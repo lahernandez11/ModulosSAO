@@ -1,62 +1,50 @@
 <?php require_once 'setPath.php'; require_once 'models/Sesion.class.php'; Sesion::validaSesion(); ?>
 <!doctype html>
-<html lang="es">
+<html lang="es-mx">
 <head>
 	<meta charset="utf-8" />
 	<title>Precios de Venta</title>
-	<link href="css/general.css" type="text/css" rel="stylesheet" />
-	<link href="css/cobranza.css" type="text/css" rel="stylesheet" />
-	<link href="css/jquery.notify.css" type="text/css" rel="stylesheet" />
-	<link href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" type="text/css" media="all" rel="stylesheet" />
-	<link href="css/superfish.css" type="text/css" rel="stylesheet" />
+
+	<link rel="stylesheet" href="css/normalize.css" />
+	<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
+	<link rel="stylesheet" href="css/general.css" />
+	<link rel="stylesheet" href="css/cobranza.css" />
+	<link rel="stylesheet" href="css/jquery.notify.css" />
+	
 	<!--[if lt IE 9]><script src="inc/js/html5shiv.js"></script><![endif]-->
 	<script src="inc/js/jquery-1.7.1.min.js"></script>
 	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
 	<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
-	<script src="inc/js/hoverIntent.js"></script>
-	<script src="inc/js/superfish.js"></script>
+
+	<script src="inc/js/general.js"></script>
 	<script src="inc/js/jquery.buttonlist.js"></script>
 	<script src="inc/js/jquery.listaTransacciones.js"></script>
 	<script src="inc/js/jquery.uxtable.js"></script>
 	<script src="inc/js/jquery.notify.js"></script>
-	<script src="inc/js/general.js"></script>
 	<script src="inc/js/precios_venta.js"></script>
 </head>
 
 <body>
 	<div id="app-wrapper">
-		<header id="app-header">
-			<?php include("inc/app-header.php"); ?>
-		</header> <!-- app-header -->
-		
+		<?php include("inc/app-header.php"); ?>
 		<nav>
-			<ul id="app-nav" class="sf-menu"></ul> 
-		</nav> <!-- app-nav -->
+			<ul id="app-nav"></ul> 
+		</nav>
 		
 		<div id="app-content">
 			<div id="app-module">
-				<header id="app-module-header">
-					<h4>-> PRECIOS DE VENTA</h4>
-				</header>
 				<div class="module-toolbar">
 					<a class="toolbar-button dd-list" id="bl-proyectos">
 						<span class="button-text">Proyectos</span>
 						<span class="icon"></span>
 					</a>
-					<a id="guardar" class="toolbar-button save"><span class="icon"></span>Guardar</a>
+					<a id="guardar" class="toolbar-button save">
+						<span class="icon"></span>
+						<span class="label">Guardar</span>
+					</a>
 				</div>
 				<div id="app-module-content">
 					<section id="tran">
-						<section id="tran-header">
-							<section class="module-toolbar" id="tran-toolbar">
-								<form>
-									<input type="hidden" name="IDListaPreciosVenta" id="IDListaPreciosVenta" value="" />
-								</form>
-							</section>
-
-							<section id="tran-info">
-							</section> <!-- tran-info -->
-						</section> <!-- tran-header -->
 
 						<section id="tran-content">
 							<table id="tabla-conceptos">

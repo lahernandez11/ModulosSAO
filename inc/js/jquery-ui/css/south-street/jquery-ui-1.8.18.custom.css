@@ -53,7 +53,7 @@
 
 /* Component containers
 ----------------------------------*/
-.ui-widget {  font-size: 0.8em; }
+.ui-widget {  font-size: 0.8rem; }
 .ui-widget .ui-widget { font-size: 1em; }
 .ui-widget input,
 .ui-widget select,

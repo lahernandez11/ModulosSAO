@@ -1107,12 +1107,6 @@ $(function() {
 			}
 			
 			$('#app-nav').empty().html(json.menu);
-			$('#app-nav').superfish();
-			/*$('#app-nav li').hover( function() {
-				$(this).children('ul').stop(true, true).slideDown('fast');
-			}, function() {
-				$(this).children('ul').slideUp('normal');
-			});*/
 		} catch(e) {
 			messageConsole.displayMessage('Error: ' + e.message, 'error');
 		}

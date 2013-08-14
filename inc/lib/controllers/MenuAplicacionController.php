@@ -42,19 +42,19 @@ try {
 				$data['menu'] .= '<li>';
 
 				$direccion = $nodo->Direccion;
-				$icono = 'img/app/nav-icons/'.$nodo->NombreIcono;
+				// $icono = 'img/app/nav-icons/'.$nodo->NombreIcono;
 				
 				if( $nodo->EsSubmenu == 0 || strlen($direccion) > 0 )
 					$direccion = ' href="'.$direccion.'"';
 				else
 					$direccion = '';
 				
-				if( strlen($nodo->NombreIcono) > 0 )
-					$icono = '<img src="'.$icono.'" width="16" heigth="16" />';
-				else
-					$icono = '';
+				// if( strlen($nodo->NombreIcono) > 0 )
+				// 	$icono = '<img src="'.$icono.'" width="16" heigth="16" />';
+				// else
+				// 	$icono = '';
 					
-				$data['menu'] .= '<a'.$direccion.'>'.$icono.$nodo->Nombre.'</a>';
+				$data['menu'] .= '<a'.$direccion.'>'.$nodo->Nombre.'</a>';
 				
 				$nivelAnterior = $nodo->NodoNivel;
 			}

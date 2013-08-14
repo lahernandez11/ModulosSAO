@@ -1,43 +1,36 @@
 <?php require_once 'setPath.php'; require_once 'models/Sesion.class.php'; Sesion::validaSesion(); ?>
 <!doctype html>
-<html lang="es">
+<html lang="es-mx">
 <head>
 	<meta charset="utf-8" />
 	<title>Agrupación de Insumos</title>
-	<link href="css/general.css" type="text/css" rel="stylesheet" />
-	<link href="css/agrupacion.css" type="text/css" rel="stylesheet"/>
-	<link href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" type="text/css" media="all" rel="stylesheet" />
-	<link href="css/superfish.css" type="text/css" rel="stylesheet" />
+
+	<link rel="stylesheet" href="css/normalize.css" />
+	<link rel="stylesheet" href="css/general.css" />
+	<link rel="stylesheet" href="css/agrupacion.css"/>
+	<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
 	
 	<script src="inc/js/jquery-1.7.1.min.js"></script>
 	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
-	<script src="inc/js/hoverIntent.js"></script>
-	<script src="inc/js/superfish.js"></script>
 	<script src="inc/js/general.js"></script>
 	<script src="inc/js/agrupacion.js"></script>
 </head>
 
 <body>
 	<div id="app-wrapper">
-		<header id="app-header">
-			<?php include("inc/app-header.php"); ?>
-		</header> <!-- app-header -->
-		
+		<?php include("inc/app-header.php"); ?>
 		<nav>
-			<ul id="app-nav"></ul>
-		</nav> <!-- app-nav -->
+			<ul id="app-nav"></ul> 
+		</nav>
 		
 		<div id="app-content">
 			<div id="app-module">
-				<header id="app-module-header">
-					<h4>-> AGRUPACIÓN</h4>
-				</header>
 				<div id="app-module-content">
 					<div class="options">
 						<div class="options-block">
 							<h3 class="title">Proyectos</h3>
 							<div class="content">
-								<ul id="lista-proyectos" class="menu"></ul>
+								<ul id="lista-proyectos" class="options-list"></ul>
 							</div>
 						</div>
 						<div class="options-block" id="opciones">

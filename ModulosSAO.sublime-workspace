@@ -520,42 +520,18 @@
 	"buffers":
 	[
 		{
-			"file": "inc/lib/models/FormatoPDF.class.php",
+			"file": "css/general.css",
 			"settings":
 			{
-				"buffer_size": 1441,
+				"buffer_size": 23545,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
+			"file": "index.php",
 			"settings":
 			{
-				"buffer_size": 16887,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/models/EstimacionSubcontrato.class.php",
-			"settings":
-			{
-				"buffer_size": 21131,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/controllers/EstimacionSubcontratoController.php",
-			"settings":
-			{
-				"buffer_size": 17821,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/js/estimaciones.js",
-			"settings":
-			{
-				"buffer_size": 39527,
+				"buffer_size": 1317,
 				"line_ending": "Windows"
 			}
 		},
@@ -563,7 +539,31 @@
 			"file": "estimaciones.php",
 			"settings":
 			{
-				"buffer_size": 14183,
+				"buffer_size": 14084,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "inc/app-header.php",
+			"settings":
+			{
+				"buffer_size": 326,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "inc/lib/controllers/MenuAplicacionController.php",
+			"settings":
+			{
+				"buffer_size": 1602,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "inc/js/general.js",
+			"settings":
+			{
+				"buffer_size": 25979,
 				"line_ending": "Windows"
 			}
 		}
@@ -612,6 +612,16 @@
 	},
 	"file_history":
 	[
+		"/D/www/ModulosSAO/inc/app-header.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/setPath.php",
+		"/D/www/ModulosSAO/setPath.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/LoginController.php",
+		"/D/www/ModulosSAO/estimaciones.php",
+		"/D/www/ModulosSAO/inc/js/estimaciones.js",
+		"/D/www/ModulosSAO/inc/lib/controllers/EstimacionSubcontratoController.php",
+		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontrato.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/FormatoPDF.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
 		"/D/Dropbox/www/ModulosSAO/inc/lib/models/FormatoPDF.class.php",
 		"/D/Dropbox/www/ModulosSAO/inc/lib/fpdf/NewFPDF.class.php",
 		"/D/Dropbox/www/ModulosSAO/inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css",
@@ -729,17 +739,7 @@
 		"/C/AppServ/www/ControlRemesas/inc/controllers/DocumentoController.php",
 		"/C/AppServ/www/ModulosSAO/inc/lib/Obra.class.php",
 		"/C/AppServ/www/ModulosSAO/inc/lib/TransaccionSAO.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/db/SAO1814DBConn.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/db/SQLSrvDBConn.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/avance_obra/controllers/AvanceObraController.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/avance_obra/AvanceObra.class.php",
-		"/C/AppServ/www/ModulosSAO/modulos/cobranza/RegistraCobranza.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/Util.class.php",
-		"/C/AppServ/www/ModulosSAO/modulos/cobranza/EliminaTransaccion.php",
-		"/C/Users/Uziel/Desktop/class.ReporteX.php",
-		"/C/AppServ/www/ModulosSAO/modulos/confirmacion_cobranza/EliminaTransaccion.php",
-		"/C/AppServ/www/ModulosSAO/modulos/confirmacion_cobranza/GetTotales.php",
-		"/C/AppServ/www/ModulosSAO/modulos/confirmacion_cobranza/GetConceptosCobranza.php"
+		"/C/AppServ/www/ModulosSAO/inc/lib/db/SAO1814DBConn.class.php"
 	],
 	"find":
 	{
@@ -757,6 +757,8 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"app-nav",
+			"header",
 			"40",
 			"Cell",
 			"align",
@@ -882,9 +884,7 @@
 			"Cell",
 			"utf-8",
 			"widths",
-			"th",
-			"header",
-			"public"
+			"th"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -960,23 +960,129 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "inc/lib/models/FormatoPDF.class.php",
+					"file": "css/general.css",
 					"settings":
 					{
-						"buffer_size": 1441,
+						"buffer_size": 23545,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								664,
-								664
+								5197,
+								5197
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 5207.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "index.php",
+					"settings":
+					{
+						"buffer_size": 1317,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								576,
+								576
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "estimaciones.php",
+					"settings":
+					{
+						"buffer_size": 14084,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								166,
+								166
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "inc/app-header.php",
+					"settings":
+					{
+						"buffer_size": 326,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								52,
+								52
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "inc/lib/controllers/MenuAplicacionController.php",
+					"settings":
+					{
+						"buffer_size": 1602,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1259,
+								1259
 							]
 						],
 						"settings":
@@ -991,100 +1097,19 @@
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
+					"buffer": 5,
+					"file": "inc/js/general.js",
 					"settings":
 					{
-						"buffer_size": 16887,
+						"buffer_size": 25979,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1410,
-								1410
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 880.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "inc/lib/models/EstimacionSubcontrato.class.php",
-					"settings":
-					{
-						"buffer_size": 21131,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								476,
-								476
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 68.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "inc/lib/controllers/EstimacionSubcontratoController.php",
-					"settings":
-					{
-						"buffer_size": 17821,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								16658,
-								16658
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 10543.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "inc/js/estimaciones.js",
-					"settings":
-					{
-						"buffer_size": 39527,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7631,
-								7631
+								25504,
+								25504
 							]
 						],
 						"settings":
@@ -1093,34 +1118,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 5918.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "estimaciones.php",
-					"settings":
-					{
-						"buffer_size": 14183,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1326,
-								1326
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 23975.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1179,7 +1177,7 @@
 		[
 			[
 				"",
-				"/D/Dropbox/www/ControlRemesas/ControlRemesas.sublime-project"
+				"/D/www/INS/INS.sublime-project"
 			]
 		],
 		"width": 380.0

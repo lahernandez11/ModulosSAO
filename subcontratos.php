@@ -1,46 +1,37 @@
 <?php require_once 'setPath.php'; require_once 'models/Sesion.class.php'; Sesion::validaSesion(); ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-mx">
 <head>
 	<meta charset="utf-8" />
 	<title>Subcontratos</title>
-	<link href="css/general.css" type="text/css" rel="stylesheet" />
-	<link href="css/subcontratos.css" type="text/css" rel="stylesheet"/>
-	<link href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" type="text/css" media="all" rel="stylesheet" />
-	<link href="css/superfish.css" type="text/css" rel="stylesheet" />
+
+	<link rel="stylesheet" href="css/normalize.css" />
+	<link rel="stylesheet" href="css/general.css" />
+	<link rel="stylesheet" href="css/subcontratos.css"/>
+	<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
+	
 	<!--[if lt IE 9]><script src="inc/js/html5shiv.js"></script><![endif]-->
 	<script src="inc/js/jquery-1.7.1.min.js"></script>
 	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
 	<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
-	<script src="inc/js/hoverIntent.js"></script>
-	<script src="inc/js/superfish.js"></script>
 	<script src="inc/js/general.js"></script>
 	<script src="inc/js/subcontratos.js"></script>
 </head>
 
 <body>
 	<div id="app-wrapper">
-		<header id="app-header">
-			<?php include("inc/app-header.php"); ?>
-		</header> <!-- app-header -->
-		
+		<?php include("inc/app-header.php"); ?>
 		<nav>
-			<ul id="app-nav"></ul>
-		</nav> <!-- app-nav -->
+			<ul id="app-nav"></ul> 
+		</nav>
 		
 		<div id="app-content">
 			<div id="app-module">
-				<header id="app-module-header">
-					<h4>-> SUBCONTRATOS</h4>
-				</header>
 				<div id="app-module-content" class="two-panel-app">
-					
-					
-					
 					<div class="panel left-panel">
-						<header class="panel-header">
+						<div class="panel-header">
 		    				<h3 class="title">Subcontratos<a href="#dropdown-proyecto" class="dropdown-list-trigger"></a></h3>
-		    			</header>
+		    			</div>
 		    			<div class="panel-content">
 		    				<ul id="lista-subcontratos" class="tree"></ul>
 		    			</div>
@@ -236,5 +227,4 @@
 	</div>
 	<div id="message-console"><span id="console-message"></span><span id="console-toggler" class="open"></span></div>
 </body>
-
 </html>

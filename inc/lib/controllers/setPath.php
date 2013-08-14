@@ -1,1 +1,1 @@
-<?php set_include_path(get_include_path().";".$_SERVER["DOCUMENT_ROOT"]."\ModulosSAO\inc\lib"); ?>
+<?php set_include_path(get_include_path().";".$_SERVER["DOCUMENT_ROOT"]."/ModulosSAO/inc/lib/"); ?>

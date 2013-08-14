@@ -133,14 +133,12 @@
 				'left': (buttonXPos) + 'px',
 			}).slideDown('fast', function() {
 				
-				if ( data.selectedItem ) {
+				// if ( data.selectedItem ) {
 					
-					var selecctedItemPos = list.find('a.selected').position().top;
-					console.log(list.find('a.selected'));
-					console.log(selecctedItemPos);
-					//var listScrollHeight = $(data.listContainerID)[0].scrollHeight;
-					list.scrollTop( selecctedItemPos );
-				}
+				// 	var selecctedItemPos = list.find('a.selected').position().top;
+				// 	//var listScrollHeight = $(data.listContainerID)[0].scrollHeight;
+				// 	list.scrollTop( selecctedItemPos );
+				// }
 			});
 		},
 
