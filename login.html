@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE-Edge"/>
+<title>Modulos SAO</title>
+
+<link href="css/login.css" type="text/css" media="screen" rel="stylesheet" />
+<script type="text/javascript" src="inc/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="inc/js/login.js"></script>
+</head>
+
+<body>
+	<noscript>Para usar este software necesita un navegador compatible con javascript.</noscript>
+  <div id="wrapper">
+    <div id="header">
+      <a id="logo"></a>
+    </div>
+  <div id="login-box">
+    <div id="content">
+        <form id="login-form" action="index.php" method="post">
+          <div class="LoginErrorBar">
+            <span></span>
+          </div>
+          <div class="LoginUserInputDiv">
+            <label for="usuario">Usuario</label>
+            <input type="text" class="inputtext" id="usuario" name="usuario" value="" />
+          </div>
+          <div class="LoginPasswordInputDiv">
+            <label for="clave">Clave</label>
+            <input type="password" class="inputtext" id="clave" name="clave" value="" />
+          </div>
+          <div class="LoginButtonDiv">
+            <input type="submit" id="entrar" name="entrar" class="button key enabled" value="Entrar" />
+          </div>
+        </form>
+      </div>
+      <div id="console">Error</div>
+  </div>
+  <!-- login-box -->
+</body>
+</html>

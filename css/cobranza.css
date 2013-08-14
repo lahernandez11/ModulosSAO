@@ -1,0 +1,43 @@
+#penalizaciones-registradas
+{
+	margin-bottom: 2em;
+}
+#tabla-estimaciones-obra tbody tr.titulo
+{
+	background-color: #F4F4F4;
+}
+.disabled
+{
+	background-color: #F0F0F0;
+    color: #888888;
+}
+
+table.tabla-resumen
+{
+	border: 1px solid #CCCCCC;
+}
+table.tabla-resumen td,
+table.tabla-resumen th
+{
+	border: none;
+	border-width: 0 1px 1px 1px;
+	border-style: none solid solid solid;
+	border-color: white #CCCCCC #CCCCCC #CCCCCC;
+}
+table.tabla-resumen tr.total
+{
+	background-color: whitesmoke;
+	border-top: 4px double black;
+	font-weight: bold;
+}
+
+table#tabla-estimaciones-obra tbody tr:hover
+{
+	background-color: #F0E68C;
+	cursor: pointer;
+}
+table tbody tr.selected,
+table#tabla-estimaciones-obra tbody tr.selected:hover
+{
+	background-color: #99CC00;
+}

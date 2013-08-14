@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="utf-8" />
+	<title></title>
+
+	<style type="text/css">
+		td {
+			text-align: left;
+			padding: 5px;
+		}
+		table {
+			width: 200px;
+			border-collapse: collapse;
+			width: 50%;
+			float: left;
+		}
+		#buttonDiv {
+			width: 15px;
+			text-align: center;
+			margin: 20px;
+			float: left;
+		}
+	</style>
+	<link href="../jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" type="text/css" media="all" rel="stylesheet" />
+	<script src="../jquery-1.7.1.min.js"></script>
+	<script src="../jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
+
+	<script>
+		$( function() {
+
+			//var def = $.Deferred();
+
+			// When the deferred object is resolved the callback will display a message
+			//def.done( function() {
+
+				//displayMessage('Callback Executed!');
+			//});
+ 
+			function performLongTaskSync() {
+				var start = $.now();
+				var total = 0;
+
+				for (var i = 0; i < 800000000; i++) {
+					total += i;
+				};
+
+				var elapsedTime = (($.now() - start) / 1000).toFixed(1);
+
+				displayMessage('Task Complete. Time: ' + elapsedTime + ' sec');
+
+				return total;
+			}
+
+			function performLongTask() {
+
+				return $.Deferred( function(def) {
+
+					setTimeout( function() {
+						performLongTaskSync();
+						def.resolve();
+					}, 1000);
+
+				});
+			}
+
+			// When the button is clicked the deferred object will be resolved
+			$('button').button().click( function() {
+
+				if( $(':checked').length > 0) {
+					
+					displayMessage('Calling performLongTask()');
+
+					var observer = performLongTask();
+
+					observer.done( function() {
+						displayMessage('Callback Executed!')
+					})
+
+					displayMessage('performLongTask Returned');
+				} else {
+					displayMessage('Calling performLongTaskSync()');
+					performLongTaskSync();
+					displayMessage('performLongTaskSync Returned');
+				}
+			});
+
+			$(':checkbox').button();
+			displayMessage('Ready!');
+		});
+
+		// Function to add a message to the table
+		function displayMessage( message ) {
+
+			$('tbody').append('<tr><td>' + message + '</td></tr>')
+		}
+	</script>
+</head>
+<body>
+	<h1>jacqui´s Flower Shop</h1>
+
+	<table class="ui-widget" border="1">
+		<thead class="ui-widget-header">
+			<tr>
+				<th>Message</th>
+			</tr>
+		</thead>
+		<tbody class="ui-widget-content">
+
+		</tbody>
+	</table>
+	<div id="buttonDiv">
+		<button>Go</button>
+		<input type="checkbox" id="async" checked/>
+		<label for="async">Async</label>
+	</div>
+</body>
+</html>

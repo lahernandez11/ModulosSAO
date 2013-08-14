@@ -1,0 +1,14 @@
+.panel .panel-header .title .dropdown-list-trigger {
+	background-image: url("../img/cc/blacks/16x16/cog.png");
+	float: right;
+}
+
+form div {
+	clear: left;
+}
+form div input,
+form div textarea,
+form div select,
+form div.select input {
+	width: 300px;
+}

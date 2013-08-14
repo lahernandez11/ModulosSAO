@@ -1,0 +1,9 @@
+table colgroup col.unidad {
+	width: 80px;
+}
+table colgroup col.cuenta {
+	width: 120px;
+}
+table colgroup col.agrupador {
+	width: 300px;
+}

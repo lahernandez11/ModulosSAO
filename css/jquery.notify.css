@@ -1,0 +1,49 @@
+.notify-wrapper {
+	position: fixed;
+	bottom: 0;
+	right: 20px;
+	width: 300px;
+	z-index: 99999;
+}
+.notify {
+	display: block;
+}
+.notify-content {
+	position: relative;
+	display: block;
+	padding: 5px;
+	margin-bottom: 10px;
+	height: 60px;
+	opacity: 0.9;
+	background-color: black;
+	border: 3px solid black;
+	-webkit-border-radius: 5px 5px 5px 5px;
+	-moz-border-radius: 5px 5px 5px 5px;
+	border-radius: 5px 5px 5px 5px;
+}
+.notify:hover .notify-content {
+	border-color: #99CC00;
+}
+.notify-content .notify-icon {
+	position: absolute;
+	top: 5;
+	left: 5;
+	width: 32px;
+    height: 37px;
+    background: url('../img/app/company-icon_32x32.png') scroll no-repeat 0 0 transparent;
+}
+.notify-content .notify-text {
+	color: white;
+	margin-left: 40px;
+}
+.notify:hover .notify-close {
+	right: 5px;
+}
+.notify-content .notify-close {
+	position: absolute;
+	top: 0;
+	right: 999999px;
+	cursor: pointer;
+	color: white;
+	font-weight: bold;
+}
