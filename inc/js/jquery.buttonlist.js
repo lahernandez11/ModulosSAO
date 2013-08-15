@@ -194,7 +194,10 @@
 				restoreData.call(this)[opt] = value;
 			}
 			else {
-				return restoreData.call(this)[opt];
+				if ( opt === 'selectedItem' && restoreData.call(this)[opt] == null )
+					return {value: null}
+				else
+					return restoreData.call(this)[opt];
 			}
 		},
 

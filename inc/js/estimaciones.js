@@ -409,14 +409,12 @@ var ESTIMACION = {
 		DATA_LOADER.show();
 
 		$.ajax({
-			type: 'GET',
 			url: that.urls.tranController,
 			data: {
 				IDSubcontrato: that.getIDSubcontrato(),
 				action: 'nuevaTransaccion'
 			},
-			dataType: 'json',
-			cache: false
+			dataType: 'json'
 		}).done( function( json ) {
 			try {
 
@@ -429,9 +427,13 @@ var ESTIMACION = {
 				$('#txtObjetoSubcontrato').text(json.datosSubcontrato.ObjetoSubcontrato);
 				$('#txtNombreContratista').text(json.datosSubcontrato.NombreContratista);
 				// Conceptos del subcontrato para estimacion
+				
 				that.fillConceptosList(json.conceptos);
+				
 				that.habilitaCamposTransaccion();
+				
 				pubsub.publish('modified_tran');
+				
 				that.setURLFormatoPDF();
 			} catch( e ) {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );

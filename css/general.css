@@ -72,41 +72,6 @@ div.options form div
     text-align: center;
     float: none;
 }
-/*div.section
-{
-	padding-top: 0.5em;
-	padding-bottom: 0.5em;
-}
-div.section .section-header .content-toggler
-{
-	padding-left: 20px;
-	cursor: pointer;
-	background-attachment: scroll;
-    background-color: transparent;
-    background-image: url("../img/section/arrow_right_hc.png");
-    background-position: 0 50%;
-    background-repeat: no-repeat;
-}
-div.section .section-header .content-toggler.expanded
-{
-	background-image: url("../img/section/arrow_down_hc.png");
-}
-div.section .section-header a.title
-{
-	color: crimson;
-	font-weight: bold;
-}
-div.section .section-header a.title .items-counter
-{
-	color: gray;
-    font-size: 85%;
-    margin-left: 3px;
-}
-div.section .section-content
-{
-	padding-left: 1.5em;
-	display: none;
-}*/
 div.ui-state-highlight
 {
 	margin-bottom: 0.3em;
@@ -294,6 +259,7 @@ input.date + img {
 nav
 {
 	background-color: #444444;
+	font-size: 0.9em;
 }
 nav ul
 {
@@ -342,25 +308,13 @@ nav > ul li:hover ul
 	display: block;
 	position: absolute;
 }
-/*nav#app-nav
-{
-	background: url("../img/app/nav-bg.png") repeat-x scroll 0 0 #000000;
-	list-style: none;
-	margin: 0;
-}
-nav#app-nav li a img
-{
-	border: none;
-	float: left;
-	margin-right: 5px;
-	margin-top: 8px;
-}*/
 table
 {
 	background-color: white;
 	border-color: transparent;
 	border-collapse: collapse;
 	clear: both;
+	font-size: 0.9em;
 	table-layout: fixed;
 	width: 100%;
 }
@@ -416,7 +370,7 @@ table col.hidden
 }
 table thead th
 {
-	padding: 4px 3px;
+	padding: 0.2em;
 	border: 1px solid #666;
 	background-color: #202020;
 	color: white;
@@ -1327,9 +1281,6 @@ ul.dropdown-list li a.with-icon
 {
 	display: none;
 }
-
-
-
 #message-console
 {
 	background-color: yellow;

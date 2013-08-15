@@ -64,7 +64,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->setFontStyle("B");
 		$this->Cell($labelCellWidth, $cellHeight, "Semana de Contrato", $printBorder);
 		$this->resetFontStyle();
-		$this->Cell(0, $cellHeight, "aqui va semana contrato", $printBorder, 0, 'R');
+		$this->Cell(0, $cellHeight, "", $printBorder, 0, 'R');
 		$this->Ln($cellHeight);
 
 		$this->SetX($xPosData);
