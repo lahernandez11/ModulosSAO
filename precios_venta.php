@@ -28,7 +28,7 @@
 	<div id="app-wrapper">
 		<?php include("inc/app-header.php"); ?>
 		<nav>
-			<ul id="app-nav"></ul> 
+			<ul id="app-nav"></ul>
 		</nav>
 		
 		<div id="app-content">
@@ -36,12 +36,13 @@
 				<div class="module-toolbar">
 					<a class="toolbar-button dd-list" id="bl-proyectos">
 						<span class="button-text">Proyectos</span>
-						<span class="icon"></span>
+						<span class="icon flechita-abajo"></span>
 					</a>
-					<a id="guardar" class="toolbar-button save">
-						<span class="icon"></span>
+					<a id="guardar" class="toolbar-button">
+						<span class="icon save"></span>
 						<span class="label">Guardar</span>
 					</a>
+					<h2>Precios de Venta</h2>
 				</div>
 				<div id="app-module-content">
 					<section id="tran">

@@ -5,7 +5,7 @@ abstract class TransaccionSAO {
 	protected $_IDObra = 0;
 	protected $_estado = 0;
 	protected $_numeroFolio = 0;
-	protected $_fecha = "";
+	protected $_fecha = null;
 	protected $_observaciones = "";
 	protected $_SAOConn = null;
 	private $_nombreObra;
@@ -81,17 +81,17 @@ abstract class TransaccionSAO {
 				$this->_tipoTransaccion = $datosTran->tipo_transaccion;
 				$this->_estado 		    = $datosTran->estado;
 				$this->_numeroFolio     = $datosTran->numero_folio;
-				$this->_fecha 		    = $datosTran->fecha;
+				$this->setFecha($datosTran->fecha);
 				$this->_observaciones   = $datosTran->observaciones;
 			}
-		} else {
+		} else
 			throw new Exception("No se encontro la transacción.");
-		}
 	}
 
 	protected function setIDTransaccion( $IDTransaccion ) {
 		$this->_IDTransaccion = $IDTransaccion;
 	}
+
 	public function getIDTransaccion() {
 		return $this->_IDTransaccion;
 	}
@@ -120,8 +120,8 @@ abstract class TransaccionSAO {
 		
 		if ( ! $this->fechaEsValida($fecha) )
 			throw new Exception("El formato de fecha es incorrecto.");
-		
-		$this->_fecha = $fecha;
+		else
+			$this->_fecha = $fecha;
 	}
 
 	protected function fechaEsValida( $fecha ) {

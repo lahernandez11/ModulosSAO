@@ -5,6 +5,7 @@ require_once 'models/Obra.class.php';
 require_once 'models/Util.class.php';
 require_once 'db/SAODBConn.class.php';
 require_once 'models/EstimacionObra.class.php';
+require_once 'models/EstimacionSubcontrato.class.php';
 
 $data['success'] = true;
 $data['message'] = null;
@@ -104,13 +105,13 @@ try {
 			
 			$transaccion = new EstimacionObra( $IDTransaccion , $conn );
 
-			$data['datos']['Observaciones'] = $transaccion->getObservaciones();
 			$data['datos']['Fecha'] 		= Util::formatoFecha($transaccion->getFecha());
 			$data['datos']['FechaInicio']   = Util::formatoFecha($transaccion->getFechaInicio());
 			$data['datos']['FechaTermino']  = Util::formatoFecha($transaccion->getFechaTermino());
+			$data['datos']['Observaciones'] = $transaccion->getObservaciones();
 			$data['datos']['Referencia']    = $transaccion->getReferencia();
 
-			$conceptos = $transaccion->getConceptosAvance();
+			$conceptos = $transaccion->getConceptos();
 
 			foreach ($conceptos as $concepto) {
 				
@@ -118,16 +119,13 @@ try {
 					'IDConcepto'  => $concepto->IDConcepto,
 					'NumeroNivel' => $concepto->NumeroNivel,
 					'Descripcion' => $concepto->Descripcion,
-					'Unidad' 	  => $concepto->Unidad,
 					'EsActividad' => $concepto->EsActividad,
+					'Unidad' 	  => $concepto->Unidad,
 					'CantidadPresupuestada'  => Util::formatoNumerico($concepto->CantidadPresupuestada),
-					'CantidadAvanceAnterior' => Util::formatoNumerico($concepto->CantidadAvanceAnterior),
-					'CantidadAvance' 		 => Util::formatoNumerico($concepto->CantidadAvance),
+					'CantidadEstimadaAnterior' => Util::formatoNumerico($concepto->CantidadEstimadaAnterior),
+					'CantidadEstimada' 		 => Util::formatoNumerico($concepto->CantidadEstimada),
 					'PrecioVenta' 		 	 => Util::formatoNumerico($concepto->PrecioVenta),
-					'MontoAvance'			 => Util::formatoNumerico($concepto->MontoAvance),
-					'CantidadAvanceActual'   => Util::formatoNumerico($concepto->CantidadAvanceActual),
-					'MontoAvanceActual'   	 => Util::formatoNumerico($concepto->MontoAvanceActual),
-					'Cumplido' 		 		 => $concepto->Cumplido
+					'Total' 		 		 => $concepto->Total
 				);
 			}
 

@@ -35,20 +35,21 @@
 				<div class="module-toolbar">
 					<a class="toolbar-button dd-list" id="bl-proyectos">
 						<span class="button-text">Proyectos</span>
-						<span class="icon"></span>
+						<span class="icon flechita-abajo"></span>
 					</a>
-					<a id="nuevo" class="toolbar-button new">
-						<span class="icon"></span>
+					<a id="nuevo" class="toolbar-button">
+						<span class="icon new"></span>
 						<span class="label">Nuevo</span>
 					</a>
-					<a id="eliminar" class="toolbar-button delete">
-						<span class="icon"></span>
-						<span class="label">Eliminar</span>
-					</a>
-					<a id="guardar" class="toolbar-button save">
-						<span class="icon"></span>
+					<a id="guardar" class="toolbar-button">
+						<span class="icon save"></span>
 						<span class="label">Guardar</span>
 					</a>
+					<a id="eliminar" class="toolbar-button">
+						<span class="icon delete"></span>
+						<span class="label">Eliminar</span>
+					</a>
+					<h2>Confirmación de Cobranza</h2>
 				</div>
 				<div id="app-module-content">
 					<section id="tran">
@@ -56,7 +57,7 @@
 							<section class="module-toolbar" id="tran-toolbar">
 								<a class="toolbar-button dd-list" id="folios-estimacion">
 									<span class="button-text">Folio</span>
-									<span class="icon"></span>
+									<span class="icon flechita-abajo"></span>
 								</a>
 								<form>
 									<label>Fecha</label>
@@ -65,7 +66,7 @@
 									<input type="hidden" name="IDCobranza" id="IDCobranza" value="" />
 									<input type="hidden" name="IDEstimacionObra" id="IDEstimacionObra" />
 								</form>
-								<a id="btnResumen" class="toolbar-button op resumen"><span class="icon"></span>Resumen</a>
+								<a id="btnResumen" class="toolbar-button op"><span class="icon"></span>Resumen</a>
 							</section>
 
 							<section id="tran-info">

@@ -36,20 +36,21 @@
 				<div class="module-toolbar">
 					<a class="toolbar-button dd-list" id="bl-proyectos">
 						<span class="button-text">Proyectos</span>
-						<span class="icon"></span>
+						<span class="icon flechita-abajo"></span>
 					</a>
-					<a id="nuevo" class="toolbar-button new">
-						<span class="icon"></span>
+					<a id="nuevo" class="toolbar-button">
+						<span class="icon new"></span>
 						<span class="label">Nuevo</span>
 					</a>
-					<a id="eliminar" class="toolbar-button delete">
-						<span class="icon"></span>
-						<span class="label">Eliminar</span>
-					</a>
-					<a id="guardar" class="toolbar-button save">
-						<span class="icon"></span>
+					<a id="guardar" class="toolbar-button">
+						<span class="icon save"></span>
 						<span class="label">Guardar</span>
 					</a>
+					<a id="eliminar" class="toolbar-button">
+						<span class="icon delete"></span>
+						<span class="label">Eliminar</span>
+					</a>
+					<h2>Estimación de Subcontrato</h2>
 				</div>
 				<div id="app-module-content">
 					<section id="tran">
@@ -57,7 +58,7 @@
 							<section class="module-toolbar" id="tran-toolbar">
 								<a class="toolbar-button op dd-list" id="folios-transaccion">
 									<span class="button-text">Folio</span>
-									<span class="icon"></span>
+									<span class="icon flechita-abajo"></span>
 								</a>
 								<a id="btnLista-transacciones" class="toolbar-button">...</a>
 								<form>
@@ -65,10 +66,10 @@
 									<input type="text" class="date" name="txtFecha" id="txtFecha" />
 									<input type="hidden" name="txtFechaDB" id="txtFechaDB" />
 								</form>
-								<a id="btnDeductivas" class="toolbar-button op deductiva"><span class="icon"></span><span class="label">Deductivas</span></a>
-								<a id="btnRetenciones" class="toolbar-button op retencion"><span class="icon"></span><span class="label">Retenciones</span></a>
-								<a id="btnResumen" class="toolbar-button op resumen"><span class="icon"></span><span class="label">Resumen</span></a>
-								<a id="btnFormatoPDF" class="toolbar-button op formato" target="_blank" href="inc/lib/controllers/EstimacionSubcontratoController.php?action=generaFormato&IDTransaccion="><span class="icon"></span><span class="label">Formato</span></a>
+								<a id="btnDeductivas" class="toolbar-button op"><span class="icon deductivas"></span><span class="label">Deductivas</span></a>
+								<a id="btnRetenciones" class="toolbar-button op"><span class="icon retenciones"></span><span class="label">Retenciones</span></a>
+								<a id="btnResumen" class="toolbar-button op"><span class="icon resumen"></span><span class="label">Resumen</span></a>
+								<a id="btnFormatoPDF" class="toolbar-button op" target="_blank" href="inc/lib/controllers/EstimacionSubcontratoController.php?action=generaFormato&IDTransaccion="><span class="icon pdf"></span><span class="label">Formato</span></a>
 							</section>
 
 							<section id="tran-info">

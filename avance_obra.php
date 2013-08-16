@@ -37,20 +37,21 @@
 				<div class="module-toolbar">
 					<a class="toolbar-button dd-list" id="bl-proyectos">
 						<span class="button-text">Proyectos</span>
-						<span class="icon"></span>
+						<span class="icon flechita-abajo"></span>
 					</a>
-					<a id="nueva-transaccion" class="toolbar-button new">
-						<span class="icon"></span>
+					<a id="nueva-transaccion" class="toolbar-button">
+						<span class="icon new"></span>
 						<span class="label">Nuevo</span>
 					</a>
-					<a id="eliminar" class="toolbar-button delete">
-						<span class="icon"></span>
-						<span class="label">Eliminar</span>
-					</a>
-					<a id="guardar" class="toolbar-button save">
-						<span class="icon"></span>
+					<a id="guardar" class="toolbar-button">
+						<span class="icon save"></span>
 						<span class="label">Guardar</span>
 					</a>
+					<a id="eliminar" class="toolbar-button">
+						<span class="icon delete"></span>
+						<span class="label">Eliminar</span>
+					</a>
+					<h2>Producción de Obra</h2>
 				</div>
 				<div id="app-module-content">
 					<section id="tran">
@@ -58,7 +59,7 @@
 							<section class="module-toolbar" id="tran-toolbar">
 								<a class="toolbar-button op dd-list" id="folios-transaccion">
 									<span class="button-text">Folio</span>
-									<span class="icon"></span>
+									<span class="icon flechita-abajo"></span>
 								</a>
 								<a id="btnLista-transacciones" class="toolbar-button">...</a>
 								<form>
@@ -67,11 +68,11 @@
 									<input type="hidden" name="txtFechaTransaccionDB" id="txtFechaTransaccionDB" />
 									<input type="hidden" name="IDTransaccion" id="IDTransaccion" value="" />
 								</form>
-								<a id="aprobar" class="toolbar-button op aprobar">
+								<a id="aprobar" class="toolbar-button op">
 									<span class="icon"></span>
 									<span class="button-text">Aprobar</span>
 								</a>
-								<a id="revierte-aprobacion" class="toolbar-button revertir">
+								<a id="revierte-aprobacion" class="toolbar-button">
 									<span class="icon"></span>
 									<span class="button-text">Revertir Aprobación</span>
 								</a>

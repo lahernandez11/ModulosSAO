@@ -3,7 +3,6 @@
 <html lang="es-mx">
 <head>
 	<meta charset="utf-8" />
-
 	<title>Avance de Subcontratos</title>
 	
 	<link rel="stylesheet" href="css/normalize.css" />
@@ -38,20 +37,21 @@
 				<div class="module-toolbar">
 					<a class="toolbar-button dd-list" id="bl-proyectos">
 						<span class="button-text">Proyectos</span>
-						<span class="icon"></span>
+						<span class="icon flechita-abajo"></span>
 					</a>
-					<a id="nueva-transaccion" class="toolbar-button new">
-						<span class="icon"></span>
+					<a id="nueva-transaccion" class="toolbar-button">
+						<span class="icon new"></span>
 						<span class="label">Nuevo</span>
 					</a>
-					<a id="guardar" class="toolbar-button save">
-						<span class="icon"></span>
+					<a id="guardar" class="toolbar-button">
+						<span class="icon save"></span>
 						<span class="label">Guardar</span>
 					</a>
-					<a id="eliminar" class="toolbar-button delete">
-						<span class="icon"></span>
+					<a id="eliminar" class="toolbar-button">
+						<span class="icon delete"></span>
 						<span class="label">Eliminar</span>
 					</a>
+					<h2>Avance de Subcontratos</h2>
 				</div>
 				<div id="app-module-content">
 					<section id="tran">
@@ -59,7 +59,7 @@
 							<section class="module-toolbar" id="tran-toolbar">
 								<a class="toolbar-button op dd-list" id="folios-transaccion">
 									<span class="button-text">Folio</span>
-									<span class="icon"></span>
+									<span class="icon flechita-abajo"></span>
 								</a>
 								<a id="btnLista-transacciones" class="toolbar-button">...</a>
 								<form>

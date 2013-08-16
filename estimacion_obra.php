@@ -36,20 +36,21 @@
 				<div class="module-toolbar">
 					<a class="toolbar-button dd-list" id="bl-proyectos">
 						<span class="button-text">Proyectos</span>
-						<span class="icon"></span>
+						<span class="icon flechita-abajo"></span>
 					</a>
-					<a id="nueva-transaccion" class="toolbar-button new">
-						<span class="icon"></span>
+					<a id="nuevo" class="toolbar-button">
+						<span class="icon new"></span>
 						<span class="label">Nuevo</span>
 					</a>
-					<a id="guardar" class="toolbar-button save">
-						<span class="icon"></span>
+					<a id="guardar" class="toolbar-button">
+						<span class="icon save"></span>
 						<span class="label">Guardar</span>
 					</a>
-					<a id="eliminar" class="toolbar-button delete">
-						<span class="icon"></span>
+					<a id="eliminar" class="toolbar-button">
+						<span class="icon delete"></span>
 						<span class="label">Eliminar</span>
 					</a>
+					<h2>Estimación de Obra</h2>
 				</div>
 				<div id="app-module-content">
 					<section id="tran">
@@ -57,14 +58,13 @@
 							<section class="module-toolbar" id="tran-toolbar">
 								<a class="toolbar-button op dd-list" id="folios-transaccion">
 									<span class="button-text">Folio</span>
-									<span class="icon"></span>
+									<span class="icon flechita-abajo"></span>
 								</a>
 								<a id="btnLista-transacciones" class="toolbar-button">...</a>
 								<form>
 									<label>Fecha</label>
-									<input type="text" class="date" name="txtFechaTransaccion" id="txtFechaTransaccion" />
-									<input type="hidden" name="txtFechaTransaccionDB" id="txtFechaTransaccionDB" />
-									<input type="hidden" name="IDTransaccion" id="IDTransaccion" value="" />
+									<input type="text" class="date" name="txtFecha" id="txtFecha" />
+									<input type="hidden" name="txtFechaDB" id="txtFechaDB" />
 								</form>
 								<a id="aprobar" class="toolbar-button op aprobar">
 									<span class="icon"></span>
@@ -130,19 +130,19 @@
 						<section id="tran-content">
 							<table id="tabla-conceptos">
 								<colgroup>
-									<col class="icon"/>
+									<col class="icon" />
 									<col/>
-									<col class="unidad"/>
-									<col span="2" class="monto"/>
-									<col span="4" class="monto editable"/>
-									<col class="monto"/>
+									<col class="unidad" />
+									<col span="2" class="monto" />
+									<col class="monto editable" />
+									<col span="3" class="monto" />
 								</colgroup>
 								<thead>
 									<tr>
 										<th rowspan="2"></th>
 										<th rowspan="2">Concepto</th>
 										<th rowspan="2">Unidad</th>
-										<th colspan="4">Cantidad</th>
+										<th colspan="3">Cantidad</th>
 										<th rowspan="2">Precio</th>
 										<th>Monto</th>
 										<th rowspan="2">Cumplido</th>
@@ -150,7 +150,6 @@
 									<tr>
 										<th>Presupuesto</th>
 										<th>Anterior</th>
-										<th>Actual</th>
 										<th>Avance</th>
 										<th>Total</th>
 									</tr>

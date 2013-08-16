@@ -574,7 +574,7 @@ var ESTIMACION = {
 
 				// Establece los datos generales
 				$('#txtFolioConsecutivo').text(json.datos.NumeroFolioConsecutivo);
-				$('#txtFechaTransaccion').datepicker( 'setDate', json.datos.Fecha );
+				$('#txtFecha').datepicker( 'setDate', json.datos.Fecha );
 				$('#txtObjetoSubcontrato').text( json.datos.ObjetoSubcontrato );
 				$('#txtNombreContratista').text( json.datos.NombreContratista );
 				$('#txtObservaciones').val( json.datos.Observaciones );

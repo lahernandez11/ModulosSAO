@@ -24,11 +24,13 @@ var ESTIMACION = {
 		// Suscripcion al evento que notifica cuando la transaccion tiene cambios por guardar
 		var notifyModifiedTranSubs = pubsub.subscribe('notify_modtran', notifyModifiedTran);
 
-		$('#tabla-conceptos').on('keyup', 'input[type=text]', function() {
+		// Da formato al numero ingresado en un input text de la tabla de conceptos
+		$('#tabla-conceptos').on('keyup', 'input[type=text]', function(event) {
+		    var rowKeys = [38, 39, 40, 37],
+		    	oldValue = $(this).val();
 
-		    var oldValue = $(this).val();
-		    
-		    $(this).val(oldValue.numFormat());
+		    if ( rowKeys.indexOf(event.keyCode) < 0 )
+		    	$(this).val(oldValue.numFormat());
 		});
 
 		$('#bl-proyectos').buttonlist({
@@ -37,11 +39,17 @@ var ESTIMACION = {
 			onSelect: function( selectedItem, listItem ) {
 				
 				$('#folios-transaccion')
-				.buttonlist('option', 'data', {IDProyecto: selectedItem.value, action: 'getFoliosTransaccion'});
+				.buttonlist('option', 'data', {
+					IDProyecto: selectedItem.value,
+					action: 'getFoliosTransaccion'
+				});
 
 				$('#folios-transaccion').buttonlist('refresh');
 
-				$('#btnLista-transacciones').listaTransacciones('option', 'data', {IDProyecto: selectedItem.value, action: 'getListaTransacciones'});
+				$('#btnLista-transacciones').listaTransacciones('option', 'data', {
+					IDProyecto: selectedItem.value,
+					action: 'getListaTransacciones'
+				});
 				
 				that.limpiaDatosTransaccion();
 				that.deshabilitaCamposTransaccion();
@@ -132,10 +140,8 @@ var ESTIMACION = {
 			}
 		});
 		
-		$('#nueva-transaccion').on('click', function(event) {
+		$('#nuevo').on('click', function(event) {
 
-			//that.nuevaTransaccion();
-			
 			if( that.existenCambiosSinGuardar() )
 				pubsub.publish('notify_modtran', that.nuevaTransaccion);
 			else
@@ -160,11 +166,11 @@ var ESTIMACION = {
 			that.revierteAprobacion();
 		});
 
-		$('#txtFechaTransaccion, #txtFechaInicio, #txtFechaTermino')
+		$('#txtFecha, #txtFechaInicio, #txtFechaTermino')
 		.datepicker({
 			dateFormat: 'dd-mm-yy',
 			altFormat: 'yy-mm-dd',
-			altField: '#txtFechaTransaccionDB',
+			altField: '#txtFechaDB',
 			showOtherMonths: "true",
 			selectOtherMonths: "true",
 			buttonImage: "img/app/calendar_light-green_16x16.png",
@@ -211,12 +217,8 @@ var ESTIMACION = {
 		return $('#folios-transaccion').buttonlist('option', 'selectedItem').value;
 	},
 
-	deshabilitaConceptoRaiz: function() {
-		$('#txtConceptoRaiz').prop('disabled', true).addClass('disabled');
-	},
-
 	deshabilitaFechaTransaccion: function() {
-		$('#txtFechaTransaccion').datepicker('disable');
+		$('#txtFecha').datepicker('disable');
 	},
 
 	deshabilitaCamposTransaccion: function() {
@@ -224,38 +226,37 @@ var ESTIMACION = {
 		$('#txtFechaInicio').datepicker('disable');
 		$('#txtFechaTermino').datepicker('disable');
 		$('#txtObservaciones').prop('disabled', true).addClass('disabled');
-		this.deshabilitaConceptoRaiz();
+		$('#txtReferencia').prop('disabled', true).addClass('disabled');
 	},
 
 	habilitaCamposTransaccion: function() {
-		$('#txtConceptoRaiz').prop('disabled', false).removeClass('disabled');
-		$('#txtFechaTransaccion').datepicker('enable');
+		$('#txtFecha').datepicker('enable');
 		$('#txtFechaInicio').datepicker('enable');
 		$('#txtFechaTermino').datepicker('enable');
 		$('#txtObservaciones').prop('disabled', false).removeClass('disabled');
+		$('#txtReferencia').prop('disabled', false).removeClass('disabled');
 	},
 
 	limpiaDatosTransaccion: function() {
 		$('#tabla-conceptos tbody').empty();
-		$('#txtFechaTransaccion').datepicker( 'setDate', new Date() );
+		$('#txtFecha').datepicker( 'setDate', new Date() );
 		$('#txtFechaInicio').datepicker( 'setDate', new Date() );
 		$('#txtFechaTermino').datepicker( 'setDate', new Date() );
 		$('#txtObservaciones').val('');
+		$('#txtReferencia').val('');
 		$('#txtSubtotal, #txtIVA, #txtTotal').text('');
 		$('#guardar').removeClass('alert');
 	},
 
 	getTotalesTransaccion: function() {
 
-		var that = this,
-			IDTransaccion = this.getIDTransaccion();
+		var that = this;
 
 		var request =
 			$.ajax({
-				type: 'GET',
 				url: that.urls.tranController,
 				data: {
-					IDTransaccion: IDTransaccion,
+					IDTransaccion: this.getIDTransaccion(),
 					action: 'getTotalesTransaccion'
 				},
 				dataType: 'json'
@@ -267,11 +268,7 @@ var ESTIMACION = {
 						return;
 					}
 
-					if( json.totales.length ) {
-						that.setSubtotal(json.totales[0].Subtotal);
-						that.setIVA(json.totales[0].IVA);
-						that.setTotal(json.totales[0].Total);
-					}
+					that.fillTotales( json.totales );
 
 				} catch( e ) {
 					messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
@@ -279,6 +276,24 @@ var ESTIMACION = {
 			}).fail( function() {
 				$.notify({text: 'Ocurrió un error al cargar los totales.'});
 			});
+	},
+
+	fillDatosGenerales: function( data ) {
+		// Establece los datos generales
+		$('#txtFecha').datepicker( 'setDate', data.Fecha );
+		$('#txtFechaInicio').datepicker( 'setDate', data.FechaInicio );
+		$('#txtFechaTermino').datepicker( 'setDate', data.FechaTermino );
+		$('#txtObservaciones').val( data.Observaciones );
+		$('#txtReferencia').val( data.Referencia );
+	},
+
+	fillTotales: function( totales ) {
+		// Establece los totales de transaccion
+		if( totales.length ) {
+			this.setSubtotal(totales[0].Subtotal);
+			this.setIVA(totales[0].IVA);
+			this.setTotal(totales[0].Total);
+		}
 	},
 
 	setSubtotal: function( $monto ) {
@@ -315,7 +330,6 @@ var ESTIMACION = {
 		DATA_LOADER.show();
 
 		$.ajax({
-			type: 'GET',
 			url: that.urls.tranController,
 			data: {
 				IDTransaccion: $('#folios-transaccion').buttonlist('option', 'selectedItem').value,
@@ -335,26 +349,14 @@ var ESTIMACION = {
 					return;
 				}
 
-				// Establece los datos generales
-				$('#txtFechaTransaccion').datepicker( 'setDate', json.datos.Fecha );
-				$('#txtConceptoRaiz').val( json.datos.ConceptoRaiz );
-				$('#txtObservaciones').val( json.datos.Observaciones );
-				$('#txtFechaInicio').datepicker( 'setDate', json.datos.FechaInicio );
-				$('#txtFechaTermino').datepicker( 'setDate', json.datos.FechaTermino );
+				that.fillDatosGenerales( json.datos );
 
-				// llena la tabla de conceptos
-				that.llenaTablaConceptos( json.conceptos );
+				that.fillConceptos( json.conceptos );
 
-				// Establece los totales de transaccion
-				if( json.totales.length ) {
-					that.setSubtotal(json.totales[0].Subtotal);
-					that.setIVA(json.totales[0].IVA);
-					that.setTotal(json.totales[0].Total);
-				}
+				that.fillTotales( json.totales );
 
 				that.habilitaCamposTransaccion();
 				that.deshabilitaFechaTransaccion();
-				that.deshabilitaConceptoRaiz();
 
 			} catch( e ) {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
@@ -391,56 +393,65 @@ var ESTIMACION = {
 				messageConsole.displayMessage( json.message, 'error' );
 			}
 
-			that.llenaTablaConceptos( json.conceptos, DATA_LOADER.hide() );
+			that.fillConceptos( json.conceptos );
 		});
 	},
 
-	llenaTablaConceptos: function( conceptos, callback ) {
+	fillConceptos: function( conceptos ) {		
+		
+		$('#tabla-conceptos tbody').html( this.conceptosListTemplate(conceptos) );
+	},
 
-		var rows = '',
+	conceptosListTemplate: function( conceptos ) {
+
+		var html = '';
+
+		for (var i = 0; i < conceptos.length; i++) {
+
+			html += this.conceptoTemplate( conceptos[i] );
+		};
+
+		return html;
+	},
+
+	conceptoTemplate: function( concepto ) {
+
+		var html = '',
 			cellType = 'td',
 			cantidadPresupuestada = '',
-			cantidadAvanceAnterior = '',
-			cantidadAvanceActual = '',
+			cantidadEstimadaAnterior = '',
 			cantidadAvance = '';
 
-		$.each( conceptos, function() {
+		if ( concepto.EsActividad ) {
+			cellType = 'td';
+			cantidadPresupuestada    = concepto.CantidadPresupuestada;
+			cantidadEstimadaAnterior = concepto.CantidadEstimadaAnterior;
+			cantidadEstimada	     = concepto.CantidadEstimada;
+		}
+		else {
+			cellType = 'th';
+			cantidadPresupuestada    = '';
+			cantidadEstimadaAnterior = '';
+			cantidadEstimada 		 = '';
+		}
 
-			if ( this.EsActividad ) {
-				cellType = 'td';
-				cantidadPresupuestada  = this.CantidadPresupuestada;
-				cantidadAvanceAnterior = this.CantidadAvanceAnterior;
-				cantidadAvanceActual   = this.CantidadAvanceActual;
-				cantidadAvance 		   = this.CantidadAvance;
-			}
-			else {
-				cellType = 'th';
-				cantidadPresupuestada  = '';
-				cantidadAvanceAnterior = '';
-				cantidadAvanceActual   = '';
-				cantidadAvance 		   = '';
-			}
+		html = 
+		'<tr data-id="' + concepto.IDConcepto + '" data-esactividad="' + concepto.EsActividad + '">'
+		+  '<td class="icon-cell"><a class="icon fixed"></a></td>'
+		+  '<' + cellType + ' title="' + concepto.Descripcion + '">'
+		+  '&nbsp;&nbsp;'.repeat(concepto.NumeroNivel) + concepto.Descripcion + ' </' + cellType + '>'
+		+  '<td class="centrado">' + concepto.Unidad + '</td>'
+		+  '<td class="numerico">' + cantidadPresupuestada + '</td>'
+		+  '<td class="numerico">' + cantidadEstimadaAnterior + '</td>'
+		+  '<td class="editable-cell numerico">' + cantidadEstimada + '</td>'
+		+  '<td class="numerico">' + (concepto.EsActividad ? concepto.PrecioVenta : '') + '</td>'
+		+  '<td class="numerico">' + (concepto.EsActividad ? concepto.MontoAvance : '') + '</td>'
+		+  '<td class="icon-cell cumplido">'
+		+    (concepto.EsActividad ? '<a class="icon action checkbox checkbox-' + ( concepto.Cumplido ? 'checked' : 'unchecked') + '"></a> Si' : '')
+		+  '</td>'
+		+ '</tr>';
 
-			rows +=
-				 '<tr data-id="' + this.IDConcepto + '" data-esactividad="' + this.EsActividad + '">'
-				+  '<td class="icon-cell"><a class="icon fixed"></a></td>'
-				+  '<' + cellType + ' title="' + this.Descripcion + '">'
-				+  '&nbsp;&nbsp;'.repeat(this.NumeroNivel) + this.Descripcion + ' </' + cellType + '>'
-				+  '<td class="centrado">' + this.Unidad + '</td>'
-				+  '<td class="numerico">' + cantidadPresupuestada + '</td>'
-				+  '<td class="numerico">' + cantidadAvanceAnterior + '</td>'
-				+  '<td class="editable-cell numerico">' + cantidadAvance + '</td>'
-				+  '<td class="numerico">' + (this.EsActividad ? this.PrecioVenta : '') + '</td>'
-				+  '<td class="numerico">' + (this.EsActividad ? this.MontoAvance : '') + '</td>'
-				+  '<td class="numerico">' + cantidadAvanceActual + '</td>'
-				+  '<td class="numerico">' + (this.EsActividad ? this.MontoAvanceActual : '') + '</td>'
-				+  '<td class="icon-cell cumplido">'
-				+    (this.EsActividad ? '<a class="icon action checkbox checkbox-' + ( this.Cumplido ? 'checked' : 'unchecked') + '"></a> Si' : '')
-				+  '</td>'
-				+ '</tr>';
-		});
-		
-		$('#tabla-conceptos tbody').html( rows );
+		return html;
 	},
 
 	getConceptosModificados: function() {
@@ -480,7 +491,7 @@ var ESTIMACION = {
 				data: {
 					IDProyecto: IDProyecto,
 					IDConceptoRaiz: IDConceptoRaiz,
-					fecha: $('#txtFechaTransaccionDB').val(),
+					fecha: $('#txtFechaDB').val(),
 					fechaInicio: $('#txtFechaInicioDB').val(),
 					fechaTermino: $('#txtFechaTerminoDB').val(),
 					observaciones: $('#txtObservaciones').val(),
@@ -522,7 +533,7 @@ var ESTIMACION = {
 				url: that.urls.tranController,
 				data: {
 					IDTransaccion: IDTransaccion,
-					fecha: $('#txtFechaTransaccionDB').val(),
+					fecha: $('#txtFechaDB').val(),
 					fechaInicio: $('#txtFechaInicioDB').val(),
 					fechaTermino: $('#txtFechaTerminoDB').val(),
 					observaciones: $('#txtObservaciones').val(),
