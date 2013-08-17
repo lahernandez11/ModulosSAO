@@ -122,7 +122,18 @@ var ESTIMACION = {
 						var IDConcepto = parseInt( activeCell.parent().attr('data-id') );
 
 						if ( parseInt(activeCell.parent().attr('data-esactividad')) == 1 )
-							that.setCantidadAvance.call( this, IDConcepto, value );
+							that.setCantidadEstimada.call( this, IDConcepto, value );
+
+						pubsub.publish('modified_tran');
+					}
+				},
+				6: {
+					'onFinishEdit': function( activeCell, value ) {
+
+						var IDConcepto = parseInt( activeCell.parent().attr('data-id') );
+
+						if ( parseInt(activeCell.parent().attr('data-esactividad')) == 1 )
+							that.setPrecio.call( this, IDConcepto, value );
 
 						pubsub.publish('modified_tran');
 					}
@@ -199,6 +210,8 @@ var ESTIMACION = {
 
 	nuevaTransaccion: function() {
 
+		var that = this;
+
 		if ( ! this.getIDProyecto() ) {
 			$.notify({text: 'Seleccione un proyecto'});
 			return;
@@ -207,6 +220,27 @@ var ESTIMACION = {
 		this.limpiaDatosTransaccion();
 		this.habilitaCamposTransaccion();
 		$('#folios-transaccion').buttonlist('reset');
+
+		DATA_LOADER.show();
+
+		$.ajax({
+			type: 'GET',
+			url: that.urls.tranController,
+			data: {
+				IDProyecto: this.getIDProyecto(),
+				action: 'nuevaTransaccion'
+			},
+			dataType: 'json'
+		})
+		.done( function( json ) {
+
+			if ( ! json.success ) {
+				messageConsole.displayMessage( json.message, 'error' );
+			}
+
+			that.fillConceptos( json.conceptos );
+		})
+		.always( function() { DATA_LOADER.hide() });
 	},
 
 	getIDProyecto: function() {
@@ -248,36 +282,6 @@ var ESTIMACION = {
 		$('#guardar').removeClass('alert');
 	},
 
-	getTotalesTransaccion: function() {
-
-		var that = this;
-
-		var request =
-			$.ajax({
-				url: that.urls.tranController,
-				data: {
-					IDTransaccion: this.getIDTransaccion(),
-					action: 'getTotalesTransaccion'
-				},
-				dataType: 'json'
-			}).done( function( json ) {
-				try {
-
-					if( ! json.success ) {
-						messageConsole.displayMessage(json.message, 'error');
-						return;
-					}
-
-					that.fillTotales( json.totales );
-
-				} catch( e ) {
-					messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
-				}
-			}).fail( function() {
-				$.notify({text: 'Ocurrió un error al cargar los totales.'});
-			});
-	},
-
 	fillDatosGenerales: function( data ) {
 		// Establece los datos generales
 		$('#txtFecha').datepicker( 'setDate', data.Fecha );
@@ -285,6 +289,36 @@ var ESTIMACION = {
 		$('#txtFechaTermino').datepicker( 'setDate', data.FechaTermino );
 		$('#txtObservaciones').val( data.Observaciones );
 		$('#txtReferencia').val( data.Referencia );
+	},
+
+	getTotalesTransaccion: function() {
+
+		var that = this;
+
+		var request =
+		$.ajax({
+			url: that.urls.tranController,
+			data: {
+				IDTransaccion: this.getIDTransaccion(),
+				action: 'getTotalesTransaccion'
+			},
+			dataType: 'json'
+		}).done( function( json ) {
+			try {
+
+				if( ! json.success ) {
+					messageConsole.displayMessage(json.message, 'error');
+					return;
+				}
+
+				that.fillTotales( json.totales );
+
+			} catch( e ) {
+				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
+			}
+		}).fail( function() {
+			$.notify({text: 'Ocurrió un error al cargar los totales.'});
+		});
 	},
 
 	fillTotales: function( totales ) {
@@ -308,7 +342,7 @@ var ESTIMACION = {
 		$('#txtTotal').text($monto);
 	},
 
-	setCantidadAvance: function( IDConcepto, cantidad ) {
+	setCantidadEstimada: function( IDConcepto, cantidad ) {
 
 		var cantidad = parseFloat(cantidad.replace(/,/g, '')) || 0;
 
@@ -318,6 +352,18 @@ var ESTIMACION = {
 			//ESTIMACION.desmarcaConcepto( IDConcepto );
 
 		this.uxtable('getCell', 5).text( cantidad.toFixed(4).numFormat() );
+	},
+
+	setPrecio: function( IDConcepto, precio ) {
+
+		var pu = parseFloat(precio.replace(/,/g, '')) || 0;
+
+		//if ( cantidad.length > 0 || cantidad != 0 )
+			ESTIMACION.marcaConcepto( IDConcepto );
+		//else
+			//ESTIMACION.desmarcaConcepto( IDConcepto );
+
+		this.uxtable('getCell', 6).text( pu.toFixed(4).numFormat() );
 	},
 
 	cargaTransaccion: function() {
@@ -370,33 +416,6 @@ var ESTIMACION = {
 		});
 	},
 
-	cargaConceptos: function() {
-		
-		var IDProyecto = this.getIDProyecto(),
-			that = this;
-
-		DATA_LOADER.show();
-
-		$.ajax({
-			type: 'GET',
-			url: that.urls.tranController,
-			data: {
-				IDProyecto: IDProyecto,
-				IDConceptoRaiz: IDConceptoRaiz,
-				action: 'getConceptosNuevoAvance'
-			},
-			dataType: 'json'
-		})
-		.done( function( json ) {
-
-			if ( ! json.success ) {
-				messageConsole.displayMessage( json.message, 'error' );
-			}
-
-			that.fillConceptos( json.conceptos );
-		});
-	},
-
 	fillConceptos: function( conceptos ) {		
 		
 		$('#tabla-conceptos tbody').html( this.conceptosListTemplate(conceptos) );
@@ -444,14 +463,73 @@ var ESTIMACION = {
 		+  '<td class="numerico">' + cantidadPresupuestada + '</td>'
 		+  '<td class="numerico">' + cantidadEstimadaAnterior + '</td>'
 		+  '<td class="editable-cell numerico">' + cantidadEstimada + '</td>'
-		+  '<td class="numerico">' + (concepto.EsActividad ? concepto.PrecioVenta : '') + '</td>'
-		+  '<td class="numerico">' + (concepto.EsActividad ? concepto.MontoAvance : '') + '</td>'
+		+  '<td class="editable-cell numerico">' + (concepto.EsActividad ? concepto.PrecioVenta : '') + '</td>'
+		+  '<td class="numerico">' + (concepto.EsActividad ? concepto.Total : '') + '</td>'
 		+  '<td class="icon-cell cumplido">'
 		+    (concepto.EsActividad ? '<a class="icon action checkbox checkbox-' + ( concepto.Cumplido ? 'checked' : 'unchecked') + '"></a> Si' : '')
 		+  '</td>'
 		+ '</tr>';
 
 		return html;
+	},
+
+	guardaTransaccion: function() {
+
+		var that = this;
+
+		DATA_LOADER.show();
+
+		that.desmarcaConceptosError();
+
+		$.ajax({
+			type: 'POST',
+			url: that.urls.tranController,
+			data: {
+				IDProyecto: that.getIDProyecto(),
+				IDTransaccion: that.getIDTransaccion(),
+				datosGenerales: {
+					'fecha': $('#txtFechaDB').val(),
+					'fechaInicio': $('#txtFechaInicioDB').val(),
+					'fechaTermino': $('#txtFechaTerminoDB').val(),
+					'observaciones': $('#txtObservaciones').val(),
+					'referencia': $('#txtReferencia').val()
+				},
+				conceptos: that.getConceptosModificados(),
+				action: 'guardaTransaccion'
+			},
+			dataType: 'json'
+		}).done( function(json) {
+
+			if( ! json.success ) {
+				messageConsole.displayMessage( json.message, 'error' );
+				return;
+			}
+
+			if ( ! that.getIDTransaccion() ) {
+				$('#folios-transaccion').buttonlist('addListItem', 
+					{id: json.IDTransaccion, text: json.NumeroFolio}, 'start');
+				
+				$('#folios-transaccion').buttonlist('setSelectedItemById', 
+					json.IDTransaccion, false );
+				
+				that.deshabilitaFechaTransaccion();
+				// that.setURLFormatoPDF();
+			}
+
+	 		that.fillTotales(json.totales);
+
+	 		if ( json.errores.length > 0 ) {
+	 			that.marcaConceptoError(json.errores);
+	 			messageConsole.displayMessage( 'Existen errores en algunos conceptos, por favor revise y guarde otra vez.', 'error');
+	 		} else {
+
+	 			$('#guardar').removeClass('alert');
+	 			messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success');
+	 		}
+	 		
+		}).always( function() {
+			DATA_LOADER.hide();
+		});
 	},
 
 	getConceptosModificados: function() {
@@ -466,101 +544,12 @@ var ESTIMACION = {
 
 				'IDConcepto': row.attr('data-id'),
 				'cantidad': row.children(':eq(5)').text(),
+				'precio': row.children(':eq(6)').text(),
 				'cumplido': (row.find('td.cumplido a.checkbox').hasClass('checkbox-checked') ? 1: 0)
 			}
 		});
 
 		return conceptos;
-	},
-
-	guardaTransaccion: function() {
-
-		var that = this;
-
-		var IDProyecto = that.getIDProyecto(),
-			IDTransaccion = that.getIDTransaccion(),
-			conceptos = that.getConceptosModificados();
-
-		if( ! IDTransaccion ) {
-			
-			DATA_LOADER.show();
-
-			$.ajax({
-				type: 'POST',
-				url: that.urls.tranController,
-				data: {
-					IDProyecto: IDProyecto,
-					IDConceptoRaiz: IDConceptoRaiz,
-					fecha: $('#txtFechaDB').val(),
-					fechaInicio: $('#txtFechaInicioDB').val(),
-					fechaTermino: $('#txtFechaTerminoDB').val(),
-					observaciones: $('#txtObservaciones').val(),
-					conceptos: conceptos,
-					action: 'registraTransaccion'
-				},
-				dataType: 'json'
-			})
-			.done( function( json ) {
-				try {
-
-					if( ! json.success ) {
-						messageConsole.displayMessage( json.message, 'error' );
-						return;
-					}
-
-					$('#folios-transaccion').buttonlist('addListItem', {id: json.IDTransaccion, text: json.numeroFolio}, 'start');
-					$('#folios-transaccion').buttonlist('setSelectedItemById', json.IDTransaccion, false );
-					that.deshabilitaFechaTransaccion();
-					$('#tabla-conceptos tr.modificado').removeClass(that.classes.conceptoModificado);
-
-					messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success' );
-				} catch( e ) {
-					messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
-				}
-			})
-			.always( function() {
-				DATA_LOADER.hide();
-			});
-		} else {
-
-			if ( ! IDTransaccion )
-				return;
-			// Guardar Transaccion Existente
-			DATA_LOADER.show();
-
-			$.ajax({
-				type: 'POST',
-				url: that.urls.tranController,
-				data: {
-					IDTransaccion: IDTransaccion,
-					fecha: $('#txtFechaDB').val(),
-					fechaInicio: $('#txtFechaInicioDB').val(),
-					fechaTermino: $('#txtFechaTerminoDB').val(),
-					observaciones: $('#txtObservaciones').val(),
-					conceptos: conceptos,
-					action: 'guardaTransaccion'
-				},
-				dataType: 'json'
-			})
-			.done( function( json ) {
-				try {
-
-					if( ! json.success ) {
-						messageConsole.displayMessage( json.message, 'error' );
-						return;
-					}
-
-					$('#guardar').removeClass('alert');
-
-					messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success' );
-				} catch( e ) {
-					messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
-				}
-			})
-			.always( function() {
-				DATA_LOADER.hide();
-			});
-		}
 	},
 
 	eliminaTransaccion: function() {
@@ -576,8 +565,6 @@ var ESTIMACION = {
 			return;
 
 		DATA_LOADER.show();
-
-		this.requestingData = true;
 
 		$.ajax({
 			type: 'GET',
@@ -605,10 +592,7 @@ var ESTIMACION = {
 			} catch( e ) {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
 			}
-		}).always( function() {
-			that.requestingData = false;
-			DATA_LOADER.hide();
-		});
+		}).always( function() {	DATA_LOADER.hide();	});
 	},
 
 	apruebaTransaccion: function() {

@@ -26,39 +26,11 @@ try {
 	
 	switch ( $_REQUEST['action'] ) {
 
-		case 'registraTransaccion':
-
-			$fecha 		    = $_REQUEST['fecha'];
-			$fechaInicio    = $_REQUEST['fechaInicio'];
-			$fechaTermino   = $_REQUEST['fechaTermino'];
-			$observaciones  = $_REQUEST['observaciones'];
-			$referencia = $_REQUEST['referencia'];
-			$conceptos 	 	= is_array($_REQUEST['conceptos']) ? $_REQUEST['conceptos'] : array();
-			$data['conceptosError'] = array();
-
-			$transaccion = new EstimacionObra( $IDObra, $fecha, $fechaInicio, $fechaTermino, $observaciones, $referencia, $conceptos , $conn );
-			
-			$data['conceptosError'] = $transaccion->registraTransaccion();
-			$data['IDTransaccion']  = $transaccion->getIDTransaccion();
-			$data['numeroFolio']    = Util::formatoNumeroFolio($transaccion->getNumeroFolio());
-
-			break;
-
-		case 'eliminaTransaccion':
-
-			$IDTransaccion = (int) $_GET['IDTransaccion'];
-
-			$transaccion = new EstimacionObra( $IDTransaccion , $conn );
-
-			$transaccion->eliminaTransaccion();
-
-			break;
-
-		case 'getConceptosNuevaEstimacion':
+		case 'nuevaTransaccion':
 			
 			$data['conceptos'] = array();
 
-			$conceptos = EstimacionObra::getConceptosNuevaEstimacion( $IDObra, $IDConceptoRaiz, $conn );
+			$conceptos = EstimacionObra::getConceptosNuevaEstimacion( $IDObra, $conn );
 
 			foreach ($conceptos as $concepto) {
 				
@@ -66,14 +38,13 @@ try {
 					'IDConcepto'  => $concepto->IDConcepto,
 					'NumeroNivel' => $concepto->NumeroNivel,
 					'Descripcion' => $concepto->Descripcion,
-					'Unidad' 	  => $concepto->Unidad,
 					'EsActividad' => $concepto->EsActividad,
-					'CantidadPresupuestada'  => Util::formatoNumerico($concepto->CantidadPresupuestada),
+					'Unidad' 	  => $concepto->Unidad,
+					'CantidadPresupuestada'    => Util::formatoNumerico($concepto->CantidadPresupuestada),
 					'CantidadEstimadaAnterior' => Util::formatoNumerico($concepto->CantidadEstimadaAnterior),
-					'PrecioVenta' 		 	 => Util::formatoNumerico($concepto->PrecioVenta),
-					'CantidadEstimada' 		 => Util::formatoNumerico($concepto->CantidadEstimada),
-					'MontoTotal'   	 		 => Util::formatoNumerico($concepto->MontoTotal),
-					'Cumplido' 		 		 => $concepto->Cumplido
+					'CantidadEstimada' 		   => Util::formatoNumerico($concepto->CantidadEstimada),
+					'PrecioVenta' 		 	   => Util::formatoNumerico($concepto->PrecioVenta),
+					'Total' 		 		   => Util::formatoNumerico($concepto->Total)
 				);
 			}
 
@@ -121,48 +92,88 @@ try {
 					'Descripcion' => $concepto->Descripcion,
 					'EsActividad' => $concepto->EsActividad,
 					'Unidad' 	  => $concepto->Unidad,
-					'CantidadPresupuestada'  => Util::formatoNumerico($concepto->CantidadPresupuestada),
+					'CantidadPresupuestada'    => Util::formatoNumerico($concepto->CantidadPresupuestada),
 					'CantidadEstimadaAnterior' => Util::formatoNumerico($concepto->CantidadEstimadaAnterior),
-					'CantidadEstimada' 		 => Util::formatoNumerico($concepto->CantidadEstimada),
-					'PrecioVenta' 		 	 => Util::formatoNumerico($concepto->PrecioVenta),
-					'Total' 		 		 => $concepto->Total
+					'CantidadEstimada' 		   => Util::formatoNumerico($concepto->CantidadEstimada),
+					'PrecioVenta' 		 	   => Util::formatoNumerico($concepto->PrecioVenta),
+					'Total' 		 		   => Util::formatoNumerico($concepto->Total),
+					'Cumplido' 		 		   => $concepto->Cumplido
 				);
 			}
 
 			$totales = $transaccion->getTotalesTransaccion();
 
 			foreach ($totales as $total) {
-				
+
 				$data['totales'][] = array(
 					'Subtotal'  => Util::formatoNumerico($total->Subtotal),
 					'IVA' 		=> Util::formatoNumerico($total->IVA),
-					'Total'   	=> Util::formatoNumerico($total->Total)					
+					'Total'   	=> Util::formatoNumerico($total->Total)
 				);
 			}
 			break;
 
 		case 'guardaTransaccion':
 
-			$IDTransaccion = (int) $_REQUEST['IDTransaccion'];
-			$fecha 		   = $_REQUEST['fecha'];
-			$fechaInicio   = $_REQUEST['fechaInicio'];
-			$fechaTermino  = $_REQUEST['fechaTermino'];
-			$observaciones = $_REQUEST['observaciones'];
-			$conceptos 	   = is_array($_REQUEST['conceptos']) ? $_REQUEST['conceptos'] : array();
-			$data['conceptosError'] = array();
+			$IDTransaccion = (int) $_POST['IDTransaccion'];
 
-			$transaccion = new AvanceObra( $IDTransaccion , $conn );
+			$fecha 		   = $_POST['datosGenerales']['fecha'];
+			$fechaInicio   = $_POST['datosGenerales']['fechaInicio'];
+			$fechaTermino  = $_POST['datosGenerales']['fechaTermino'];
+			$referencia    = $_POST['datosGenerales']['referencia'];
+			$observaciones = $_POST['datosGenerales']['observaciones'];
+			$conceptos     = is_array($_POST['conceptos']) ? $_POST['conceptos'] : array();
 
-			$transaccion->setFecha( $fecha );
-			$transaccion->setFechaInicio( $fechaInicio );
-			$transaccion->setFechaTermino( $fechaTermino );
-			$transaccion->setObservaciones( $observaciones );
-			$transaccion->setConceptos( $conceptos );
+			$data['errores'] = array();
+			$data['totales'] = array();
 
-			$data['conceptosError'] = $transaccion->guardaTransaccion();
+			if ( ! empty($IDTransaccion) ) {
+
+				$transaccion = new EstimacionObra( $IDTransaccion , $conn );
+
+				$transaccion->setFecha( $fecha );
+				$transaccion->setFechaInicio( $fechaInicio );
+				$transaccion->setFechaTermino( $fechaTermino );
+				$transaccion->setReferencia( $referencia );
+				$transaccion->setObservaciones( $observaciones );
+				$transaccion->setConceptos( $conceptos );
+				
+				$data['errores'] = $transaccion->guardaTransaccion();
+			} else {
+				
+				$transaccion = new EstimacionObra(
+					$IDObra, $fecha, $fechaInicio, $fechaTermino,
+					$observaciones, $referencia, $conceptos, $conn
+				);
+				
+				$data['errores']		= $transaccion->guardaTransaccion();
+				$data['IDTransaccion']  = $transaccion->getIDTransaccion();
+				$data['NumeroFolio']    = Util::formatoNumeroFolio($transaccion->getNumeroFolio());
+			}
+
+			$totales = $transaccion->getTotalesTransaccion();
+
+			foreach ($totales as $total) {
+
+				$data['totales'][] = array(
+					'Subtotal'  => Util::formatoNumerico($total->Subtotal),
+					'IVA' 		=> Util::formatoNumerico($total->IVA),
+					'Total'   	=> Util::formatoNumerico($total->Total)
+				);
+			}
 
 			break;
 
+		case 'eliminaTransaccion':
+
+			$IDTransaccion = (int) $_GET['IDTransaccion'];
+
+			$transaccion = new EstimacionObra( $IDTransaccion , $conn );
+
+			$transaccion->eliminaTransaccion();
+
+			break;
+			
 		case 'apruebaTransaccion':
 
 			$IDTransaccion = (int) $_REQUEST['IDTransaccion'];

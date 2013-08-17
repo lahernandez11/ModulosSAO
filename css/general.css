@@ -338,42 +338,46 @@ table caption
     padding: 5px 0 5px 5px;
     text-align: left;
 }
-table col.icon
+table col.concepto
 {
-	width: 25px;
+	width: 15em;
+}
+table col.cumplido
+{
+	width: 70px;
+}
+table col.editable
+{
+	background-color: #D3D3D3;
 }
 table col.fecha,
 table col.folio
 {
 	width: 90px;
 }
+table col.hidden
+{
+	width: 0
+}
+table col.icon
+{
+	width: 25px;
+}
 table col.monto
 {
 	width: 100px;
-}
-table col.tipo
-{
-	width: 12em;
 }
 table col.pct
 {
 	width: 60px;
 }
+table col.tipo
+{
+	width: 12em;
+}
 table col.unidad
 {
 	width: 55px;
-}
-table col.concepto
-{
-	width: 15em;
-}
-table col.editable
-{
-	background-color: #D3D3D3;
-}
-table col.hidden
-{
-	width: 0
 }
 table thead th
 {
@@ -382,7 +386,6 @@ table thead th
 	background-color: #202020;
 	color: white;
 	overflow: hidden;
-    /*white-space: nowrap;*/
 }
 table tbody tr
 {

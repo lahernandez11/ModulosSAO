@@ -43,8 +43,95 @@ class EstimacionObra extends TransaccionSAO {
 		$this->setDatosGenerales();
 	}
 
+	public function guardaTransaccion() {
+
+		if ( ! empty($this->_IDTransaccion) ) {
+
+			$tsql = "{call [SubcontratosEstimaciones].[uspActualizaDatosGenerales]( ?, ?, ?, ?, ?, ? )}";
+
+		    $params = array(
+		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        array( $this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
+		        array( $this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
+		        array( $this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
+		        array( $this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096) ),
+		        array( Sesion::getCuentaUsuarioSesion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
+		    );
+
+		    $this->_SAOConn->executeSP($tsql, $params);
+		} else {
+
+			$tsql = "{call [EstimacionObra].[uspRegistraTransaccion]( ?, ?, ?, ?, ?, ?, ?, ?, ? )}";
+
+		    $params = array(
+		        array( $this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        array( $this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
+		       	array( $this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
+		        array( $this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
+		        array( $this->getReferencia(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(64) ),
+		        array( $this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096) ),
+		        array( Sesion::getCuentaUsuarioSesion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
+		        array( &$this->_IDTransaccion, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT ),
+		        array( &$this->_numeroFolio, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
+		    );
+
+		    $this->_SAOConn->executeSP($tsql, $params);
+		}
+
+		$errores = array();
+
+		$tsql = "{call [EstimacionObra].[uspEstimaConcepto]( ?, ?, ?, ?, ? )}";
+
+		foreach ( $this->_conceptos as $concepto ) {
+			
+			try {
+				// Limpia y valida la cantidad
+				$concepto['cantidad'] = str_replace(',', '', $concepto['cantidad']);
+
+				// Si el importe no es valido agrega el concepto con error
+				if( ! $this->esImporte($concepto['cantidad']) ) {
+					throw new Exception("El numero ingresado no es correcto");
+				}
+
+				$params = array(
+					array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+					array( $concepto['IDConcepto'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+					array( $concepto['cantidad'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
+					array( $concepto['precio'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
+					array( $concepto['cumplido'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT )
+				);
+
+				$this->_SAOConn->executeSP($tsql, $params);
+			} catch( Exception $e ) {
+
+				$errores[] = array(
+					'IDConcepto' => $concepto['IDConcepto'],
+					'cantidad'   => $concepto['cantidad'],
+					'message' 	 => $e->getMessage()
+				);
+			}
+		}
+
+		return $errores;
+	}
+
+	// public function eliminaTransaccion() {
+
+	// 	$tsql = "{call [EstimacionObra].[uspEliminaTransaccion]( ? )}";
+
+	//     $params = array(
+	//         array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	//     );
+
+	//     $this->_SAOConn->executeSP($tsql, $params);
+	// }
+
 	public function getReferencia() {
 		return $this->_referencia;
+	}
+
+	public function setReferencia( $referencia ) {
+		$this->_referencia = $referencia;
 	}
 
 	public function setConceptos( Array $conceptos ) {
@@ -120,7 +207,7 @@ class EstimacionObra extends TransaccionSAO {
 	    return $totales;
 	}
 
-	public static function getConceptosNuevaEstimacion( $IDObra, $IDConceptoRaiz, SAODBConn $conn ) {
+	public static function getConceptosNuevaEstimacion( $IDObra, SAODBConn $conn ) {
 
 		$tsql = "{call [EstimacionObra].[uspConceptosEstimacion]( ? )}";
 

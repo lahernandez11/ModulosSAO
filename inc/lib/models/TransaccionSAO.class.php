@@ -133,6 +133,11 @@ abstract class TransaccionSAO {
 			return false;
 	}
 
+	protected function esImporte( $importe ) {
+
+		return preg_match('/^-?\d+(\.\d+)?$/', $importe );
+	}
+
 	public function getNumeroFolio() {
 		return $this->_numeroFolio;
 	}

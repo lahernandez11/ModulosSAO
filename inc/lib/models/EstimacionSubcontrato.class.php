@@ -80,11 +80,6 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    $this->_pctIVA 	   			   = $datos[0]->PctIVA;
 	}
 
-	private function esImporte( $importe ) {
-
-		return preg_match('/^-?\d+(\.\d+)?$/', $importe );
-	}
-
 	public function getConceptosEstimacion() {
 
 		$tsql = "{call [SubcontratosEstimaciones].[uspConceptosEstimacion]( ?, ?, ?, ? )}";
