@@ -31,8 +31,53 @@ div.checkboxgroup input
 {
 	width: auto;
 }
+/*@-webkit-keyframes anim-beat
+{
+	0%
+	{
+		-webkit-transform: rotate(0);
+	}
+	100%
+	{
+		-webkit-transform: rotate(360deg);
+	}
+}*/
+/*@-webkit-keyframes anim-beat
+{
+	from
+	{
+		height: 160px;
+		width: 150px;
+	}
+	50%
+	{
+		height: 180px;
+		width: 170px;
+	}
+	to
+	{
+		height: 160px;
+		width: 150px;
+	}
+}*/
+/*@-webkit-keyframes anim-beat
+{
+	from
+	{
+		opacity: 0.6;
+	}
+	50%
+	{
+		opacity: 1;
+	}
+	to
+	{
+		opacity: 0.6;
+	}
+}*/
 div.data-loader
 {
+
 	background: url("../img/app/data-loader.png") no-repeat scroll 0 0 transparent;
     height: 160px;
     left: 700px;
@@ -41,6 +86,7 @@ div.data-loader
     width: 150px;
     z-index: 10000;
     display: none;
+	/*-webkit-animation: anim-beat 2s infinite ease-out;*/
 }
 div.options
 {
@@ -201,11 +247,14 @@ header figure#logo img
 {
 	width: 43px;
 	height: 50px;
-	-webkit-transition: 1s;
+	-webkit-transition: 2s;
+	-ms-transition: 2s;
+	-transition: 1s;
 }
 header figure#logo img:hover
 {
 	-webkit-transform:rotate(360deg);
+	-ms-transform:rotate(360deg);
 	transform: rotate(360deg);
 }
 header h1
@@ -1431,4 +1480,15 @@ ul.dropdown-list li a.with-icon
 	border: none;
 	border-bottom: 1px solid #CCCCCC;
 	padding: 5px 0 5px 10px;
+}
+
+
+
+.fade
+{
+	opacity: 0.5;
+	/*-webkit-animation: anim-rotate 1s infinite linear;
+	animation: anim-rotate 1s infinite linear;*/
+	/*-webkit-transition: 0.5s;
+	-webkit-transform: rotate(360deg);*/
 }

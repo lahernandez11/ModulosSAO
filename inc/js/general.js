@@ -791,178 +791,178 @@ function TreeViewList(container) {
 
 TreeViewList.prototype.treeClass = '.tree';
 
-var uxTable = function(container, editableCellsArray) {
+// var uxTable = function(container, editableCellsArray) {
 
-	console.log(this);
+// 	console.log(this);
 	
-	this.tableContainer = container;
-	this.editableColumns = editableCellsArray || [];
-	this.isCellBeignEdited = false;
-	this.finishEditing = null;
+// 	this.tableContainer = container;
+// 	this.editableColumns = editableCellsArray || [];
+// 	this.isCellBeignEdited = false;
+// 	this.finishEditing = null;
 	
-	var UT = this;
+// 	var UT = this;
 	
-	// Maneja el evento clic en la tabla
-	$(this.tableContainer).click( function(event) {
+// 	// Maneja el evento clic en la tabla
+// 	$(this.tableContainer).click( function(event) {
 
-		//console.log('clic en tabla');
-	    var $tgt = $(event.target);
+// 		//console.log('clic en tabla');
+// 	    var $tgt = $(event.target);
 	    
-	    UT.blurTables();
+// 	    UT.blurTables();
 	
-	    // Hace la tabla activa
-	    $(this).addClass('active');
+// 	    // Hace la tabla activa
+// 	    $(this).addClass('active');
 	
-	    if( $tgt.parents().is('tbody') ) {
+// 	    if( $tgt.parents().is('tbody') ) {
 
-	        if( $tgt.is('td') ) {
+// 	        if( $tgt.is('td') ) {
 	        	
-	        	if( UT.isCellBeignEdited )
-	        		UT.finishEditCell();
+// 	        	if( UT.isCellBeignEdited )
+// 	        		UT.finishEditCell();
 	        	
-	            UT.selectCell($tgt);
-            }
-	    }
-	});
+// 	            UT.selectCell($tgt);
+//             }
+// 	    }
+// 	});
 	
-	// Solo registra los manejadores globales una vez
-	if( !uxTable.prototype.isGlobalHandlerSet ) {
+// 	// Solo registra los manejadores globales una vez
+// 	if( !uxTable.prototype.isGlobalHandlerSet ) {
 		
-		// Handler global para manejar clics sobre la tabla
-		// Si la tabla pierde el enfoque se inhabilitaran los eventos
-		// para no interferir con otras partes de la interfaz
-		// la clase .active en la tabla indica que los eventos seran manejados en la tabla
-		$(document).click( function(event) {
+// 		// Handler global para manejar clics sobre la tabla
+// 		// Si la tabla pierde el enfoque se inhabilitaran los eventos
+// 		// para no interferir con otras partes de la interfaz
+// 		// la clase .active en la tabla indica que los eventos seran manejados en la tabla
+// 		$(document).click( function(event) {
 			
-		    var $tgt = $(event.target);
+// 		    var $tgt = $(event.target);
 
-		    if( !$tgt.parents(uxTable.prototype.tableClass).length ) {
-		        UT.blurTables();
-		        //console.log('clic global');
-		    }
-		});
+// 		    if( !$tgt.parents(uxTable.prototype.tableClass).length ) {
+// 		        UT.blurTables();
+// 		        //console.log('clic global');
+// 		    }
+// 		});
 
-		// Handler global para manejar el evento keydown en la tabla
-		// Solo maneja los eventos cuando una tabla esta activa (tiene el enfoque)
-		$(document.documentElement).bind('keydown.uxTable', function(event) {
-			//console.log('key global')
-			//console.log(UT.tableContainer);
+// 		// Handler global para manejar el evento keydown en la tabla
+// 		// Solo maneja los eventos cuando una tabla esta activa (tiene el enfoque)
+// 		$(document.documentElement).bind('keydown.uxTable', function(event) {
+// 			//console.log('key global')
+// 			//console.log(UT.tableContainer);
 
-		    var $activeTable = $(this).find(uxTable.prototype.tableClass + '.active');
+// 		    var $activeTable = $(this).find(uxTable.prototype.tableClass + '.active');
 
-		    // Si hay una tabla activa, manejara los eventos
-		    if( $activeTable.length ) {
+// 		    // Si hay una tabla activa, manejara los eventos
+// 		    if( $activeTable.length ) {
 
-		        var activeCellIX = UT.activeCell.index();
-		        var keyCode = event.keyCode;
-		        var direction = '';
-		        var $cellToMove = false;
+// 		        var activeCellIX = UT.activeCell.index();
+// 		        var keyCode = event.keyCode;
+// 		        var direction = '';
+// 		        var $cellToMove = false;
 		        
-		        // Bloque que permite editar una celda cuando la tecla Enter es presionada
-		        if( keyCode === 13 ) {
+// 		        // Bloque que permite editar una celda cuando la tecla Enter es presionada
+// 		        if( keyCode === 13 ) {
 		            
-		            if( UT.isCellBeignEdited )
-						UT.finishEditCell();
-		            else
-			            UT.editCell();
+// 		            if( UT.isCellBeignEdited )
+// 						UT.finishEditCell();
+// 		            else
+// 			            UT.editCell();
 			            
-		        } else {
+// 		        } else {
 		            
-		        	// Si una celda esta siendo editada no se puede mover a otra hasta que termine la edicion
-		        	// de la celda actual
-		            if( UT.isCellBeignEdited )
-		                return;
+// 		        	// Si una celda esta siendo editada no se puede mover a otra hasta que termine la edicion
+// 		        	// de la celda actual
+// 		            if( UT.isCellBeignEdited )
+// 		                return;
 		            
-		            var direction = '';
+// 		            var direction = '';
 		                
-		            switch( keyCode ) {
+// 		            switch( keyCode ) {
 		            	
-		                case 38:
-		                    direction = 'up';
-		                    $cellToMove = UT.activeCell.parent().prev().children().eq(activeCellIX);
-		                break;
-		                case 39:
-		                    direction = 'next';
-		                    $cellToMove = UT.activeCell.next();
-		                break;
-		                case 40:
-		                    direction = 'down';
-		                    $cellToMove = UT.activeCell.parent().next().children().eq(activeCellIX);
-		                break;
-		                case 37:
-		                    direction = 'prev';
-		                    $cellToMove = UT.activeCell.prev();
-		                break;
-		            }
+// 		                case 38:
+// 		                    direction = 'up';
+// 		                    $cellToMove = UT.activeCell.parent().prev().children().eq(activeCellIX);
+// 		                break;
+// 		                case 39:
+// 		                    direction = 'next';
+// 		                    $cellToMove = UT.activeCell.next();
+// 		                break;
+// 		                case 40:
+// 		                    direction = 'down';
+// 		                    $cellToMove = UT.activeCell.parent().next().children().eq(activeCellIX);
+// 		                break;
+// 		                case 37:
+// 		                    direction = 'prev';
+// 		                    $cellToMove = UT.activeCell.prev();
+// 		                break;
+// 		            }
 					
-		            // Si se va a mover hacia otra celda
-		            if( direction ) {
+// 		            // Si se va a mover hacia otra celda
+// 		            if( direction ) {
 			            
-			            if( $cellToMove.length ) {
-			            	UT.selectCell($cellToMove)
-			            }
-		            }
-		        }
-		    }
-		});
+// 			            if( $cellToMove.length ) {
+// 			            	UT.selectCell($cellToMove)
+// 			            }
+// 		            }
+// 		        }
+// 		    }
+// 		});
 		
-		uxTable.prototype.isGlobalHandlerSet = true;
-	}
+// 		uxTable.prototype.isGlobalHandlerSet = true;
+// 	}
 	
-	return this;
-}
+// 	return this;
+// }
 
-uxTable.prototype.isGlobalHandlerSet = false;
-uxTable.prototype.activeCell = null;
-uxTable.prototype.tableClass = '.ux-table';
+// uxTable.prototype.isGlobalHandlerSet = false;
+// uxTable.prototype.activeCell = null;
+// uxTable.prototype.tableClass = '.ux-table';
 
-uxTable.prototype.editCell = function() {
+// uxTable.prototype.editCell = function() {
 	
-	// Solo permitira editar la celda cuando este definida en el arreglo de celdas editables
-	// o cuando no se especificaron celdas editables, todas seran editables
-	if( this.editableColumns.indexOf(this.activeCell.index()) >= 0 || !this.editableColumns.length ) {
+// 	// Solo permitira editar la celda cuando este definida en el arreglo de celdas editables
+// 	// o cuando no se especificaron celdas editables, todas seran editables
+// 	if( this.editableColumns.indexOf(this.activeCell.index()) >= 0 || !this.editableColumns.length ) {
 
-		this.isCellBeignEdited = true;
-		// Agregar la clase in-edit a la celda para saber que se esta editando
-	    this.activeCell.addClass('in-edit');
-	    // Crea un textField con el texto de la celda para ser editado
-	    var $inputBox = $('<input type="text" class="text" />').val(this.activeCell.text());
-	    // Borra el contenido actual de la celda
-	    this.activeCell.empty();
-	    // Agrega el textField a la celda
-	    $inputBox.appendTo(this.activeCell).focus( function(){ 
-	    	$(this).select();
-	    }).focus();
-    }
-}
+// 		this.isCellBeignEdited = true;
+// 		// Agregar la clase in-edit a la celda para saber que se esta editando
+// 	    this.activeCell.addClass('in-edit');
+// 	    // Crea un textField con el texto de la celda para ser editado
+// 	    var $inputBox = $('<input type="text" class="text" />').val(this.activeCell.text());
+// 	    // Borra el contenido actual de la celda
+// 	    this.activeCell.empty();
+// 	    // Agrega el textField a la celda
+// 	    $inputBox.appendTo(this.activeCell).focus( function(){ 
+// 	    	$(this).select();
+// 	    }).focus();
+//     }
+// }
 
-uxTable.prototype.finishEditCell = function() {
+// uxTable.prototype.finishEditCell = function() {
 	
-	var $inputBox = this.activeCell.children('input');
-    this.activeCell.text($inputBox.val());
-    $inputBox.remove();
-    this.activeCell.removeClass('in-edit');
+// 	var $inputBox = this.activeCell.children('input');
+//     this.activeCell.text($inputBox.val());
+//     $inputBox.remove();
+//     this.activeCell.removeClass('in-edit');
     
-    this.isCellBeignEdited = false;
+//     this.isCellBeignEdited = false;
     
-    console.log(this.activeCell.index());
+//     console.log(this.activeCell.index());
     
-    if( $.isFunction(this.finishEditing) )
-    	this.finishEditing();
-}
+//     if( $.isFunction(this.finishEditing) )
+//     	this.finishEditing();
+// }
 
-uxTable.prototype.selectCell = function(cell) {
+// uxTable.prototype.selectCell = function(cell) {
 	
-	if( uxTable.prototype.activeCell )
-		uxTable.prototype.activeCell.removeClass('active-cell');
+// 	if( uxTable.prototype.activeCell )
+// 		uxTable.prototype.activeCell.removeClass('active-cell');
 	
-	uxTable.prototype.activeCell = cell;
-	cell.addClass('active-cell');
-}
+// 	uxTable.prototype.activeCell = cell;
+// 	cell.addClass('active-cell');
+// }
 
-uxTable.prototype.blurTables = function() {
-	$(uxTable.prototype.tableClass).removeClass('active').find('td').removeClass('active-cell');
-}
+// uxTable.prototype.blurTables = function() {
+// 	$(uxTable.prototype.tableClass).removeClass('active').find('td').removeClass('active-cell');
+// }
 
 
 /*

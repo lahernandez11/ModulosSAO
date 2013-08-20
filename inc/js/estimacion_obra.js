@@ -525,7 +525,6 @@ var ESTIMACION = {
 					json.IDTransaccion, false );
 				
 				that.deshabilitaFechaTransaccion();
-				// that.setURLFormatoPDF();
 			}
 
 	 		that.fillTotales(json.totales);
@@ -534,7 +533,6 @@ var ESTIMACION = {
 	 			that.marcaConceptoError(json.errores);
 	 			messageConsole.displayMessage( 'Existen errores en algunos conceptos, por favor revise y guarde otra vez.', 'error');
 	 		} else {
-
 	 			$('#guardar').removeClass('alert');
 	 			messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success');
 	 		}
@@ -697,7 +695,7 @@ var ESTIMACION = {
 
 	desmarcaConceptosError: function() {
 		$('#tabla-conceptos')
-		.find('tr.estimado')
+		.find('tr.modificado')
 		.removeClass('error')
 		.find('.icon')
 		.removeClass('error')
