@@ -698,8 +698,8 @@ ul.dropdown-list li a
 	border: 1px solid white;
 	color: #2A2A2A;
 	display: block;
-	margin: 0 2px;
-	padding: 0 6px 2px;
+	
+	padding: 0.2em 0.5em;
 	text-decoration: none;
 	white-space: nowrap;
 }

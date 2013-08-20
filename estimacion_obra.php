@@ -66,14 +66,14 @@
 									<input type="text" class="date" name="txtFecha" id="txtFecha" />
 									<input type="hidden" name="txtFechaDB" id="txtFechaDB" />
 								</form>
-								<a id="aprobar" class="toolbar-button op aprobar">
+								<!-- <a id="aprobar" class="toolbar-button op aprobar">
 									<span class="icon"></span>
 									<span class="button-text">Aprobar</span>
 								</a>
 								<a id="revierte-aprobacion" class="toolbar-button revertir">
 									<span class="icon"></span>
 									<span class="button-text">Revertir Aprobación</span>
-								</a>
+								</a> -->
 							</section>
 
 							<section id="tran-info">

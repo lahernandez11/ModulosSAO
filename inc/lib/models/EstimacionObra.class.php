@@ -47,13 +47,14 @@ class EstimacionObra extends TransaccionSAO {
 
 		if ( ! empty($this->_IDTransaccion) ) {
 
-			$tsql = "{call [SubcontratosEstimaciones].[uspActualizaDatosGenerales]( ?, ?, ?, ?, ?, ? )}";
+			$tsql = "{call [EstimacionObra].[uspActualizaDatosGenerales]( ?, ?, ?, ?, ?, ?, ? )}";
 
 		    $params = array(
 		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 		        array( $this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
 		        array( $this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
 		        array( $this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
+		        array( $this->getReferencia(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(64) ),
 		        array( $this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096) ),
 		        array( Sesion::getCuentaUsuarioSesion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
 		    );
@@ -85,11 +86,12 @@ class EstimacionObra extends TransaccionSAO {
 		foreach ( $this->_conceptos as $concepto ) {
 			
 			try {
-				// Limpia y valida la cantidad
+				// Limpia y valida la cantidad y precio
 				$concepto['cantidad'] = str_replace(',', '', $concepto['cantidad']);
+				$concepto['precio'] = str_replace(',', '', $concepto['precio']);
 
 				// Si el importe no es valido agrega el concepto con error
-				if( ! $this->esImporte($concepto['cantidad']) ) {
+				if( ! $this->esImporte($concepto['cantidad']) || ! $this->esImporte($concepto['precio'])) {
 					throw new Exception("El numero ingresado no es correcto");
 				}
 

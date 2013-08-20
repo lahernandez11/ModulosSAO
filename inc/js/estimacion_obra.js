@@ -121,9 +121,13 @@ var ESTIMACION = {
 
 						var IDConcepto = parseInt( activeCell.parent().attr('data-id') );
 
-						if ( parseInt(activeCell.parent().attr('data-esactividad')) == 1 )
-							that.setCantidadEstimada.call( this, IDConcepto, value );
+						if ( parseInt(activeCell.parent().attr('data-esactividad')) == 1 ) {
 
+							that.setCantidadEstimada.call( this, IDConcepto, value );
+							that.setMontoTotal.call(activeCell.next().next());
+						}
+						
+						
 						pubsub.publish('modified_tran');
 					}
 				},
@@ -132,8 +136,12 @@ var ESTIMACION = {
 
 						var IDConcepto = parseInt( activeCell.parent().attr('data-id') );
 
-						if ( parseInt(activeCell.parent().attr('data-esactividad')) == 1 )
+
+						if ( parseInt(activeCell.parent().attr('data-esactividad')) == 1 ) {
+							
 							that.setPrecio.call( this, IDConcepto, value );
+							that.setMontoTotal.call(activeCell.next());
+						}
 
 						pubsub.publish('modified_tran');
 					}
@@ -364,6 +372,10 @@ var ESTIMACION = {
 			//ESTIMACION.desmarcaConcepto( IDConcepto );
 
 		this.uxtable('getCell', 6).text( pu.toFixed(4).numFormat() );
+	},
+
+	setMontoTotal: function() {
+		this.text((parseFloat(this.prev().text()) * parseFloat(this.prev().prev().text())).toFixed(2).toString().numFormat());
 	},
 
 	cargaTransaccion: function() {
@@ -671,17 +683,23 @@ var ESTIMACION = {
 		});
 	},
 
-	marcaConceptoError: function( IDConcepto, errorMessage ) {
+	marcaConceptoError: function( errores ) {
 
-		$('tr[data-id=' + IDConcepto + ']')
-		 .find('.icon')
-		 .addClass('error')
-		 .attr('title', errorMessage);
+		for( error in errores ) {
+
+			$('tr[data-id=' + errores[error].IDConcepto + ']')
+			.addClass('error')
+			.find('.icon')
+			.addClass('error')
+			.attr('title', errores[error].message);
+		}
 	},
 
 	desmarcaConceptosError: function() {
 		$('#tabla-conceptos')
-		.find('tr.' + this.classes.conceptoModificado + ' .icon')
+		.find('tr.estimado')
+		.removeClass('error')
+		.find('.icon')
 		.removeClass('error')
 		.removeAttr('title');
 	},
