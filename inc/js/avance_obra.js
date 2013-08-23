@@ -318,11 +318,9 @@ var AVANCE = {
 
 	fillTotales: function( totales ) {
 		// Establece los totales de transaccion
-		if( totales.length ) {
-			this.setSubtotal(totales[0].Subtotal);
-			this.setIVA(totales[0].IVA);
-			this.setTotal(totales[0].Total);
-		}
+		this.setSubtotal(totales.Subtotal);
+		this.setIVA(totales.IVA);
+		this.setTotal(totales.Total);
 	},
 
 	setCantidadAvance: function( IDConcepto, cantidad ) {
@@ -491,96 +489,57 @@ var AVANCE = {
 
 		var that = this;
 
-		var IDProyecto = that.getIDProyecto(),
-			IDTransaccion = that.getIDTransaccion(),
-			conceptos = that.getConceptosModificados();
+		that.desmarcaConceptosError();
 
-		if( ! IDTransaccion ) {
-			
-			var IDConceptoRaiz = $('#txtConceptoRaiz').presupuestoObra('option', 'selectedNode').id;
+		DATA_LOADER.show();
 
-			if ( ! IDConceptoRaiz )
+		$.ajax({
+			type: 'POST',
+			url: that.urls.tranController,
+			data: {
+				IDProyecto: that.getIDProyecto(),
+				IDTransaccion: that.getIDTransaccion(),
+				IDConceptoRaiz: $('#txtConceptoRaiz').presupuestoObra('option', 'selectedNode').id,
+				fecha: $('#txtFechaTransaccionDB').val(),
+				fechaInicio: $('#txtFechaInicioDB').val(),
+				fechaTermino: $('#txtFechaTerminoDB').val(),
+				observaciones: $('#txtObservaciones').val(),
+				conceptos: that.getConceptosModificados(),
+				action: 'guardaTransaccion'
+			},
+			dataType: 'json'
+		}).done( function(json) {
+
+			if( ! json.success ) {
+				messageConsole.displayMessage( json.message, 'error' );
 				return;
-			
-			DATA_LOADER.show();
+			}
 
-			$.ajax({
-				type: 'POST',
-				url: that.urls.tranController,
-				data: {
-					IDProyecto: IDProyecto,
-					IDConceptoRaiz: IDConceptoRaiz,
-					fecha: $('#txtFechaTransaccionDB').val(),
-					fechaInicio: $('#txtFechaInicioDB').val(),
-					fechaTermino: $('#txtFechaTerminoDB').val(),
-					observaciones: $('#txtObservaciones').val(),
-					conceptos: conceptos,
-					action: 'registraTransaccion'
-				},
-				dataType: 'json'
-			})
-			.done( function( json ) {
-				try {
+			if ( ! that.getIDTransaccion() ) {
 
-					if( ! json.success ) {
-						messageConsole.displayMessage( json.message, 'error' );
-						return;
-					}
+				$('#folios-transaccion').buttonlist('addListItem', 
+					{id: json.IDTransaccion, text: json.NumeroFolio}, 'start');
+				
+				$('#folios-transaccion').buttonlist('setSelectedItemById', 
+					json.IDTransaccion, false );
+				
+				that.deshabilitaFechaTransaccion();
+				that.deshabilitaConceptoRaiz();
+			}
 
-					$('#folios-transaccion').buttonlist('addListItem', {id: json.IDTransaccion, text: json.numeroFolio}, 'start');
-					$('#folios-transaccion').buttonlist('setSelectedItemById', json.IDTransaccion, false );
-					that.deshabilitaConceptoRaiz();
-					that.deshabilitaFechaTransaccion();
-					$('#tabla-conceptos tr.modificado').removeClass(that.classes.conceptoModificado);
+	 		that.fillTotales( json.totales );
 
-					messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success' );
-				} catch( e ) {
-					messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
-				}
-			})
-			.always( function() {
-				DATA_LOADER.hide();
-			});
-		} else {
-
-			if ( ! IDTransaccion )
-				return;
-			// Guardar Transaccion Existente
-			DATA_LOADER.show();
-
-			$.ajax({
-				type: 'POST',
-				url: that.urls.tranController,
-				data: {
-					IDTransaccion: IDTransaccion,
-					fecha: $('#txtFechaTransaccionDB').val(),
-					fechaInicio: $('#txtFechaInicioDB').val(),
-					fechaTermino: $('#txtFechaTerminoDB').val(),
-					observaciones: $('#txtObservaciones').val(),
-					conceptos: conceptos,
-					action: 'guardaTransaccion'
-				},
-				dataType: 'json'
-			})
-			.done( function( json ) {
-				try {
-
-					if( ! json.success ) {
-						messageConsole.displayMessage( json.message, 'error' );
-						return;
-					}
-
-					$('#guardar').removeClass('alert');
-
-					messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success' );
-				} catch( e ) {
-					messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
-				}
-			})
-			.always( function() {
-				DATA_LOADER.hide();
-			});
-		}
+	 		if ( json.errores.length > 0 ) {
+	 			that.marcaConceptosError( json.errores );
+	 			messageConsole.displayMessage( 'Existen errores en algunos conceptos, por favor revise y guarde otra vez.', 'error');
+	 		} else {
+	 			$('#guardar').removeClass('alert');
+	 			messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success');
+	 		}
+	 		
+		}).always( function() {
+			DATA_LOADER.hide();
+		});
 	},
 
 	eliminaTransaccion: function() {
@@ -707,27 +666,25 @@ var AVANCE = {
 		});
 	},
 
-	marcaConceptoError: function( IDConcepto, errorMessage ) {
+	marcaConceptosError: function( errores ) {
 
-		$('tr[data-id=' + IDConcepto + ']')
-		 .find('.icon')
-		 .addClass('error')
-		 .attr('title', errorMessage);
+		for( error in errores ) {
+
+			$('tr[data-id=' + errores[error].IDConcepto + ']')
+			.addClass('error')
+			.find('.icon')
+			.addClass('error')
+			.attr('title', errores[error].message);
+		}
 	},
 
 	desmarcaConceptosError: function() {
 		$('#tabla-conceptos')
-		.find('tr.' + this.classes.conceptoModificado + ' .icon')
+		.find('tr.modificado')
+		.removeClass('error')
+		.find('.icon')
 		.removeClass('error')
 		.removeAttr('title');
-	},
-
-	desmarcaConceptoError: function( IDConcepto ) {
-
-		$('tr[data-id=' + IDConcepto + ']')
-		 .find('.icon')
-		 .removeClass('error')
-		 .removeAttr('title');
 	},
 
 	marcaConcepto: function( IDConcepto ) {
@@ -747,10 +704,6 @@ var AVANCE = {
 	existenCambiosSinGuardar: function() {
 		
 		return $('#guardar').hasClass('alert');
-	},
-
-	showListaTransacciones: function() {
-		$('#dialog-lista-transacciones').dialog('open');
 	}
 };
 

@@ -25,24 +25,6 @@ try {
 	
 	switch ( $_REQUEST['action'] ) {
 
-		case 'registraTransaccion':
-
-			$fecha 		    = $_REQUEST['fecha'];
-			$fechaInicio    = $_REQUEST['fechaInicio'];
-			$fechaTermino   = $_REQUEST['fechaTermino'];
-			$observaciones  = $_REQUEST['observaciones'];
-			$IDConceptoRaiz = (int) $_REQUEST['IDConceptoRaiz'];
-			$conceptos 	 	= is_array($_REQUEST['conceptos']) ? $_REQUEST['conceptos'] : array();
-			$data['conceptosError'] = array();
-
-			$avanceObra = new AvanceObra( $IDObra, $fecha, $fechaInicio, $fechaTermino, $observaciones, $IDConceptoRaiz, $conceptos , $conn );
-			
-			$data['conceptosError'] = $avanceObra->registraTransaccion();
-			$data['IDTransaccion']  = $avanceObra->getIDTransaccion();
-			$data['numeroFolio']    = Util::formatoNumeroFolio($avanceObra->getNumeroFolio());
-
-			break;
-
 		case 'eliminaTransaccion':
 
 			$IDTransaccion = (int) $_GET['IDTransaccion'];
@@ -106,15 +88,15 @@ try {
 			$data['conceptos'] = array();
 			$data['totales']   = array();
 			
-			$avanceObra = new AvanceObra( $IDTransaccion , $conn );
+			$transaccion = new AvanceObra( $IDTransaccion , $conn );
 
-			$data['datos']['Observaciones'] = $avanceObra->getObservaciones();
-			$data['datos']['Fecha'] 		= Util::formatoFecha($avanceObra->getFecha());
-			$data['datos']['FechaInicio']   = Util::formatoFecha($avanceObra->getFechaInicio());
-			$data['datos']['FechaTermino']  = Util::formatoFecha($avanceObra->getFechaTermino());
-			$data['datos']['ConceptoRaiz']  = $avanceObra->getConceptoRaiz();
+			$data['datos']['Observaciones'] = $transaccion->getObservaciones();
+			$data['datos']['Fecha'] 		= Util::formatoFecha($transaccion->getFecha());
+			$data['datos']['FechaInicio']   = Util::formatoFecha($transaccion->getFechaInicio());
+			$data['datos']['FechaTermino']  = Util::formatoFecha($transaccion->getFechaTermino());
+			$data['datos']['ConceptoRaiz']  = $transaccion->getConceptoRaiz();
 
-			$conceptos = $avanceObra->getConceptosAvance();
+			$conceptos = $transaccion->getConceptosAvance();
 
 			foreach ($conceptos as $concepto) {
 				
@@ -135,11 +117,11 @@ try {
 				);
 			}
 
-			$totales = $avanceObra->getTotalesTransaccion();
+			$totales = $transaccion->getTotalesTransaccion();
 
 			foreach ($totales as $total) {
 				
-				$data['totales'][] = array(
+				$data['totales'] = array(
 					'Subtotal'  => Util::formatoNumerico($total->Subtotal),
 					'IVA' 		=> Util::formatoNumerico($total->IVA),
 					'Total'   	=> Util::formatoNumerico($total->Total)					
@@ -151,29 +133,48 @@ try {
 		case 'guardaTransaccion':
 
 			$IDTransaccion = (int) $_REQUEST['IDTransaccion'];
-			$fecha = $_REQUEST['fecha'];
-			$fechaInicio = $_REQUEST['fechaInicio'];
-			$fechaTermino = $_REQUEST['fechaTermino'];
+			$IDConceptoRaiz = (int) $_REQUEST['IDConceptoRaiz'];
+			$fecha 		   = $_REQUEST['fecha'];
+			$fechaInicio   = $_REQUEST['fechaInicio'];
+			$fechaTermino  = $_REQUEST['fechaTermino'];
 			$observaciones = $_REQUEST['observaciones'];
-			$conceptos = is_array($_REQUEST['conceptos']) ? $_REQUEST['conceptos'] : array();
-			$data['conceptosError'] = array();
+			$conceptos 	   = is_array($_REQUEST['conceptos']) ? $_REQUEST['conceptos'] : array();
+			$data['errores'] = array();
 			$data['totales']   = array();
 
-			$avanceObra = new AvanceObra( $IDTransaccion , $conn );
+			if ( ! empty($IDTransaccion) ) {
 
-			$avanceObra->setFecha( $fecha );
-			$avanceObra->setFechaInicio( $fechaInicio );
-			$avanceObra->setFechaTermino( $fechaTermino );
-			$avanceObra->setObservaciones( $observaciones );
-			$avanceObra->setConceptos( $conceptos );
+				$transaccion = new AvanceObra( $IDTransaccion , $conn );
+				$transaccion->setFecha( $fecha );
+				$transaccion->setFechaInicio( $fechaInicio );
+				$transaccion->setFechaTermino( $fechaTermino );
+				$transaccion->setObservaciones( $observaciones );
+				$transaccion->setConceptos( $conceptos );
 
-			$data['conceptosError'] = $avanceObra->guardaTransaccion();
+				$data['errores'] = $transaccion->guardaTransaccion();
+			} else {
+				
+				$transaccion = new AvanceObra(
+						$IDObra,
+						$fecha,
+						$fechaInicio,
+						$fechaTermino,
+						$observaciones,
+						$IDConceptoRaiz,
+						$conceptos,
+						$conn
+				);
+			
+				$data['errores'] = $transaccion->guardaTransaccion();
+				$data['IDTransaccion']  = $transaccion->getIDTransaccion();
+				$data['numeroFolio']    = Util::formatoNumeroFolio($transaccion->getNumeroFolio());
+			}
 
-			$totales = $avanceObra->getTotalesTransaccion();
+			$totales = $transaccion->getTotalesTransaccion();
 
 			foreach ($totales as $total) {
 				
-				$data['totales'][] = array(
+				$data['totales'] = array(
 					'Subtotal'  => Util::formatoNumerico($total->Subtotal),
 					'IVA' 		=> Util::formatoNumerico($total->IVA),
 					'Total'   	=> Util::formatoNumerico($total->Total)					
@@ -214,7 +215,7 @@ try {
 
 			foreach ($totales as $total) {
 				
-				$data['totales'][] = array(
+				$data['totales'] = array(
 					'Subtotal'  => Util::formatoNumerico($total->Subtotal),
 					'IVA' 		=> Util::formatoNumerico($total->IVA),
 					'Total'     => Util::formatoNumerico($total->Total)					
