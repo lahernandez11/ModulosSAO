@@ -31,6 +31,7 @@ div.checkboxgroup input
 {
 	width: auto;
 }
+
 /*@-webkit-keyframes anim-beat
 {
 	0%
@@ -128,6 +129,41 @@ div.options form div
 	margin: 5px 0;
     text-align: center;
     float: none;
+}
+div.section
+{
+	padding-bottom: 0.5em;
+	padding-top: 0.5em;
+}
+div.section .section-header .content-toggler
+{
+	background-attachment: scroll;
+    background-color: transparent;
+    background-image: url("../img/section/arrow_right_hc.png");
+    background-position: 0 50%;
+    background-repeat: no-repeat;
+	cursor: pointer;
+	padding-left: 20px;
+}
+div.section .section-header .content-toggler.expanded
+{
+	background-image: url("../img/section/arrow_down_hc.png");
+}
+div.section .section-header a.title
+{
+	color: crimson;
+	font-weight: bold;
+}
+div.section .section-header a.title .items-counter
+{
+	color: gray;
+    font-size: 85%;
+    margin-left: 3px;
+}
+div.section .section-content
+{
+	display: none;
+	padding-left: 1.5em;
 }
 div.ui-state-highlight
 {
