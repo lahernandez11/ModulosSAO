@@ -141,10 +141,11 @@ try {
 				
 				$data['totales'][] = array(
 					'Subtotal'  => Util::formatoNumerico($total->Subtotal),
-					'IVA' => Util::formatoNumerico($total->IVA),
-					'Total'   => Util::formatoNumerico($total->Total)					
+					'IVA' 		=> Util::formatoNumerico($total->IVA),
+					'Total'   	=> Util::formatoNumerico($total->Total)					
 				);
 			}
+			
 			break;
 
 		case 'guardaTransaccion':
@@ -156,6 +157,7 @@ try {
 			$observaciones = $_REQUEST['observaciones'];
 			$conceptos = is_array($_REQUEST['conceptos']) ? $_REQUEST['conceptos'] : array();
 			$data['conceptosError'] = array();
+			$data['totales']   = array();
 
 			$avanceObra = new AvanceObra( $IDTransaccion , $conn );
 
@@ -166,6 +168,17 @@ try {
 			$avanceObra->setConceptos( $conceptos );
 
 			$data['conceptosError'] = $avanceObra->guardaTransaccion();
+
+			$totales = $avanceObra->getTotalesTransaccion();
+
+			foreach ($totales as $total) {
+				
+				$data['totales'][] = array(
+					'Subtotal'  => Util::formatoNumerico($total->Subtotal),
+					'IVA' 		=> Util::formatoNumerico($total->IVA),
+					'Total'   	=> Util::formatoNumerico($total->Total)					
+				);
+			}
 
 			break;
 

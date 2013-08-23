@@ -294,11 +294,7 @@ var AVANCE = {
 						return;
 					}
 
-					if( json.totales.length ) {
-						that.setSubtotal(json.totales[0].Subtotal);
-						that.setIVA(json.totales[0].IVA);
-						that.setTotal(json.totales[0].Total);
-					}
+					that.fillTotales( json.totales );
 
 				} catch( e ) {
 					messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
@@ -318,6 +314,15 @@ var AVANCE = {
 
 	setTotal: function( $monto ) {
 		$('#txtTotal').text($monto);
+	},
+
+	fillTotales: function( totales ) {
+		// Establece los totales de transaccion
+		if( totales.length ) {
+			this.setSubtotal(totales[0].Subtotal);
+			this.setIVA(totales[0].IVA);
+			this.setTotal(totales[0].Total);
+		}
 	},
 
 	setCantidadAvance: function( IDConcepto, cantidad ) {
@@ -373,11 +378,7 @@ var AVANCE = {
 				that.llenaTablaConceptos( json.conceptos );
 
 				// Establece los totales de transaccion
-				if( json.totales.length ) {
-					that.setSubtotal(json.totales[0].Subtotal);
-					that.setIVA(json.totales[0].IVA);
-					that.setTotal(json.totales[0].Total);
-				}
+				that.fillTotales( json.totales );
 
 				that.habilitaCamposTransaccion();
 				that.deshabilitaFechaTransaccion();
@@ -387,12 +388,8 @@ var AVANCE = {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
 			}
 		})
-		.fail( function() {
-			$.notify({text: 'Ocurrió un error al cargar la transaccion.'});
-		})
-		.always( function() {
-			DATA_LOADER.hide();
-		});
+		.fail( function() {	$.notify({text: 'Ocurrió un error al cargar la transaccion.'});	})
+		.always( function() { DATA_LOADER.hide(); });
 	},
 
 	cargaConceptos: function() {
