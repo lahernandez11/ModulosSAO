@@ -57,13 +57,53 @@ class AvanceObra extends TransaccionSAO {
 
 	    $this->setIDConceptoRaiz( $datos[0]->IDConceptoRaiz );
 	    $this->_conceptoRaiz   = $datos[0]->ConceptoRaiz;
-	    $this->_fechaInicio = $datos[0]->FechaInicio;
-	    $this->_fechaTermino = $datos[0]->FechaTermino;
+	    $this->_fechaInicio    = $datos[0]->FechaInicio;
+	    $this->_fechaTermino   = $datos[0]->FechaTermino;
+	}
+
+	public function guardaTransaccion() {
+
+		$errores = array();
+
+		if ( ! empty($this->_IDTransaccion) ) {
+
+			$tsql = "{call [AvanceObra].[uspGuardaDatosGenerales]( ?, ?, ?, ?, ?, ? )}";
+
+		    $params = array(
+		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        array( $this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
+		        array( $this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
+		        array( $this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
+		        array( $this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096) ),
+		        array( Sesion::getCuentaUsuarioSesion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
+		    );
+
+		    $this->_SAOConn->executeSP($tsql, $params);
+		} else {
+
+			$tsql = "{call [AvanceObra].[uspRegistraTransaccion]( ?, ?, ?, ?, ?, ?, ?, ?, ? )}";
+
+		    $params = array(
+		        array( $this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        array( $this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
+		       	array( $this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
+		        array( $this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
+		        array( $this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096) ),
+		        array( $this->getIDConceptoRaiz(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        array( Sesion::getCuentaUsuarioSesion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
+		        array( &$this->_IDTransaccion, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT ),
+		        array( &$this->_numeroFolio, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
+		    );
+
+		    $this->_SAOConn->executeSP($tsql, $params);
+		}
+
+		return $errores = $this->guardaConceptosAvance();
 	}
 
 	private function guardaConceptosAvance() {
 
-		$conceptosError = array();
+		$errores = array();
 
 		$tsql = "{call [AvanceObra].[uspGuardaAvanceConcepto]( ?, ?, ?, ? )}";
 
@@ -77,7 +117,7 @@ class AvanceObra extends TransaccionSAO {
 
 				// Si la cantidad no es valida agrega el concepto con error
 				if( ! $isValid ) {
-					throw new Exception("La cantidad ingresada no es correcta");
+					throw new Exception("La cantidad ingresada no es correcta.");
 				}
 
 				$params = array(
@@ -91,7 +131,7 @@ class AvanceObra extends TransaccionSAO {
 				$this->_SAOConn->executeSP($tsql, $params);
 			} catch( Exception $e ) {
 
-				$conceptosError[] = array(
+				$errores[] = array(
 					'IDConcepto' => $concepto['IDConcepto'],
 					'cantidad' => $concepto['cantidad'],
 					'message' => $e->getMessage()
@@ -99,60 +139,7 @@ class AvanceObra extends TransaccionSAO {
 			}
 		}
 
-		return $conceptosError;
-	}
-
-	private function guardaDatosGenerales() {
-
-		$tsql = "{call [AvanceObra].[uspGuardaDatosGenerales]( ?, ?, ?, ?, ?, ? )}";
-
-	    $params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
-	        array( $this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
-	        array( $this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
-	        array( $this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096) ),
-	        array( Sesion::getCuentaUsuarioSesion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
-	    );
-
-	    $rsConceptos = $this->_SAOConn->executeSP($tsql, $params);
-	}
-
-	private function getIDConceptoRaiz() {
-		return $this->_IDConceptoRaiz;
-	}
-
-	private function setIDConceptoRaiz( $IDConceptoRaiz ) {
-		$this->_IDConceptoRaiz = $IDConceptoRaiz;
-	}
-
-	public function registraTransaccion() {
-
-		$tsql = "{call [AvanceObra].[uspRegistraTransaccion]( ?, ?, ?, ?, ?, ?, ?, ?, ? )}";
-
-	    $params = array(
-	        array( $this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
-	       	array( $this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
-	        array( $this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
-	        array( $this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096) ),
-	        array( $this->getIDConceptoRaiz(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( Sesion::getCuentaUsuarioSesion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
-	        array( &$this->_IDTransaccion, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT ),
-	        array( &$this->_numeroFolio, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
-	    );
-
-	    $this->_SAOConn->executeSP($tsql, $params);
-	    $feedback = $this->guardaConceptosAvance();
-
-	    return $feedback;
-	}
-
-	public function guardaTransaccion() {
-
-		$this->guardaDatosGenerales();
-
-		$this->guardaConceptosAvance();
+		return $errores;
 	}
 
 	public function apruebaTransaccion() {
@@ -175,6 +162,14 @@ class AvanceObra extends TransaccionSAO {
 	    );
 
 	    $this->_SAOConn->executeSP($tsql, $params);
+	}
+
+	private function getIDConceptoRaiz() {
+		return $this->_IDConceptoRaiz;
+	}
+
+	private function setIDConceptoRaiz( $IDConceptoRaiz ) {
+		$this->_IDConceptoRaiz = $IDConceptoRaiz;
 	}
 
 	public function setConceptos( Array $conceptos ) {

@@ -530,7 +530,7 @@ var ESTIMACION = {
 	 		that.fillTotales(json.totales);
 
 	 		if ( json.errores.length > 0 ) {
-	 			that.marcaConceptoError(json.errores);
+	 			that.marcaConceptosError(json.errores);
 	 			messageConsole.displayMessage( 'Existen errores en algunos conceptos, por favor revise y guarde otra vez.', 'error');
 	 		} else {
 	 			$('#guardar').removeClass('alert');
@@ -681,7 +681,7 @@ var ESTIMACION = {
 		});
 	},
 
-	marcaConceptoError: function( errores ) {
+	marcaConceptosError: function( errores ) {
 
 		for( error in errores ) {
 
@@ -702,14 +702,6 @@ var ESTIMACION = {
 		.removeAttr('title');
 	},
 
-	desmarcaConceptoError: function( IDConcepto ) {
-
-		$('tr[data-id=' + IDConcepto + ']')
-		 .find('.icon')
-		 .removeClass('error')
-		 .removeAttr('title');
-	},
-
 	marcaConcepto: function( IDConcepto ) {
 		
 		$('tr[data-id=' + IDConcepto + ']').addClass(this.classes.conceptoModificado);
@@ -727,10 +719,6 @@ var ESTIMACION = {
 	existenCambiosSinGuardar: function() {
 		
 		return $('#guardar').hasClass('alert');
-	},
-
-	showListaTransacciones: function() {
-		$('#dialog-lista-transacciones').dialog('open');
 	}
 };
 
