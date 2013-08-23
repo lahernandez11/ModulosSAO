@@ -318,9 +318,9 @@ var AVANCE = {
 
 	fillTotales: function( totales ) {
 		// Establece los totales de transaccion
-		this.setSubtotal(totales.Subtotal);
-		this.setIVA(totales.IVA);
-		this.setTotal(totales.Total);
+		this.setSubtotal(totales.subtotal);
+		this.setIVA(totales.iva);
+		this.setTotal(totales.total);
 	},
 
 	setCantidadAvance: function( IDConcepto, cantidad ) {
@@ -516,9 +516,9 @@ var AVANCE = {
 			}
 
 			if ( ! that.getIDTransaccion() ) {
-
+				console.log(json.IDTransaccion);
 				$('#folios-transaccion').buttonlist('addListItem', 
-					{id: json.IDTransaccion, text: json.NumeroFolio}, 'start');
+					{id: json.IDTransaccion, text: json.numeroFolio}, 'start');
 				
 				$('#folios-transaccion').buttonlist('setSelectedItemById', 
 					json.IDTransaccion, false );

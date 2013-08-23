@@ -122,9 +122,9 @@ try {
 			foreach ($totales as $total) {
 				
 				$data['totales'] = array(
-					'Subtotal'  => Util::formatoNumerico($total->Subtotal),
-					'IVA' 		=> Util::formatoNumerico($total->IVA),
-					'Total'   	=> Util::formatoNumerico($total->Total)					
+					'subtotal'  => Util::formatoNumerico($total->Subtotal),
+					'iva' 		=> Util::formatoNumerico($total->IVA),
+					'total'   	=> Util::formatoNumerico($total->Total)					
 				);
 			}
 			
@@ -175,9 +175,9 @@ try {
 			foreach ($totales as $total) {
 				
 				$data['totales'] = array(
-					'Subtotal'  => Util::formatoNumerico($total->Subtotal),
-					'IVA' 		=> Util::formatoNumerico($total->IVA),
-					'Total'   	=> Util::formatoNumerico($total->Total)					
+					'subtotal'  => Util::formatoNumerico($total->Subtotal),
+					'iva' 		=> Util::formatoNumerico($total->IVA),
+					'total'   	=> Util::formatoNumerico($total->Total)					
 				);
 			}
 
