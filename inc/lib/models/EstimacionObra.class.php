@@ -17,7 +17,7 @@ class EstimacionObra extends TransaccionSAO {
 		switch ( func_num_args() ) {
 
 			case 8:
-				call_user_func_array(array($this, "instaceFromDefault"), $params);
+				call_user_func_array(array($this, "instanceFromDefault"), $params);
 				break;
 
 			case 2:
@@ -26,7 +26,7 @@ class EstimacionObra extends TransaccionSAO {
 		}
 	}
 
-	private function instaceFromDefault( $IDObra, $fecha, $fechaInicio, 
+	private function instanceFromDefault( $IDObra, $fecha, $fechaInicio, 
 		$fechaTermino, $observaciones, $referencia, Array $conceptos, SAODBConn $conn ) {
 
 		parent::__construct($IDObra, self::TIPO_TRANSACCION, $fecha, $observaciones, $conn);

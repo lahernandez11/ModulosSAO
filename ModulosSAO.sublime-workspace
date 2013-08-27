@@ -520,14 +520,6 @@
 	"buffers":
 	[
 		{
-			"file": "css/general.css",
-			"settings":
-			{
-				"buffer_size": 24898,
-				"line_ending": "Windows"
-			}
-		},
-		{
 			"file": "estimacion_obra.php",
 			"settings":
 			{
@@ -539,7 +531,7 @@
 			"file": "inc/js/estimacion_obra.js",
 			"settings":
 			{
-				"buffer_size": 18745,
+				"buffer_size": 18492,
 				"line_ending": "Windows"
 			}
 		},
@@ -560,37 +552,18 @@
 			}
 		},
 		{
-			"file": "inc/js/estimaciones.js",
+			"file": "inc/js/avance_obra.js",
 			"settings":
 			{
-				"buffer_size": 39503,
+				"buffer_size": 18546,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "inc/lib/models/TransaccionSAO.class.php",
+			"file": "inc/lib/controllers/AvanceObraController.php",
 			"settings":
 			{
-				"buffer_size": 5595,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/js/general.js",
-			"settings":
-			{
-				"buffer_size": 26154,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"contents": "<?php\nsession_start();\nrequire_once(\"../../inc/DBConn.php\");\n\n$data['success'] = 0;\n$data['errorMessage'] = null;\n$data['noRows'] = false;\n$data['noRowsMessage'] = null;\n\n$conn = modulosSAO();\n\nif( !$conn ) {\n	$data['success'] = 0;\n	$data['errorMessage'] = 'No se pudo establecer una conexion con el servidor de Base de Datos';\n	\n	echo json_encode($data);\n	return;\n}\n\n$tsql = \"{call [Proyectos].[uspDatosGeneralesProyecto]( ? )}\";\n\n$params = array(\n				  array($_GET['idProyecto'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)\n			   );\n\n$stmt = sqlsrv_query($conn, $tsql, $params);\n\nif( !$stmt ) {\n	$data['success'] = 0;\n	$data['errorMessage'] = getErrorMessage();\n\n	echo json_encode($data);\n	return;\n}\nelse\n	$data['success'] = 1;\n\nwhile( $datos = sqlsrv_fetch_object($stmt) ) {\n\n	$data['Nombre'] = $datos->Nombre;\n	$data['Descripcion'] = $datos->Descripcion;\n	$data['TipoProyecto'] = $datos->TipoProyecto;\n	$data['Empresa'] = $datos->Empresa;\n	$data['Estado'] = $datos->Estado;\n	$data['Direccion'] = $datos->Direccion;\n	$data['FechaInicio'] = $datos->FechaInicio;\n	$data['FechaTermino'] = $datos->FechaTermino;\n	$data['FechaInicioContrato'] = $datos->FechaInicioContrato;\n	$data['FechaTerminoContrato'] = $datos->FechaTerminoContrato;\n	$data['PctMetaUtilidadCorporativo'] = $datos->PctMetaUtilidadCorporativo;\n	$data['PctMetaUtilidadObra'] = $datos->PctMetaUtilidadObra;\n	$data['PctParticipacion'] = $datos->PctParticipacion;\n	\n	$data['MontoVentaContrato'] = $datos->MontoVentaContrato;\n	$data['MontoActualContrato'] = $datos->MontoActualContrato;\n	$data['MontoInicialPIO'] = $datos->MontoInicialPIO;\n	$data['MontoActualPIO'] = $datos->MontoActualPIO;\n	\n	$data['EstaActivo'] = $datos->EstaActivo;\n	$data['VisibleEnApps'] = $datos->VisibleEnApps;\n	$data['VisibleEnReportes'] = $datos->VisibleEnReportes;\n}\n\nsqlsrv_free_stmt($stmt);\nsqlsrv_close($conn);\n\necho json_encode($data);\n?>",
-			"file": "modulos/proyectos/GetDatosGeneralesProyecto.php",
-			"file_size": 1946,
-			"file_write_time": 129798740649415657,
-			"settings":
-			{
-				"buffer_size": 1879,
+				"buffer_size": 7379,
 				"line_ending": "Windows"
 			}
 		}
@@ -643,14 +616,20 @@
 	},
 	"file_history":
 	[
+		"/D/www/ModulosSAO/inc/js/avance_obra.js",
+		"/D/www/ModulosSAO/inc/lib/controllers/AvanceObraController.php",
+		"/D/www/ModulosSAO/inc/lib/models/AvanceObra.class.php",
+		"/D/www/ModulosSAO/inc/js/estimaciones.js",
+		"/D/www/ModulosSAO/inc/lib/models/TransaccionSAO.class.php",
+		"/D/www/ModulosSAO/css/general.css",
+		"/D/www/ModulosSAO/inc/js/general.js",
+		"/D/www/ModulosSAO/modulos/proyectos/GetDatosGeneralesProyecto.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontrato.class.php",
 		"/D/www/ModulosSAO/estimaciones.php",
 		"/D/www/ModulosSAO/avance_obra.php",
 		"/D/www/ModulosSAO/confirmacion_cobranza.php",
 		"/D/www/ModulosSAO/precios_venta.php",
 		"/D/www/ModulosSAO/avance_subcontratos.php",
-		"/D/www/ModulosSAO/inc/lib/models/TransaccionSAO.class.php",
-		"/D/www/ModulosSAO/inc/js/estimaciones.js",
 		"/D/www/icomoon79764/style.css",
 		"/D/www/icomoon34677/style.css",
 		"/D/www/icomoon93297/style.css",
@@ -663,7 +642,6 @@
 		"/D/www/ModulosSAO/subcontratos.php",
 		"/D/www/ModulosSAO/inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css",
 		"/D/www/ModulosSAO/inc/app-header.php",
-		"/D/www/ModulosSAO/inc/js/general.js",
 		"/D/www/ModulosSAO/inc/lib/controllers/MenuAplicacionController.php",
 		"/D/www/ModulosSAO/inc/app-footer.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/setPath.php",
@@ -765,12 +743,7 @@
 		"/C/AppServ/www/ModulosSAO/setPath.php",
 		"/C/AppServ/www/ModulosSAO/modulos/estimaciones/FormatoOrdenPago.php",
 		"/C/AppServ/www/ModulosSAO/inc/js/proyectos.js",
-		"/C/AppServ/www/ModulosSAO/inc/js/general.js",
-		"/C/AppServ/www/ModulosSAO/inc/js/confirmacion_cobranza.js",
-		"/C/AppServ/www/ModulosSAO/inc/lib/views/lista_transacciones.tpl.php",
-		"/C/AppServ/www/ModulosSAO/inc/login.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/models/Sesion.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/js/jquery.listaTransacciones.js"
+		"/C/AppServ/www/ModulosSAO/inc/js/general.js"
 	],
 	"find":
 	{
@@ -788,6 +761,16 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"showListaTransacciones",
+			"fillTotales",
+			"marcaConceptoError",
+			"conceptosError",
+			"avanceObra",
+			"AvanceObra",
+			"avanceObra",
+			"guardaTransaccion",
+			"-",
+			"guardaTransaccion",
 			"@",
 			"logo",
 			"@",
@@ -905,17 +888,7 @@
 			"public function getImporteAnticipo() {\n		return $this->_importeAnticipo;\n	}",
 			"nuevaTransaccion",
 			"PDF",
-			"desmarcaConceptoError",
-			"guardaTransaccion",
-			"guardaConceptosEstimados",
-			")",
-			"Util::formatoNumerico(",
-			"txtRetencionIVA",
-			"txtFondoGarantia",
-			"resumen",
-			"resetTextSize",
-			"guardaDeduccion",
-			"50"
+			"desmarcaConceptoError"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -991,38 +964,11 @@
 	"groups":
 	[
 		{
-			"selected": 8,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "css/general.css",
-					"settings":
-					{
-						"buffer_size": 24898,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1022,
-								1022
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1027.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
 					"file": "estimacion_obra.php",
 					"settings":
 					{
@@ -1049,19 +995,19 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 1,
 					"file": "inc/js/estimacion_obra.js",
 					"settings":
 					{
-						"buffer_size": 18745,
+						"buffer_size": 18492,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								14005,
-								14005
+								18029,
+								18029
 							]
 						],
 						"settings":
@@ -1070,13 +1016,13 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 7160.0,
+						"translation.y": 11185.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 2,
 					"file": "inc/lib/models/EstimacionObra.class.php",
 					"settings":
 					{
@@ -1087,8 +1033,8 @@
 						"selection":
 						[
 							[
-								5,
-								0
+								516,
+								230
 							]
 						],
 						"settings":
@@ -1097,13 +1043,13 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 220.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 3,
 					"file": "inc/lib/controllers/EstimacionObraController.php",
 					"settings":
 					{
@@ -1114,8 +1060,8 @@
 						"selection":
 						[
 							[
-								4484,
-								4484
+								3707,
+								3707
 							]
 						],
 						"settings":
@@ -1124,52 +1070,52 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 647.0,
+						"translation.y": 2297.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "inc/js/avance_obra.js",
+					"settings":
+					{
+						"buffer_size": 18546,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8142,
+								8142
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 6859.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 5,
-					"file": "inc/js/estimaciones.js",
+					"file": "inc/lib/controllers/AvanceObraController.php",
 					"settings":
 					{
-						"buffer_size": 39503,
+						"buffer_size": 7379,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								23772,
-								23639
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 5444.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "inc/lib/models/TransaccionSAO.class.php",
-					"settings":
-					{
-						"buffer_size": 5595,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4012,
-								3752
+								5562,
+								5562
 							]
 						],
 						"settings":
@@ -1178,61 +1124,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3080.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "inc/js/general.js",
-					"settings":
-					{
-						"buffer_size": 26154,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								14624,
-								14635
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 14750.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "modulos/proyectos/GetDatosGeneralesProyecto.php",
-					"settings":
-					{
-						"buffer_size": 1879,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 3300.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

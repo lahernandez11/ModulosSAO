@@ -12,6 +12,7 @@ $dbServer['ModulosSAO'] 	 = '(local)\SQL2012';
 $dbUser['ModulosSAO']   	 = 'App_ModulosSAO';
 $userPassword['ModulosSAO']  = '@msApp85%';
 $dbName['ModulosSAO'] 		 = 'ModulosSAO';
+
 $dbServer['SAO1814_SUB'] 	 = '172.20.74.3';
 $dbUser['SAO1814_SUB']   	 = 'App_ModulosSAO';
 $userPassword['SAO1814_SUB'] = '@msApp85%';
