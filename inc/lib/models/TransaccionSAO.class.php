@@ -197,21 +197,6 @@ abstract class TransaccionSAO {
 		return $data;
 	}
 
-	// public static function getInstance( $IDTransaccion, SAODBConn $conn) {
-
-	// 	$tsql = "SELECT
-	// 				  [transacciones].[tipo_transaccion]
-	// 			FROM
-	// 				[dbo].[transacciones]
-	// 			WHERE
-	// 				[transacciones].[id_transaccion] = ?";
-		
-	//     $params = array(
-	//         array( $IDTransaccion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	//     );
-
-	//     $rsDatosTran = $this->_SAOConn->executeSP($tsql, $params);	    
-	// }
 /*
 	public abstract function getTotales();
 

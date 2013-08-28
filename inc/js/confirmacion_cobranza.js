@@ -7,16 +7,17 @@ var pubsub = PubSub();
 
 var COBRANZA = {
 
-	isModified: false,
-	estimando: false,
-	requestingData: false,
+	classes: {
+		conceptoModificado: 'modificado'
+	},
+	urls: {
+		tranController: 'inc/lib/controllers/CobranzaController.php'
+	},
+	IDEstimacionObra: null,
 
 	init: function() {
 
-		var CO = this;
-
-		this.deshabilitaCamposEstimacion();
-		this.limpiaDatosEstimacion();
+		var that = this;
 
 		// Suscripcion al evento transaccion modificada
 		var modifiedTranSubscription = pubsub.subscribe('modified_tran', modifiedTran);
@@ -35,11 +36,14 @@ var COBRANZA = {
 			data: {action: 'getListaProyectos'},
 			'onSelect': function( selectedItem, listItem ) {
 				
-				$('#folios-estimacion').buttonlist('option', 'data', {IDProyecto: selectedItem.value});
-				$('#folios-estimacion').buttonlist('refresh');
+				$('#folios-transaccion').buttonlist('option', 'data', {
+					IDProyecto: selectedItem.value, action: 'getTransacciones'
+				});
 
-				CO.limpiaDatosEstimacion();
-				CO.deshabilitaCamposEstimacion();
+				$('#folios-transaccion').buttonlist('refresh');
+
+				that.limpiaDatosTransaccion();
+				that.deshabilitaCamposTransaccion();
 			},
 			'didNotDataFound': function() {
 				$.notify({text: 'No se pudo cargar la lista de proyectos'});
@@ -52,8 +56,8 @@ var COBRANZA = {
 			}
 		});
 
-		$('#folios-estimacion').buttonlist({
-			'source': 'modulos/cobranza/GetListaFoliosCobranza.php',
+		$('#folios-transaccion').buttonlist({
+			'source': that.urls.tranController,
 			'beforeLoad': function() {
 
 				if( ! $('#bl-proyectos').buttonlist('option', 'selectedItem') ) {
@@ -65,51 +69,48 @@ var COBRANZA = {
 			},
 			'onSelect': function( selectedItem, listItemElement ) {
 
-				CO.limpiaDatosEstimacion();
-				CO.setIDCobranza(selectedItem.value);
-				CO.cargaCobranza();
+				that.cargaTransaccion();
 			},
 			'didNotDataFound': function() {
 				$.notify({text: 'No se encontraron transacciones registradas en este proyecto'});
 			},
 			onCreateListItem: function() {
 				return {
-					id: this.id,
-					value: this.value
+					id: this.IDCobranza,
+					value: this.NumeroFolio
 				}
 			}
 		});
 
 		$('#tabla-conceptos').uxtable({
 			editableColumns: {
-				6: {
+				8: {
 					'onFinishEdit': function( activeCell, value ) {
 
 						var cantidad = parseFloat(value.replace(/,/g, '')),
 							IDConcepto = parseInt( activeCell.parent().attr('data-id') );
 
-						if ( parseInt( activeCell.parent().attr('data-id') ) === 0 )
-							return false;
+						if ( parseInt(activeCell.parent().attr('data-esactividad')) == 1 ) {
+							that.setCantidadCobrada.call( this, IDConcepto, value );
+							that.setImporteCobrado.call(activeCell.next().next());
+						}
 
-						var importe = (cantidad * CO.getPrecioUnitario.call(this));
-
-						CO.setImporteCobrado.call( this, importe );
-
-						CO.marcaConcepto( IDConcepto );
+						that.marcaConcepto( IDConcepto );
 						pubsub.publish('modified_tran');
 					}
 				},
-				7: {
+				9: {
 					'onFinishEdit': function( activeCell, value ) {
 
 						var pu = parseFloat(value.replace(/,/g, '')),
 							IDConcepto = parseInt( activeCell.parent().attr('data-id') );
 
-						var importe = CO.getCantidadCobrada.call(this) * pu;
+						if ( parseInt(activeCell.parent().attr('data-esactividad')) == 1 ) {
+							
+							that.setPrecio.call( this, IDConcepto, value );
+							that.setImporteCobrado.call(activeCell.next());
+						}
 
-						CO.setImporteCobrado.call( this, importe );
-
-						CO.marcaConcepto( IDConcepto );
 						pubsub.publish('modified_tran');
 					}
 				}
@@ -124,30 +125,30 @@ var COBRANZA = {
 				return;
 			}
 
-			if( CO.existenCambiosSinGuardar() )
-				pubsub.publish('notify_modtran', CO.nuevaEstimacion);
+			if( that.existenCambiosSinGuardar() )
+				pubsub.publish('notify_modtran', that.muestraListaEstimacionesObra);
 			else
-				CO.nuevaEstimacion();
+				that.muestraListaEstimacionesObra();
 		});
 
 		$('#eliminar').bind('click', function() {
 
-			if( CO.existenCambiosSinGuardar() )
-				pubsub.publish('notify_modtran', CO.eliminaEstimacion);
+			if( that.existenCambiosSinGuardar() )
+				pubsub.publish('notify_modtran', that.eliminaEstimacion);
 			else
-				CO.eliminaTransaccion();
+				that.eliminaTransaccion();
 		});
 
 		$('#guardar').bind('click', function() {
-			CO.guardaTransaccion();
+			that.guardaTransaccion();
 		});
 
 		$('#enviar-sao').bind('click', function() {
 
-			if( CO.existenCambiosSinGuardar() )
-				pubsub.publish('notify_modtran', CO.enviaEstimacionCDC);
+			if( that.existenCambiosSinGuardar() )
+				pubsub.publish('notify_modtran', that.enviaEstimacionCDC);
 			else
-				CO.enviaEstimacionCDC();
+				that.enviaEstimacionCDC();
 		});
 
 		$('#btnResumen').on('click', function() {
@@ -209,7 +210,7 @@ var COBRANZA = {
 		 	$('#tabla-conceptos colgroup .' + this.id).toggleClass('hidden');
 		 });
 
-		// Handler para la tabla de seleccion de un subcontrato a estimar
+		// Handler para la tabla de seleccion de una estimacion de obra
 		$('#tabla-estimaciones-obra tbody').on({
 
 			click: function( event ) {
@@ -219,515 +220,457 @@ var COBRANZA = {
 			},
 			dblclick: function( event ) {
 
-				CO.creaEstimacion.call(CO, this);
-				event.preventDefault();
+				that.nuevaTransaccion.call(that, this);
 			}
 
 		}, 'tr');
+
+		this.deshabilitaCamposTransaccion();
+		this.limpiaDatosTransaccion();
 	},
 
-	nuevaEstimacion: function() {
+	getIDProyecto: function() {
+		return $('#bl-proyectos').buttonlist('option', 'selectedItem').value;
+	},
+
+	getIDTransaccion: function() {
+		return $('#folios-transaccion').buttonlist('option', 'selectedItem').value;
+	},
+
+	getIDEstimacionObra: function() {
+		return this.IDEstimacionObra;
+	},
+
+	setIDEstimacionObra: function( id ) {
+		this.IDEstimacionObra = id;
+	},
+
+	setReferencia: function( referencia ) {
+		$('#txtReferencia').val(referencia);
+	},
+
+	deshabilitaFechaTransaccion: function() {
+		$('#txtFecha').datepicker('disable');
+	},
+
+	deshabilitaCamposTransaccion: function() {
+		this.deshabilitaFechaTransaccion();
+		$('#txtObservaciones').prop('disabled', true);
+		$('#txtReferencia').prop('disabled', true);
+	},
+
+	habilitaCamposTransaccion: function() {
+		$('#txtFecha').datepicker('enable');
+		$('#txtObservaciones').prop('disabled', false);
+		$('#txtReferencia').prop('disabled', false);
+	},
+
+	habilitaObservaciones: function() {
+		$('#txtObservaciones').prop('disabled', false);
+	},
+
+	habilitaFechaTransaccion: function() {
+		$('#txtFecha').datepicker('enable');
+	},
+
+	limpiaDatosTransaccion: function() {
 		
-		this.limpiaDatosEstimacion();
-		this.deshabilitaCamposEstimacion();
-		this.muestraListaEstimaciones();
-		$('#folios-estimacion').buttonlist('reset');
+		$('#txtFecha').datepicker( 'setDate', new Date() );
+		$('#txtObservaciones').val('');
+		$('#txtReferencia').val('');
+		$('#txtSubtotal, #txtIVA, #txtTotal').text('');
+		$('#tabla-conceptos tbody').empty();
+
+		$('#guardar').removeClass('alert');
 	},
 
-	muestraListaEstimaciones: function() {
+	muestraListaEstimacionesObra: function() {
+		var that = this;
 
 		DATA_LOADER.show();
 
 		$.ajax({
 			type: 'GET',
-			url: 'modulos/cobranza/GetListaTransacciones.php',
+			url: 'inc/lib/controllers/EstimacionObraController.php',
 			data: {
-				IDObra: $('#bl-proyectos').buttonlist('option', 'selectedItem').value
+				IDProyecto: that.getIDProyecto(),
+				action: 'getListaTransacciones'
 			},
 			dataType: 'json'
 		}).done( function( json ) {
 			try {
 
 				if( ! json.success ) {
-					messageConsole.displayMessage( json.errorMessage, 'error' );
+					messageConsole.displayMessage( json.message, 'error' );
 					return;
 				}
 
 				if( json.noRows ) {
-					$.notify( {text: json.noRowsMessage} );
+					$.notify( {text: json.message} );
 					return;
 				}
 
-				var $tableBody = $('#tabla-estimaciones-obra tbody'),
-					transacciones = '';
-
-				$tableBody.empty();
-
-				$.each( json.Transacciones, function() {
-
-					transacciones +=
-						'<tr data-id="' + this.IDEstimacionObra + '">'
-					  +   '<td>' + this.NumeroFolio + '</td>'
-					  +   '<td>' + this.Fecha + '</td>'
-					  +   '<td>' + this.Referencia + '</td>'
-					  + '</tr>';
-				});
-
-				$tableBody.html(transacciones);
+				that.fillEstimacionesObra(json.options);
 
 				$('#dialog-estimaciones-obra').dialog('open');
 
 			} catch( e ) {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
 			}
-		}).always( function() {
-			DATA_LOADER.hide();
-		});
+
+		}).always( function() { DATA_LOADER.hide(); });
 	},
 
-	deshabilitaCamposEstimacion: function() {
-		$('#txtObservaciones').prop('disabled', true);
-		$('#column-switchers').buttonset('disable');
+	fillEstimacionesObra: function( estimaciones ) {
+		$estimacionesObraBody = $('#tabla-estimaciones-obra tbody');
+
+		$estimacionesObraBody.empty();
+
+		$estimacionesObraBody.html(this.listaEstimacionesObraTemplate(estimaciones));
 	},
 
-	habilitaCamposEstimacion: function() {
-		$('#txtFecha').datepicker('enable').prop('disabled', false);
-		 $('#txtObservaciones').prop('disabled', false);
-		 $('#column-switchers').buttonset('enable');
+	estimacionObraItemTemplate: function( data ) {
+		var html = "";
+
+		html = '<tr data-id="' + data.IDTransaccion + '">'
+			+   '<td>' + data.NumeroFolio + '</td>'
+			+   '<td>' + data.Fecha + '</td>'
+			+   '<td>' + data.Observaciones + '</td>'
+			+ '</tr>';
+
+		return html;
 	},
 
-	limpiaDatosEstimacion: function() {
-		//$('#IDCobranza').val('');
-		$('#IDEstimacionObra').val('');
-		$('#tabla-conceptos tbody').empty();
-		$('#txtFecha').datepicker( 'setDate', new Date() );
-		$('#txtObservaciones').val('');
-		$('#txtSubtotal, #txtIVA, #txtTotal').text('');
-		$('#guardar').removeClass('alert');
+	listaEstimacionesObraTemplate: function( estimaciones ) {
+		var html = "";
 
-		// Limpia la tabla de totales
-		$('#resumen-total td.numerico').text('');
+		for (var i = 0; i < estimaciones.length; i++) {
+			html += this.estimacionObraItemTemplate( estimaciones[i] );
+		};
+
+		return html;
 	},
 
-	getIDCobranza: function() {
+	nuevaTransaccion: function( estimacionObra ) {
+		var that = this;
 
-		return $('#IDCobranza').val();
-	},
+		this.limpiaDatosTransaccion();
+		this.deshabilitaCamposTransaccion();
+		$('#folios-transaccion').buttonlist('reset');
+		$('#dialog-estimaciones-obra').dialog('close');
 
-	setIDCobranza: function( IDCobranza ) {
-		
-		$('#IDCobranza').val(IDCobranza);
-	},
+		this.setIDEstimacionObra(parseInt($(estimacionObra).attr('data-id')));
 
-	identificaModificacion: function() {
-		
-		$('#guardar').addClass('alert');
-	},
+		DATA_LOADER.show();
 
-	existenCambiosSinGuardar: function() {
-		
-		return $('#guardar').hasClass('alert');
-	},
-
-	cargaDatosGeneralesEstimacion: function( IDEstimacion ) {
-		
-		var request = 
-			$.ajax({
-				type: 'GET',
-				url: 'modulos/estimaciones/GetDatosGeneralesEstimacion.php',
-				data: {
-					'IDEstimacion': IDEstimacion
-				},
-				dataType: 'json'
-			}).success( function( json ) {
-				try {
-
-					if( ! json.success ) {
-						messageConsole.displayMessage(json.errorMessage, 'error');
-						return;
-					}
-					
-					$('#txtNombreSubcontrato').text( json.Estimacion.NombreSubcontrato );
-					$('#txtNombreContratista').text( json.Estimacion.NombreContratista );
-					$('#txtFecha').val( json.Estimacion.Fecha );
-					$('#txtFechaInicio').val( json.Estimacion.FechaInicio );
-					$('#txtFechaTermino').val( json.Estimacion.FechaTermino );
-					$('#txtFolio').text( json.Estimacion.NumeroFolio );
-					$('#txtFolioCDC').text( json.Estimacion.NumeroFolioCDC );
-					$('#IDCobranza').val(IDEstimacion);
-					$('#IDSubcontratoCDC').val( json.Estimacion.IDSubcontratoCDC );
-					$('#txtObservaciones').val( json.Estimacion.Observaciones );
-
-				} catch( e ) {
-					messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
-				}
-			}).fail( function() {
-				$.notify({text: 'Ocurrió un error al cargar los datos generales.'});
-			});
-
-		return request;
-	},
-
-	cargaTotalesCobranza: function() {
-
-		var IDCobranza = this.getIDCobranza();
-
-		var request =
-			$.ajax({
-				type: 'GET',
-				url: 'modulos/cobranza/GetTotales.php',
-				data: {
-					'IDCobranza': IDCobranza
-				},
-				dataType: 'json'
-			}).done( function( json ) {
-				try {
-
-					if( ! json.success ) {
-						messageConsole.displayMessage(json.errorMessage, 'error');
-						return;
-					}
-
-					if( json.Totales.length ) {
-
-						$('#txtSubtotal, #rsSubtotal').text(json.Totales[0].Subtotal);
-						$('#txtIVA, #rsIVA').text(json.Totales[0].IVA);
-						$('#txtTotal, #rsTotal').text(json.Totales[0].Total);
-						//$('#rsSumaImportes').text(json.Totales[0].SumaImportes);
-						//$('#rsAnticipo').text(json.Totales[0].AmortizacionAnticipo);
-						//$('#rsFondoG').text(json.Totales[0].FondoGarantia);
-						//$('#rsRetenciones').text(json.Totales[0].TotalRetenido);
-						//$('#rsPenalizaciones').text(json.Totales[0].TotalPenalizado);
-						//$('#rsRetencionIVA').text(json.Totales[0].TotalIVARetenido);
-					}
-
-				} catch( e ) {
-					messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
-				}
-			}).fail( function() {
-				$.notify({text: 'Ocurrió un error al cargar los totales.'});
-			});
-	},
-
-	cargaConceptosCobranza: function( IDCobranza ) {
-
-		$.notify({text: 'Se estan cargando los datos de la transacción. Por favor espere.'});
-		
-		IDCobranza = IDCobranza || 0;
-
-		//--- Caragar los conceptos de contrato subcontratados
-		var request = 
+		// cargar los datos de la estimacion de obra
 		$.ajax({
-			type: 'GET',
-			url: 'modulos/cobranza/GetConceptosCobranza.php',
+			url: that.urls.tranController,
 			data: {
-				IDCobranza: IDCobranza
+				IDProyecto: that.getIDProyecto(),
+				IDEstimacionObra: that.getIDEstimacionObra(),
+				action: 'nuevaTransaccion'
 			},
-			dataType: 'json',
+			dataType: 'json'
+		})
+		.done( function(data) {
+			try {
+
+				if( ! data.success ) {
+					messageConsole.displayMessage( data.message, 'error');
+				}
+
+				that.setReferencia($(estimacionObra).children().last().text());
+
+				that.fillConceptos( data.conceptos );
+
+				that.habilitaObservaciones();
+				that.habilitaFechaTransaccion();
+			} catch( e ) {
+				messageConsole.displayMessage(e.message, 'error');
+			}
+		})
+		.always( function() { DATA_LOADER.hide(); });
+	},
+
+	fillConceptos: function( conceptos ) {
+
+		$('#tabla-conceptos tbody').html( this.conceptosListTemplate(conceptos) );
+	},
+
+	conceptosListTemplate: function( conceptos ) {
+		var html = '';
+
+		for (var i = 0; i < conceptos.length; i++) {
+			html += this.conceptoTemplate( conceptos[i] );
+		}
+
+		return html;
+	},
+
+	conceptoTemplate: function( concepto ) {
+
+		var html = '',
+			cellType = 'td',
+			cantidad = '',
+			precio = '',
+			importe = '',
+			rowClass = '';
+
+		if ( concepto.EsActividad ) {
+			cellType = 'td';
+			cantidad = concepto.CantidadCobrada;
+			precio   = concepto.PrecioUnitarioCobrado;
+			importe  = concepto.ImporteCobrado;
+		} else {
+			cellType = 'th';
+			cantidad = '';
+			precio   = '';
+			importe  = '';
+		}
+
+		if ( concepto.Estimado == 1 )
+			rowClass = ' class="modificado"';
+
+		html =
+		'<tr' + rowClass + ' data-id="' + concepto.IDConcepto + '" data-esactividad="' + concepto.EsActividad + '">'
+		+  '<td class="icon-cell"><a class="icon fixed"></a></td>'
+		+  '<' + cellType + ' title="' + concepto.Descripcion + '">'
+		+    '&nbsp;&nbsp;'.repeat(concepto.NumeroNivel) + concepto.Descripcion
+		+ ' </' + cellType + '>'
+		+  '<td class="centrado">' + concepto.Unidad + '</td>'
+		+  '<td class="numerico">' + concepto.CantidadPresupuestada + '</td>'
+		+  '<td class="numerico"></td>'
+		+  '<td class="numerico">' + concepto.CantidadEstimada + '</td>'
+		+  '<td class="numerico">' + concepto.PrecioUnitarioEstimado + '</td>'
+		+  '<td class="numerico">' + concepto.ImporteEstimado + '</td>'
+		+  '<td class="editable-cell numerico">' + cantidad + '</td>'
+		+  '<td class="editable-cell numerico">' + precio + '</td>'
+		+  '<td class="numerico">' + importe + '</td>'
+		+ '</tr>';
+
+		return html;
+	},
+	
+	cargaTransaccion: function() {
+		
+		var that = this;
+		
+		this.limpiaDatosTransaccion();
+
+		DATA_LOADER.show();
+
+		$.ajax({
+			url: that.urls.tranController,
+			data: {
+				IDTransaccion: that.getIDTransaccion(),
+				action: 'getDatosTransaccion'
+			},
+			dataType: 'json'
 		}).done( function( json ) {
 			try {
 
 				if( ! json.success ) {
-					messageConsole.displayMessage( json.errorMessage, 'error');
+					messageConsole.displayMessage(json.message, 'error');
 					return;
 				}
 
 				if( json.noRows ) {
-					$.notify({text: json.noRowsMessage});
+					$.notify({text: json.message});
 					return;
 				}
 
-				var conceptos = '';
-				var cellType = 'td';
-				var rowClass = '';
-				var cantidad = '';
-				var precio = '';
-				var importe = '';
+				that.fillDatosGenerales( json.datos );
 
-				$.each( json.Conceptos, function() {
+				that.fillConceptos( json.conceptos );
 
-					if( this.EsActividad ) {
-						cellType = 'td';
-						rowClass = '';
-						cantidad = this.CantidadCobrada;
-						precio = this.PrecioUnitario;
-						importe = this.ImporteCobrado;
-					}
-					else {
-						cellType = 'th';
-						cantidad = '';
-						precio = '';
-						importe = '';
-					}
+				that.fillTotales( json.totales );
 
-					conceptos +=
-						 '<tr' + rowClass + ' data-id="' + this.IDConcepto + '" data-esactividad="' + this.EsActividad + '">'
-						+  '<td class="icon-cell"><a class="icon fixed"></a></td>'
-						+  '<' + cellType + ' title="' + this.Concepto + '">' + '&nbsp;&nbsp;'.repeat(this.NumeroNivel) + this.Concepto + ' </' + cellType + '>'
-						+  '<td class="centrado">' + this.Unidad + '</td>'
-						+  '<td class="numerico">' + this.CantidadPresupuestada + '</td>'
-						+  '<td class="numerico"></td>'
-						+  '<td class="numerico">' + this.CantidadEstimada + '</td>'
-						+  '<td class="editable-cell numerico">' + cantidad + '</td>'
-						+  '<td class="editable-cell numerico">' + precio + '</td>'
-						+  '<td class="numerico">' + importe + '</td>'
-						+ '</tr>';
-				});
-				
-				$('#tabla-conceptos tbody').html( conceptos );
+				that.habilitaObservaciones();
+				that.deshabilitaFechaTransaccion();
 
-			} catch( e ) {
-				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
-			}
-		}).fail( function() {
-			$.notify({text: 'Ocurrió un error al cargar los conceptos contratados.'});
-		});
-
-		return request;
-	},
-
-	cargaCobranza: function() {
-		
-		var that = this;
-
-		that.deshabilitaCamposEstimacion();
-
-		DATA_LOADER.show();
-
-		//var rqDatosGenerales = that.cargaDatosGeneralesEstimacion( IDCobranza );
-
-		//$.when( rqDatosGenerales )
-		//.then( function() {
-
-		 	var rqConceptos = that.cargaConceptosCobranza( that.getIDCobranza() );
-		 	var rqTotales = that.cargaTotalesCobranza();
-		 	$.when( rqConceptos, rqTotales ).then( function() {
-
-		 	 	that.habilitaCamposEstimacion();
-		 	 })
-		 	 .always( function() { DATA_LOADER.hide(); });
-		//})
-
-	
-	},
-
-	creaEstimacion: function( estOb ) {
-
-		var that = this;
-		var $estimacionObra = $(estOb);
-
-		this.limpiaDatosEstimacion();
-		$('#dialog-estimaciones-obra').dialog('close');
-
-		DATA_LOADER.show();
-
-		//--- Registra una nueva estimacion del subcontrato seleccionado
-		var rqRegistro = 
-		$.ajax({
-			type: 'GET',
-			url: 'modulos/cobranza/RegistraCobranza.php',
-			data: {
-				IDEstimacionObra: parseInt($estimacionObra.attr('data-id'))
-			},
-			dataType: 'json',
-			cache: false
-		}).done( function( json ) {
-			try {
-
-				if( ! json.success ) {
-					messageConsole.displayMessage( json.errorMessage, 'error' );
-					return;
-				}
-
-				that.setIDCobranza(json.IDCobranza);
-				
-				that.cargaCobranza();
 			} catch( e ) {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
 			}
 		})
-
-		$.when( rqRegistro )
-		 .fail( function() {
-			DATA_LOADER.hide();
-		});
+		.fail( function() { $.notify({text: 'Ocurrió un error al cargar la transaccion.'}); })
+		.always( function() { DATA_LOADER.hide(); });
 	},
 
-	getCantidadCobrada: function() {
-		
-		var cantidad = parseFloat(this.uxtable('getCell', 6).text().replace(/,/g, ''));
-		
-		return (isNaN(cantidad) ? 0 : cantidad);
+	fillDatosGenerales: function( data ) {
+		// Establece los datos generales
+		$('#txtFecha').datepicker( 'setDate', data.fecha );
+		$('#txtObservaciones').val( data.observaciones );
+		$('#txtReferencia').val( data.referencia );
 	},
 
-	getPrecioUnitario: function() {
-
-		var pu = parseFloat(this.uxtable('getCell', 7).text().replace(/,/g, ''));
-
-		return (isNaN(pu) ? 0 : pu);
-	},
-
-	getImporteCobrado: function() {
-
-		return parseFloat(this.uxtable('getCell', 8).text().replace(/,/g, ''));
-	},
-
-	setCantidadEstimada: function( cantidad ) {
-
-		var cantidad = cantidad || 0;
-
-		this.uxtable('getCell', 6).text( cantidad.toFixed(4).numFormat() );
-	},
-
-	setPrecioUnitario: function( precio ) {
-
-		precio = precio || 0;
-
-		this.uxtable('getCell', 7).text( precio.toFixed(2).numFormat() );
-	},
-
-	setImporteCobrado: function( importe ) {
-
-		importe = importe || 0;
-
-		this.uxtable('getCell', 8).text( importe.toFixed(2).numFormat() );
-	},
-
-	guardaDatosGenerales: function() {
-
-		var that = this;
-
-		return $.ajax({
-					type: 'GET',
-					url: 'modulos/cobranza/GuardaDatosGenerales.php',
-					data: {
-						'IDCobranza': 	 that.getIDCobranza(),
-						'Fecha': 	     $('#txtFechaDB').val(),
-						'Referencia':    $('#txtReferencia').val(),
-						'Observaciones': $('#txtObservaciones').val()
-					},
-					dataType: 'json'
-				}).done( function( json ) {
-					try {
-
-						if( ! json.success ) {
-							messageConsole.displayMessage( json.errorMessage, 'error' );
-							return;
-						}
-
-					} catch( e ) {
-						messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
-					}
-				})
-				.fail( function() {
-					$.notify({text: 'Ocurrió un error al guardar los datos generales de la transacción.'});
-				});
-	},
-
-	getConceptos: function() {
-
-		var estimados = [], row = null;
-
-		$('#tabla-conceptos tr.estimado').each( function() {			
-			row = $(this);
-
-			estimados[estimados.length] = {
-				'IDConcepto': row.attr('data-id'),
-				'Cantidad': row.children(':eq(6)').text(),
-				'PrecioUnitario': row.children(':eq(7)').text(),
-				'Importe': row.children(':eq(8)').text()
-			}
-		});
-
-		return estimados;
-	},
-
-	guardaConceptos: function() {
-
-		var that = this;
-
-		var estimados = this.getConceptos();
-		
-		return $.ajax({
-				type: 'GET',
-				url: 'modulos/cobranza/GuardaConceptos.php',
-				data: {
-					'IDCobranza': that.getIDCobranza(),
-					'conceptos': estimados
-				},
-				dataType: 'json'
-			})
-			.done( function( json ) {
-				try {
-					if( ! json.success ) {
-
-						messageConsole.displayMessage( json.errorMessage, 'error');
-
-						if( json.conceptosError.length ) {
-
-							for( concepto in json.conceptosError ) {
-								 that.marcaConceptoError( json.conceptosError[concepto].IDConcepto, json.conceptosError[concepto].ErrorMessage );
-							}
-						}
-
-						return;
-					}
-
-				} catch( e ) {
-					messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
-				}
-			})
-			.fail( function() {
-				$.notify({text: 'Ocurrió un error al guardar los conceptos.'});
-			});
+	fillTotales: function( totales ) {
+		// Establece los totales de transaccion
+		$('#txtSubtotal').text(totales.subtotal);
+		$('#txtIVA').text(totales.iva);
+		$('#txtTotal').text(totales.total);
 	},
 
 	guardaTransaccion: function() {
 
 		var that = this;
-		var IDCobranza = this.getIDCobranza();
 
-		if( ! IDCobranza ) {
+		DATA_LOADER.show();
+
+		that.desmarcaConceptosError();
+
+		$.ajax({
+			type: 'POST',
+			url: that.urls.tranController,
+			data: {
+				IDProyecto: that.getIDProyecto(),
+				IDTransaccion: that.getIDTransaccion(),
+				fecha: $('#txtFechaDB').val(),
+				IDEstimacionObra: that.getIDEstimacionObra(),
+				'observaciones': $('#txtObservaciones').val(),
+				conceptos: that.getConceptosModificados(),
+				action: 'guardaTransaccion'
+			},
+			dataType: 'json'
+		}).done( function(data) {
+
+			if( ! data.success ) {
+				messageConsole.displayMessage( data.message, 'error' );
+				return;
+			}
+
+			if ( ! that.getIDTransaccion() ) {
+				$('#folios-transaccion').buttonlist('addListItem', 
+					{id: data.IDTransaccion, text: data.numeroFolio}, 'start');
+				
+				$('#folios-transaccion').buttonlist('setSelectedItemById', 
+					data.IDTransaccion, false );
+				
+				that.deshabilitaFechaTransaccion();
+			}
+
+	 		that.fillTotales(data.totales);
+
+	 		if ( data.errores.length > 0 ) {
+	 			that.marcaConceptosError(data.errores);
+	 			messageConsole.displayMessage( 'Existen errores en algunos conceptos, por favor revise y guarde otra vez.', 'error');
+	 		} else {
+	 			$('#guardar').removeClass('alert');
+	 			messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success');
+	 		}
+	 		
+		}).always( function() {
+			DATA_LOADER.hide();
+		});
+	},
+
+	getConceptosModificados: function() {
+
+		var conceptos = [],
+			row = null;
+
+		$('#tabla-conceptos tr.' + this.classes.conceptoModificado).each( function() {			
+			row = $(this);
+
+			conceptos[conceptos.length] = {
+
+				'IDConcepto': row.attr('data-id'),
+				'cantidad': row.children(':eq(8)').text(),
+				'precio': row.children(':eq(9)').text()
+				// 'cumplido': (row.find('td.cumplido a.checkbox').hasClass('checkbox-checked') ? 1: 0)
+			}
+		});
+
+		return conceptos;
+	},
+	
+	eliminaTransaccion: function() {
+
+		var that = this;
+
+		if( ! this.getIDTransaccion() ) {
 			messageConsole.displayMessage( 'No hay una transacción cargada.', 'error' );
 			return;
 		}
 
+		if ( ! confirm('La transacción será eliminada, desea continuar?') )
+			return;
+
 		DATA_LOADER.show();
 
-		var rqDatosGenerales = this.guardaDatosGenerales();
-		var rqConceptos = this.guardaConceptos();
+		$.ajax({
+			url: that.urls.tranController,
+			data: {
+				'IDTransaccion': that.getIDTransaccion(),
+				action: 'eliminaTransaccion'
+			},
+			dataType: 'json'
+		}).done( function( data ) {
+			try {
 
-		$.when( rqDatosGenerales, rqConceptos )
-		 .then( function( jsonDatosGenerales, jsonEstimados ) {
-		 	
-		 	if( jsonDatosGenerales[0].success && jsonEstimados[0].success ) {
+				if( ! data.success ) {
+					messageConsole.displayMessage( data.message, 'error' );
+					return;
+				}
 
-		 		messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success');
-		 		that.cargaTotalesCobranza();
-		 		that.desmarcaConceptosError();
-		 		$('#guardar').removeClass('alert');
-		 	}
+				that.deshabilitaCamposTransaccion();
+				that.limpiaDatosTransaccion();
+				$('#folios-transaccion').buttonlist('reset');
+				$('#folios-transaccion').buttonlist('refresh');
 
-		 })
-		 .fail( function() {
-		 	messageConsole.displayMessage( 'Ocurrió un error al guardar la transacción.', 'error' );
-		 })
-		 .always( function() {
-		 	DATA_LOADER.hide();
-		 });
+			} catch( e ) {
+				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
+			}
+		}).always( function() {	DATA_LOADER.hide(); });
 	},
 
-	marcaConceptoError: function( IDConcepto, errorMessage ) {
+	identificaModificacion: function() {
+		$('#guardar').addClass('alert');
+	},
 
-		$('tr[data-id=' + IDConcepto + ']')
-		 .find('.icon')
-		 .addClass('error')
-		 .attr('title', errorMessage);
+	existenCambiosSinGuardar: function() {
+		return $('#guardar').hasClass('alert');
+	},
+
+	setCantidadCobrada: function( IDConcepto, cantidad ) {
+
+		var cantidad = parseFloat(cantidad.replace(/,/g, '')) || 0;
+
+		COBRANZA.marcaConcepto( IDConcepto );
+		
+		this.uxtable('getCell', 8).text( cantidad.toFixed(4).numFormat() );
+	},
+
+	setPrecio: function( IDConcepto, precio ) {
+
+		var pu = parseFloat(precio.replace(/,/g, '')) || 0;
+
+		COBRANZA.marcaConcepto( IDConcepto );
+
+		this.uxtable('getCell', 9).text( pu.toFixed(4).numFormat() );
+	},
+
+	setImporteCobrado: function() {
+		this.text((parseFloat(this.prev().text()) * parseFloat(this.prev().prev().text())).toFixed(2).toString().numFormat());
+	},
+
+	marcaConceptosError: function( errores ) {
+
+		for( error in errores ) {
+
+			$('tr[data-id=' + errores[error].IDConcepto + ']')
+			.addClass('error')
+			.find('.icon')
+			.addClass('error')
+			.attr('title', errores[error].message);
+		}
 	},
 
 	desmarcaConceptosError: function() {
 		$('#tabla-conceptos')
-		.find('tr.estimado .icon')
+		.find('tr.' + this.classes.conceptoModificado)
+		.removeClass('error')
+		.find('.icon')
 		.removeClass('error')
 		.removeAttr('title');
 	},
@@ -742,63 +685,7 @@ var COBRANZA = {
 
 	marcaConcepto: function( IDConcepto ) {
 		
-		$('tr[data-id=' + IDConcepto + ']').addClass('estimado');
-	},
-
-	desmarcaConceptoEstimado: function( IDConcepto ) {
-
-		$('tr[data-id=' + IDConcepto + ']').removeClass('estimado');
-		this.desmarcaConceptoError( IDConcepto );
-	},
-
-	eliminaTransaccion: function() {
-
-		var that = this
-			IDCobranza = this.getIDCobranza();
-
-		if( ! IDCobranza ) {
-			messageConsole.displayMessage( 'No hay una transacción cargada.', 'error' );
-			return;
-		}
-
-		if ( this.requestingData ) {
-			$.notify({text: 'La transacción se esta eliminando, espere por favor.'});
-			return;
-		}
-
-		if ( ! confirm('La transacción será eliminada, desea continuar?') )
-			return;
-
-		DATA_LOADER.show();
-
-		this.requestingData = true;
-
-		$.ajax({
-			type: 'GET',
-			url: 'modulos/cobranza/EliminaTransaccion.php',
-			data: {
-				'IDCobranza': IDCobranza
-			},
-			dataType: 'json'
-		}).done( function( json ) {
-			try {
-
-				if( ! json.success ) {
-					messageConsole.displayMessage( json.errorMessage, 'error' );
-					return;
-				}
-
-				that.deshabilitaCamposEstimacion();
-				that.limpiaDatosEstimacion();
-				$('#folios-estimacion').buttonlist('reset');
-
-			} catch( e ) {
-				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
-			}
-		}).always( function() {
-			that.requestingData = false;
-			DATA_LOADER.hide();
-		});
+		$('tr[data-id=' + IDConcepto + ']').addClass(this.classes.conceptoModificado);
 	}
 };
 

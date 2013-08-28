@@ -30,7 +30,5 @@ try {
 	$data['errorMessage'] = $e->getMessage();
 }
 
-unset($conn);
-
 echo json_encode($data);
 ?>

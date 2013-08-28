@@ -55,7 +55,7 @@
 					<section id="tran">
 						<section id="tran-header">
 							<section class="module-toolbar" id="tran-toolbar">
-								<a class="toolbar-button dd-list" id="folios-estimacion">
+								<a class="toolbar-button dd-list" id="folios-transaccion">
 									<span class="button-text">Folio</span>
 									<span class="icon flechita-abajo"></span>
 								</a>
@@ -63,8 +63,6 @@
 									<label>Fecha</label>
 									<input type="text" class="date" name="txtFecha" id="txtFecha" />
 									<input type="hidden" name="txtFechaDB" id="txtFechaDB" />
-									<input type="hidden" name="IDCobranza" id="IDCobranza" value="" />
-									<input type="hidden" name="IDEstimacionObra" id="IDEstimacionObra" />
 								</form>
 								<a id="btnResumen" class="toolbar-button op"><span class="icon"></span>Resumen</a>
 							</section>
@@ -128,6 +126,8 @@
 									<col class="monto"/>
 									<col class="monto"/>
 									<col class="monto"/>
+									<col class="monto"/>
+									<col class="monto"/>
 									<col span="2" class="monto editable"/>
 									<col class="monto"/>
 								</colgroup>
@@ -138,13 +138,15 @@
 										<th rowspan="2">UM</th>
 										<th>PRESUPUESTO</th>
 										<th>ANTERIOR</th>
-										<th>AVANCE</th>
+										<th colspan="3">AVANCE</th>
 										<th colspan="3">COBRADO</th>
 									</tr>
 									<tr>
 										<th>Volumen</th>
 										<th>Acum.</th>
 										<th>Volumen</th>
+										<th>P.U.</th>
+										<th>Importe</th>
 										<th>Volumen</th>
 										<th>P.U.</th>
 										<th>Importe</th>

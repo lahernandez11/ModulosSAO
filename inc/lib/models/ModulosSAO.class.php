@@ -1,6 +1,6 @@
 <?php
-include_once 'Aplicacion.class.php';
-include_once 'Sesion.class.php';
+require_once 'Aplicacion.class.php';
+require_once 'Sesion.class.php';
 
 abstract class ModulosSAO extends Aplicacion {
 	

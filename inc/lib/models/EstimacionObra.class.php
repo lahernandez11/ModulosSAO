@@ -1,5 +1,5 @@
 <?php
-include_once 'models/TransaccionSAO.class.php';
+require_once 'models/TransaccionSAO.class.php';
 
 class EstimacionObra extends TransaccionSAO {
 
@@ -116,17 +116,6 @@ class EstimacionObra extends TransaccionSAO {
 
 		return $errores;
 	}
-
-	// public function eliminaTransaccion() {
-
-	// 	$tsql = "{call [EstimacionObra].[uspEliminaTransaccion]( ? )}";
-
-	//     $params = array(
-	//         array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	//     );
-
-	//     $this->_SAOConn->executeSP($tsql, $params);
-	// }
 
 	public function getReferencia() {
 		return $this->_referencia;

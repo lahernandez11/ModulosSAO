@@ -5,7 +5,6 @@ require_once 'models/Obra.class.php';
 require_once 'models/Util.class.php';
 require_once 'db/SAODBConn.class.php';
 require_once 'models/EstimacionObra.class.php';
-require_once 'models/EstimacionSubcontrato.class.php';
 
 $data['success'] = true;
 $data['message'] = null;

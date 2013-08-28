@@ -125,8 +125,7 @@ var ESTIMACION = {
 
 							that.setCantidadEstimada.call( this, IDConcepto, value );
 							that.setMontoTotal.call(activeCell.next().next());
-						}
-						
+						}						
 						
 						pubsub.publish('modified_tran');
 					}
@@ -135,7 +134,6 @@ var ESTIMACION = {
 					'onFinishEdit': function( activeCell, value ) {
 
 						var IDConcepto = parseInt( activeCell.parent().attr('data-id') );
-
 
 						if ( parseInt(activeCell.parent().attr('data-esactividad')) == 1 ) {
 							
@@ -299,6 +297,15 @@ var ESTIMACION = {
 		$('#txtReferencia').val( data.Referencia );
 	},
 
+	fillTotales: function( totales ) {
+		// Establece los totales de transaccion
+		if( totales.length ) {
+			this.setSubtotal(totales[0].Subtotal);
+			this.setIVA(totales[0].IVA);
+			this.setTotal(totales[0].Total);
+		}
+	},
+	
 	getTotalesTransaccion: function() {
 
 		var that = this;
@@ -329,14 +336,6 @@ var ESTIMACION = {
 		});
 	},
 
-	fillTotales: function( totales ) {
-		// Establece los totales de transaccion
-		if( totales.length ) {
-			this.setSubtotal(totales[0].Subtotal);
-			this.setIVA(totales[0].IVA);
-			this.setTotal(totales[0].Total);
-		}
-	},
 
 	setSubtotal: function( $monto ) {
 		$('#txtSubtotal').text($monto);

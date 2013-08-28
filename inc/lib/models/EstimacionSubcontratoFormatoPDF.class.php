@@ -1,9 +1,6 @@
 <?php
-// set_include_path(get_include_path().";".$_SERVER["DOCUMENT_ROOT"]."\ModulosSAO\inc\lib");
 require_once 'models/FormatoPDF.class.php';
 require_once 'models/Util.class.php';
-// require_once 'db/SAO1814DBConn.class.php';
-// require_once 'models/EstimacionSubcontrato.class.php';
 
 class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 
