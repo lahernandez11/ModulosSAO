@@ -118,14 +118,14 @@ var AGRUPACION = {
 		 	switch( this.id ) {
 		 		
 		 		case 'rd-show-sin-naturaleza':
-		 			$(AG.dataContainer).find('tr td:nth-child(2):not(:empty)').parent().addClass('hidden').hide();
+		 			$(AG.dataContainer).find('tr td:nth-child(3):not(:empty)').parent().addClass('hidden').hide();
 		 		break;
 		 		case 'rd-show-sin-familia':
-		 			$(AG.dataContainer).find('tr td:nth-child(4):not(:empty)').parent().addClass('hidden').hide();
+		 			$(AG.dataContainer).find('tr td:nth-child(5):not(:empty)').parent().addClass('hidden').hide();
 
 		 		break;
 		 		case 'rd-show-sin-insumo-generico':
-		 			$(AG.dataContainer).find('tr td:nth-child(6):not(:empty)').parent().addClass('hidden').hide();
+		 			$(AG.dataContainer).find('tr td:nth-child(7):not(:empty)').parent().addClass('hidden').hide();
 		 		break;
 		 	}
 

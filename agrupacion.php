@@ -62,9 +62,7 @@
 								<input type="radio" id="rd-collapse-all" name="rdExpansion" checked="true"  />
 								<label for="rd-collapse-all">Contraer todo</label>
 							</li>
-							<li class="item-title">
-								Mostrar:
-							</li>
+							<li class="item-title">Mostrar:</li>
 							<li id="radios-visibilidad">
 								<input type="radio" id="rd-show-all" name="rdVisibilidad" disabled="disabled" />
 								<label for="rd-show-all">Todos</label>

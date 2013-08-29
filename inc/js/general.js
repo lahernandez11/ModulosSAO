@@ -563,7 +563,7 @@ var DROP_LIST = {
 		
 		this.trigger = $(event.target);
 
-		if( !this.initialized )
+		if( ! this.initialized )
 			this.init();
 
 		$('ul.dropdown-list').fadeOut();

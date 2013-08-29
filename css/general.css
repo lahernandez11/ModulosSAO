@@ -18,6 +18,7 @@ a.dropdown-list-trigger
 	cursor: pointer;
 	height: 20px;
     width: 20px;
+    display: inline-block;
 }
 body
 {
@@ -412,8 +413,9 @@ table
 }
 table a.dropdown-list-trigger
 {
-	display: none;
+	/*display: none;*/
 	background-image: url("../img/dortmund/16x16/consulting.png");
+	visibility: hidden;
 }
 table caption
 {
@@ -584,16 +586,17 @@ table .icon-cell .icon.fixed
 }
 table .icon-cell .icon.hidden
 {
-	display: none;
+	visibility: hidden;
 }
 table tr:hover a.dropdown-list-trigger
 {
-	display: block;
+	visibility: visible;
 }
 table tr:hover td.icon-cell .icon.hidden,
 table tr td.icon-cell .icon.hidden.active
 {
 	display: block;
+	/*visibility: visible;*/
 }
 table .icon-cell .icon.error
 {
@@ -760,15 +763,15 @@ ul.dropdown-list
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	font-size: 0.9em;
 	display: none;
-	left: 700px;
-	min-width: 250px;
+	/*left: 700px;*/
+	/*min-width: 250px;*/
 	max-width: 350px;
 	max-height: 250px;
 	overflow-x: hidden;
 	overflow-y: auto;
 	position: absolute;
-	top : 500px;
-	z-index: 3000;
+	/*top : 500px;*/
+	z-index: 1000;
 }
 ul.dropdown-list li
 {
