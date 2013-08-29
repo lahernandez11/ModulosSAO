@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"bl",
+				"inline-block"
+			],
+			[
 				"habi",
 				"habilitaObservaciones"
 			],
@@ -510,79 +514,11 @@
 			[
 				"cobra",
 				"confirmacion_cobranza"
-			],
-			[
-				"transacci",
-				"transacción"
 			]
 		]
 	},
 	"buffers":
 	[
-		{
-			"file": "confirmacion_cobranza.php",
-			"settings":
-			{
-				"buffer_size": 10276,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/js/confirmacion_cobranza.js",
-			"settings":
-			{
-				"buffer_size": 17322,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/models/Cobranza.class.php",
-			"settings":
-			{
-				"buffer_size": 6761,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/controllers/CobranzaController.php",
-			"settings":
-			{
-				"buffer_size": 7927,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/models/EstimacionObra.class.php",
-			"settings":
-			{
-				"buffer_size": 7445,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "modulos/cobranza/RegistraCobranza.php",
-			"settings":
-			{
-				"buffer_size": 743,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/models/TransaccionSAO.class.php",
-			"settings":
-			{
-				"buffer_size": 5154,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/controllers/EstimacionObraController.php",
-			"settings":
-			{
-				"buffer_size": 7024,
-				"line_ending": "Windows"
-			}
-		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -632,26 +568,32 @@
 	},
 	"file_history":
 	[
+		"/D/www/ModulosSAO/agrupacion.php",
+		"/D/www/ModulosSAO/css/general.css",
+		"/D/www/ModulosSAO/inc/js/agrupacion.js",
+		"/D/www/ModulosSAO/inc/js/general.js",
+		"/D/www/ModulosSAO/confirmacion_cobranza.php",
+		"/D/www/ModulosSAO/inc/js/confirmacion_cobranza.js",
+		"/D/www/ModulosSAO/inc/lib/models/Cobranza.class.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/CobranzaController.php",
+		"/D/www/ModulosSAO/inc/lib/models/EstimacionObra.class.php",
+		"/D/www/ModulosSAO/modulos/cobranza/RegistraCobranza.php",
+		"/D/www/ModulosSAO/inc/lib/models/TransaccionSAO.class.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/EstimacionObraController.php",
 		"/D/www/ModulosSAO/inc/js/estimacion_obra.js",
 		"/D/www/ModulosSAO/inc/js/avance_obra.js",
 		"/D/www/ModulosSAO/modulos/cobranza/GetConceptosCobranza.php",
 		"/D/www/ModulosSAO/inc/lib/models/Cobranza.php",
-		"/D/www/ModulosSAO/inc/lib/models/EstimacionObra.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/ModulosSAO.class.php",
 		"/D/www/ModulosSAO/estimacion_obra.php",
-		"/D/www/ModulosSAO/inc/lib/controllers/EstimacionObraController.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/AvanceObraController.php",
 		"/D/www/ModulosSAO/inc/lib/models/AvanceObra.class.php",
 		"/D/www/ModulosSAO/inc/js/estimaciones.js",
-		"/D/www/ModulosSAO/inc/lib/models/TransaccionSAO.class.php",
-		"/D/www/ModulosSAO/css/general.css",
-		"/D/www/ModulosSAO/inc/js/general.js",
 		"/D/www/ModulosSAO/modulos/proyectos/GetDatosGeneralesProyecto.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontrato.class.php",
 		"/D/www/ModulosSAO/estimaciones.php",
 		"/D/www/ModulosSAO/avance_obra.php",
-		"/D/www/ModulosSAO/confirmacion_cobranza.php",
 		"/D/www/ModulosSAO/precios_venta.php",
 		"/D/www/ModulosSAO/avance_subcontratos.php",
 		"/D/www/icomoon79764/style.css",
@@ -660,7 +602,6 @@
 		"/D/www/icomoon14898/style.css",
 		"/D/www/ModulosSAO/inc/js/jquery.buttonlist.js",
 		"/D/www/ModulosSAO/index.php",
-		"/D/www/ModulosSAO/agrupacion.php",
 		"/D/www/ModulosSAO/proyectos.php",
 		"/D/www/ModulosSAO/subcontratos.php",
 		"/D/www/ModulosSAO/inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css",
@@ -754,12 +695,7 @@
 		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/setPath.php",
 		"/C/AppServ/www/ModulosSAO/inc/lib/db/test.php",
 		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/retest.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/db/ModulosSAOConn.class.php",
-		"/C/AppServ/www/ModulosSAO/index.php",
-		"/C/AppServ/www/ModulosSAO/agrupacion.php",
-		"/C/AppServ/www/ModulosSAO/avance_obra.php",
-		"/C/AppServ/www/ModulosSAO/confirmacion_cobranza.php",
-		"/C/AppServ/www/ModulosSAO/estimaciones.php"
+		"/C/AppServ/www/ModulosSAO/inc/lib/db/ModulosSAOConn.class.php"
 	],
 	"find":
 	{
@@ -777,6 +713,10 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"z-index",
+			"a.dropdown-list-trigger",
+			"drop-down-list",
+			"drop",
 			"setCantidadCobrada",
 			"setCantidadEstimada",
 			"json",
@@ -900,11 +840,7 @@
 			"figure",
 			"company-logo",
 			"module-toolbar",
-			"header",
-			"app-nav",
-			"header",
-			"40",
-			"Cell"
+			"header"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -980,226 +916,8 @@
 	"groups":
 	[
 		{
-			"selected": 2,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "confirmacion_cobranza.php",
-					"settings":
-					{
-						"buffer_size": 10276,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4725,
-								4725
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1650.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "inc/js/confirmacion_cobranza.js",
-					"settings":
-					{
-						"buffer_size": 17322,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								15893,
-								15893
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 8106.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "inc/lib/models/Cobranza.class.php",
-					"settings":
-					{
-						"buffer_size": 6761,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2439,
-								2439
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1100.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "inc/lib/controllers/CobranzaController.php",
-					"settings":
-					{
-						"buffer_size": 7927,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1921,
-								1921
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "inc/lib/models/EstimacionObra.class.php",
-					"settings":
-					{
-						"buffer_size": 7445,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6268,
-								6006
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 3740.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "modulos/cobranza/RegistraCobranza.php",
-					"settings":
-					{
-						"buffer_size": 743,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								714,
-								714
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "inc/lib/models/TransaccionSAO.class.php",
-					"settings":
-					{
-						"buffer_size": 5154,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1085,
-								1085
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "inc/lib/controllers/EstimacionObraController.php",
-					"settings":
-					{
-						"buffer_size": 7024,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								651,
-								1484
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
