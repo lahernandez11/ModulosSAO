@@ -452,7 +452,7 @@ table col.icon
 }
 table col.monto
 {
-	width: 100px;
+	width: 110px;
 }
 table col.pct
 {
@@ -523,20 +523,13 @@ table tbody td.editable-cell.numerico
 {
 	font-weight: bold;
 }
-table tbody td.numerico
-{
-	text-align: right;
-	padding-left: 0;
-	white-space: normal;
-}
-table tbody td.numerico input
-{
-	text-align: right;
-	color: red;
-}
-table tbody td.centrado
+table tbody .porcentaje
 {
 	text-align: center;
+}
+table tbody .porcentaje:after
+{
+	content: "%";
 }
 table tbody td input.text
 {
@@ -547,6 +540,34 @@ table tbody td input.text
 	background-color: transparent;
 	font-family: inherit;
 	font-size: inherit;
+}
+table tbody .numerico
+{
+	text-align: right;
+	padding-left: 0;
+	white-space: normal;
+}
+table tbody .numerico input
+{
+	text-align: right;
+	color: red;
+}
+table tr.separador,
+table tr.separador:hover
+{
+	background-color: #F5F5F5;
+	/*border-style: solid none none none;
+	border-width: 2px;
+	border-color: #434343;*/
+}
+table tr.separador th
+{
+	text-align: center;
+	color: #434343;
+}
+table .centrado
+{
+	text-align: center;
 }
 table .icon-cell
 {
@@ -630,8 +651,7 @@ table.tabla-resumen caption
 table.tabla-resumen tr.total
 {
 	background-color: whitesmoke;
-	border-top: 4px double black;
-	font-weight: bold;
+	border-bottom: 4px double black;
 }
 table#tabla-subcontratos tbody tr:hover
 {
@@ -1221,7 +1241,6 @@ ul.dropdown-list li a.with-icon
 	-webkit-transition: 0.2s;
 	transition: 0.2s;
 }
-
 .toolbar-button .label
 {
 	margin-left: 5px;

@@ -225,8 +225,89 @@ var COBRANZA = {
 
 		}, 'tr');
 
+		$('.tabla-resumen .editable').on('dblclick', function(event) {
+		    
+		    var $that = $(this),
+		    	tipoTotal = this.id;
+
+		    if ( $that.children('input').length )
+		    	return;
+
+		    var	oldValue  = $(this).text(),
+		    	inputText = $('<input type="text" class="text" value="' + oldValue + '" />');
+		    
+		    $that.empty();
+		    
+		    inputText
+		    .appendTo($that)
+		    .on('blur', function() {
+				updateValue();
+			})
+			.on('keydown', function(event) {
+
+				switch( event.keyCode ) {
+			    	case 13:
+			        	updateValue();
+		           	break;
+
+		           	case 27:
+		            	restorePrevValue();
+		            	removeInput();
+		           	break;
+			   }
+
+			   event.stopPropagation();
+			}).select();
+
+			function removeInput() {
+				inputText.remove();
+			}
+
+			function restorePrevValue() {
+				$that.text(oldValue);
+			}
+
+			function setValue() {
+				$that.text(inputText.val().numFormat());
+			}
+
+			function updateValue() {
+
+				that.actualizaTotal( tipoTotal, inputText.val(), setValue, restorePrevValue, removeInput );
+			}
+		});
+
 		this.deshabilitaCamposTransaccion();
 		this.limpiaDatosTransaccion();
+	},
+
+	actualizaTotal: function(tipoTotal, importe, successCallback, errorCallback, alwaysCallback) {
+		var that = this;
+
+		DATA_LOADER.show();
+
+    	$.ajax({
+    		type: 'POST',
+    		url: that.urls.tranController,
+    		data: {
+    			IDTransaccion: that.getIDTransaccion(),
+    			tipoTotal: tipoTotal,
+    			importe: importe,
+    			action: 'actualizaTotal'
+    		},
+    		dataType: 'json'
+    	})
+    	.done( function( json ) {
+
+    		if ( ! json.success ) {
+    			messageConsole.displayMessage(json.message, 'error');
+    			errorCallback();
+    		} else {
+    			successCallback();
+    			that.cargaTotales();
+    		}
+    	})
+    	.always( function() { alwaysCallback(); DATA_LOADER.hide(); });
 	},
 
 	getIDProyecto: function() {
@@ -509,6 +590,28 @@ var COBRANZA = {
 		$('#txtSubtotal').text(totales.subtotal);
 		$('#txtIVA').text(totales.iva);
 		$('#txtTotal').text(totales.total);
+
+		$('#txtImporteProgramado').text(totales.importeProgramado);
+		$('#txtImporteEstimadoAcumuladoAnterior').text(totales.importeEstimadoAcumuladoAnterior)
+		$('#txtImporteObraEjecutadaEstimada').text(totales.importeObraEjecutadaEstimada);
+		$('#txtImporteObraAcumuladaNoEjecutada').text(totales.importeObraAcumuladaNoEjecutada);
+		$('#txtImporteDevolucion').text(totales.importeDevolucion);
+		$('#txtImporteRetencionObraNoEjecutada').text(totales.importeRetencionObraNoEjecutada);
+		$('#txtSubtotalFacturar').text(totales.subtotalFacturar);
+		$('#txtIVAFacturar').text(totales.ivaFacturar);
+		$('#txtTotalFacturar').text(totales.totalFacturar);
+		$('#txtImporteAmortizacionAnticipo').text(totales.importeAmortizacionAnticipo);
+		$('#txtImporteIVAAnticipo').text(totales.importeIVAAnticipo);
+
+		$('#txtPctObraNoEjecutada').text(totales.pctObraNoEjecutada);
+		$('#txtPctInspeccionVigilancia').text(totales.pctInspeccion);
+		$('#txtPctIVAAnticipo').text(totales.pctIVAAnticipo);
+
+		$('#txtImporteInspeccionVigilancia').text(totales.importeInspeccionVigilancia);
+		$('#txtImporteCMIC').text(totales.importeCMIC);
+		$('#txtImporteEstimacion').text(totales.subtotal);
+		$('#txtTotalDeducciones').text(totales.totalDeducciones);
+		$('#txtImporteLiquidoContrato').text(totales.alcanceLiquidoContratista);
 	},
 
 	guardaTransaccion: function() {
@@ -622,6 +725,42 @@ var COBRANZA = {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
 			}
 		}).always( function() {	DATA_LOADER.hide(); });
+	},
+
+	cargaTotales: function() {
+
+		var that = this;
+
+		DATA_LOADER.show();
+
+		$.ajax({
+			url: that.urls.tranController,
+			data: {
+				IDTransaccion: that.getIDTransaccion(),
+				action: 'getTotalesTransaccion'
+			},
+			dataType: 'json'
+		}).done( function( data ) {
+			try {
+
+				if( ! data.success ) {
+					messageConsole.displayMessage(data.message, 'error');
+					return;
+				}
+
+				if( data.noRows ) {
+					$.notify({text: data.message});
+					return;
+				}
+				
+				that.fillTotales(data.totales);
+
+			} catch( e ) {
+				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
+			}
+		})
+		.fail( function() {	$.notify({text: 'Ocurrió un error al cargar la transaccion.'});	})
+		.always( function() { DATA_LOADER.hide(); });
 	},
 
 	identificaModificacion: function() {

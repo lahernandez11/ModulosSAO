@@ -40,5 +40,9 @@ abstract class Util {
 
 		return str_replace(',', '', $importe);
 	}
+
+	public static function aPorcentaje( $numero ) {
+		return round(($numero * 100), 2);
+	}
 }
 ?>

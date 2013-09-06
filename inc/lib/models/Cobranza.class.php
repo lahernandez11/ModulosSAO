@@ -188,6 +188,139 @@ class Cobranza extends TransaccionSAO {
 		return $this->_IDEstimacionObra;
 	}
 
+	public function setImporteProgramado( $importe ) {
+
+		if ( ! $this->esImporte( $importe ) ) {
+			throw new Exception("Importe Incorrecto");
+		} else {
+			$tsql = "{call [Cobranza].[uspActualizaTotales]( ?, ? )}";
+
+		    $params = array(
+		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) )
+		    );
+
+		    $this->_SAOConn->executeSP($tsql, $params);
+		}
+	}
+
+	public function setImporteDevolucion( $importe ) {
+
+		if ( ! $this->esImporte( $importe ) ) {
+			throw new Exception("Importe Incorrecto");
+		} else {
+			$tsql = "{call [Cobranza].[uspActualizaTotales]( ?, ?, ? )}";
+
+		    $params = array(
+		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        null,
+		        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) )
+		    );
+
+		    $this->_SAOConn->executeSP($tsql, $params);
+		}
+	}
+
+	public function setImporteRetencionObraNoEjecutada( $importe ) {
+
+		if ( ! $this->esImporte( $importe ) ) {
+			throw new Exception("Importe Incorrecto");
+		} else {
+			$tsql = "{call [Cobranza].[uspActualizaTotales]( ?, ?, ?, ? )}";
+
+		    $params = array(
+		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        null,
+		        null,
+		        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) )
+		    );
+
+		    $this->_SAOConn->executeSP($tsql, $params);
+		}
+	}
+
+	public function setImporteAmortizacionAnticipo( $importe ) {
+
+		if ( ! $this->esImporte( $importe ) ) {
+			throw new Exception("Importe Incorrecto");
+		} else {
+			$tsql = "{call [Cobranza].[uspActualizaTotales]( ?, ?, ?, ?, ? )}";
+
+		    $params = array(
+		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        null,
+		        null,
+		        null,
+		        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) )
+		    );
+
+		    $this->_SAOConn->executeSP($tsql, $params);
+		}
+	}
+
+	public function setImporteIVAAnticipo( $importe ) {
+
+		if ( ! $this->esImporte( $importe ) ) {
+			throw new Exception("Importe Incorrecto");
+		} else {
+			$tsql = "{call [Cobranza].[uspActualizaTotales]( ?, ?, ?, ?, ?, ? )}";
+
+		    $params = array(
+		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        null,
+		        null,
+		        null,
+		        null,
+		        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) )
+		    );
+
+		    $this->_SAOConn->executeSP($tsql, $params);
+		}
+	}
+
+	public function setImporteInspeccionVigilancia( $importe ) {
+
+		if ( ! $this->esImporte( $importe ) ) {
+			throw new Exception("Importe Incorrecto");
+		} else {
+			$tsql = "{call [Cobranza].[uspActualizaTotales]( ?, ?, ?, ?, ?, ?, ? )}";
+
+		    $params = array(
+		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        null,
+		        null,
+		        null,
+		        null,
+		        null,
+		        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) )
+		    );
+
+		    $this->_SAOConn->executeSP($tsql, $params);
+		}
+	}
+
+	public function setImporteCMIC( $importe ) {
+
+		if ( ! $this->esImporte( $importe ) ) {
+			throw new Exception("Importe Incorrecto");
+		} else {
+			$tsql = "{call [Cobranza].[uspActualizaTotales]( ?, ?, ?, ?, ?, ?, ?, ? )}";
+
+		    $params = array(
+		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        null,
+		        null,
+		        null,
+		        null,
+		        null,
+		        null,
+		        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) )
+		    );
+
+		    $this->_SAOConn->executeSP($tsql, $params);
+		}
+	}
+
 	public static function getTransacciones( $IDObra, SAODBConn $conn) {
 
 		if ( ! is_int($IDObra) )

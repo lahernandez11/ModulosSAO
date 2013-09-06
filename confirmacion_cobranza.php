@@ -106,7 +106,7 @@
 
 						<div style="clear:both"></div>
 						<section id="tran-content">
-							<div id="column-switchers" class="checkboxgroup">
+						<!-- 	<div id="column-switchers" class="checkboxgroup">
 								<input type="checkbox" id="contratado" name="col-viz" checked />
 								<label for="contratado">Contratado</label>
 								<input type="checkbox" id="avance-volumen" name="col-viz" checked />
@@ -117,7 +117,7 @@
 								<label for="saldo">Saldo</label>
 								<input type="checkbox" id="destino" name="col-viz" checked />
 								<label for="destino">Destino</label>
-							</div>
+							</div> -->
 							<table id="tabla-conceptos">
 								<colgroup>
 									<col class="icon"/>
@@ -187,154 +187,115 @@
 			</tbody>
 		</table>
 	</div>
-	<div id="dialog-resumen" class="dialog" title="Resumen de Estimación">
-		<table id="resumen-total" class="tabla-resumen">
+	<div id="dialog-resumen" class="dialog" title="Resumen">
+		<table class="tabla-resumen">
+			<caption>Cálculo de la Estimación</caption>
+			<colgroup>
+				<col/>
+				<col class="pct"/>
+				<col class="monto"/>
+			</colgroup>
+			<tbody>
+				<tr>
+					<td>Importe Programado</td>
+					<td></td>
+					<td class="numerico editable" id="txtImporteProgramado"></td>
+				</tr>
+				<tr>
+					<td>Estimado Acumulado Anterior</td>
+					<td></td>
+					<td class="numerico" id="txtImporteEstimadoAcumuladoAnterior"></td>
+				</tr>
+				<tr>
+					<td>Esta Estimacion</td>
+					<td></td>
+					<td class="numerico" id="txtImporteEstimacion"></td>
+				</tr>
+				<tr>
+					<td>Obra Ejecutada Estimada</td>
+					<td></td>
+					<td class="numerico" id="txtImporteObraEjecutadaEstimada"></td>
+				</tr>
+				<tr>
+					<td>Obra Acumulada no Ejecutada</td>
+					<td></td>
+					<td class="numerico" id="txtImporteObraAcumuladaNoEjecutada"></td>
+				</tr>
+				<tr>
+					<td>Retención por Obra no Ejecutada</td>
+					<td id="txtPctObraNoEjecutada" class="porcentaje"></td>
+					<td class="numerico editable" id="txtImporteRetencionObraNoEjecutada"></td>
+				</tr>
+				<tr>
+					<td>Devolución</td>
+					<td></td>
+					<td class="numerico editable" id="txtImporteDevolucion"></td>
+				</tr>
+				<tr>
+					<td>Subtotal a Facturar</td>
+					<td></td>
+					<td class="numerico" id="txtSubtotalFacturar"></td>
+				</tr>
+				<tr>
+					<td>I.V.A.</td>
+					<td></td>
+					<td class="numerico" id="txtIVAFacturar"></td>
+				</tr>
+				<tr>
+					<td>Total a Facturar</td>
+					<td></td>
+					<th class="numerico" id="txtTotalFacturar"></th>
+				</tr>
+			</tbody>
+		</table>
+		<table class="tabla-resumen">
+			<caption>DEDUCCIONES</caption>
+			<colgroup>
+				<col/>
+				<col class="pct"/>
+				<col class="monto"/>
+			</colgroup>
+			<tbody>
+				<tr>
+					<td>Amortización de Anticipo</td>
+					<td></td>
+					<td class="numerico editable" id="txtImporteAmortizacionAnticipo"></td>
+				</tr>
+				<tr>
+					<td>I.V.A. sobre Anticipo</td>
+					<td id="txtPctIVAAnticipo" class="porcentaje"></td>
+					<td class="numerico editable" id="txtImporteIVAAnticipo"></td>
+				</tr>
+				<tr>
+					<td>Inspección y Vigilancia</td>
+					<td id="txtPctInspeccionVigilancia" class="porcentaje"></td>
+					<td class="numerico editable" id="txtImporteInspeccionVigilancia"></td>
+				</tr>
+				<tr>
+					<td>Camara Mexicana de Ingenieros Civiles</td>
+					<td></td>
+					<td class="numerico editable" id="txtImporteCMIC"></td>
+				</tr>
+				<tr>
+					<th>Total Deducciones</th>
+					<td></td>
+					<th class="numerico" id="txtTotalDeducciones"></th>
+				</tr>
+			</tbody>
+		</table>
+		<table class="tabla-resumen">
+			<caption>TOTAL</caption>
 			<colgroup>
 				<col/>
 				<col class="monto"/>
 			</colgroup>
 			<tbody>
-				<tr>
-					<th>Suma de Importes</th>
-					<td class="numerico" id="rsSumaImportes"></td>
-				</tr>
-				<tr>
-					<th>Amortización de Anticipo</th>
-					<td class="numerico" id="rsAnticipo"></td>
-				</tr>
-				<tr>
-					<th>Fondo de Garantia</th>
-					<td class="numerico" id="rsFondoG"></td>
-				</tr>
-				<tr>
-					<th>Retenciones</th>
-					<td class="numerico" id="rsRetenciones"></td>
-				</tr>
-				<tr>
-					<th>Penalizaciones</th>
-					<td class="numerico" id="rsPenalizaciones"></td>
-				</tr>
-				<tr>
-					<th>Subtotal</th>
-					<td class="numerico" id="rsSubtotal"></td>
-				</tr>
-				<tr>
-					<th>I.V.A.</th>
-					<td class="numerico" id="rsIVA"></td>
-				</tr>
-				<tr>
-					<th>Retención de I.V.A.</th>
-					<td class="numerico" id="rsRetencionIVA"></td>
-				</tr>
 				<tr class="total">
-					<th>Total</th>
-					<td class="numerico" id="rsTotal"></td>
+					<th>Alcance Liquido al Contratista</th>
+					<th class="numerico" id="txtImporteLiquidoContrato"></th>
 				</tr>
 			</tbody>
 		</table>
-	</div>
-	<div id="dialog-retenciones" class="dialog" title="Retenciones">
-		<div class="table-toolbar">
-			<h4 class="table-title">Retenciones</h4>
-			<ul class="options">
-				<li>
-					<a id="nueva-retencion" class="add-new" title="Agregar retencion"></a>
-				</li>
-			</ul>
-		</div>
-		<table id="retenciones-registradas" class="item-list">
-			<colgroup>
-				<col class="icon"/>
-				<col class="concepto"/>
-				<col class="monto"/>
-				<col/>
-			</colgroup>
-			<thead>
-				<tr>
-					<th></th>
-					<th>Tipo</th>
-					<th>Importe</th>
-					<th>Descripción</th>
-				</tr>
-			</thead>
-			<tbody></tbody>
-		</table>
-	</div>
-	<div id="dialog-nuevaRetencion" class="dialog" title="Nueva Retención">
-		<div class="validation-tips"></div>
-		<form>
-			<div>
-				<label for="lstTipoRetencion">Tipo:</label>
-				<select class="select" id="lstTipoRetencion">
-					<option value="1">Prueba</option>
-				</select>
-			</div>
-			<div>
-				<label for="txtImporteRetencion">Importe:</label>
-				<input type="text" id="txtImporteRetencion" name="txtImporteRetencion" class="amount" value="0" />
-			</div>
-			<div>
-				<label for="txtDescripcionRetencion">Descripción:</label>
-				<textarea id="txtDescripcionRetencion" name="txtDescripcionRetencion"></textarea>
-			</div>
-		</form>
-	</div>
-	<div id="dialog-penalizaciones" class="dialog" title="Penalizaciones">
-		<div class="table-toolbar">
-			<h4 class="table-title">Penalizaciones</h4>
-			<ul class="options">
-				<li>
-					<a id="nueva-penalizacion" class="add-new" title="Agregar penalización"></a>
-				</li>
-			</ul>
-		</div>
-		<table id="penalizaciones-registradas" class="item-list">
-			<colgroup>
-				<col class="icon"/>
-				<col class="monto"/>
-				<col/>
-			</colgroup>
-			<thead>
-				<tr>
-					<th></th>
-					<th>Importe</th>
-					<th>Descripción</th>
-				</tr>
-			</thead>
-			<tbody></tbody>
-		</table>
-		
-		<div class="table-toolbar">
-			<h4 class="table-title">Penalizaciones por Liberar</h4>
-		</div>
-		<table id="penalizaciones-pendientes" class="item-list">
-			<colgroup>
-				<col class="icon"/>
-				<col class="monto"/>
-				<col/>
-			</colgroup>
-			<thead>
-				<tr>
-					<th></th>
-					<th>Importe</th>
-					<th>Descripción</th>
-				</tr>
-			</thead>
-			<tbody></tbody>
-		</table>
-	</div>
-	<div id="dialog-nuevaPenalizacion" class="dialog" title="Nueva Penalización">
-		<div class="validation-tips"></div>
-		<form>
-			<div>
-				<label for="txtImportePenalizacion">Importe:</label>
-				<input type="text" id="txtImportePenalizacion" name="txtImportePenalizacion" class="amount" value="0" />
-			</div>
-			<div>
-				<label for="txtDescripcionPenalizacion">Descripción:</label>
-				<textarea id="txtDescripcionPenalizacion" name="txtDescripcionPenalizacion"></textarea>
-			</div>
-		</form>
 	</div>
 	<div id="message-console"><span id="console-message"></span><span id="console-toggler" class="open"></span></div>
 	<div id="cache">
