@@ -303,7 +303,8 @@ var ESTIMACION = {
 		// Botones para ocultar/mostrar las columnas de la tabla
 		$('#column-switchers')
 		 .buttonset()
-		 .buttonset({disabled: true}).on('click', 'input', function( event ) {
+		 .buttonset({disabled: true})
+		 .on('click', 'input', function( event ) {
 
 		 	$('#tabla-conceptos colgroup .' + this.id).toggleClass('hidden');
 		 });
