@@ -18,10 +18,12 @@ if( !$conn ) {
 }
 
 $tsql = "SELECT
-		   [idAgrupador]
-		 , [Codigo] + ' ' + [Agrupador] AS [Agrupador]
-		 FROM [Agrupadores].[vwAgrupadoresNaturaleza]
-		 ORDER BY [Agrupador]";
+			   [IDAgrupador]
+			 , [Codigo] + ' ' + [Agrupador] AS [Agrupador]
+		 FROM
+		 	[Agrupadores].[vwAgrupadoresNaturaleza]
+		 ORDER BY
+		 	[Agrupador]";
 
 $stmt = sqlsrv_query($conn, $tsql);
 
@@ -40,9 +42,12 @@ $data['options'] = array();
 $counter = 0;
 while( $dataRow = sqlsrv_fetch_object($stmt) ) {
 	
-	$data['options'][] = array( 'id' => $dataRow->idAgrupador
-							   , 'value' => $dataRow->Agrupador
-							   );
+	$data['options'][] =
+		array(
+			  'id'    => $dataRow->IDAgrupador
+			, 'value' => $dataRow->Agrupador
+		);
+		
 	++$counter;
 }
 

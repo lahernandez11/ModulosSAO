@@ -23,7 +23,7 @@ $params = array( array($_GET['idProyecto'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYP
 
 $stmt = sqlsrv_query($conn, $tsql, $params);
 
-if( !$stmt ) {
+if( ! $stmt ) {
 	$data['success'] = 0;
 	$data['errorMessage'] = getErrorMessage();
 
@@ -38,13 +38,14 @@ $counter = 0;
 while( $dataRow = sqlsrv_fetch_object($stmt) ) {
 
 	$data['Cuentas'][] = 
-		array( 'idCuenta' => $dataRow->idCuenta
-			 , 'Codigo' => $dataRow->Codigo
-			 , 'Nombre' => $dataRow->Nombre
-			 , 'Afectable' => $dataRow->Afectable
-			 , 'idAgrupadorNaturaleza' => $dataRow->idAgrupadorNaturaleza
-			 , 'AgrupadorNaturaleza' => $dataRow->AgrupadorNaturaleza
-			 );
+		array(
+			  'idCuenta'  => $dataRow->IDCuenta
+			, 'Codigo'    => $dataRow->Codigo
+			, 'Nombre'    => $dataRow->Nombre
+			, 'Afectable' => $dataRow->Afectable
+			, 'idAgrupadorNaturaleza' => $dataRow->IDAgrupadorNaturaleza
+			, 'AgrupadorNaturaleza' => $dataRow->AgrupadorNaturaleza
+		);
 
 	++$counter;
 }

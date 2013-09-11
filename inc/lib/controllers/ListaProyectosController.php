@@ -31,10 +31,8 @@ try {
 			$data['options'] = $proyectos;
 	}
 
-	unset($MSAOConn);
 } catch( Exception $e ) {
 
-	unset($MSAOConn);
 	$data['success'] = false;
 	$data['message'] = $e->getMessage();
 }

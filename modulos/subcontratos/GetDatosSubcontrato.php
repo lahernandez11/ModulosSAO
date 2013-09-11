@@ -36,29 +36,30 @@ else
 	$data['success'] = 1;
 
 while( $dataRow = sqlsrv_fetch_object($stmt) ) {
-	$data['Subcontrato'] = $dataRow->Subcontrato;
-	$data['Descripcion'] = $dataRow->Descripcion;
-	$data['TipoContrato'] = $dataRow->TipoContrato;
+
+	$data['Subcontrato'] 	    = $dataRow->Subcontrato;
+	$data['Descripcion'] 	    = $dataRow->Descripcion;
+	$data['TipoContrato'] 	    = $dataRow->TipoContrato;
 	$data['EmpresaContratista'] = $dataRow->EmpresaContratista;
 	
-	$data['MontoSubcontrato'] = $dataRow->MontoSubcontrato;
-	$data['MontoAnticipo'] = $dataRow->MontoAnticipo;
-	$data['PctRetencionFG'] = $dataRow->PctRetencionFG;
+	$data['MontoSubcontrato']   = $dataRow->MontoSubcontrato;
+	$data['MontoAnticipo'] 	    = $dataRow->MontoAnticipo;
+	$data['PctRetencionFG'] 	= $dataRow->PctRetencionFG;
 	
-	$data['idClasificador'] = $dataRow->idClasificador;
-	$data['Clasificador'] = $dataRow->Clasificador;
+	$data['idClasificador'] 	= $dataRow->IDClasificador;
+	$data['Clasificador'] 		= $dataRow->Clasificador;
 	
-	$data['FechaInicioCliente'] = $dataRow->FechaInicioCliente;
-	$data['FechaTerminoCliente'] = $dataRow->FechaTerminoCliente;
-	$data['FechaInicioProyecto'] = $dataRow->FechaInicioProyecto;
-	$data['FechaTerminoProyecto'] = $dataRow->FechaTerminoProyecto;
-	$data['FechaInicioContratista'] = $dataRow->FechaInicioContratista;
+	$data['FechaInicioCliente']      = $dataRow->FechaInicioCliente;
+	$data['FechaTerminoCliente']     = $dataRow->FechaTerminoCliente;
+	$data['FechaInicioProyecto']     = $dataRow->FechaInicioProyecto;
+	$data['FechaTerminoProyecto']    = $dataRow->FechaTerminoProyecto;
+	$data['FechaInicioContratista']  = $dataRow->FechaInicioContratista;
 	$data['FechaTerminoContratista'] = $dataRow->FechaTerminoContratista;
 	
-	$data['MontoVentaCliente'] = $dataRow->MontoVentaCliente;
+	$data['MontoVentaCliente'] 		 = $dataRow->MontoVentaCliente;
 	$data['MontoVentaActualCliente'] = $dataRow->MontoVentaActualCliente;
-	$data['MontoInicialPIO'] = $dataRow->MontoInicialPIO;
-	$data['MontoActualPIO'] = $dataRow->MontoActualPIO;
+	$data['MontoInicialPIO'] 		 = $dataRow->MontoInicialPIO;
+	$data['MontoActualPIO'] 		 = $dataRow->MontoActualPIO;
 }
 
 sqlsrv_free_stmt($stmt);

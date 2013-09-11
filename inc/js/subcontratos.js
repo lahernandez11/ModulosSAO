@@ -40,13 +40,11 @@ var SUBCONTRATOS = {
 			
 			// Carga la lista de arbol de los subcontratos
 			$.ajax({
-				type: 'GET',
 				url: 'modulos/subcontratos/GetListaSubcontratos.php',
 				data: {},
-				dataType: 'json',
-				cache: false,
-				timeout: 60000
-			}).success( function(json) {
+				dataType: 'json'
+			})
+			.done( function(json) {
 				try {
 					
 					if( !json.success ) {
@@ -287,18 +285,16 @@ var SUBCONTRATOS = {
 		
 		S.currentRequest = 
 		$.ajax({
-			type: 'GET',
 			url: 'modulos/subcontratos/GetDatosSubcontrato.php',
 			data: {
 				idSubcontrato: S.listaSubcontratos.selectedNode.value
 			},
-			dataType: 'json',
-			cache: false,
-			timeout: 60000
-		}).success( function(json) {
+			dataType: 'json'
+		})
+		.done( function(json) {
 			try {
 				
-				if( !json.success ) {
+				if ( ! json.success ) {
 					messageConsole.displayMessage(json.errorMessage, 'error');
 					return false;
 				}
@@ -329,7 +325,8 @@ var SUBCONTRATOS = {
 			} catch(e) {
 				messageConsole.displayMessage('Error: ' + e.message, 'error');
 			}
-		}).complete( function() {
+		})
+		.always( function() {
 			TABS.enable();
 			DATA_LOADER.hide();
 			S.currentRequest = null;
@@ -347,13 +344,12 @@ var SUBCONTRATOS = {
 				  idSubcontrato: S.listaSubcontratos.selectedNode.value
 				, idClasificador: selectedItem.value
 			},
-			dataType: 'json',
-			cache: false,
-			timeout: false
-		}).success( function(json) {
+			dataType: 'json'
+		})
+		.done( function(json) {
 			try {
 				
-				if( !json.success ) {
+				if ( ! json.success ) {
 					messageConsole.displayMessage(json.errorMessage, 'error');
 					input.removeAttr('checked').button('refresh');
 					return false;
@@ -378,13 +374,12 @@ var SUBCONTRATOS = {
 				  idSubcontrato: S.listaSubcontratos.selectedNode.value
 				, Descripcion: $(inputField).val()
 			},
-			dataType: 'json',
-			cache: false,
-			timeout: 60000
-		}).success( function(json) {
+			dataType: 'json'
+		})
+		.done( function(json) {
 			try {
 				
-				if( !json.success ) {
+				if ( ! json.success ) {
 					messageConsole.displayMessage(json.errorMessage, 'error');
 					return false;
 				}
@@ -436,13 +431,12 @@ var SUBCONTRATOS = {
 				  idSubcontrato: S.listaSubcontratos.selectedNode.value
 				, Fecha: fecha
 			},
-			dataType: 'json',
-			cache: false,
-			timeout: 60000
-		}).success( function(json) {
+			dataType: 'json'
+		})
+		.done( function(json) {
 			try {
 				
-				if( !json.success ) {
+				if ( ! json.success ) {
 					messageConsole.displayMessage(json.errorMessage, 'error');
 					return false;
 				}
@@ -490,13 +484,12 @@ var SUBCONTRATOS = {
 				  idSubcontrato: S.listaSubcontratos.selectedNode.value
 				, Monto: inputField.val()
 			},
-			dataType: 'json',
-			cache: false,
-			timeout: 60000
-		}).success( function(json) {
+			dataType: 'json'
+		})
+		.done( function(json) {
 			try {
 				
-				if( !json.success ) {
+				if ( ! json.success ) {
 					
 					if( !json.isDataValid ) {
 						messageConsole.displayMessage(json.errorMessage, 'error');
@@ -531,18 +524,16 @@ var SUBCONTRATOS = {
 		DATA_LOADER.show();
 		
 		$.ajax({
-			type: 'GET',
 			url: 'modulos/subcontratos/GetAddendums.php',
 			data: {
 				idSubcontrato: S.listaSubcontratos.selectedNode.value
 			},
-			dataType: 'json',
-			cache: false,
-			timeout: 60000
-		}).success( function(json) {
+			dataType: 'json'
+		})
+		.done( function(json) {
 			try {
 				
-				if( !json.success ) {
+				if ( ! json.success ) {
 					messageConsole.displayMessage(json.errorMessage, 'error');
 					return false;
 				}
@@ -574,9 +565,8 @@ var SUBCONTRATOS = {
 			} catch(e) {
 				messageConsole.displayMessage('Error: ' + e.message, 'error');
 			}
-		}).fail( function() {
-			
-		}).complete( function() {
+		})
+		.always( function() {
 			TABS.enable();
 			DATA_LOADER.hide();
 			S.currentRequest = null;
@@ -605,15 +595,14 @@ var SUBCONTRATOS = {
 				, MontoAnticipo: $('#txtAnticipoAddendum').val()
 				, PctRetFG: $('#txtRetencionFG').val()
 			},
-			dataType: 'json',
-			cache: false,
-			timeout: 60000
-		}).success( function(json) {
+			dataType: 'json'
+		})
+		.done( function(json) {
 			try {
 				
-				if( !json.success ) {
+				if ( ! json.success ) {
 					
-					if( !json.isDataValid ) {
+					if ( ! json.isDataValid ) {
 						$validationTips.text(json.errorMessage).addClass('ui-state-highlight');
 						return false;
 					}
@@ -673,10 +662,9 @@ var SUBCONTRATOS = {
 			data: {
 				idAddendum: tableRow.attr('data-id')
 			},
-			dataType: 'json',
-			cache: false,
-			timeout: 60000
-		}).success( function(json) {
+			dataType: 'json'
+		})
+		.done( function(json) {
 			try {
 				
 				if( !json.success ) {
@@ -688,7 +676,8 @@ var SUBCONTRATOS = {
 			} catch(e) {
 				messageConsole.displayMessage('Error: ' + e.message, 'error');
 			}
-		}).complete( function() {
+		})
+		.always( function() {
 			$('#confirmation-dialog').dialog('close');
 			DATA_LOADER.hide();
 		});

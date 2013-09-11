@@ -49,36 +49,39 @@ $data['Subcontratos'] = array(
 
 while( $dataRow = sqlsrv_fetch_object($stmt) ) {
 	
-	if( $dataRow->idProyecto != $ultimoProyecto ) {
+	if( $dataRow->IDProyecto != $ultimoProyecto ) {
 		
 		$data['Subcontratos']['Proyectos'][] = 
-			array( 'idProyecto' => $dataRow->idProyecto
-			     , 'Proyecto' => $dataRow->Proyecto
-			     , 'Contratistas' => array()
-			     );
+			array(
+				  'idProyecto'   => $dataRow->IDProyecto
+				, 'Proyecto'     => $dataRow->Proyecto
+				, 'Contratistas' => array()
+			);
 			   
-		$ultimoProyecto = $dataRow->idProyecto;
+		$ultimoProyecto = $dataRow->IDProyecto;
 		$ultimoContratista = null;
 		
 		$indexProyecto = count($data['Subcontratos']['Proyectos']) - 1;
 	}
 	
-	if( $dataRow->idEmpresaContratista != $ultimoContratista ) {
+	if( $dataRow->IDEmpresaContratista != $ultimoContratista ) {
 		
 		$data['Subcontratos']['Proyectos'][$indexProyecto]['Contratistas'][] = 
-			array( 'idEmpresaContratista' => $dataRow->idEmpresaContratista
-				 , 'EmpresaContratista' => $dataRow->EmpresaContratista
-				 , 'Subcontratos' => array()
-				 );
+			array(
+				  'idEmpresaContratista' => $dataRow->IDEmpresaContratista
+				, 'EmpresaContratista'   => $dataRow->EmpresaContratista
+				, 'Subcontratos' 		 => array()
+			);
 				 
-		$ultimoContratista = $dataRow->idEmpresaContratista;
+		$ultimoContratista = $dataRow->IDEmpresaContratista;
 		$indexContratista = count($data['Subcontratos']['Proyectos'][$indexProyecto]['Contratistas']) - 1;
 	}
 	
 	$data['Subcontratos']['Proyectos'][$indexProyecto]['Contratistas'][$indexContratista]['Subcontratos'][] =
-		array( 'idSubcontrato' => $dataRow->idSubcontrato
-			 , 'NombreSubcontrato' => $dataRow->NombreSubcontrato
-			 );
+		array(
+			  'idSubcontrato' 	  => $dataRow->IDSubcontrato
+			, 'NombreSubcontrato' => $dataRow->NombreSubcontrato
+		);
 	
 	++$counter;
 }

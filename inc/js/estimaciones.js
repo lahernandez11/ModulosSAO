@@ -62,7 +62,7 @@ var ESTIMACION = {
 			},
 			onCreateListItem: function() {
 				return {
-					id: this.idProyecto,
+					id: this.IDProyecto,
 					value: this.NombreProyecto
 				}
 			}
@@ -305,7 +305,7 @@ var ESTIMACION = {
 		 .buttonset()
 		 .buttonset({disabled: true})
 		 .on('click', 'input', function( event ) {
-
+		 	
 		 	$('#tabla-conceptos colgroup .' + this.id).toggleClass('hidden');
 		 });
 

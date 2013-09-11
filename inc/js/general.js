@@ -125,7 +125,6 @@ var LISTA_PROYECTOS = {
 		
 		// Carga la lista de proyectos
 		$.ajax({
-			type: 'GET',
 			url: LP.dataURL,
 			dataType: 'json',
 			data: {action: 'getListaProyectos'}
@@ -146,7 +145,7 @@ var LISTA_PROYECTOS = {
 				
 				// Agrega cada uno de los proyectos a la lista
 				$.each(json.options, function() {
-					proyectos += '<li><a href="#' + this.idProyecto + '">' + this.NombreProyecto + '</a></li>';
+					proyectos += '<li><a href="#' + this.IDProyecto + '">' + this.NombreProyecto + '</a></li>';
 				});
 				
 				$(LP.container).append(proyectos);
@@ -522,10 +521,9 @@ var DROP_LIST = {
 			type: 'GET',
 			url: DL.source,
 			data: {},
-			dataType: 'json',
-			timeout: 60000,
-			cache: false
-		}).success( function(json) {
+			dataType: 'json'
+		})
+		.done( function(json) {
 			try {
 				
 				if( !json.success ) {
@@ -553,7 +551,8 @@ var DROP_LIST = {
 				return false;
 			}
 			
-		}).complete( function() {
+		})
+		.always( function() {
 			DL.isLoading = false;
 			DATA_LOADER.hide();
 		});
@@ -791,180 +790,6 @@ function TreeViewList(container) {
 
 TreeViewList.prototype.treeClass = '.tree';
 
-// var uxTable = function(container, editableCellsArray) {
-
-// 	console.log(this);
-	
-// 	this.tableContainer = container;
-// 	this.editableColumns = editableCellsArray || [];
-// 	this.isCellBeignEdited = false;
-// 	this.finishEditing = null;
-	
-// 	var UT = this;
-	
-// 	// Maneja el evento clic en la tabla
-// 	$(this.tableContainer).click( function(event) {
-
-// 		//console.log('clic en tabla');
-// 	    var $tgt = $(event.target);
-	    
-// 	    UT.blurTables();
-	
-// 	    // Hace la tabla activa
-// 	    $(this).addClass('active');
-	
-// 	    if( $tgt.parents().is('tbody') ) {
-
-// 	        if( $tgt.is('td') ) {
-	        	
-// 	        	if( UT.isCellBeignEdited )
-// 	        		UT.finishEditCell();
-	        	
-// 	            UT.selectCell($tgt);
-//             }
-// 	    }
-// 	});
-	
-// 	// Solo registra los manejadores globales una vez
-// 	if( !uxTable.prototype.isGlobalHandlerSet ) {
-		
-// 		// Handler global para manejar clics sobre la tabla
-// 		// Si la tabla pierde el enfoque se inhabilitaran los eventos
-// 		// para no interferir con otras partes de la interfaz
-// 		// la clase .active en la tabla indica que los eventos seran manejados en la tabla
-// 		$(document).click( function(event) {
-			
-// 		    var $tgt = $(event.target);
-
-// 		    if( !$tgt.parents(uxTable.prototype.tableClass).length ) {
-// 		        UT.blurTables();
-// 		        //console.log('clic global');
-// 		    }
-// 		});
-
-// 		// Handler global para manejar el evento keydown en la tabla
-// 		// Solo maneja los eventos cuando una tabla esta activa (tiene el enfoque)
-// 		$(document.documentElement).bind('keydown.uxTable', function(event) {
-// 			//console.log('key global')
-// 			//console.log(UT.tableContainer);
-
-// 		    var $activeTable = $(this).find(uxTable.prototype.tableClass + '.active');
-
-// 		    // Si hay una tabla activa, manejara los eventos
-// 		    if( $activeTable.length ) {
-
-// 		        var activeCellIX = UT.activeCell.index();
-// 		        var keyCode = event.keyCode;
-// 		        var direction = '';
-// 		        var $cellToMove = false;
-		        
-// 		        // Bloque que permite editar una celda cuando la tecla Enter es presionada
-// 		        if( keyCode === 13 ) {
-		            
-// 		            if( UT.isCellBeignEdited )
-// 						UT.finishEditCell();
-// 		            else
-// 			            UT.editCell();
-			            
-// 		        } else {
-		            
-// 		        	// Si una celda esta siendo editada no se puede mover a otra hasta que termine la edicion
-// 		        	// de la celda actual
-// 		            if( UT.isCellBeignEdited )
-// 		                return;
-		            
-// 		            var direction = '';
-		                
-// 		            switch( keyCode ) {
-		            	
-// 		                case 38:
-// 		                    direction = 'up';
-// 		                    $cellToMove = UT.activeCell.parent().prev().children().eq(activeCellIX);
-// 		                break;
-// 		                case 39:
-// 		                    direction = 'next';
-// 		                    $cellToMove = UT.activeCell.next();
-// 		                break;
-// 		                case 40:
-// 		                    direction = 'down';
-// 		                    $cellToMove = UT.activeCell.parent().next().children().eq(activeCellIX);
-// 		                break;
-// 		                case 37:
-// 		                    direction = 'prev';
-// 		                    $cellToMove = UT.activeCell.prev();
-// 		                break;
-// 		            }
-					
-// 		            // Si se va a mover hacia otra celda
-// 		            if( direction ) {
-			            
-// 			            if( $cellToMove.length ) {
-// 			            	UT.selectCell($cellToMove)
-// 			            }
-// 		            }
-// 		        }
-// 		    }
-// 		});
-		
-// 		uxTable.prototype.isGlobalHandlerSet = true;
-// 	}
-	
-// 	return this;
-// }
-
-// uxTable.prototype.isGlobalHandlerSet = false;
-// uxTable.prototype.activeCell = null;
-// uxTable.prototype.tableClass = '.ux-table';
-
-// uxTable.prototype.editCell = function() {
-	
-// 	// Solo permitira editar la celda cuando este definida en el arreglo de celdas editables
-// 	// o cuando no se especificaron celdas editables, todas seran editables
-// 	if( this.editableColumns.indexOf(this.activeCell.index()) >= 0 || !this.editableColumns.length ) {
-
-// 		this.isCellBeignEdited = true;
-// 		// Agregar la clase in-edit a la celda para saber que se esta editando
-// 	    this.activeCell.addClass('in-edit');
-// 	    // Crea un textField con el texto de la celda para ser editado
-// 	    var $inputBox = $('<input type="text" class="text" />').val(this.activeCell.text());
-// 	    // Borra el contenido actual de la celda
-// 	    this.activeCell.empty();
-// 	    // Agrega el textField a la celda
-// 	    $inputBox.appendTo(this.activeCell).focus( function(){ 
-// 	    	$(this).select();
-// 	    }).focus();
-//     }
-// }
-
-// uxTable.prototype.finishEditCell = function() {
-	
-// 	var $inputBox = this.activeCell.children('input');
-//     this.activeCell.text($inputBox.val());
-//     $inputBox.remove();
-//     this.activeCell.removeClass('in-edit');
-    
-//     this.isCellBeignEdited = false;
-    
-//     console.log(this.activeCell.index());
-    
-//     if( $.isFunction(this.finishEditing) )
-//     	this.finishEditing();
-// }
-
-// uxTable.prototype.selectCell = function(cell) {
-	
-// 	if( uxTable.prototype.activeCell )
-// 		uxTable.prototype.activeCell.removeClass('active-cell');
-	
-// 	uxTable.prototype.activeCell = cell;
-// 	cell.addClass('active-cell');
-// }
-
-// uxTable.prototype.blurTables = function() {
-// 	$(uxTable.prototype.tableClass).removeClass('active').find('td').removeClass('active-cell');
-// }
-
-
 /*
  * OPCIONES
  */
@@ -1011,68 +836,6 @@ $(function() {
 			}
 
 			messageConsole.displayMessage(msg, 'error');
-			//console.log(JSON.stringify(jqXHR));
-			//console.log(JSON.stringify(ajaxSettings));
-			
-			// Bloque try para atrapar la excepcion lanzada cuando se genera un timeout en la peticion
-			/*
-			try {
-				var errorMessage = 'Estatus ' + jqXHR.status + ': ';
-				var displayError = true;
-				
-				if( jqXHR.readyState != 0 ) {
-					
-					switch(jqXHR.status) {
-						case 404:
-							errorMessage += 'La pagina ' + ajaxSettings.url + ' no existe.';//$(xhr.responseText)[5].innerHTML
-							break;
-						case 500:
-							errorMessage += 'Error del servidor de internet.';
-							break;
-						default:
-							errorMessage += jqXHR.statusText;//'Error desconcido.';
-							displayError = false;
-							break;
-					}
-					
-				} else {
-					
-					switch(jqXHR.statusText) {
-						
-						case 'timeout':
-							errorMessage += 'Se termino el tiempo de espera asignado para realizar la petición.';
-							break;
-							
-						// Don´t show error when a request is aborted by custom code
-						case 'abort':
-							errorMessage += 'Peticion abortada.';
-							displayError = false;
-							break;
-						
-						//case 'error':
-						//	errorMessage += '';
-						//	break;
-						//case 'notmodified':
-						//	errorMessage += '';
-						//	break;
-						case 'parsererror':
-							errorMessage += '';
-							break;
-						
-						default:
-							errorMessage += jqXHR.statusText;
-							displayError = false;
-							break;
-					}
-				}
-				
-				if( displayError )
-					messageConsole.displayMessage(errorMessage, 'error');
-				
-			} catch(e) {
-				messageConsole.displayMessage(e.message, 'error');
-			}
-			*/
 		}
 	);
 
@@ -1092,7 +855,8 @@ $(function() {
 			action: 'getMenu'
 		},
 		dataType: 'json'
-	}).success( function(json) {
+	})
+	.done( function(json) {
 		
 		try {
 			
@@ -1111,10 +875,12 @@ $(function() {
 			messageConsole.displayMessage('Error: ' + e.message, 'error');
 		}
 		
-	}).fail( function(jqXHR, textStatus, errorMessage) {
+	})
+	.fail( function(jqXHR, textStatus, errorMessage) {
 		if( textStatus != 'timeout' )
 			messageConsole.displayMessage('Error: ' + errorMessage, 'error');
-	}).always( function() {
+	})
+	.always( function() {
 		LIGHTBOX.hide();
 	});
 });

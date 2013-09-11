@@ -40,31 +40,34 @@ $indexFamilia = null;
 $counter = 0;
 while( $dataRow = sqlsrv_fetch_object($stmt) ) {
 
-	if( $dataRow->idFamilia !== $ultimaFamilia ) {
+	if( $dataRow->IDFamilia !== $ultimaFamilia ) {
 		
-		$data['Insumos']['Familias'][] = array( 'idFamilia' => $dataRow->idFamilia
-								  			  , 'Familia' => $dataRow->Familia
-								  			  , 'NumInsumosFamilia' => 0
-								  			  , 'Insumos' => array()
-								  			  );
+		$data['Insumos']['Familias'][] =
+			array(
+				  'idFamilia' => $dataRow->IDFamilia
+				, 'Familia'   => $dataRow->Familia
+				, 'NumInsumosFamilia' => 0
+				, 'Insumos'   => array()
+			);
 
-		$ultimaFamilia = $dataRow->idFamilia;
+		$ultimaFamilia = $dataRow->IDFamilia;
 		
 		$indexFamilia = count($data['Insumos']['Familias']) - 1;
 	}
 
 	$data['Insumos']['Familias'][$indexFamilia]['Insumos'][] = 
-		array( 'idInsumo' => $dataRow->idInsumo
-			 , 'Insumo' => $dataRow->Insumo
-			 , 'Unidad' => $dataRow->Unidad
-			 , 'CodigoExterno' => $dataRow->CodigoExterno
-			 , 'idAgrupadorNaturaleza' => $dataRow->idAgrupadorNaturaleza
-			 , 'AgrupadorNaturaleza' => $dataRow->AgrupadorNaturaleza
-			 , 'idAgrupadorFamilia' => $dataRow->idAgrupadorFamilia
-			 , 'AgrupadorFamilia' => $dataRow->AgrupadorFamilia
-			 , 'idAgrupadorInsumoGenerico' => $dataRow->idAgrupadorInsumoGenerico
-			 , 'AgrupadorInsumoGenerico' => $dataRow->AgrupadorInsumoGenerico
-			 );
+		array(
+			  'idInsumo' 			  => $dataRow->IDInsumo
+			, 'Insumo' 				  => $dataRow->Insumo
+			, 'Unidad' 				  => $dataRow->Unidad
+			, 'CodigoExterno' 		  => $dataRow->CodigoExterno
+			, 'idAgrupadorNaturaleza' => $dataRow->IDAgrupadorNaturaleza
+			, 'AgrupadorNaturaleza'   => $dataRow->AgrupadorNaturaleza
+			, 'idAgrupadorFamilia' 	  => $dataRow->IDAgrupadorFamilia
+			, 'AgrupadorFamilia' 	  => $dataRow->AgrupadorFamilia
+			, 'idAgrupadorInsumoGenerico' => $dataRow->IDAgrupadorInsumoGenerico
+			, 'AgrupadorInsumoGenerico'   => $dataRow->AgrupadorInsumoGenerico
+		);
 
 	++$data['Insumos']['Familias'][$indexFamilia]['NumInsumos'];
 	++$counter;

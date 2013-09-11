@@ -54,7 +54,7 @@ var AVANCE = {
 			},
 			onCreateListItem: function() {
 				return {
-					id: this.idProyecto,
+					id: this.IDProyecto,
 					value: this.NombreProyecto
 				}
 			}

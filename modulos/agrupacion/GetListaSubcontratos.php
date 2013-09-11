@@ -42,45 +42,49 @@ $indexSubcontrato = null;
 $counter = 0;
 while( $dataRow = sqlsrv_fetch_object($stmt) ) {
 
-	if( $dataRow->idEmpresa !== $ultimoContratista ) {
+	if( $dataRow->IDEmpresa !== $ultimoContratista ) {
 		
-		$data['Subcontratos']['Contratistas'][] = array( 'idContratista' => $dataRow->idEmpresa
-										  			   , 'Contratista' => $dataRow->Empresa
-										  			   , 'NumSubcontratos' => 0
-										  			   , 'Subcontratos' => array()
-										  			   );
+		$data['Subcontratos']['Contratistas'][] =
+			array(
+				  'idContratista'   => $dataRow->IDEmpresa
+				, 'Contratista'     => $dataRow->Empresa
+				, 'NumSubcontratos' => 0
+				, 'Subcontratos'    => array()
+			);
 
-		$ultimoContratista = $dataRow->idEmpresa;
+		$ultimoContratista = $dataRow->IDEmpresa;
 		$ultimoSubcontrato = null;
 		
 		$indexContratista = count($data['Subcontratos']['Contratistas']) - 1;
 	}
 	
-	if( $dataRow->idSubcontrato !== $ultimoSubcontrato ) {
+	if( $dataRow->IDSubcontrato !== $ultimoSubcontrato ) {
 		
 		$data['Subcontratos']['Contratistas'][$indexContratista]['Subcontratos'][] = 
-			array( 'idSubcontrato' => $dataRow->idSubcontrato
-  			     , 'Subcontrato' => $dataRow->Subcontrato
-  			     , 'NumActividades' => 0
-  			     , 'Actividades' => array()
-  			     );
+			array(
+				  'idSubcontrato'  => $dataRow->IDSubcontrato
+				, 'Subcontrato'    => $dataRow->Subcontrato
+				, 'NumActividades' => 0
+				, 'Actividades'    => array()
+			);
 
-		$ultimoSubcontrato = $dataRow->idSubcontrato;
+		$ultimoSubcontrato = $dataRow->IDSubcontrato;
 		
 		$indexSubcontrato = count($data['Subcontratos']['Contratistas'][$indexContratista]['Subcontratos']) - 1;
 	}
 
 	$data['Subcontratos']['Contratistas'][$indexContratista]['Subcontratos'][$indexSubcontrato]['Actividades'][] = 
-		array( 'idActividad' => $dataRow->idActividad
-			 , 'Actividad' => $dataRow->Actividad
-			 , 'Unidad' => $dataRow->Unidad
-			 , 'idAgrupadorNaturaleza' => $dataRow->idAgrupadorNaturaleza
-			 , 'AgrupadorNaturaleza' => $dataRow->AgrupadorNaturaleza
-			 , 'idAgrupadorFamilia' => $dataRow->idAgrupadorFamilia
-			 , 'AgrupadorFamilia' => $dataRow->AgrupadorFamilia
-			 , 'idAgrupadorInsumoGenerico' => $dataRow->idAgrupadorInsumoGenerico
-			 , 'AgrupadorInsumoGenerico' => $dataRow->AgrupadorInsumoGenerico
-			 );
+		array(
+			  'idActividad' 		  => $dataRow->IDActividad
+			, 'Actividad' 		      => $dataRow->Actividad
+			, 'Unidad' 				  => $dataRow->Unidad
+			, 'idAgrupadorNaturaleza' => $dataRow->IDAgrupadorNaturaleza
+			, 'AgrupadorNaturaleza'   => $dataRow->AgrupadorNaturaleza
+			, 'idAgrupadorFamilia'    => $dataRow->IDAgrupadorFamilia
+			, 'AgrupadorFamilia'      => $dataRow->AgrupadorFamilia
+			, 'idAgrupadorInsumoGenerico' => $dataRow->IDAgrupadorInsumoGenerico
+			, 'AgrupadorInsumoGenerico'   => $dataRow->AgrupadorInsumoGenerico
+		);
 
 	++$data['Subcontratos']['Contratistas'][$indexContratista]['Subcontratos'][$indexSubcontrato]['NumActividades'];
 	++$counter;

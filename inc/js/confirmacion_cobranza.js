@@ -22,7 +22,7 @@ var COBRANZA = {
 		// Suscripcion al evento transaccion modificada
 		var modifiedTranSubscription = pubsub.subscribe('modified_tran', modifiedTran);
 		// Suscripcion al evento que notifica cuando la transaccion tiene cambios por guardar
-		var notifyModifiedTranSubs = pubsub.subscribe('notify_modtran', notifyModifiedTran);
+		var notifyModifiedTranSubs   = pubsub.subscribe('notify_modtran', notifyModifiedTran);
 
 		$('#tabla-conceptos').on('keyup', 'input[type=text]', function() {
 
@@ -50,7 +50,7 @@ var COBRANZA = {
 			},
 			onCreateListItem: function() {
 				return {
-					id: this.idProyecto,
+					id: this.IDProyecto,
 					value: this.NombreProyecto
 				}
 			}

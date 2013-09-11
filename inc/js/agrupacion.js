@@ -171,18 +171,15 @@ var AGRUPACION = {
 		
 		AG.currentRequest = 
 		$.ajax({
-			type: 'GET',
 			url: dataURL,
 			data: {
 				idProyecto: LISTA_PROYECTOS.selectedItem.value
 			},
-			dataType: 'json',
-			cache: false,
-			timeout: 120000
+			dataType: 'json'
 		}).success( function(json) {
 			try {
 				
-				if( !json.success ) {
+				if( ! json.success ) {
 					messageConsole.displayMessage(json.errorMessage, 'error');
 					return false;
 				}
@@ -518,9 +515,7 @@ var AGRUPACION = {
 				, id: id
 				, idAgrupador: selectedItem.value
 			},
-			dataType: 'json',
-			cache: false,
-			timeout: 60000
+			dataType: 'json'
 		}).success( function(json) {
 			try {
 				

@@ -34,10 +34,11 @@ else
 $data['options'] = array();
 while( $dataRow = sqlsrv_fetch_object($stmt) ) {
 	
-	$data['options'][] = array(
-		'id' => $dataRow->idClasificador,
-		'value' => $dataRow->Clasificador
-	);
+	$data['options'][] =
+		array(
+			'id'    => $dataRow->IDClasificador,
+			'value' => $dataRow->Clasificador
+		);
 }
 
 sqlsrv_free_stmt($stmt);

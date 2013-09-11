@@ -40,12 +40,15 @@ $data['Addendums'] = array();
 $counter = 0;
 while( $dataRow = sqlsrv_fetch_object($stmt) ) {
 	
-	$data['Addendums'][] = array( 'idAddendum' => $dataRow->idAddendum
-							  , 'Fecha' => $dataRow->Fecha
-							  , 'Monto' => $dataRow->Monto
-							  , 'MontoAnticipo' => $dataRow->MontoAnticipo
-							  , 'PctRetencionFG' => $dataRow->PctRetencionFG
-							  );
+	$data['Addendums'][] =
+		array(
+			  'idAddendum'     => $dataRow->IDAddendum
+			, 'Fecha' 	       => $dataRow->Fecha
+			, 'Monto' 	       => $dataRow->Monto
+			, 'MontoAnticipo'  => $dataRow->MontoAnticipo
+			, 'PctRetencionFG' => $dataRow->PctRetencionFG
+	);
+
 	++$counter;
 }
 
