@@ -520,42 +520,18 @@
 	"buffers":
 	[
 		{
-			"file": "confirmacion_cobranza.php",
+			"file": "inc/js/estimaciones.js",
 			"settings":
 			{
-				"buffer_size": 9372,
+				"buffer_size": 39511,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "inc/lib/models/Cobranza.class.php",
+			"file": "inc/js/estimacion_obra.js",
 			"settings":
 			{
-				"buffer_size": 10528,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/controllers/CobranzaController.php",
-			"settings":
-			{
-				"buffer_size": 10255,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "css/general.css",
-			"settings":
-			{
-				"buffer_size": 26012,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "css/cobranza.css",
-			"settings":
-			{
-				"buffer_size": 574,
+				"buffer_size": 18492,
 				"line_ending": "Windows"
 			}
 		},
@@ -563,26 +539,31 @@
 			"file": "inc/js/confirmacion_cobranza.js",
 			"settings":
 			{
-				"buffer_size": 21138,
+				"buffer_size": 21140,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "inc/lib/models/Util.class.php",
+			"file": "inc/js/avance_subcontratos.js",
 			"settings":
 			{
-				"buffer_size": 1024,
+				"buffer_size": 19700,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"contents": "$( function() {\n	\n	ESTIMACION.init();\n});\n\nvar pubsub = PubSub();\n\nvar ESTIMACION = {\n\n	isModified: false,\n	estimando: false,\n	requestingData: false,\n	IDSubcontrato: null,\n\n	classes: {\n		conceptoModificado: 'modificado'\n	},\n	urls: {\n		tranController: 'inc/lib/controllers/EstimacionSubcontratoController.php'\n	},\n\n	init: function() {\n\n		var that = this;\n\n		Retenciones.init();\n		Deductivas.init();\n\n		this.deshabilitaCamposTransaccion();\n		this.limpiaDatosTransaccion();\n\n		// Suscripcion al evento transaccion modificada\n		var modifiedTranSubscription = pubsub.subscribe('modified_tran', modifiedTran);\n		// Suscripcion al evento que notifica cuando la transaccion tiene cambios por guardar\n		var notifyModifiedTranSubs = pubsub.subscribe('notify_modtran', notifyModifiedTran);\n\n		$('#tabla-conceptos').on('keyup', 'input[type=text]', function() {\n		    var oldValue = $(this).val();\n		    $(this).val(oldValue.numFormat());\n		});\n\n\n		$('#bl-proyectos').buttonlist({\n			source: 'inc/lib/controllers/ListaProyectosController.php',\n			data: {action: 'getListaProyectos'},\n			onSelect: function( selectedItem, listItem ) {\n\n				$('#btnLista-transacciones').listaTransacciones('option', 'data', \n					{IDProyecto: selectedItem.value, action: 'getListaTransacciones'});\n\n				$('#folios-transaccion')\n				.buttonlist('option', 'data', \n					{IDProyecto: selectedItem.value, action: 'getFoliosTransaccion'});\n\n				$('#folios-transaccion').buttonlist('refresh');\n\n				that.limpiaDatosTransaccion();\n				that.deshabilitaCamposTransaccion();\n			},\n			didNotDataFound: function() {\n				$.notify({text: 'No se pudo cargar la lista de proyectos'});\n			},\n			onCreateListItem: function() {\n				return {\n					id: this.idProyecto,\n					value: this.NombreProyecto\n				}\n			}\n		});\n\n		$('#folios-transaccion').buttonlist({\n			source: that.urls.tranController,\n			beforeLoad: function() {\n\n				if( ! $('#bl-proyectos').buttonlist('option', 'selectedItem') ) {\n\n					$.notify({text: 'Seleccione un proyecto para cargar los folios'});\n					return false;\n				} else\n					return true;\n			},\n			'onSelect': function( selectedItem, listItem ) {\n				that.cargaTransaccion();\n			},\n			'didNotDataFound': function() {\n				$.notify({text: 'No se encontraron estimaciones registradas en este proyecto'});\n			},\n			onCreateListItem: function() {\n				return {\n					id: this.IDTransaccion,\n					value: this.NumeroFolio\n				}\n			}\n		});\n\n		$('#btnLista-transacciones').listaTransacciones({\n			source: that.urls.tranController,\n			data: { action: 'getListaTransacciones'},\n			beforeLoad: function() {\n\n				if( ! that.getIDProyecto() ) {\n					$.notify({text: 'Seleccione un proyecto para cargar las transacciones.'});\n					return false;\n				} else\n					return true;\n			},\n			onSelectItem: function( item ) {\n				$('#folios-transaccion').buttonlist('selectItemById', item.value, true );\n			},\n			onCreateListItem: function() {\n				return {\n					id: this.IDTransaccion,\n					folio: this.NumeroFolio,\n					fecha: this.Fecha,\n					observaciones: this.Observaciones\n				};\n			}\n		});\n\n		$('#tabla-conceptos').uxtable({\n			editableColumns: {\n				12: {\n					'onFinishEdit': function( activeCell, value ) {\n\n						var cantidadEstimada = parseFloat(value.replace(/,/g, '')),\n							IDConcepto = parseInt( activeCell.parent().attr('data-id') );\n\n						var pctEstimado = ((cantidadEstimada / that.getVolumenSubcontratado.call(this)) * 100);\n						var importeEstimado = (cantidadEstimada * that.getPrecioUnitarioConcepto.call(this));\n\n						that.setPorcentajeEstimado.call( this, pctEstimado );\n						that.setImporteEstimado.call( this, importeEstimado );\n\n						//if( cantidadEstimada === 0 )\n						//	that.desmarcaConceptoEstimado( IDConcepto );\n						//else {\n							that.marcaConceptoEstimado( IDConcepto );\n							pubsub.publish('modified_tran');\n						//}\n					}\n				},\n				13: {\n					'onFinishEdit': function( activeCell, value ) {\n\n						var porcentajeEstimado = parseFloat(value.replace(/,/g, '')),\n							IDConcepto = parseInt( activeCell.parent().attr('data-id') );\n\n						var cantidadEstimada = ((that.getVolumenSubcontratado.call(this) * porcentajeEstimado) / 100);\n						var importeEstimado = (cantidadEstimada * that.getPrecioUnitarioConcepto.call(this));\n\n						that.setCantidadEstimada.call( this, cantidadEstimada );\n						that.setImporteEstimado.call( this, importeEstimado );\n\n						//if( porcentajeEstimado === 0 )\n							//that.desmarcaConceptoEstimado( IDConcepto );\n						//else {\n							that.marcaConceptoEstimado( IDConcepto );\n							pubsub.publish('modified_tran');\n						//}\n					}\n				},\n				15: {\n					'onFinishEdit': function( activeCell, value ) {\n\n						var importeEstimado = parseFloat( value.replace(/,/g, '') ),\n							IDConcepto = parseInt( activeCell.parent().attr('data-id') );\n\n						var cantidadEstimada = (importeEstimado / that.getPrecioUnitarioConcepto.call(this));\n\n						var pctEstimado = ((cantidadEstimada / that.getVolumenSubcontratado.call(this)) * 100);\n\n						that.setCantidadEstimada.call( this, cantidadEstimada );\n						that.setPorcentajeEstimado.call( this, pctEstimado );\n						activeCell.text( importeEstimado.toString().numFormat() );\n						//if( importeEstimado === 0 )\n						//	that.desmarcaConceptoEstimado( IDConcepto );\n						//else {\n							that.marcaConceptoEstimado( IDConcepto );\n							pubsub.publish('modified_tran');\n						//}\n					}\n				}\n			}\n		});\n\n		$('#nuevo').on('click', function() {\n\n			// if( that.existenCambiosSinGuardar() )\n			// 	pubsub.publish('notify_modtran', that.nuevaTransaccion);\n			// else {\n\n				if ( ! that.getIDProyecto() ) {\n					$.notify({text: 'Seleccione un proyecto.'});\n					return;\n				}\n\n				that.limpiaDatosTransaccion();\n				that.deshabilitaCamposTransaccion();\n				that.muestraListaSubcontratos();\n				$('#folios-transaccion').buttonlist('reset');\n			// }\n		});\n\n		$('#eliminar').on('click', function() {\n\n			if( that.existenCambiosSinGuardar() )\n				pubsub.publish('notify_modtran', that.eliminaTransaccion);\n			else\n				that.eliminaTransaccion();\n		});\n\n		$('#guardar').on('click', function() {\n			that.guardaTransaccion();\n		});\n\n		$('#enviar-sao').on('click', function() {\n\n			if( that.existenCambiosSinGuardar() )\n				pubsub.publish('notify_modtran', that.enviaEstimacionCDC);\n			else\n				that.enviaEstimacionCDC();\n		});\n\n		$('#btnResumen').on('click', function() {\n			\n			if( ! that.getIDTransaccion() ) {\n				$.notify({text: 'Debe cargar una estimación.'});\n			} else\n				$('#dialog-resumen').dialog('open');\n		});\n\n		$('#btnDeductivas').on('click', function() {\n			\n			if( ! that.getIDTransaccion() ) {\n				$.notify({text: 'Debe cargar una estimación.'});\n			} else\n				Deductivas.cargaDeductivas();\n		});\n\n		$('#btnRetenciones').on('click', function() {\n\n			if( ! that.getIDTransaccion() ) {\n				$.notify({text: 'Debe cargar una estimación.'});\n			} else\n				Retenciones.cargaRetenciones();\n		});\n\n		$('#btnFormatoPDF').on('click', function(event) {\n\n			if( ! that.getIDTransaccion() ) {\n				$.notify({text: 'Debe cargar una estimación.'});\n				event.preventDefault();\n			}\n		});\n\n		$('#txtFecha, #txtFechaInicio, #txtFechaTermino').datepicker({\n			dateFormat: 'dd-mm-yy',\n			altFormat: 'yy-mm-dd',\n			showOtherMonths: \"true\",\n			selectOtherMonths: \"true\",\n			buttonImage: \"img/app/calendar_light-green_16x16.png\",\n			showOn: \"both\",\n			buttonImageOnly: true,\n			onSelect: function() {\n				pubsub.publish('modified_tran');\n			}\n		})\n		 .datepicker( 'setDate', new Date() )\n		 .datepicker('disable');\n\n		$('#txtFecha')\n		 .datepicker( 'option', 'altField', '#txtFechaDB' );\n\n		$('#txtFechaInicio')\n		 .datepicker( 'option', 'altField', '#txtFechaInicioDB' );\n		 \n		$('#txtFechaTermino')\n		 .datepicker( 'option', 'altField', '#txtFechaTerminoDB' )\n\n		$('#txtObservaciones').on('change', function(){\n			pubsub.publish('modified_tran');\n		});\n\n		$('#dialog-subcontratos').dialog({\n			autoOpen: false,\n			modal: true,\n			width: 760,\n			height: 390,\n			show: 'fold'\n		});\n\n		$('#dialog-resumen').dialog({\n			autoOpen: false,\n			modal: true,\n			width: 400,\n			buttons: {\n				Cerrar: function() {\n					$(this).dialog('close');\n				}\n			}\n		});\n\n		// Botones para ocultar/mostrar las columnas de la tabla\n		$('#column-switchers')\n		 .buttonset()\n		 .buttonset({disabled: true})\n		 .on('click', 'input', function( event ) {\n		 	\n		 	$('#tabla-conceptos colgroup .' + this.id).toggleClass('hidden');\n		 });\n\n		// Handler para la tabla de seleccion de un subcontrato a estimar\n		$('#tabla-subcontratos tbody').on({\n			click: function( event ) {\n\n				$(this).siblings().removeClass('selected');\n				$(this).addClass('selected');\n			},\n			dblclick: function( event ) {\n				$('#dialog-subcontratos').dialog('close');\n				that.IDSubcontrato = parseInt($(this).attr('data-id'));\n				that.nuevaTransaccion();\n				event.preventDefault();\n			}\n		}, 'tr');\n\n		$('#txtAmortAnticipo, #txtFondoGarantia, #txtRetencionIVA, #txtAnticipoLiberar').on('click', function(event) {\n		    \n		    var $that = $(this),\n		    	tipoTotal = this.id;\n\n		    if ( $that.children('input').length )\n		    	return;\n\n		    var	oldValue  = $(this).text(),\n		    	inputText = $('<input type=\"text\" class=\"text\" value=\"' + oldValue + '\" />');\n		    \n		    $that.empty();\n		    \n		    inputText\n		    .appendTo($that)\n		    .on('blur', function() {\n				updateValue();\n			})\n			.on('keydown', function(event) {\n\n				switch( event.keyCode ) {\n			    	case 13:\n			        	updateValue();\n		           	break;\n\n		           	case 27:\n		            	restorePrevValue();\n		            	removeInput();\n		           	break;\n			   }\n\n			   event.stopPropagation();\n			}).select();\n\n			function removeInput() {\n				inputText.remove();\n			}\n\n			function restorePrevValue() {\n				$that.text(oldValue);\n			}\n\n			function setValue() {\n				$that.text(inputText.val().numFormat());\n			}\n\n			function updateValue() {\n\n				DATA_LOADER.show();\n\n		    	$.ajax({\n		    		type: 'GET',\n		    		url: that.urls.tranController,\n		    		data: {\n		    			IDTransaccion: that.getIDTransaccion(),\n		    			tipoTotal: tipoTotal,\n		    			importe: inputText.val(),\n		    			action: 'actualizaImporte'\n		    		},\n		    		dataType: 'json'\n		    	})\n		    	.done( function( json ) {\n\n		    		if ( ! json.success ) {\n		    			messageConsole.displayMessage(json.message, 'error');\n		    			restorePrevValue();\n		    		} else {\n		    			setValue();\n		    			that.cargaTotales();\n		    		}\n		    	})\n		    	.always( function() {\n		    		removeInput();\n		    		DATA_LOADER.hide();\n		    	});\n			}\n		});\n	},\n\n	nuevaTransaccion: function() {\n\n		var that = this;\n\n		DATA_LOADER.show();\n\n		$.ajax({\n			url: that.urls.tranController,\n			data: {\n				IDSubcontrato: that.getIDSubcontrato(),\n				action: 'nuevaTransaccion'\n			},\n			dataType: 'json'\n		}).done( function( json ) {\n			try {\n\n				if( ! json.success ) {\n					messageConsole.displayMessage( json.message, 'error' );\n					return;\n				}\n\n				// Datos del Subcontrato\n				$('#txtObjetoSubcontrato').text(json.datosSubcontrato.ObjetoSubcontrato);\n				$('#txtNombreContratista').text(json.datosSubcontrato.NombreContratista);\n				// Conceptos del subcontrato para estimacion\n				\n				that.fillConceptosList(json.conceptos);\n				\n				that.habilitaCamposTransaccion();\n				\n				pubsub.publish('modified_tran');\n				\n				that.setURLFormatoPDF();\n			} catch( e ) {\n				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );\n			}\n		}).always( function() {\n			DATA_LOADER.hide();\n		});\n	},\n\n	deshabilitaCamposTransaccion: function() {\n		$('#txtFecha, #txtFechaInicio, #txtFechaTermino').datepicker('disable');\n		$('#txtObservaciones').prop('disabled', true);\n		$('#column-switchers').buttonset('disable');\n	},\n\n	deshabilitaFechaTransaccion: function() {\n		$('#txtFecha').datepicker('disable');\n	},\n\n	habilitaCamposTransaccion: function() {\n		$('#txtFecha, #txtFechaInicio, #txtFechaTermino').datepicker('enable');\n		$('#txtObservaciones').prop('disabled', false);\n		$('#column-switchers').buttonset('enable');\n	},\n\n	limpiaDatosTransaccion: function() {\n		this.IDSubcontrato = null;\n		$('#IDSubcontratoCDC').val('');\n		$('#txtObjetoSubcontrato').text('');\n		$('#txtNombreContratista').text('');\n		$('#txtFecha, #txtFechaInicio, #txtFechaTermino').datepicker( 'setDate', new Date() );\n		$('#txtFolioConsecutivo').text('');\n		$('#txtObservaciones').val('');\n		$('#txtSubtotal, #txtIVA, #txtTotal').text('');\n		$('#tabla-conceptos tbody').empty();\n		$('#guardar').removeClass('alert');\n		\n		// Limpia la tabla de totales\n		$('#resumen-total td.numerico').text('');\n	},\n\n	getIDProyecto: function() {\n		return $('#bl-proyectos').buttonlist('option', 'selectedItem').value;\n	},\n\n	getIDSubcontrato: function() {\n		return this.IDSubcontrato;\n	},\n\n	getIDTransaccion: function() {\n		return $('#folios-transaccion').buttonlist('option', 'selectedItem').value;\n	},\n\n	muestraListaSubcontratos: function() {\n\n		var that = this;\n\n		DATA_LOADER.show();\n\n		$.ajax({\n			type: 'GET',\n			url: that.urls.tranController,\n			data: {\n				IDProyecto: $('#bl-proyectos').buttonlist('option', 'selectedItem').value,\n				action: 'getListaSubcontratos'\n			},\n			dataType: 'json'\n		}).done( function( json ) {\n			try {\n				if( ! json.success ) {\n					messageConsole.displayMessage( json.message, 'error' );\n					return;\n				}\n\n				if( json.noRows ) {\n					$.notify( {text: json.message} );\n					return;\n				}\n\n				// Crear tabla de subcontratos\n				var $bodySubcontratos = $('#tabla-subcontratos tbody'),\n					subcontratos = '';\n\n				$bodySubcontratos.empty();\n\n				$.each( json.subcontratos, function() {\n\n					subcontratos +=\n						'<tr data-id=\"' + this.IDSubcontrato + '\">'\n					  +   '<td>' + this.Contratista + '</td>'\n					  +   '<td>' + this.NumeroFolio + '</td>'\n					  +   '<td>' + this.Fecha + '</td>'\n					  +   '<td>' + this.Referencia + '</td>'\n					  + '</tr>';\n				});\n\n				$bodySubcontratos.html(subcontratos);\n\n				$('#dialog-subcontratos').dialog('open');\n\n			} catch( e ) {\n				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );\n			}\n		}).always( function() {\n			DATA_LOADER.hide();\n		});\n	},\n\n	cargaTransaccion: function() {\n		\n		var that = this;\n\n		this.limpiaDatosTransaccion();\n		this.deshabilitaCamposTransaccion();\n\n		DATA_LOADER.show();\n\n		$.ajax({\n			type: 'GET',\n			url: that.urls.tranController,\n			data: {\n				IDTransaccion: that.getIDTransaccion(),\n				action: 'getDatosTransaccion'\n			},\n			dataType: 'json'\n		}).done( function( json ) {\n			try {\n\n				if( ! json.success ) {\n					messageConsole.displayMessage(json.message, 'error');\n					return;\n				}\n\n				if( json.noRows ) {\n					$.notify({text: json.message});\n					return;\n				}\n\n				// Establece los datos generales\n				$('#txtFolioConsecutivo').text(json.datos.NumeroFolioConsecutivo);\n				$('#txtFecha').datepicker( 'setDate', json.datos.Fecha );\n				$('#txtObjetoSubcontrato').text( json.datos.ObjetoSubcontrato );\n				$('#txtNombreContratista').text( json.datos.NombreContratista );\n				$('#txtObservaciones').val( json.datos.Observaciones );\n				$('#txtFechaInicio').datepicker( 'setDate', json.datos.FechaInicio );\n				$('#txtFechaTermino').datepicker( 'setDate', json.datos.FechaTermino );\n\n				// llena la tabla de conceptos\n				that.fillConceptosList( json.conceptos );\n\n				// Establece los totales de transaccion\n				that.setTotalesTransaccion(json.totales);\n\n				that.habilitaCamposTransaccion();\n				that.deshabilitaFechaTransaccion();\n				that.setURLFormatoPDF();\n\n			} catch( e ) {\n				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );\n			}\n		})\n		.fail( function() {\n			$.notify({text: 'Ocurrió un error al cargar la transaccion.'});\n		})\n		.always( function() {\n			DATA_LOADER.hide();\n		});\n	},\n\n	setURLFormatoPDF: function() {\n\n		var url = $('#btnFormatoPDF').attr('href');\n\n		if ( url.match(/=(\\d+\\d$|null)/ig) ) {\n			url = url.replace(/(=)(\\d+\\d$|null)/ig, '$1' + this.getIDTransaccion());\n		} else\n			url += (this.getIDTransaccion() != null ? this.getIDTransaccion() : \"\");\n\n		$('#btnFormatoPDF').attr('href', url);\n	},\n\n	cargaTotales: function() {\n\n		var that = this;\n\n		DATA_LOADER.show();\n\n		$.ajax({\n			type: 'GET',\n			url: that.urls.tranController,\n			data: {\n				IDTransaccion: that.getIDTransaccion(),\n				action: 'getTotalesTransaccion'\n			},\n			dataType: 'json'\n		}).done( function( json ) {\n			try {\n\n				if( ! json.success ) {\n					messageConsole.displayMessage(json.message, 'error');\n					return;\n				}\n\n				if( json.noRows ) {\n					$.notify({text: json.message});\n					return;\n				}\n				// Establece los totales de transaccion\n				that.setTotalesTransaccion(json.totales);\n\n			} catch( e ) {\n				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );\n			}\n		})\n		.fail( function() {\n			$.notify({text: 'Ocurrió un error al cargar la transaccion.'});\n		})\n		.always( function() {\n			DATA_LOADER.hide();\n		});\n	},\n\n	conceptosListTemplate: function( conceptos ) {\n\n		var html = '',\n			cellType = 'td';\n\n		for (var i = 0; i < conceptos.length; i++) {\n			\n			var concepto = conceptos[i];\n\n			if ( concepto.EsActividad )\n				cellType = 'td';\n			else\n				cellType = 'th';\n\n			html +=\n				  '<tr data-id=\"' + concepto.IDConceptoContrato + '\" data-iddestino=\"' + concepto.IDConceptoDestino + '\">'\n				+    '<td class=\"icon-cell\"><a class=\"icon fixed\"></a></td>'\n				+    '<' + cellType + ' title=\"' + concepto.Descripcion + '\">' + '&nbsp;&nbsp;'.repeat(concepto.NumeroNivel) + concepto.Descripcion + ' </' + cellType + '>'\n				+    '<td class=\"centrado\">' + concepto.Unidad + '</td>'\n				+    '<td class=\"numerico contratado\">' + concepto.CantidadSubcontratada + '</td>'\n				+    '<td class=\"numerico contratado\">' + concepto.PrecioUnitario + '</td>'\n				+    '<td></td>'\n				+    '<td class=\"numerico\">' + concepto.CantidadEstimadaTotal + '</td>'\n				+    '<td class=\"numerico\">' + concepto.PctAvance + '</td>'\n				+    '<td></td>'\n				+    '<td class=\"numerico\">' + concepto.MontoEstimadoTotal + '</td>'\n				+    '<td class=\"numerico\">' + concepto.CantidadSaldo + '</td>'\n				+    '<td class=\"numerico\">' + concepto.MontoSaldo + '</td>'\n				+    '<td class=\"editable-cell numerico\">' + concepto.CantidadEstimada + '</td>'\n				+    '<td class=\"editable-cell numerico\">' + concepto.PctEstimado + '</td>'\n				+    '<td class=\"numerico\">' + concepto.PrecioUnitario + '</td>'\n				+    '<td class=\"editable-cell numerico\">' + concepto.ImporteEstimado + '</td>'\n				+    '<td title=\"' + concepto.RutaDestino + '\">' + concepto.RutaDestino + '</td>'\n			    +  '</tr>';\n		};\n		\n		return html;\n	},\n\n	fillConceptosList: function( data ) {\n\n		var html = this.conceptosListTemplate( data );\n\n		$('#tabla-conceptos tbody').html( html );\n	},\n\n	guardaTransaccion: function() {\n\n		var that = this;\n\n		DATA_LOADER.show();\n\n		that.desmarcaConceptosError();\n\n		$.ajax({\n			type: 'GET',\n			url: that.urls.tranController,\n			data: {\n				IDProyecto: that.getIDProyecto(),\n				IDTransaccion: that.getIDTransaccion(),\n				IDSubcontrato: that.getIDSubcontrato(),\n				datosGenerales: {\n					'Fecha': $('#txtFechaDB').val(),\n					'FechaInicio': $('#txtFechaInicioDB').val(),\n					'FechaTermino': $('#txtFechaTerminoDB').val(),\n					'Observaciones': $('#txtObservaciones').val()\n				},\n				conceptos: that.getConceptosEstimados(),\n				action: 'guardaTransaccion'\n			},\n			dataType: 'json'\n		}).done( function(json) {\n\n			if( ! json.success ) {\n				messageConsole.displayMessage( json.message, 'error' );\n				return;\n			}\n\n			if ( ! that.getIDTransaccion() ) {\n				$('#folios-transaccion').buttonlist('addListItem', \n					{id: json.IDTransaccion, text: json.NumeroFolio}, 'start');\n				\n				$('#folios-transaccion').buttonlist('setSelectedItemById', \n					json.IDTransaccion, false );\n				\n				$('#txtFolioConsecutivo').text(json.NumeroFolioConsecutivo);\n				\n				that.deshabilitaFechaTransaccion();\n				that.setURLFormatoPDF();\n			}\n\n	 		that.setTotalesTransaccion(json.totales);\n\n	 		if ( json.errores.length > 0 ) {\n	 			that.marcaConceptoError(json.errores);\n	 			messageConsole.displayMessage( 'Existen errores en algunos conceptos, por favor revise y guarde otra vez.', 'error');\n	 		} else {\n\n	 			$('#guardar').removeClass('alert');\n	 			messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success');\n	 		}\n	 		\n		}).always( function() {\n			DATA_LOADER.hide();\n		});\n	},\n\n	eliminaTransaccion: function() {\n\n		var that = this;\n\n		if( ! that.getIDTransaccion() ) {\n			messageConsole.displayMessage( 'No hay una estimación cargada.', 'error' );\n			return;\n		}\n\n		if ( ! confirm('La estimación será eliminada, desea continuar?') )\n			return;\n\n		DATA_LOADER.show();\n\n		$.ajax({\n			type: 'GET',\n			url: that.urls.tranController,\n			data: {\n				IDTransaccion: that.getIDTransaccion(),\n				action: 'eliminaTransaccion'\n			},\n			dataType: 'json'\n		}).done( function( json ) {\n			try {\n\n				if( ! json.success ) {\n					messageConsole.displayMessage( json.message, 'error' );\n					return;\n				}\n\n				that.limpiaDatosTransaccion();\n				that.deshabilitaCamposTransaccion();\n				$('#folios-transaccion').buttonlist('refresh');\n				that.setURLFormatoPDF();\n\n			} catch( e ) {\n				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );\n			}\n		}).always( function() {\n			DATA_LOADER.hide();\n		});\n	},\n\n	setTotalesTransaccion: function( totales ) {\n		// Establece los totales de transaccion\n		if( totales.length ) {\n			$('#txtSumaImportes').text(totales[0].SumaImportes);\n			$('#txtAmortAnticipo').text(totales[0].ImporteAmortizacionAnticipo);\n			$('#txtAnticipoLiberar').text(totales[0].ImporteAnticipoLiberar);\n			$('#txtFondoGarantia').text(totales[0].ImporteFondoGarantia);\n			$('#txtSumaDeductivas').text(totales[0].SumaDeductivas);\n			$('#txtSumaRetenciones').text(totales[0].SumaRetenciones);\n			$('#txtRetencionIVA').text(totales[0].ImporteRetencionIVA);\n			$('#txtRetencionesLiberadas').text(totales[0].SumaRetencionesLiberadas);\n			$('#rsSubtotal').text(totales[0].Subtotal);\n\n			this.setSubtotal(totales[0].Subtotal);\n			this.setIVA(totales[0].IVA);\n			$('#rsIVA').text(totales[0].IVA);\n			this.setTotal(totales[0].Total);\n			$('#rsTotal').text(totales[0].Total);\n		}\n	},\n\n	setSubtotal: function( monto ) {\n		$('#txtSubtotal').text(monto);\n	},\n\n	setIVA: function( monto ) {\n		$('#txtIVA').text(monto);\n	},\n\n	setTotal: function( monto ) {\n		$('#txtTotal').text(monto);\n	},\n\n	getVolumenSubcontratado: function() {\n		\n		return parseFloat(this.uxtable('getCell', 3).text().replace(/,/g, ''));\n	},\n\n	getPrecioUnitarioConcepto: function() {\n\n		return parseFloat(this.uxtable('getCell', 14).text().replace(/,/g, ''));\n	},\n\n	getVolumenSaldo: function() {\n\n		return parseFloat(this.uxtable('getCell', 10).text().replace(/,/g, ''));\n	},\n\n	setCantidadEstimada: function( cantidadEstimada ) {\n\n		this.uxtable('getCell', 12).text( cantidadEstimada.toFixed(4).numFormat() );\n	},\n\n	setPorcentajeEstimado: function( pctEstimado ) {\n\n		this.uxtable('getCell', 13).text( pctEstimado.toFixed(2) );\n	},\n\n	setImporteEstimado: function( importeEstimado ) {\n\n		this.uxtable('getCell', 15).text( importeEstimado.toFixed(2).numFormat() );\n	},\n\n	getConceptosEstimados: function() {\n\n		var estimados = [], row = null;\n\n		$('#tabla-conceptos tr.estimado').each( function() {			\n			row = $(this);\n\n			estimados[estimados.length] = {\n				'IDConceptoContrato': row.attr('data-id'),\n				'IDConceptoDestino': row.attr('data-iddestino'),\n				'importeEstimado': row.children(':eq(15)').text()\n			}\n		});\n\n		return estimados;\n	},\n\n	marcaConceptoError: function( errores ) {\n\n		for( error in errores ) {\n\n			$('tr[data-id=' + errores[error].IDConceptoContrato + ']')\n			.addClass('error')\n			.find('.icon')\n			.addClass('error')\n			.attr('title', errores[error].message);\n		}\n	},\n\n	desmarcaConceptosError: function() {\n		$('#tabla-conceptos')\n		.find('tr.estimado')\n		.removeClass('error')\n		.find('.icon')\n		.removeClass('error')\n		.removeAttr('title');\n	},\n\n	desmarcaConceptoError: function( IDConcepto ) {\n\n		$('tr[data-id=' + IDConcepto + ']')\n		.removeClass('error')\n		.find('.icon')\n		.removeClass('error')\n		.removeAttr('title');\n	},\n\n	marcaConceptoEstimado: function( IDConcepto ) {\n		\n		$('tr[data-id=' + IDConcepto + ']').addClass('estimado');\n	},\n\n	desmarcaConceptoEstimado: function( IDConcepto ) {\n\n		$('tr[data-id=' + IDConcepto + ']').removeClass('estimado');\n		this.desmarcaConceptoError( IDConcepto );\n	},\n\n	identificaModificacion: function() {\n		\n		$('#guardar').addClass('alert');\n	},\n\n	existenCambiosSinGuardar: function() {\n		\n		return $('#guardar').hasClass('alert');\n	},\n\n\n};\n\nvar Deductivas = {\n\n	tiposMaterial: {\n		materiales: 1,\n		manoobra: 2,\n		servicios: 3,\n		herramienta: 4,\n		maquinaria: 8\n	},\n	tiposAlmacen: {\n		maquinaria: 2\n	},\n	urls: {\n		insumoController: 'inc/lib/controllers/InsumoController.php',\n		almacenController: 'inc/lib/controllers/AlmacenController.php'\n	},\n	selectedIDInsumo: 0,\n	selectedTipoDeductiva: 0,\n\n	init: function() {\n\n		var that = this;\n\n		$('#tipo_deductiva').buttonset();\n\n		$('#dialog-deductivas').dialog({\n			autoOpen: false,\n			modal: true,\n			width: 650\n		});\n\n		$('#dialog-nueva-deduccion').dialog({\n			autoOpen: false,\n			modal: true,\n			resizable: false,\n			buttons: {\n				Aceptar: function() {\n					that.guardaDeductiva();\n				}\n			},\n			close: function() {\n				$('#tipo_deductiva input').prop('checked', false);\n				$('#tipo_deductiva').buttonset('refresh');\n				that.selectedIDInsumo = 0;\n				that.selectedTipoDeductiva = 0;\n			}\n		});\n\n		$(\"#txtConceptoDeductiva\").autocomplete({\n		    minLength: 3,\n		    select: function( event, ui ) {\n		    	that.selectedIDInsumo = ui.item.id\n		    }\n		});\n\n		$('#tipo_deductiva').on('click', 'input', function(event) {\n\n			$(\"#txtConceptoDeductiva\").autocomplete( \"option\", \"disabled\", false );\n			\n			that.selectedTipoDeductiva = parseInt($(this).val());\n\n			switch ( this.id ) {\n\n				case 'materiales':\n					$(\"#txtConceptoDeductiva\").autocomplete('option', 'source',\n						that.configuraSourceAutocomplete(that.tiposMaterial.materiales));\n					that.showNuevaDeduccion();\n					break;\n\n				case 'mano_obra':\n					$(\"#txtConceptoDeductiva\").autocomplete('option', 'source',\n						that.configuraSourceAutocomplete(that.tiposMaterial.manoobra));\n					that.showNuevaDeduccion();\n					break;\n\n				case 'maquinaria':\n					$(\"#txtConceptoDeductiva\").autocomplete('option', 'source',\n						that.configuraSourceAutocomplete(that.tiposMaterial.maquinaria));\n					that.showNuevaDeduccion();\n					break;\n\n				default:\n					$(\"#txtConceptoDeductiva\").autocomplete( \"option\", \"disabled\", true );\n					that.showNuevaDeduccion();\n					break;\n			}\n		});\n\n		$('#registros_deductivas table').on('click', '.action.delete', that.eliminaDeductiva);\n	},\n\n	showNuevaDeduccion: function() {\n		$(\"#txtConceptoDeductiva, #txtObservacionesDeductiva\").val('');\n		$(\"#txtImporteDeductiva\").val(0);\n		$('#dialog-nueva-deduccion').dialog('open');\n	},\n\n	configuraSourceAutocomplete: function( tipoMaterial ) {\n		var that = this;\n\n		return function( request, response ) {\n		        \n		        var src;\n\n		        switch ( that.selectedTipoDeductiva ) {\n		        	case 3:\n		        		src = that.urls.almacenController;\n		        		request.IDTipoAlmacen = that.tiposAlmacen.maquinaria;\n		        		request.IDProyecto    = ESTIMACION.getIDProyecto();\n		        		request.action = 'listaAlmacenes';\n		        		$.getJSON( src, request, function( data, status, xhr ) {\n							var almacenes = [];\n				            \n				            for( i = 0; i < data.almacenes.length; i++ ){\n							   almacenes.push({\n							   		id: data.almacenes[i].IDAlmacen,\n							   		label: data.almacenes[i].Descripcion\n							   	});\n							}\n							\n							response( almacenes );\n						});\n		        		break;\n		        	default:\n		        		src = that.urls.insumoController;\n		        		request.IDTipoInsumo = tipoMaterial;\n		        		request.action = 'listaInsumos';\n		        		$.getJSON( src, request, function( data, status, xhr ) {\n							var insumos = [];\n				            	\n				            for( i = 0; i < data.insumos.length; i++ ){\n							   insumos.push({\n							   		id: data.insumos[i].IDInsumo,\n							   		label: data.insumos[i].Descripcion\n							   	});\n							}\n							\n							response( insumos );\n						});\n		        		break;\n		        }\n			}\n	},\n\n	guardaDeductiva: function() {\n\n		var that = this;\n\n		DATA_LOADER.show();\n\n		$.ajax({\n			type: 'GET',\n			url: ESTIMACION.urls.tranController,\n			data: {\n				IDTransaccion: ESTIMACION.getIDTransaccion(),\n				IDInsumo: that.selectedIDInsumo,\n				IDTipoDeductiva: that.selectedTipoDeductiva,\n				concepto: $('#txtConceptoDeductiva').val(),\n				importe: $('#txtImporteDeductiva').val(),\n				observaciones: $('#txtObservacionesDeductiva').val(),\n				action: 'guardaDeductiva'\n			},\n			dataType: 'json'\n		}).done( function(json) {\n\n			if( ! json.success ) {\n				messageConsole.displayMessage( json.message, 'error' );\n				return;\n			}\n			\n			// Ingresar la deduccion a la lista\n			that.agregaDeductiva(json.IDDeductiva, that.selectedTipoDeductiva, $('#txtConceptoDeductiva').val(), $('#txtImporteDeductiva').val(), $('#txtObservacionesDeductiva').val());\n			ESTIMACION.cargaTotales();\n			$('#dialog-nueva-deduccion').dialog('close');\n		}).always( function() {\n			DATA_LOADER.hide();\n		});\n	},\n\n	agregaDeductiva: function( IDDeductiva, tipo, concepto, importe, observaciones ) {\n\n		var deductiva =\n			  '<tr data-id=\"' + IDDeductiva + '\">'\n			+   '<td>' + tipo + '</td>'\n			+   '<td>' + concepto + '</td>'\n			+   '<td class=\"numerico\">' + importe.numFormat() + '</td>'\n			+   '<td>' + observaciones + '</td>'\n			+   '<td class=\"icon-cell\"><a class=\"icon action delete\"></a></td>'\n			+ '</tr>';\n\n		$('#registros_deductivas table tbody').append(deductiva);\n	},\n\n	cargaDeductivas: function() {\n\n		var that = this;\n\n		$('#registros_deductivas table tbody').empty();\n\n		DATA_LOADER.show();\n\n		$.ajax({\n			type: 'GET',\n			url: ESTIMACION.urls.tranController,\n			data: {\n				IDTransaccion: ESTIMACION.getIDTransaccion(),\n				action: 'getDeductivas'\n			},\n			dataType: 'json'\n		}).done( function( json ) {\n			try {\n\n				if( ! json.success ) {\n					messageConsole.displayMessage(json.message, 'error');\n					return;\n				}\n\n				if( json.noRows ) {\n					$.notify({text: json.message});\n					return;\n				}\n\n				$.each(json.deductivas, function() {\n					that.agregaDeductiva( this.IDDeductiva, this.TipoDeductiva, this.Concepto, this.Importe, this.Observaciones );\n				});\n\n				$('#dialog-deductivas').dialog('open');\n			} catch( e ) {\n				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );\n			}\n		})\n		.fail( function() {\n			$.notify({text: 'Ocurrió un error al cargar los datos.'});\n		})\n		.always( function() {\n			DATA_LOADER.hide();\n		});\n	},\n\n	eliminaDeductiva: function( event ) {\n\n		var that = this;\n		var IDDeductiva = parseInt($(that).parents('tr').attr('data-id'));\n\n		if ( ! confirm('La deductiva sera eliminada, continuar?') ) {\n			return;\n		}\n\n		DATA_LOADER.show();\n\n		$.ajax({\n			type: 'GET',\n			url: ESTIMACION.urls.tranController,\n			data: {\n				IDTransaccion: ESTIMACION.getIDTransaccion(),\n				IDDeductiva: IDDeductiva,\n				action: 'eliminaDeductiva'\n			},\n			dataType: 'json'\n		}).done( function( json ) {\n			try {\n\n				if( ! json.success ) {\n					messageConsole.displayMessage(json.message, 'error');\n					return;\n				}\n\n				$(that).parents('tr').remove();\n				ESTIMACION.cargaTotales();\n			} catch( e ) {\n				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );\n			}\n		})\n		.fail( function() {\n			$.notify({text: 'Ocurrió un error al cargar los datos.'});\n		})\n		.always( function() {\n			DATA_LOADER.hide();\n		});\n	}\n}\n\nvar Retenciones = {\n\n	init: function() {\n\n		var that = this;\n\n		$('#dialog-retenciones').dialog({\n			autoOpen: false,\n			modal: true,\n			width: 550,\n			buttons: {\n				Cerrar: function() {\n					$(this).dialog('close');\n				}\n			}\n		});\n\n		$('#dialog-nueva-retencion').dialog({\n			autoOpen: false,\n			modal: true,\n			resizable: false,\n			buttons: {\n				Aceptar: function() {\n					that.guardaRetencion();\n				}\n			}\n		});\n\n		$('#dialog-nueva-liberacion').dialog({\n			autoOpen: false,\n			modal: true,\n			resizable: false,\n			buttons: {\n				Aceptar: function() {\n					that.guardaLiberacion();\n				}\n			}\n		});\n\n		$('#tipos-retencion').buttonlist({\n			source: ESTIMACION.urls.tranController,\n			data: {action: 'getTiposRetencion'},\n			onSelect: function( selectedItem, listItem ) {\n			},\n			didNotDataFound: function() {\n				$.notify({text: 'No se pudo cargar la lista.'});\n			},\n			onCreateListItem: function() {\n				return {\n					id: this.IDTipoRetencion,\n					value: this.TipoRetencion\n				}\n			}\n		});\n\n		$('#btnNuevaRetencion').on( 'click', function() {\n			that.showNuevaRetencion();\n		});\n		$('#btnLiberaRetencion').on( 'click', function() {\n			that.showNuevaLiberacion();\n		});\n\n		$('#registros_retenciones table').on('click', '.action.delete', that.eliminaRetencion);\n		$('#registros_liberaciones table').on('click', '.action.delete', that.eliminaLiberacion);\n	},\n\n	showNuevaRetencion: function() {\n		$(\"#txtConceptoRetencion, #txtObservacionesRetencion\").val('');\n		$('#txtImporteRetencion').val(0);\n		$('#tipos-retencion').buttonlist('refresh');\n		$('#dialog-nueva-retencion').dialog('open');\n	},\n\n	showNuevaLiberacion: function() {\n		$(\"#txtObservacionesLiberacion\").val('');\n		$('#txtImporteLiberacion').val(0);\n\n		DATA_LOADER.show();\n\n		$.ajax({\n			type: 'GET',\n			url: ESTIMACION.urls.tranController,\n			data: {\n				IDTransaccion: ESTIMACION.getIDTransaccion(),\n				action: 'getImportePorLiberar'\n			},\n			dataType: 'json'\n		}).done( function(json) {\n\n			$('#txtImportePorLiberar').text(json.importePorLiberar);\n			$('#dialog-nueva-liberacion').dialog('open');\n		}).always(function() {\n			DATA_LOADER.hide();\n		});\n	},\n\n	agregaRetencion: function( retObj ) {\n\n		row = '<tr data-id=\"' + retObj.IDRetencion + '\">'\n			 +   '<td>' + retObj.TipoRetencion + '</td>'\n			 +   '<td class=\"numerico\">' + retObj.importe + '</td>'\n			 +   '<td>' + retObj.concepto + '</td>'\n			 +   '<td>' + retObj.observaciones + '</td>'\n			 +   '<td class=\"icon-cell\">'\n			 +     '<span class=\"icon action delete\"></span>'\n			 +   '</td>'\n			 + '</tr>';\n				\n		$('#registros_retenciones tbody').append(row);\n	},\n\n	agregaLiberacion: function( libObj ) {\n\n		row = '<tr data-id=\"' + libObj.IDLiberacion + '\">'\n			 +   '<td class=\"numerico\">' + libObj.importe + '</td>'\n			 +   '<td>' + libObj.observaciones + '</td>'\n			 +   '<td class=\"icon-cell\">'\n			 +     '<span class=\"icon action delete\"></span>'\n			 +   '</td>'\n			 + '</tr>';\n				\n		$('#registros_liberaciones tbody').append(row);\n	},\n\n	guardaRetencion: function() {\n		\n		var that = this;\n\n		$.ajax({\n			type: 'GET',\n			url: ESTIMACION.urls.tranController,\n			data: {\n				  IDTransaccion: ESTIMACION.getIDTransaccion()\n				, IDTipoRetencion: parseInt($('#tipos-retencion').buttonlist('option', 'selectedItem').value)\n				, importe: $('#txtImporteRetencion').val()\n				, concepto: $('#txtConceptoRetencion').val()\n				, observaciones: $('#txtObservacionesRetencion').val()\n				, action: 'guardaRetencion'\n			},\n			dataType: 'json'\n		}).success( function(json) {\n			try {\n				\n				if( ! json.success ) { messageConsole.displayMessage(json.message, 'error'); return false; }\n				\n				var retObj = {\n					'IDRetencion': json.IDRetencion,\n					'TipoRetencion': $('#tipos-retencion').buttonlist('option', 'selectedItem').label,\n					'importe': $('#txtImporteRetencion').val().numFormat(),\n					'concepto': $('#txtConceptoRetencion').val(),\n					'observaciones': $('#txtObservacionesRetencion').val()\n				};\n\n				that.agregaRetencion( retObj );\n				\n				$('#dialog-nueva-retencion').dialog('close');\n\n				ESTIMACION.cargaTotales();\n				\n			} catch(e) {\n				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );\n			}\n		});\n	},\n\n	guardaLiberacion: function() {\n		\n		var that = this;\n\n		$.ajax({\n			type: 'GET',\n			url: ESTIMACION.urls.tranController,\n			data: {\n				  IDTransaccion: ESTIMACION.getIDTransaccion()\n				, importe: $('#txtImporteLiberacion').val()\n				, observaciones: $('#txtObservacionesLiberacion').val()\n				, action: 'guardaLiberacion'\n			},\n			dataType: 'json'\n		}).success( function(json) {\n			try {\n				\n				if( ! json.success ) { messageConsole.displayMessage(json.message, 'error'); return false; }\n				\n				var libObj = {\n					'IDLiberacion': json.IDLiberacion,\n					'importe': $('#txtImporteLiberacion').val().numFormat(),\n					'observaciones': $('#txtObservacionesLiberacion').val()\n				};\n\n				that.agregaLiberacion( libObj );\n				\n				$('#dialog-nueva-liberacion').dialog('close');\n\n				ESTIMACION.cargaTotales();\n				\n			} catch(e) {\n				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );\n			}\n		});\n	},\n\n	eliminaRetencion: function() {\n\n		var that = this;\n\n		var IDRetencion = parseInt($(that).parents('tr').attr('data-id'));\n\n		if ( ! confirm('La retención sera eliminada, continuar?') ) {\n			return;\n		}\n\n		DATA_LOADER.show();\n\n		$.ajax({\n			type: 'GET',\n			url: ESTIMACION.urls.tranController,\n			data: {\n				IDTransaccion: ESTIMACION.getIDTransaccion(),\n				IDRetencion: IDRetencion,\n				action: 'eliminaRetencion'\n			},\n			dataType: 'json'\n		})\n		.done( function( json ) {\n			try {\n\n				if( ! json.success ) {\n					messageConsole.displayMessage( json.message, 'error' );\n					return;\n				}\n				\n				$(that).parents('tr').remove();\n\n				ESTIMACION.cargaTotales();\n			} catch( e ) {\n				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );\n			}\n		})\n		.always( function() {\n			DATA_LOADER.hide();\n		});\n	},\n\n	eliminaLiberacion: function() {\n\n		var that = this;\n\n		var IDLiberacion = parseInt($(that).parents('tr').attr('data-id'));\n\n		if ( ! confirm('La liberación sera eliminada, continuar?') ) {\n			return;\n		}\n\n		DATA_LOADER.show();\n\n		$.ajax({\n			type: 'GET',\n			url: ESTIMACION.urls.tranController,\n			data: {\n				IDTransaccion: ESTIMACION.getIDTransaccion(),\n				IDLiberacion: IDLiberacion,\n				action: 'eliminaLiberacion'\n			},\n			dataType: 'json'\n		})\n		.done( function( json ) {\n			try {\n\n				if( ! json.success ) {\n					messageConsole.displayMessage( json.message, 'error' );\n					return;\n				}\n				\n				$(that).parents('tr').remove();\n\n				ESTIMACION.cargaTotales();\n			} catch( e ) {\n				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );\n			}\n		})\n		.always( function() {\n			DATA_LOADER.hide();\n		});\n	},\n\n	cargaRetenciones: function() {\n\n		var that = this;\n\n		$('#registros_retenciones tbody').empty();\n		$('#registros_liberaciones tbody').empty();\n\n		DATA_LOADER.show();\n\n		$.ajax({\n			type: 'GET',\n			url: ESTIMACION.urls.tranController,\n			data: {\n				IDTransaccion: ESTIMACION.getIDTransaccion(),\n				action: 'getRetenciones'\n			},\n			dataType: 'json'\n		}).success( function( json ) {\n			try {\n\n				if( ! json.success ) {\n					messageConsole.displayMessage(json.message, 'error');\n					return;\n				}\n				\n				$.each( json.retenciones, function() {\n\n					that.agregaRetencion( this );\n				});\n\n				$.each( json.liberaciones, function() {\n					that.agregaLiberacion( this );\n				});\n\n				$('#dialog-retenciones').dialog('open');\n			} catch( e ) {\n				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );\n			}\n		}).fail( function() {\n			$.notify({text: 'Ocurrió un error al cargar las retenciones.'});\n		}).always( function() {\n			DATA_LOADER.hide();\n		});;\n	}\n};\n\n// funciones Mediators que llamaran las notificaciones\nvar modifiedTran = function( event, data ) {\n	ESTIMACION.identificaModificacion();\n};\n\nvar notifyModifiedTran = function( event, data ) {\n	if( confirm('Desea continuar sin guardar los cambios?...') ) {\n		//if( typeof data === 'object')\n			data.call(ESTIMACION);\n	}\n}",
-			"file": "inc/js/estimaciones.js",
-			"file_size": 41090,
-			"file_write_time": 130232276271303831,
+			"file": "inc/js/avance_obra.js",
 			"settings":
 			{
-				"buffer_size": 39511,
+				"buffer_size": 18546,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "inc/js/precios_venta.js",
+			"settings":
+			{
+				"buffer_size": 6896,
 				"line_ending": "Windows"
 			}
 		}
@@ -635,14 +616,31 @@
 	},
 	"file_history":
 	[
-		"/D/www/ModulosSAO/css/general.css",
-		"/D/www/ModulosSAO/agrupacion.php",
 		"/D/www/ModulosSAO/inc/js/agrupacion.js",
+		"/D/www/ModulosSAO/modulos/subcontratos/GetAddendums.php",
+		"/D/www/ModulosSAO/modulos/subcontratos/GetClasificadores.php",
+		"/D/www/ModulosSAO/modulos/subcontratos/GetDatosSubcontrato.php",
+		"/D/www/ModulosSAO/modulos/subcontratos/GetListaSubcontratos.php",
+		"/D/www/ModulosSAO/inc/js/subcontratos.js",
 		"/D/www/ModulosSAO/inc/js/general.js",
-		"/D/www/ModulosSAO/confirmacion_cobranza.php",
+		"/D/www/ModulosSAO/modulos/agrupacion/GetListaCuentasContables.php",
+		"/D/www/ModulosSAO/modulos/agrupacion/GetInsumosGenericos.php",
+		"/D/www/ModulosSAO/modulos/agrupacion/GetFamilias.php",
+		"/D/www/ModulosSAO/modulos/agrupacion/GetListaInsumos.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/ListaProyectosController.php",
+		"/D/www/ModulosSAO/modulos/agrupacion/GetListaFacturasVarios.php",
+		"/D/www/ModulosSAO/modulos/agrupacion/GetListaSubcontratos.php",
+		"/D/www/ModulosSAO/modulos/agrupacion/GetNaturalezas.php",
+		"/D/www/ModulosSAO/modulos/proyectos/GetDatosGeneralesProyecto.php",
+		"/D/www/ModulosSAO/inc/js/estimaciones.js",
+		"/D/www/ModulosSAO/inc/lib/models/Util.class.php",
 		"/D/www/ModulosSAO/inc/js/confirmacion_cobranza.js",
-		"/D/www/ModulosSAO/inc/lib/models/Cobranza.class.php",
+		"/D/www/ModulosSAO/css/cobranza.css",
+		"/D/www/ModulosSAO/css/general.css",
 		"/D/www/ModulosSAO/inc/lib/controllers/CobranzaController.php",
+		"/D/www/ModulosSAO/inc/lib/models/Cobranza.class.php",
+		"/D/www/ModulosSAO/confirmacion_cobranza.php",
+		"/D/www/ModulosSAO/agrupacion.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionObra.class.php",
 		"/D/www/ModulosSAO/modulos/cobranza/RegistraCobranza.php",
 		"/D/www/ModulosSAO/inc/lib/models/TransaccionSAO.class.php",
@@ -656,8 +654,6 @@
 		"/D/www/ModulosSAO/estimacion_obra.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/AvanceObraController.php",
 		"/D/www/ModulosSAO/inc/lib/models/AvanceObra.class.php",
-		"/D/www/ModulosSAO/inc/js/estimaciones.js",
-		"/D/www/ModulosSAO/modulos/proyectos/GetDatosGeneralesProyecto.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontrato.class.php",
 		"/D/www/ModulosSAO/estimaciones.php",
 		"/D/www/ModulosSAO/avance_obra.php",
@@ -747,22 +743,7 @@
 		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/AvanceObraController.php",
 		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/EstimacionObraController.php",
 		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/ListaProyectosController.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/PrecioVentaController.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/ArbolPresupuestoController.php",
-		"/C/AppServ/www/ModulosSAO/avance_subcontratos.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/db/SAOSubcontratosDBConn.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/js/estimacion_obra.js",
-		"/C/AppServ/www/ModulosSAO/precios_venta.php",
-		"/C/AppServ/www/ModulosSAO/inc/js/precios_venta.js",
-		"/C/AppServ/www/ModulosSAO/inc/lib/models/PrecioVenta.class.php",
-		"/C/AppServ/www/ModulosSAO/css/general.css",
-		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/MenuAplicacionController.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/db/SQLSrvDBConf.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/db/DBConf.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/setPath.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/db/test.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/retest.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/db/ModulosSAOConn.class.php"
+		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/PrecioVentaController.php"
 	],
 	"find":
 	{
@@ -780,6 +761,13 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"idProyecto",
+			"clasificadores",
+			"ajax",
+			"timeout",
+			"cache",
+			"LISTA_PROYECTOS",
+			"LISTA_Proyectos",
 			"content",
 			"numerico",
 			"cargaTotales",
@@ -900,14 +888,7 @@
 			"console.log",
 			" rel=\"stylesheet\"",
 			" type=\"text/css\"",
-			"rel=\"stylesheet\"",
-			"type=\"text/css\"",
-			"footer",
-			" rel=\"stylesheet\"",
-			" type=\"text/css\"",
-			"ul",
-			".selected",
-			"selected"
+			"rel=\"stylesheet\""
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -915,6 +896,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"IDProyecto",
 			"eliminaTransaccion",
 			"guardaTransaccion",
 			"nuevaTransaccion",
@@ -983,200 +965,11 @@
 	"groups":
 	[
 		{
-			"selected": 7,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "confirmacion_cobranza.php",
-					"settings":
-					{
-						"buffer_size": 9372,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								8517,
-								8517
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 5572.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "inc/lib/models/Cobranza.class.php",
-					"settings":
-					{
-						"buffer_size": 10528,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6303,
-								6303
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1265.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "inc/lib/controllers/CobranzaController.php",
-					"settings":
-					{
-						"buffer_size": 10255,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								9249,
-								9249
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1610.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "css/general.css",
-					"settings":
-					{
-						"buffer_size": 26012,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								8592,
-								8592
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 11718.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "css/cobranza.css",
-					"settings":
-					{
-						"buffer_size": 574,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								157,
-								157
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "inc/js/confirmacion_cobranza.js",
-					"settings":
-					{
-						"buffer_size": 21138,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								133,
-								133
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "inc/lib/models/Util.class.php",
-					"settings":
-					{
-						"buffer_size": 1024,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1016,
-								1016
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 690.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
 					"file": "inc/js/estimaciones.js",
 					"settings":
 					{
@@ -1187,8 +980,8 @@
 						"selection":
 						[
 							[
-								8289,
-								8289
+								1714,
+								1714
 							]
 						],
 						"settings":
@@ -1197,7 +990,142 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 6785.0,
+						"translation.y": 1320.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "inc/js/estimacion_obra.js",
+					"settings":
+					{
+						"buffer_size": 18492,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1189,
+								1189
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 695.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "inc/js/confirmacion_cobranza.js",
+					"settings":
+					{
+						"buffer_size": 21140,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1372,
+								1372
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 607.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "inc/js/avance_subcontratos.js",
+					"settings":
+					{
+						"buffer_size": 19700,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1273,
+								1273
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 802.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "inc/js/avance_obra.js",
+					"settings":
+					{
+						"buffer_size": 18546,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1676,
+								1676
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 849.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "inc/js/precios_venta.js",
+					"settings":
+					{
+						"buffer_size": 6896,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								955,
+								955
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
