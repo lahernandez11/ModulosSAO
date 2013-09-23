@@ -310,9 +310,7 @@ var ESTIMACION = {
 		 .buttonset()
 		 .buttonset({disabled: true})
 		 .on('click', 'input', function( event ) {
-
 		 	$('#tabla-conceptos .' + this.id).toggleClass('hidden');
-		 	// $('#tabla-conceptos .' + this.id).css('di', 'collapse');
 		 });
 
 		// Handler para la tabla de seleccion de un subcontrato a estimar
@@ -598,6 +596,10 @@ var ESTIMACION = {
 				that.habilitaCamposTransaccion();
 				that.deshabilitaFechaTransaccion();
 				that.setURLFormatoPDF();
+
+				$('#column-switchers :checked').each(function() {
+				     $('#tabla-conceptos .' + this.id).addClass('hidden');
+				});
 
 			} catch( e ) {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
