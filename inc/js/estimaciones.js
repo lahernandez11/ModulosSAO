@@ -15,6 +15,12 @@ var ESTIMACION = {
 	classes: {
 		conceptoModificado: 'modificado'
 	},
+	colClasses: {
+		contratado: 'contratado',
+		avance_volumen: 'avance-volumen',
+		avance_importe: 'avance-importe',
+		saldo: 'saldo', destino: 'destino'
+	},
 	urls: {
 		tranController: 'inc/lib/controllers/EstimacionSubcontratoController.php'
 	},
@@ -38,7 +44,6 @@ var ESTIMACION = {
 		    var oldValue = $(this).val();
 		    $(this).val(oldValue.numFormat());
 		});
-
 
 		$('#bl-proyectos').buttonlist({
 			source: 'inc/lib/controllers/ListaProyectosController.php',
@@ -305,8 +310,9 @@ var ESTIMACION = {
 		 .buttonset()
 		 .buttonset({disabled: true})
 		 .on('click', 'input', function( event ) {
-		 	
-		 	$('#tabla-conceptos colgroup .' + this.id).toggleClass('hidden');
+
+		 	$('#tabla-conceptos .' + this.id).toggleClass('hidden');
+		 	// $('#tabla-conceptos .' + this.id).css('di', 'collapse');
 		 });
 
 		// Handler para la tabla de seleccion de un subcontrato a estimar
@@ -324,7 +330,8 @@ var ESTIMACION = {
 			}
 		}, 'tr');
 
-		$('#txtAmortAnticipo, #txtFondoGarantia, #txtRetencionIVA, #txtAnticipoLiberar').on('click', function(event) {
+		$('#txtAmortAnticipo, #txtFondoGarantia, #txtRetencionIVA, #txtAnticipoLiberar')
+		.on('click', function(event) {
 		    
 		    var $that = $(this),
 		    	tipoTotal = this.id;
@@ -660,7 +667,8 @@ var ESTIMACION = {
 	conceptosListTemplate: function( conceptos ) {
 
 		var html = '',
-			cellType = 'td';
+			cellType = 'td',
+			that = this;
 
 		for (var i = 0; i < conceptos.length; i++) {
 			
@@ -676,20 +684,25 @@ var ESTIMACION = {
 				+    '<td class="icon-cell"><a class="icon fixed"></a></td>'
 				+    '<' + cellType + ' title="' + concepto.Descripcion + '">' + '&nbsp;&nbsp;'.repeat(concepto.NumeroNivel) + concepto.Descripcion + ' </' + cellType + '>'
 				+    '<td class="centrado">' + concepto.Unidad + '</td>'
-				+    '<td class="numerico contratado">' + concepto.CantidadSubcontratada + '</td>'
-				+    '<td class="numerico contratado">' + concepto.PrecioUnitario + '</td>'
-				+    '<td></td>'
-				+    '<td class="numerico">' + concepto.CantidadEstimadaTotal + '</td>'
-				+    '<td class="numerico">' + concepto.PctAvance + '</td>'
-				+    '<td></td>'
-				+    '<td class="numerico">' + concepto.MontoEstimadoTotal + '</td>'
-				+    '<td class="numerico">' + concepto.CantidadSaldo + '</td>'
-				+    '<td class="numerico">' + concepto.MontoSaldo + '</td>'
+
+				+    '<td class="numerico ' + that.colClasses.contratado + '">' + concepto.CantidadSubcontratada + '</td>'
+				+    '<td class="numerico ' + that.colClasses.contratado + '">' + concepto.PrecioUnitario + '</td>'
+
+				+    '<td class="numerico ' + that.colClasses.avance_volumen + '"></td>'
+				+    '<td class="numerico ' + that.colClasses.avance_volumen + '">' + concepto.CantidadEstimadaTotal + '</td>'
+				+    '<td class="numerico ' + that.colClasses.avance_volumen + '">' + concepto.PctAvance + '</td>'
+
+				+    '<td class="numerico ' + that.colClasses.avance_importe + '"></td>'
+				+    '<td class="numerico ' + that.colClasses.avance_importe + '">' + concepto.MontoEstimadoTotal + '</td>'
+
+				+    '<td class="numerico ' + that.colClasses.saldo + '">' + concepto.CantidadSaldo + '</td>'
+				+    '<td class="numerico ' + that.colClasses.saldo + '">' + concepto.MontoSaldo + '</td>'
+				
 				+    '<td class="editable-cell numerico">' + concepto.CantidadEstimada + '</td>'
 				+    '<td class="editable-cell numerico">' + concepto.PctEstimado + '</td>'
 				+    '<td class="numerico">' + concepto.PrecioUnitario + '</td>'
 				+    '<td class="editable-cell numerico">' + concepto.ImporteEstimado + '</td>'
-				+    '<td title="' + concepto.RutaDestino + '">' + concepto.RutaDestino + '</td>'
+				+    '<td title="' + concepto.RutaDestino + '" class="' + that.colClasses.destino + '">' + concepto.RutaDestino + '</td>'
 			    +  '</tr>';
 		};
 		

@@ -155,18 +155,18 @@
 							</div>
 							<table id="tabla-conceptos">
 								<colgroup>
-									<col class="icon"/>
+									<col class="icon" />
 									<col/>
-									<col class="unidad"/>
-									<col span="2" class="monto contratado"/>
-									<col span="2" class="monto avance-volumen"/>
-									<col class="pct avance-volumen"/>
-									<col span="2" class="monto avance-importe"/>
-									<col span="2" class="monto saldo"/>
-									<col class="monto editable"/>
-									<col class="pct editable"/>
-									<col class="monto"/>
-									<col class="monto editable"/>
+									<col class="unidad" />
+									<col class="monto contratado" span="2" />
+									<col class="monto avance-volumen" span="2" />
+									<col class="pct avance-volumen" />
+									<col class="monto avance-importe" span="2" />
+									<col class="monto saldo" span="2" />
+									<col class="monto editable" />
+									<col class="pct editable" />
+									<col class="monto" />
+									<col class="monto editable" />
 									<col class="destino"/>
 								</colgroup>
 								<thead>
@@ -174,30 +174,29 @@
 										<th rowspan="2"></th>
 										<th rowspan="2">Concepto</th>
 										<th rowspan="2">UM</th>
-										<th colspan="2">SUBCONTRATADO</th>
-										<th colspan="3">AVANCE VOLUMEN</th>
-										<th colspan="2">AVANCE IMPORTE</th>
-										<th colspan="2">SALDO</th>
+										<th colspan="2" class="contratado">SUBCONTRATADO</th>
+										<th colspan="3" class="avance-volumen">AVANCE VOLUMEN</th>
+										<th colspan="2" class="avance-importe">AVANCE IMPORTE</th>
+										<th colspan="2" class="saldo">SALDO</th>
 										<th colspan="4">ESTIMACIÓN</th>
-										<th>DISTRIBUCIÓN</th>
+										<th class="destino">DISTRIBUCIÓN</th>
 									</tr>
 									<tr>
-										<th>Volumen</th>
-										<th>P.U.</th>
-										<th>Anterior</th>
-										<th>Acum.</th>
-										<th>% Acum.</th>
-										<th>Anterior</th>
-										<th>Acum.</th>
-										<th>Volumen</th>
-										<th>Importe</th>
+										<th class="contratado">Volumen</th>
+										<th class="contratado">P.U.</th>
+										<th class="avance-volumen">Anterior</th>
+										<th class="avance-volumen">Acum.</th>
+										<th class="avance-volumen">% Acum.</th>
+										<th class="avance-importe">Anterior</th>
+										<th class="avance-importe">Acum.</th>
+										<th class="saldo">Volumen</th>
+										<th class="saldo">Importe</th>
 										
 										<th>Volumen</th>
 										<th>%</th>
 										<th>P.U.</th>
 										<th>Importe</th>
-										
-										<th>Destino</th>
+										<th class="destino">Destino</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -388,9 +387,9 @@
 
 	<div id="dialog-nueva-retencion" class="dialog" title="Nueva Retención">
 		<div>
-			<a class="toolbar-button op dd-list" id="tipos-retencion">
+			<a class="toolbar-button dd-list" id="tipos-retencion">
 				<span class="button-text">Tipo Retención</span>
-				<span class="icon"></span>
+				<span class="icon flechita-abajo"></span>
 			</a>
 		</div>
 		<label for="txtConceptoRetencion">Concepto</label>
