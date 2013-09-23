@@ -597,7 +597,7 @@ var ESTIMACION = {
 				that.deshabilitaFechaTransaccion();
 				that.setURLFormatoPDF();
 
-				$('#column-switchers :checked').each(function() {
+				$('#column-switchers input').not(':checked').each(function() {
 				     $('#tabla-conceptos .' + this.id).addClass('hidden');
 				});
 
