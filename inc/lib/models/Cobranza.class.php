@@ -54,7 +54,7 @@ class Cobranza extends TransaccionSAO {
 		        array( $this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
 		        array( $this->getReferencia(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(64) ),
 		        array( $this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096) ),
-		        array( $this->_folioFactura, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+		        array( $this->_folioFactura, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(20)),
 		        array( Sesion::getCuentaUsuarioSesion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
 		    );
 
