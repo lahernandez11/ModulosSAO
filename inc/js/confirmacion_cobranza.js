@@ -360,6 +360,7 @@ var COBRANZA = {
 		$('#txtObservaciones').val('');
 		$('#txtReferencia').val('');
 		$('#txtSubtotal, #txtIVA, #txtTotal').text('');
+		$('#txtFolioFactura').val('');
 		$('#tabla-conceptos tbody').empty();
 
 		$('#guardar').removeClass('alert');
@@ -583,6 +584,7 @@ var COBRANZA = {
 		$('#txtFecha').datepicker( 'setDate', data.fecha );
 		$('#txtObservaciones').val( data.observaciones );
 		$('#txtReferencia').val( data.referencia );
+		$('#txtFolioFactura').val( data.folio_factura );
 	},
 
 	fillTotales: function( totales ) {
@@ -630,7 +632,8 @@ var COBRANZA = {
 				IDTransaccion: that.getIDTransaccion(),
 				fecha: $('#txtFechaDB').val(),
 				IDEstimacionObra: that.getIDEstimacionObra(),
-				'observaciones': $('#txtObservaciones').val(),
+				observaciones: $('#txtObservaciones').val(),
+				folio_factura: $('#txtFolioFactura').val(),
 				conceptos: that.getConceptosModificados(),
 				action: 'guardaTransaccion'
 			},

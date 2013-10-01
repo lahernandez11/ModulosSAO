@@ -86,15 +86,24 @@
 										<div class="multi-field">
 											<span>
 												<span class="label">Subtotal</span>
-												<div id="txtSubtotal" name="txtSubtotal" class="roField amount">0</div>
+												<div id="txtSubtotal" name="txtSubtotal" class="roField amount"></div>
 											</span>
 											<span>
 												<span class="label">IVA</span>
-												<div id="txtIVA" name="txtIVA" class="roField amount">0</div>
+												<div id="txtIVA" name="txtIVA" class="roField amount"></div>
 											</span>
 											<span>
 												<span class="label">Total</span>
-												<div id="txtTotal" name="txtTotal" class="roField amount">0</div>
+												<div id="txtTotal" name="txtTotal" class="roField amount"></div>
+											</span>
+										</div>
+									</fieldset>
+									<fieldset>
+										<legend>Folios</legend>
+										<div class="multi-field">
+											<span>
+												<span class="label">Factura</span>
+												<input type="text" id="txtFolioFactura" class="roField amount">
 											</span>
 										</div>
 									</fieldset>

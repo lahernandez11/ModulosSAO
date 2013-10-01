@@ -106,6 +106,7 @@ try {
 			$data['datos']['fecha'] 		= Util::formatoFecha($transaccion->getFecha());
 			$data['datos']['referencia']    = $transaccion->getReferencia();
 			$data['datos']['observaciones'] = $transaccion->getObservaciones();
+			$data['datos']['folio_factura'] = $transaccion->getFolioFactura();
 
 			$conceptos = $transaccion->getConceptos();
 
@@ -137,11 +138,12 @@ try {
 
 		case 'guardaTransaccion':
 
-			$IDTransaccion    = (int) $_REQUEST['IDTransaccion'];
-			$IDEstimacionObra = (int) $_REQUEST['IDEstimacionObra'];
-			$fecha 		      = $_REQUEST['fecha'];
-			$observaciones    = $_REQUEST['observaciones'];
-			$conceptos 	      = is_array($_REQUEST['conceptos']) ? $_REQUEST['conceptos'] : array();
+			$IDTransaccion    = (int) $_POST['IDTransaccion'];
+			$IDEstimacionObra = (int) $_POST['IDEstimacionObra'];
+			$fecha 		      = $_POST['fecha'];
+			$folio_factura	  = $_POST['folio_factura'];
+			$observaciones    = $_POST['observaciones'];
+			$conceptos 	      = is_array($_POST['conceptos']) ? $_POST['conceptos'] : array();
 			$data['errores']  = array();
 			$data['totales']  = array();
 
@@ -151,6 +153,7 @@ try {
 				$transaccion->setFecha( $fecha );
 				$transaccion->setObservaciones( $observaciones );
 				$transaccion->setConceptos( $conceptos );
+				$transaccion->setFolioFactura( $folio_factura );
 
 				$data['errores'] = $transaccion->guardaTransaccion();
 			} else {
@@ -159,6 +162,7 @@ try {
 						$IDObra,
 						$IDEstimacionObra,
 						$fecha,
+						$folio_factura,
 						$observaciones,
 						$conceptos,
 						$conn

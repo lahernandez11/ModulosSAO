@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"des",
+				"destino"
+			],
+			[
+				"ava",
+				"avance_importe"
+			],
+			[
 				"border-col",
 				"border-color"
 			],
@@ -506,74 +514,26 @@
 			[
 				"IDO",
 				"IDObra"
-			],
-			[
-				"tipo",
-				"tipoTransaccion"
-			],
-			[
-				"ava",
-				"AvanceObra"
 			]
 		]
 	},
 	"buffers":
 	[
-		{
-			"file": "inc/js/estimaciones.js",
-			"settings":
-			{
-				"buffer_size": 39511,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/js/estimacion_obra.js",
-			"settings":
-			{
-				"buffer_size": 18492,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/js/confirmacion_cobranza.js",
-			"settings":
-			{
-				"buffer_size": 21140,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/js/avance_subcontratos.js",
-			"settings":
-			{
-				"buffer_size": 19700,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/js/avance_obra.js",
-			"settings":
-			{
-				"buffer_size": 18546,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/js/precios_venta.js",
-			"settings":
-			{
-				"buffer_size": 6896,
-				"line_ending": "Windows"
-			}
-		}
 	],
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 392.0,
+		"height": 196.0,
 		"selected_items":
 		[
+			[
+				"htm",
+				"Set Syntax: HTML"
+			],
+			[
+				"html",
+				"HTML: Encode Special Characters"
+			],
 			[
 				"synta",
 				"Set Syntax: CSS"
@@ -616,6 +576,16 @@
 	},
 	"file_history":
 	[
+		"/D/www/ModulosSAO/css/general.css",
+		"/D/www/ModulosSAO/estimaciones.php",
+		"/D/www/ModulosSAO/inc/js/estimaciones.js",
+		"/D/www/ModulosSAO/inc/js/estimacion_obra.js",
+		"/D/www/ModulosSAO/inc/js/confirmacion_cobranza.js",
+		"/D/www/ModulosSAO/inc/js/avance_subcontratos.js",
+		"/D/www/ModulosSAO/inc/js/avance_obra.js",
+		"/D/www/ModulosSAO/inc/js/precios_venta.js",
+		"/D/www/ModulosSAO/inc/lib/db/db_config.php",
+		"/D/www/ModulosSAO/inc/DBConn.php",
 		"/D/www/ModulosSAO/inc/js/agrupacion.js",
 		"/D/www/ModulosSAO/modulos/subcontratos/GetAddendums.php",
 		"/D/www/ModulosSAO/modulos/subcontratos/GetClasificadores.php",
@@ -632,11 +602,8 @@
 		"/D/www/ModulosSAO/modulos/agrupacion/GetListaSubcontratos.php",
 		"/D/www/ModulosSAO/modulos/agrupacion/GetNaturalezas.php",
 		"/D/www/ModulosSAO/modulos/proyectos/GetDatosGeneralesProyecto.php",
-		"/D/www/ModulosSAO/inc/js/estimaciones.js",
 		"/D/www/ModulosSAO/inc/lib/models/Util.class.php",
-		"/D/www/ModulosSAO/inc/js/confirmacion_cobranza.js",
 		"/D/www/ModulosSAO/css/cobranza.css",
-		"/D/www/ModulosSAO/css/general.css",
 		"/D/www/ModulosSAO/inc/lib/controllers/CobranzaController.php",
 		"/D/www/ModulosSAO/inc/lib/models/Cobranza.class.php",
 		"/D/www/ModulosSAO/confirmacion_cobranza.php",
@@ -645,8 +612,6 @@
 		"/D/www/ModulosSAO/modulos/cobranza/RegistraCobranza.php",
 		"/D/www/ModulosSAO/inc/lib/models/TransaccionSAO.class.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/EstimacionObraController.php",
-		"/D/www/ModulosSAO/inc/js/estimacion_obra.js",
-		"/D/www/ModulosSAO/inc/js/avance_obra.js",
 		"/D/www/ModulosSAO/modulos/cobranza/GetConceptosCobranza.php",
 		"/D/www/ModulosSAO/inc/lib/models/Cobranza.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
@@ -655,7 +620,6 @@
 		"/D/www/ModulosSAO/inc/lib/controllers/AvanceObraController.php",
 		"/D/www/ModulosSAO/inc/lib/models/AvanceObra.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontrato.class.php",
-		"/D/www/ModulosSAO/estimaciones.php",
 		"/D/www/ModulosSAO/avance_obra.php",
 		"/D/www/ModulosSAO/precios_venta.php",
 		"/D/www/ModulosSAO/avance_subcontratos.php",
@@ -739,11 +703,7 @@
 		"/C/Users/Uziel/AppData/Roaming/Sublime Text 2/Packages/User/Default (Windows).sublime-keymap",
 		"/C/AppServ/www/ModulosSAO/inc/js/estimaciones.js",
 		"/C/AppServ/www/ModulosSAO/inc/js/avance_subcontratos.js",
-		"/C/AppServ/www/ModulosSAO/inc/js/jquery.buttonlist.js",
-		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/AvanceObraController.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/EstimacionObraController.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/ListaProyectosController.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/PrecioVentaController.php"
+		"/C/AppServ/www/ModulosSAO/inc/js/jquery.buttonlist.js"
 	],
 	"find":
 	{
@@ -761,6 +721,14 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"FORMATO_NOMBRE_ARCHIVO",
+			"TITULO",
+			"110px",
+			"toggleClass",
+			".hidden",
+			"hidden",
+			"colClasses",
+			"z-",
 			"idProyecto",
 			"clasificadores",
 			"ajax",
@@ -880,15 +848,7 @@
 			" type=\"text/css\"",
 			" rel=\"stylesheet\"",
 			" type=\"text/css\"",
-			" rel=\"stylesheet\"",
-			" type=\"text/css\"",
-			"css",
-			" rel=\"stylesheet\"",
-			" type=\"text/css\"",
-			"console.log",
-			" rel=\"stylesheet\"",
-			" type=\"text/css\"",
-			"rel=\"stylesheet\""
+			" rel=\"stylesheet\""
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -965,171 +925,8 @@
 	"groups":
 	[
 		{
-			"selected": 1,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "inc/js/estimaciones.js",
-					"settings":
-					{
-						"buffer_size": 39511,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1714,
-								1714
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1320.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "inc/js/estimacion_obra.js",
-					"settings":
-					{
-						"buffer_size": 18492,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1189,
-								1189
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 695.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "inc/js/confirmacion_cobranza.js",
-					"settings":
-					{
-						"buffer_size": 21140,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1372,
-								1372
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 607.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "inc/js/avance_subcontratos.js",
-					"settings":
-					{
-						"buffer_size": 19700,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1273,
-								1273
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 802.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "inc/js/avance_obra.js",
-					"settings":
-					{
-						"buffer_size": 18546,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1676,
-								1676
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 849.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "inc/js/precios_venta.js",
-					"settings":
-					{
-						"buffer_size": 6896,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								955,
-								955
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],

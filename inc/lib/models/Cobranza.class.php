@@ -8,6 +8,7 @@ class Cobranza extends TransaccionSAO {
 	private $_referencia;
 	private $_IDEstimacionObra;
 	private $_conceptos = array();
+	private $_folioFactura;
 
 	public function __construct() {
 		
@@ -15,7 +16,7 @@ class Cobranza extends TransaccionSAO {
 
 		switch ( func_num_args() ) {
 
-			case 6:
+			case 7:
 				call_user_func_array(array($this, "instanceFromDefault"), $params);
 				break;
 
@@ -25,7 +26,7 @@ class Cobranza extends TransaccionSAO {
 		}
 	}
 
-	private function instanceFromDefault( $IDObra, $IDEstimacionObra, $fecha, 
+	private function instanceFromDefault( $IDObra, $IDEstimacionObra, $fecha, $folio_factura, 
 		$observaciones, Array $conceptos, SAODBConn $conn ) {
 
 		parent::__construct($IDObra, self::TIPO_TRANSACCION, $fecha, $observaciones, $conn);
@@ -33,6 +34,7 @@ class Cobranza extends TransaccionSAO {
 		$this->_IDEstimacionObra = $IDEstimacionObra;
 		$this->_observaciones = $observaciones;
 		$this->setConceptos( $conceptos );
+		$this->setFolioFactura($folio_factura);
 	}
 
 	private function instanceFromID( $IDTransaccion, SAODBConn $conn ) {
@@ -45,13 +47,14 @@ class Cobranza extends TransaccionSAO {
 
 		if ( ! empty($this->_IDTransaccion) ) {
 
-			$tsql = "{call [Cobranza].[uspActualizaDatosGenerales]( ?, ?, ?, ? )}";
+			$tsql = "{call [Cobranza].[uspActualizaDatosGenerales]( ?, ?, ?, ?, ? )}";
 
 		    $params = array(
 		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 		        array( $this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
 		        array( $this->getReferencia(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(64) ),
 		        array( $this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096) ),
+		        array( $this->_folioFactura, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 		        array( Sesion::getCuentaUsuarioSesion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
 		    );
 
@@ -157,6 +160,14 @@ class Cobranza extends TransaccionSAO {
 	    return $totales;
 	}
 
+	public function setFolioFactura( $folio ) {
+		$this->_folioFactura = $folio;
+	}
+
+	public function getFolioFactura() {
+		return $this->_folioFactura;
+	}
+
 	public function setDatosGenerales() {
 
 		$tsql = '{call [Cobranza].[uspDatosGenerales]( ? )}';
@@ -174,6 +185,7 @@ class Cobranza extends TransaccionSAO {
 		$this->_observaciones    = $datos[0]->Observaciones;
 		$this->_referencia   	 = $datos[0]->Referencia;
 		$this->_IDEstimacionObra = $datos[0]->IDEstimacionObra;
+		$this->_folioFactura 	 = $datos[0]->FolioFactura;
 	}
 
 	public function setReferencia( $referencia ) {

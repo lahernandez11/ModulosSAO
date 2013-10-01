@@ -2,7 +2,7 @@
 function modulosSAO() {
 
 	// PRODUCCION
-	$Server = "172.20.74.3\\GHIAPP";
+	$Server = "(local)\\SQL2012";
 
 	sqlsrv_configure("WarningsReturnAsErrors", 0);
 
