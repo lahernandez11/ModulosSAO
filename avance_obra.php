@@ -89,6 +89,18 @@
 											<label for="txtObservaciones">Observaciones</label>
 											<textarea id="txtObservaciones" class="roField"></textarea>
 										</div>
+										<div>
+											<a class="toolbar-button dd-list" id="empresa">
+												<span class="button-text">Empresa</span>
+												<span class="icon flechita-abajo"></span>
+											</a>
+											<!-- <select class="roField">
+												<option>123</option>
+												<option>345</option>
+												<option>567</option>
+											</select> -->
+											<!-- <input type="text" id="txtEmpresa" class="roField" /> -->
+										</div>
 									</fieldset>
 									<fieldset>
 										<legend>Periodo de Avance</legend>
