@@ -314,31 +314,6 @@ select
     font-family: inherit;
     font-size: inherit;
 }
-/*input.button
-{
-    background-attachment: scroll;
-    background-color: #444444;
-    background-position: 0 50%;
-    background-repeat: no-repeat;
-    border: 2px solid #666666;
-    -moz-border-radius: 5px 5px 5px 5px;
-    -webkit-border-radius: 5px 5px 5px 5px;
-    border-radius: 5px 5px 5px 5px;
-    color: white;
-    cursor: pointer;
-    padding: 2px 10px 2px 30px;
-}
-input.button.consultar
-{
-    background-image: url("../img/Square-Light-Grey/Png/24x24/Search.png");
-}
-input.button.disabled
-{
-    background-color: #CCCCCC;
-    border-color: #AAAAAA;
-    color: #666666;
-    font-style: italic;
-}*/
 input.date
 {
 	width: 7em;
@@ -429,24 +404,12 @@ table tbody tr:hover
 	background-color: #ECF9C5;
 	border-color: white #ACE500 #ACE500 #ACE500;
 }
-/*table.stripped tbody tr:nth-child(even):hover {
-	background-color: #ECF9C5;
-}
-table.stripped tbody tr.selected
-{
-	background-color: #99CC00;
-}
-table.stripped tbody tr:nth-child(even):hover {
-{
-	background-color: #99CC00;
-}*/
 table .hidden
 {
 	display: none;
 }
 table a.dropdown-list-trigger
 {
-	/*display: none;*/
 	background-image: url("../img/dortmund/16x16/consulting.png");
 	visibility: hidden;
 }
@@ -517,11 +480,6 @@ table tbody tr
 	border-style: none solid solid solid;
 	border-color: white #CCCCCC #CCCCCC #CCCCCC;
 }
-/*table tbody tr:hover
-{
-	background-color: #ECF9C5;
-	border-color: white #ACE500 #ACE500 #ACE500;
-}*/
 table tbody tr.no-rows td
 {
 	background-color: #EEEEEE;
@@ -587,9 +545,6 @@ table tr.separador,
 table tr.separador:hover
 {
 	background-color: #F5F5F5;
-	/*border-style: solid none none none;
-	border-width: 2px;
-	border-color: #434343;*/
 }
 table tr.separador th
 {
@@ -657,7 +612,6 @@ table tr:hover td.icon-cell .icon.hidden,
 table tr td.icon-cell .icon.hidden.active
 {
 	display: block;
-	/*visibility: visible;*/
 }
 table .icon-cell .icon.error
 {
@@ -1237,7 +1191,7 @@ ul.dropdown-list li a.with-icon
 }
 .tab-nav li a.selected
 {
-	background-color: #242424; /*#515151; #434343;*/
+	background-color: #242424;
 	color: white;
 }
 .tab-panel
@@ -1255,7 +1209,7 @@ ul.dropdown-list li a.with-icon
 }
 .table-toolbar
 {
-	background-color: #FFFFE0; /*#FDF5E6*/
+	background-color: #FFFFE0;
 	border-left: 1px solid #CCCCCC;
 	-moz-border-radius: 5px 5px 0 0;
 	-webkit-border-radius: 5px 5px 0 0;
@@ -1551,7 +1505,6 @@ ul.dropdown-list li a.with-icon
 	margin: 0 auto;
 	margin-bottom: 20px;
 	margin-top: 20px;
-	/*max-width: 1280px;*/
 	font-size: 0.9em;
 }
 #app-footer
@@ -1698,14 +1651,7 @@ ul.dropdown-list li a.with-icon
 	border-bottom: 1px solid #CCCCCC;
 	padding: 5px 0 5px 10px;
 }
-
-
-
 .fade
 {
 	opacity: 0.5;
-	/*-webkit-animation: anim-rotate 1s infinite linear;
-	animation: anim-rotate 1s infinite linear;*/
-	/*-webkit-transition: 0.5s;
-	-webkit-transform: rotate(360deg);*/
 }

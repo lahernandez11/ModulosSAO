@@ -1,8 +1,9 @@
+<?php require_once 'setPath.php'; require_once 'models/Sesion.class.php'; Sesion::validaSesion(); ?>
 <!DOCTYPE html>
 	<html>
 	<head>
 		<meta charset="utf-8">
-		<title></title>
+		<title>Presupuesto de Obra</title>
 		<link rel="stylesheet" href="css/normalize.css" />
 		<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
 		<link rel="stylesheet" href="css/general.css" />
@@ -66,9 +67,6 @@
 											<th>Cantidad</th>
 											<th>Precio</th>
 											<th>Monto</th>
-											<!-- <th>Agrupador Partida</th>
-											<th>Agrupador Subpartida</th>
-											<th>Agrupador Actividad</th> -->
 										</tr>
 									</thead>
 									<tbody></tbody>
