@@ -26,7 +26,6 @@ body
 	font-family: Arial, sans-serif;
 	font-size: 16px;
 	margin: 0 auto;
-	min-width: 480px;
 }
 div.checkboxgroup input
 {
@@ -86,7 +85,7 @@ div.data-loader
     position: absolute;
     top: 400px;
     width: 150px;
-    z-index: 4;
+    z-index: 2001;
     display: none;
 	/*-webkit-animation: anim-beat 2s infinite ease-out;*/
 }
@@ -298,7 +297,6 @@ header h1
 {
 	color: #7BC143;
 	display: inline-block;
-	font-size: 2em;
 	font-weight: normal;
 	margin: 0.2em 0 0 0.5em;
 	vertical-align: top;
@@ -316,7 +314,7 @@ select
     font-family: inherit;
     font-size: inherit;
 }
-input.button
+/*input.button
 {
     background-attachment: scroll;
     background-color: #444444;
@@ -340,7 +338,7 @@ input.button.disabled
     border-color: #AAAAAA;
     color: #666666;
     font-style: italic;
-}
+}*/
 input.date
 {
 	width: 7em;
@@ -352,7 +350,6 @@ input.date + img {
 nav
 {
 	background-color: #444444;
-	font-size: 0.9em;
 }
 nav ul
 {
@@ -407,9 +404,45 @@ table
 	border-color: transparent;
 	border-collapse: collapse;
 	clear: both;
-	font-size: 0.9em;
 	table-layout: fixed;
 	width: 100%;
+}
+
+table.stripped tbody tr:nth-child(even)
+{
+	background-color: #f6f6f6;
+}
+table.stripped tbody tr:nth-child(even):hover
+{
+	background-color: #ECF9C5;
+}
+table tbody tr.selected
+{
+    background-color: #99CC00 !important;
+}
+table tbody tr.selected:hover
+{
+    background-color: #99CC00;
+}
+table tbody tr:hover
+{
+	background-color: #ECF9C5;
+	border-color: white #ACE500 #ACE500 #ACE500;
+}
+/*table.stripped tbody tr:nth-child(even):hover {
+	background-color: #ECF9C5;
+}
+table.stripped tbody tr.selected
+{
+	background-color: #99CC00;
+}
+table.stripped tbody tr:nth-child(even):hover {
+{
+	background-color: #99CC00;
+}*/
+table .hidden
+{
+	display: none;
 }
 table a.dropdown-list-trigger
 {
@@ -424,6 +457,10 @@ table caption
     font-weight: bold;
     padding: 5px 0 5px 5px;
     text-align: left;
+}
+table col.clave
+{
+	width: 120px;
 }
 table col.concepto
 {
@@ -440,7 +477,7 @@ table col.editable
 table col.fecha,
 table col.folio
 {
-	width: 90px;
+	width: 100px;
 }
 table col.hidden
 {
@@ -452,7 +489,7 @@ table col.icon
 }
 table col.monto
 {
-	width: 110px;
+	width: 130px;
 }
 table col.pct
 {
@@ -464,7 +501,7 @@ table col.tipo
 }
 table col.unidad
 {
-	width: 55px;
+	width: 60px;
 }
 table thead th
 {
@@ -480,30 +517,29 @@ table tbody tr
 	border-style: none solid solid solid;
 	border-color: white #CCCCCC #CCCCCC #CCCCCC;
 }
-table tbody tr:hover
+/*table tbody tr:hover
 {
-	background-color: #ECF9C5;/*#F0E68C*/
+	background-color: #ECF9C5;
 	border-color: white #ACE500 #ACE500 #ACE500;
-}
-table.stripped tbody tr:nth-child(even)
-{
-	background-color: #F5F5F5;
-}
+}*/
 table tbody tr.no-rows td
 {
 	background-color: #EEEEEE;
     font-style: italic;
     text-align: center;
 }
-table tbody tr.selected {
+table tbody tr.selected
+{
     background-color: #99CC00;
 }
-table tbody tr.error {
+table tbody tr.error
+{
     background-color: #F9D4CF;
 }
 table tbody td,
 table tbody th
 {
+	border-right: 1px solid #ccc;
 	color: #242424;
 	line-height: 20px;
     overflow: hidden;
@@ -513,11 +549,6 @@ table tbody th
     -o-text-overflow: ellipsis;
     -ms-text-overflow: ellipsis;
     white-space: nowrap;
-}
-table.item-list tbody td,
-table.item-list tbody th
-{
-	white-space: normal;
 }
 table tbody td.editable-cell.numerico
 {
@@ -575,6 +606,15 @@ table .icon-cell
 	border-left: 1px solid #CCC;
 	padding: 0;
 	text-align: center;
+}
+table .icon-cell a
+{
+	color: inherit;
+	text-decoration: none;
+}
+table .icon-cell a:after
+{
+	display: block;
 }
 table th.icon-cell
 {
@@ -639,6 +679,12 @@ table .icon-cell .icon.checkbox-unchecked
 {
 	background-image: url("../img/cc/blacks/16x16/checkbox_unchecked.png");	
 }
+table.item-list tbody td,
+table.item-list tbody th
+{
+	white-space: normal;
+}
+
 table.tabla-resumen
 {
 	border: 1px solid #CCCCCC;
@@ -826,6 +872,52 @@ ul.dropdown-list li a.with-icon
 	background-position: 5px 50%;
 	background-repeat: no-repeat;
 }
+.button
+{
+    background-color: #555555;
+    border: 1px solid #555555;
+    -webkit-border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    padding: 5px 8px;
+    text-align: center;
+    text-decoration: none;
+}
+.button:hover
+{
+	background-color: #444444;
+	border-color: #444444;
+	color: #FFFFFF;
+}
+.button .icon
+{
+	font-family: 'icomoon';
+	font-size: 1.5em;
+	-webkit-font-smoothing: antialiased;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: normal;
+	line-height: 1;
+	speak: none;
+	text-transform: none;
+	vertical-align: middle;
+}
+.concepto a.descripcion
+{
+	color: inherit;
+	text-decoration: none;
+}
+.concepto a.descripcion:hover
+{
+	text-decoration: underline;
+}
+.concepto-medible
+{
+	font-weight: bold;
+}
 .confirmation-message
 {
 	color: red;
@@ -837,10 +929,30 @@ ul.dropdown-list li a.with-icon
 	background-color: #9DD53C;
 	color: black;
 }
-table .hidden
+.form-concepto-properties
 {
-	/*width: 0px;*/
-	display: none;
+
+}
+.form-concepto-properties label
+{
+	display: block;
+	font-weight: bold;
+	padding: 1em 0 0.2em 0;
+	width: auto;
+}
+.form-concepto-properties .buttons
+{
+	margin-top: 1em;
+	text-align: right;
+}
+.form-concepto-properties textarea.field
+{
+	height: 50px;
+}
+.form-concepto-properties .field
+{
+	width: 100%;
+	height: 25px;
 }
 .hz-menu li
 {
@@ -850,6 +962,50 @@ table .hidden
 .hz-menu li a.item
 {
 	padding-right: 0;
+}
+.icon-database:after
+{
+	font-family: "icomoon";
+	font-size: 1.1em;
+	content: "\e62f";
+}
+.icon-file:after
+{
+	font-family: "icomoon";
+	font-size: 1.1em;
+	content: "\e624";
+}
+.icon-hammer:after
+{
+	font-family: "icomoon";
+	content: "\e62e";
+}
+.icon-level-up:after
+{
+	font-family: "icomoon";
+	content: "";
+}
+.icon-minus:after
+{
+	font-family: "icomoon";
+	font-size: 20px;
+	content: "\e62b";
+}
+.icon-plus:after
+{
+	font-family: "icomoon";
+	font-size: 20px;
+	content: "\e62a";
+}
+.icon-truck:after
+{
+	font-family: "icomoon";
+	content: "\e62d";
+}
+.icon-users:after
+{
+	font-family: "icomoon";
+	content: "\e62c";
 }
 .inner-dialog-overlay
 {
@@ -1023,6 +1179,7 @@ table .hidden
     border-top: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
     border-left: 1px solid #CCCCCC;
+    overflow: hidden;
     padding: 0.5em 0 0.5em 16px;
 }
 .overlay
@@ -1035,7 +1192,7 @@ table .hidden
 	position: fixed;
 	top: 0;
 	width: 100%;
-	z-index: 3;
+	z-index: 2000;
 }
 .tab-nav
 {
@@ -1169,7 +1326,6 @@ table .hidden
     color: #FFFFFF;
     cursor: pointer;
     display: inline-block;
-    font-weight: bold;
     margin-right: 5px;
     padding: 5px 8px;
     text-align: center;
@@ -1196,11 +1352,11 @@ table .hidden
 }
 .toolbar-button .icon.deductivas:after
 {
-	content: "\e01b";
+	content: "\e60b";
 }
 .toolbar-button .icon.delete:after
 {
-	content: "\e016";
+	content: "\e628";
 }
 .toolbar-button:hover .icon.delete:after
 {
@@ -1210,11 +1366,11 @@ table .hidden
 }
 .toolbar-button .icon.flechita-abajo:after
 {
-	content: "\e037";
+	content: "\e625";
 }
 .toolbar-button .icon.new:after
 {
-	content: "\e001";
+	content: "\e602";
 }
 .toolbar-button:hover .icon.new:after
 {
@@ -1224,19 +1380,19 @@ table .hidden
 }
 .toolbar-button .icon.pdf:after
 {
-	content: "\e01d";
+	content: "\e629";
 }
 .toolbar-button .icon.resumen:after
 {
-	content: "\e008";
+	content: "\e606";
 }
 .toolbar-button .icon.retenciones:after
 {
-	content: "\e028";
+	content: "\e60f";
 }
 .toolbar-button .icon.save:after
 {
-	content: "\e014";
+	content: "\e61c";
 }
 .toolbar-button:hover .icon.save:after
 {
@@ -1396,7 +1552,7 @@ table .hidden
 	margin-bottom: 20px;
 	margin-top: 20px;
 	/*max-width: 1280px;*/
-	font-size: 0.8em;
+	font-size: 0.9em;
 }
 #app-footer
 {
@@ -1425,7 +1581,7 @@ table .hidden
 	background-color: white;
 	border: 1px solid #DDDDDD;
 	overflow: hidden;
-    padding: 0 1em;
+    padding: 0 1em 1em 1em;
 }
 #app-name
 {
@@ -1455,7 +1611,7 @@ table .hidden
 	line-height: 30px;
 	position: fixed;
 	width: 100%;
-	z-index: 2;
+	z-index: 2002;
 }
 #message-console #console-message
 {
@@ -1487,7 +1643,7 @@ table .hidden
 #message-console.success
 {
 	background: url("../img/mc/mc_success.png") scroll repeat-x 0 0 green;
-	color: white;
+	color: #222;
 }
 #message-console.error
 {

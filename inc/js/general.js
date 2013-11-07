@@ -720,8 +720,7 @@ var DATA_LOADER = {
 	},
 	
 	hide: function() {
-		$(this.container).remove();
-
+		$(DATA_LOADER.container).remove();
 		//$('#' + overlayID)
 		$('.overlay')
 		.fadeOut('fast')
