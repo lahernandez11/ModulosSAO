@@ -921,7 +921,7 @@ ul.dropdown-list li a.with-icon
 {
 	font-family: "icomoon";
 	font-size: 1.1em;
-	content: "\e62f";
+	content: "\e633";
 }
 .icon-file:after
 {
@@ -932,7 +932,7 @@ ul.dropdown-list li a.with-icon
 .icon-hammer:after
 {
 	font-family: "icomoon";
-	content: "\e62e";
+	content: "\e634";
 }
 .icon-level-up:after
 {
@@ -954,9 +954,19 @@ ul.dropdown-list li a.with-icon
 .icon-truck:after
 {
 	font-family: "icomoon";
-	content: "\e62d";
+	content: "\e632";
 }
 .icon-users:after
+{
+	font-family: "icomoon";
+	content: "\e631";
+}
+.icon-checkbox-unchecked:after
+{
+	font-family: "icomoon";
+	content: "\e62d";
+}
+.icon-checkbox-checked:after
 {
 	font-family: "icomoon";
 	content: "\e62c";

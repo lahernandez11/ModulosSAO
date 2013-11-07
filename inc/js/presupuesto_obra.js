@@ -46,11 +46,10 @@ Presupuesto = {
 			event.stopPropagation();
 		});
 
-		// $('#tabla-conceptos').on('click', 'tr.concepto', function(event) {
-		// 	var id_concepto = parseInt($(this).attr('id').split('-')[1]);
-		// 	that.toggleMarcaConcepto(id_concepto);
-		// 	console.log('asd');
-		// });
+		$('#tabla-conceptos').on('click', '.check', function(event) {
+			event.preventDefault();
+			that.toggleMarcaConcepto($(this));
+		});
 
 		$("#txtAgrupadorPartida").autocomplete({
 		    minLength: 1,
@@ -202,6 +201,7 @@ Presupuesto = {
 			'<tr id="c-' + data.id_concepto + '" data-numeronivel="' + data.numero_nivel + '" class="concepto">'
 			+ 	concepto_icon
 			+ 	handle
+			+   '<td class="icon-cell"><a href="#" class="check icon-checkbox-unchecked"></a></td>'
 			+ 	'<td>' + data.clave_concepto + '</td>'
 			+ 	descripcion
 			+ 	'<td>' + data.unidad + '</td>'
@@ -248,16 +248,20 @@ Presupuesto = {
 		};
 	},
 
-	toggleMarcaConcepto: function(id_concepto) {
-		this.getConceptoNode(id_concepto).toggleClass('selected');
+	toggleMarcaConcepto: function($element) {
+		$element.toggleClass('icon-checkbox-unchecked icon-checkbox-checked');
+		$element.parents('tr').toggleClass('selected');
 	},
 
 	marcaConcepto: function(id_concepto) {
 		this.getConceptoNode(id_concepto).addClass('selected');
 	},
 
-	desmarcaConceptos: function(id_concepto) {
+	desmarcaConceptos: function() {
 		$('#tabla-conceptos').find('tr.selected').removeClass('selected');
+		$('#tabla-conceptos')
+		.find('.check.icon-checkbox-checked')
+		.toggleClass('icon-checkbox-checked icon-checkbox-unchecked');
 	},
 
 	getConceptoNode: function(id_concepto) {
@@ -271,10 +275,6 @@ Presupuesto = {
 	getConceptosSeleccionadosDom: function() {
 		return $('#tabla-conceptos').find('.concepto.selected');
 	},
-
-	// getConceptoDescripcion: function(id_concepto) {
-	// 	return this.getConceptoNode(id_concepto).find('.descripcion').text();
-	// },
 
 	openConceptoPropertiesDialog: function() {
 		$('#dialog-propiedades-concepto').dialog('open');

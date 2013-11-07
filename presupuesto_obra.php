@@ -52,6 +52,7 @@
 									<colgroup>
 										<col class="icon"/>
 										<col class="icon"/>
+										<col class="icon"/>
 										<col class="clave"/>
 										<col />
 										<col class="unidad"/>
@@ -59,6 +60,7 @@
 									</colgroup>
 									<thead>
 										<tr>
+											<th></th>
 											<th></th>
 											<th></th>
 											<th>Clave</th>
