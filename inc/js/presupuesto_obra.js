@@ -133,9 +133,13 @@ Presupuesto = {
 				},
 				dataType: 'json'
 			})
-			.done( function(data){
-				that.fillConceptos(data.conceptos, id_concepto);
-				that.toggleConceptoHandle(id_concepto);
+			.done( function(data) {
+				if ( ! data.success ) {
+					messageConsole.displayMessage(data.message, 'error');
+				} else {
+					that.fillConceptos(data.conceptos, id_concepto);
+					that.toggleConceptoHandle(id_concepto);
+				}
 			})
 			.always(function(){ DATA_LOADER.hide(); })
 		} else {
