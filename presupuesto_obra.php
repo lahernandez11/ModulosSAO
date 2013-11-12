@@ -90,15 +90,15 @@
 				<!-- <label for="">Concepto</label>
 				<textarea id="txtDescripcion" class="field"></textarea> -->
 				<label for="">Agrupador Partida</label>
+				<a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a>
 				<input type="text" id="txtAgrupadorPartida" class="field" />
 				<label for="">Agrupador Subpartida</label>
+				<a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a>
 				<input type="text" id="txtAgrupadorSubpartida" class="field" />
 				<label for="">Agrupador Actividad</label>
+				<a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a>
 				<input type="text" id="txtAgrupadorActividad" class="field" />
-				<!-- <label for="">Observaciones</label>
-				<textarea id="txtObservacionesDeductiva" class="field"></textarea> -->
 				<section class="buttons">
-					<!-- <input type="submit" id="guardar-concepto" name="gaurdar" class="button" value="Guardar" /> -->
 					<input type="button" id="cerrar-concepto" name="cerrar" class="button" value="Cerrar" />
 				</section>
 			</form>

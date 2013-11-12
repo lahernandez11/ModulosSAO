@@ -919,57 +919,62 @@ ul.dropdown-list li a.with-icon
 }
 .icon-database:after
 {
+	content: "\e633";
 	font-family: "icomoon";
 	font-size: 1.1em;
-	content: "\e633";
 }
 .icon-file:after
 {
 	font-family: "icomoon";
-	font-size: 1.1em;
 	content: "\e624";
+	font-size: 1.1em;
 }
 .icon-hammer:after
 {
-	font-family: "icomoon";
 	content: "\e634";
-}
-.icon-level-up:after
-{
 	font-family: "icomoon";
-	content: "";
 }
 .icon-minus:after
 {
+	content: "\e62b";
 	font-family: "icomoon";
 	font-size: 20px;
-	content: "\e62b";
 }
 .icon-plus:after
 {
+	content: "\e62a";
 	font-family: "icomoon";
 	font-size: 20px;
-	content: "\e62a";
 }
 .icon-truck:after
 {
-	font-family: "icomoon";
 	content: "\e632";
+	font-family: "icomoon";
 }
 .icon-users:after
 {
-	font-family: "icomoon";
 	content: "\e631";
+	font-family: "icomoon";
 }
 .icon-checkbox-unchecked:after
 {
-	font-family: "icomoon";
 	content: "\e62d";
+	font-family: "icomoon";
 }
 .icon-checkbox-checked:after
 {
-	font-family: "icomoon";
 	content: "\e62c";
+	font-family: "icomoon";
+}
+.icon-close:after
+{
+	color: crimson;
+	content: "\e60a";
+	font-family: "icomoon";
+}
+.form-concepto-properties
+{
+	white-space: nowrap;
 }
 .inner-dialog-overlay
 {

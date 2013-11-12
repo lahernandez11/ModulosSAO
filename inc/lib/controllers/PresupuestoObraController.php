@@ -69,6 +69,14 @@ try {
 
 			break;
 
+		case 'setClaveConcepto':
+			$presupuesto = new PresupuestoObra($IDObra, $conn);
+			$clave = $_POST['clave'];
+			$concepto = $_POST['id_concepto'];
+
+			$presupuesto->setClaveConcepto($id_concepto,  $clave);
+			break;
+
 		default:
 			throw new Exception("Accion desconocida");
 	}

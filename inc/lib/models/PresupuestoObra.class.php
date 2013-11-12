@@ -48,6 +48,25 @@ class PresupuestoObra {
 		return $data[0];
 	}
 
+	public function setClaveConcepto($id_concepto, $clave) {
+
+		$tsql = "UPDATE [dbo].[conceptos]
+				 SET
+				 	[clave_concepto] = ?
+				 WHERE
+				 	[id_obra] = ?
+				 		AND
+				 	[id_concepto] = ?";
+
+	    $params = array(
+	        array( $clave, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(140) ),
+	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $id_concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	    );
+
+	    $this->conn->executeQuery($tsql, $params);
+	}
+
 	public function setAgrupadorPartida( $id_concepto, $id_agrupador ) {
 
 		$tsql = "UPDATE [dbo].[conceptos]

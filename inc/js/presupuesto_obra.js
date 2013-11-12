@@ -23,7 +23,7 @@ Presupuesto = {
 		});
 
 		$('#tabla-conceptos').on('click', '.handle', function(event) {
-			var id_concepto = parseInt($(this).parents('tr').attr('id').split('-')[1]);
+			var id_concepto = that.getIDConcepto($(this));
 			that.getConceptos(id_concepto);
 			event.preventDefault();
 		});
@@ -39,7 +39,7 @@ Presupuesto = {
 		});
 
 		$('#tabla-conceptos').on('click', '.descripcion', function(event) {
-			var id_concepto = parseInt($(this).parents('tr').attr('id').split('-')[1]);
+			var id_concepto = that.getIDConcepto($(this));
 			that.marcaConcepto(id_concepto);
 			that.getDatosConcepto(id_concepto);
 			event.preventDefault();
@@ -49,6 +49,41 @@ Presupuesto = {
 		$('#tabla-conceptos').on('click', '.check', function(event) {
 			event.preventDefault();
 			that.toggleMarcaConcepto($(this));
+		});
+
+		$('#tabla-conceptos').on('dblclick', '.clave_concepto', function(event) {
+			event.stopPropagation();
+
+			var initial_value = $(this).text();
+			
+			$(this).data('initial_value', initial_value);
+
+			var input = $('<input type="text" value="' + initial_value + '"/>');
+
+			$(this).html(input);
+			input.focus();
+		});
+
+		$('#tabla-conceptos').on('keydown', 'input', function(event) {
+
+			var initial_value = $(this).data('initial_value');
+			var input_value = $(this).val();
+
+			// determina si guardara o descartara cambios en la clave
+			switch(event.keyCode) {
+				// guarda cambios en la clave si se presiona "enter"
+				case 13:
+					that.setClaveConcepto(that.getIDConcepto($(this)), input_value);
+					$(this).parent().text(input_value);
+					$(this).remove();
+					break;
+
+				// descarta los cambios si se presiona "escape"
+				case 27:
+					$(this).parent().text(initial_value);
+					$(this).remove();
+					break;
+			}
 		});
 
 		$("#txtAgrupadorPartida").autocomplete({
@@ -90,6 +125,10 @@ Presupuesto = {
 		$('#cerrar-concepto').on('click', function(){
 			$('#dialog-propiedades-concepto').dialog('close');
 		});
+	},
+
+	getIDConcepto: function($el) {
+		return parseInt($el.parents('tr.concepto').attr('id').split('-')[1]);
 	},
 
 	requestListaAgrupadores: function(request, response) {
@@ -202,7 +241,7 @@ Presupuesto = {
 			+ 	concepto_icon
 			+ 	handle
 			+   '<td class="icon-cell"><a href="#" class="check icon-checkbox-unchecked"></a></td>'
-			+ 	'<td>' + data.clave_concepto + '</td>'
+			+ 	'<td class="clave_concepto">' + data.clave_concepto + '</td>'
 			+ 	descripcion
 			+ 	'<td>' + data.unidad + '</td>'
 			+ 	'<td class="numerico">' + data.cantidad_presupuestada + '</td>'
@@ -330,6 +369,30 @@ Presupuesto = {
 		});
 
 		return conceptos;
+	},
+
+	setClaveConcepto: function(id_concepto, clave) {
+		var that = this;
+
+		DATA_LOADER.show();
+
+		$.ajax({
+			type: 'POST',
+			url: that.controller_url,
+			data: {
+				IDProyecto: that.getIDProyecto(),
+				id_concepto: id_concepto,
+				clave: clave,
+				action: 'setClaveConcepto'
+			},
+			dataType: 'json'
+		})
+		.done( function(data) {
+			if( !data.success ) {
+				messageConsole.displayMessage(data.message, 'error');
+			}
+		})
+		.always( DATA_LOADER.hide );
 	},
 
 	setAgrupadorPartida: function(id_agrupador) {
