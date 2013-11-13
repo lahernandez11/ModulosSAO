@@ -124,6 +124,44 @@ class PresupuestoObra {
 	    $this->conn->executeQuery($tsql, $params);
 	}
 
+	public function setAgrupadorTramo( $id_concepto, $id_agrupador ) {
+		
+		$tsql = "UPDATE [dbo].[conceptos]
+				 SET
+				 	[id_agrupador_tramo] = ?
+				 WHERE
+				 	[id_obra] = ?
+				 		AND
+				 	[id_concepto] = ?";
+
+	    $params = array(
+	        array( $id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $id_concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	    );
+
+	    $this->conn->executeQuery($tsql, $params);
+	}
+
+	public function setAgrupadorSubtramo( $id_concepto, $id_agrupador ) {
+		
+		$tsql = "UPDATE [dbo].[conceptos]
+				 SET
+				 	[id_agrupador_subtramo] = ?
+				 WHERE
+				 	[id_obra] = ?
+				 		AND
+				 	[id_concepto] = ?";
+
+	    $params = array(
+	        array( $id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $id_concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	    );
+
+	    $this->conn->executeQuery($tsql, $params);
+	}
+
 	public static function getDescendantsOf( $IDObra, $IDConceptoRaiz, SAODBConn $conn ) {
 
 		$tsql = "{call [SAO].[uspPresupuestoObra]( ?, ? )}";
@@ -136,51 +174,6 @@ class PresupuestoObra {
 		$nodes = $conn->executeSP($tsql, $params);
 
 		return $nodes;
-	}
-
-	public static function getAgrupadoresPartida(SAODBConn $conn, $id_obra, $descripcion, $id_agrupador = null ) {
-
-		$tsql = "{call [PresupuestoObra].[uspAgrupadorPartida]( ?, ?, ? )}";
-
-		$params = array(
-			array( $id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-			array( $id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-			array( $descripcion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('300') )
-		);
-
-		$data = $conn->executeSP($tsql, $params);
-
-		return $data;
-	}
-
-	public static function getAgrupadoresSubpartida(SAODBConn $conn, $id_obra, $descripcion, $id_agrupador = null ) {
-
-		$tsql = "{call [PresupuestoObra].[uspAgrupadorSubpartida]( ?, ?, ? )}";
-
-		$params = array(
-			array( $id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-			array( $id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-			array( $descripcion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('300') )
-		);
-
-		$data = $conn->executeSP($tsql, $params);
-
-		return $data;
-	}
-
-	public static function getAgrupadoresActividad(SAODBConn $conn, $id_obra, $descripcion, $id_agrupador = null ) {
-
-		$tsql = "{call [PresupuestoObra].[uspAgrupadorActividad]( ?, ?, ? )}";
-
-		$params = array(
-			array( $id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-			array( $id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-			array( $descripcion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('300') )
-		);
-
-		$data = $conn->executeSP($tsql, $params);
-
-		return $data;
 	}
 
 	public function __toString() {

@@ -49,16 +49,20 @@ try {
 		case 'getAgrupadoresPartida':
 		case 'getAgrupadoresSubpartida':
 		case 'getAgrupadoresActividad':
+		case 'getAgrupadoresTramo':
+		case 'getAgrupadoresSubtramo':
 
 			$descripcion  = $_GET['term'];
 			$data['agrupadores'] = array();
-			$data['agrupadores'] = PresupuestoObra::$_GET['action']($conn, $IDObra, $descripcion);
+			$data['agrupadores'] = AgrupadorConceptoPresupuesto::$_GET['action']($conn, $IDObra, $descripcion);
 
 			break;
 
 		case 'setAgrupadorPartida':
 		case 'setAgrupadorSubpartida':
 		case 'setAgrupadorActividad':
+		case 'setAgrupadorTramo':
+		case 'setAgrupadorSubtramo':
 			$presupuesto = new PresupuestoObra($IDObra, $conn);
 			$conceptos = $_POST['conceptos'];
 			$id_agrupador = $_POST['id_agrupador'];
@@ -122,7 +126,11 @@ function formatDatosConcepto( $concepto ) {
 		'id_agrupador_subpartida' => $concepto->id_agrupador_subpartida,
 		'agrupador_subpartida' 	  => $concepto->agrupador_subpartida,
 		'id_agrupador_actividad'  => $concepto->id_agrupador_actividad,
-		'agrupador_actividad' 	  => $concepto->agrupador_actividad
+		'agrupador_actividad' 	  => $concepto->agrupador_actividad,
+		'id_agrupador_tramo'  	  => $concepto->id_agrupador_tramo,
+		'agrupador_tramo' 	  	  => $concepto->agrupador_tramo,
+		'id_agrupador_subtramo'   => $concepto->id_agrupador_subtramo,
+		'agrupador_subtramo' 	  => $concepto->agrupador_subtramo
 	);
 }
 

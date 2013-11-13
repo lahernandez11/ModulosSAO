@@ -92,17 +92,17 @@
 				<label for="txtAgrupadorPartida">Agrupador Partida</label>
 				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
 				<input type="text" id="txtAgrupadorPartida" class="field" />
+				
 				<label for="txtAgrupadorSubpartida">Agrupador Subpartida</label>
-				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
 				<input type="text" id="txtAgrupadorSubpartida" class="field" />
+				
 				<label for="txtAgrupadorActividad">Agrupador Actividad</label>
-				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
 				<input type="text" id="txtAgrupadorActividad" class="field" />
-				<label for="txtAgrupadorActividad">Agrupador Tramo</label>
-				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
+
+				<label for="txtAgrupadorTramo">Agrupador Tramo</label>
 				<input type="text" id="txtAgrupadorTramo" class="field" />
-				<label for="txtAgrupadorActividad">Agrupador Subtramo</label>
-				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
+				
+				<label for="txtAgrupadorSubtramo">Agrupador Subtramo</label>
 				<input type="text" id="txtAgrupadorSubtramo" class="field" />
 				<section class="buttons">
 					<input type="button" id="cerrar-concepto" name="cerrar" class="button" value="Cerrar" />

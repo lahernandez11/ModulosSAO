@@ -32,7 +32,6 @@ Presupuesto = {
 			autoOpen: false,
 			modal: true,
 			width: '550px',
-			// closeOnEscape: false,
 			close: function() {
 				that.desmarcaConceptos();
 			}
@@ -41,11 +40,7 @@ Presupuesto = {
 		$('#dialog-nuevo-agrupador').dialog({
 			autoOpen: false,
 			modal: true,
-			width: '350px',
-			// closeOnEscape: false,
-			close: function() {
-				// that.desmarcaConceptos();
-			}
+			width: '350px'
 		});
 
 		$('#tabla-conceptos').on('click', '.descripcion', function(event) {
@@ -99,60 +94,67 @@ Presupuesto = {
 		$("#txtAgrupadorPartida").autocomplete({
 		    minLength: 1,
 		    source: function(request, response) {
-				request.IDProyecto = Presupuesto.getIDProyecto();
 				request.action = 'getAgrupadoresPartida';
 				that.requestAgrupadoresList(request, response);
 			},
 		    select: function( event, ui ) {
-		    	
-		    	if( ui.item.id == 0 ) {
-		    		that.openAddAgrupadorDialog(ui.item.label, that.setAgrupadorPartida, 1);
-		    	} else
-		    		that.setAgrupadorPartida(ui.item.id)
+		    	that.setAgrupador(ui.item, 1);
 		    }
 		});
 
 		$("#txtAgrupadorSubpartida").autocomplete({
 		    minLength: 1,
 		    source: function(request, response) {
-				request.IDProyecto = Presupuesto.getIDProyecto();
 				request.action = 'getAgrupadoresSubpartida';
 				that.requestAgrupadoresList(request, response);
 			},
 		    select: function( event, ui ) {
-
-		    	if( ui.item.id == 0 ) {
-		    		that.openAddAgrupadorDialog(ui.item.label, that.setAgrupadorSubpartida, 2);
-		    	} else
-		    		that.setAgrupadorSubpartida(ui.item.id)
+		    	that.setAgrupador(ui.item, 2);
 		    }
 		});
 
 		$("#txtAgrupadorActividad").autocomplete({
 		    minLength: 1,
 		    source: function(request, response) {
-				request.IDProyecto = Presupuesto.getIDProyecto();
 				request.action = 'getAgrupadoresActividad';
 				that.requestAgrupadoresList(request, response);
 			},
 		    select: function( event, ui ) {
-
-		    	if( ui.item.id == 0 ) {
-		    		that.openAddAgrupadorDialog(ui.item.label, that.setAgrupadorActividad, 3);
-		    	} else
-		    		that.setAgrupadorActividad(ui.item.id)
+		    	that.setAgrupador(ui.item, 3);
 		    }
 		});
 
-		$('#guardar_agrupador').on('click', function(){
+		$("#txtAgrupadorTramo").autocomplete({
+		    minLength: 1,
+		    source: function(request, response) {
+				request.action = 'getAgrupadoresTramo';
+				that.requestAgrupadoresList(request, response);
+			},
+		    select: function( event, ui ) {
+		    	that.setAgrupador(ui.item, 4);
+		    }
+		});
+
+		$("#txtAgrupadorSubtramo").autocomplete({
+		    minLength: 1,
+		    source: function(request, response) {
+				request.action = 'getAgrupadoresSubtramo';
+				that.requestAgrupadoresList(request, response);
+			},
+		    select: function( event, ui ) {
+		    	that.setAgrupador(ui.item, 5);
+		    }
+		});
+
+		$('#guardar_agrupador').on('click', function() {
 			that.addAgrupador();
 		});
 
-		$('#cerrar_agrupador').on('click', function(){
+		$('#cerrar_agrupador').on('click', function() {
 			$('#dialog-nuevo-agrupador').dialog('close');
 		});
 
-		$('#cerrar-concepto').on('click', function(){
+		$('#cerrar-concepto').on('click', function() {
 			$('#dialog-propiedades-concepto').dialog('close');
 		});
 	},
@@ -167,22 +169,28 @@ Presupuesto = {
 
 	requestAgrupadoresList: function(request, response) {
 		var that = this;
+		
+		request.IDProyecto = that.getIDProyecto();
+		var agrupadores = [];
 
 		$.getJSON( that.controller_url, request, function( data, status, xhr ) {
-			var agrupadores = [];
             
-            for( i = 0; i < data.agrupadores.length; i++ ) {
-			   agrupadores.push({
-			   		id: data.agrupadores[i].id_agrupador,
-			   		label: data.agrupadores[i].agrupador
-			   	});
-			}
+            if ( ! data.success ) {
+            	messageConsole.displayMessage(data.message, 'error');
+            } else {
+	            for( i = 0; i < data.agrupadores.length; i++ ) {
+				   agrupadores.push({
+				   		id: data.agrupadores[i].id_agrupador,
+				   		label: data.agrupadores[i].agrupador
+				   	});
+				}
 
-			if ( data.agrupadores.length == 0) {
-				agrupadores.push({
-					id: 0,
-					label: 'Agregar - ' + request.term
-				});
+				if ( data.agrupadores.length == 0) {
+					agrupadores.push({
+						id: 0,
+						label: 'Agregar - ' + request.term
+					});
+				}
 			}
 
 			response( agrupadores );
@@ -397,6 +405,8 @@ Presupuesto = {
 		$('#txtAgrupadorPartida').val(data.agrupador_partida);
 		$('#txtAgrupadorSubpartida').val(data.agrupador_subpartida);
 		$('#txtAgrupadorActividad').val(data.agrupador_actividad);
+		$('#txtAgrupadorTramo').val(data.agrupador_tramo);
+		$('#txtAgrupadorSubtramo').val(data.agrupador_subtramo);
 	},
 
 	getConceptosSeleccionados: function() {
@@ -436,45 +446,40 @@ Presupuesto = {
 		.always( DATA_LOADER.hide );
 	},
 
-	setAgrupadorPartida: function(id_agrupador) {
+	setAgrupador: function(item, type) {
 
-		DATA_LOADER.show();
-		
 		var request = {};
-		
-		request.action = 'setAgrupadorPartida';
-		request.conceptos = this.getConceptosSeleccionados();
-		request.id_agrupador = id_agrupador;
+			request.IDProyecto = this.getIDProyecto();
+			request.conceptos = this.getConceptosSeleccionados();
 
-		this.requestSetAgrupador(request, DATA_LOADER.hide);
-	},
+		switch( type ) {
 
-	setAgrupadorSubpartida: function(id_agrupador) {
-		DATA_LOADER.show();
-		
-		var request = {};
-		
-		request.action = 'setAgrupadorSubpartida';
-		request.conceptos = this.getConceptosSeleccionados();
-		request.id_agrupador = id_agrupador;
+			case 1:
+				request.action = 'setAgrupadorPartida';
+				break;
+			case 2:
+				request.action = 'setAgrupadorSubpartida';
+				break;
+			case 3:
+				request.action = 'setAgrupadorActividad';
+				break;
+			case 4:
+				request.action = 'setAgrupadorTramo';
+				break;
+			case 5:
+				request.action = 'setAgrupadorSubtramo';
+				break;
+		}
 
-		this.requestSetAgrupador(request, DATA_LOADER.hide);
-	},
-
-	setAgrupadorActividad: function(id_agrupador) {
-		DATA_LOADER.show();
-		
-		var request = {};
-		
-		request.action = 'setAgrupadorActividad';
-		request.conceptos = this.getConceptosSeleccionados();
-		request.id_agrupador = id_agrupador;
-
-		this.requestSetAgrupador(request, DATA_LOADER.hide);
+		if ( item.id == 0 ) {
+			this.openAddAgrupadorDialog(item.label, this.requestSetAgrupador, request, type);
+		} else {
+			request.id_agrupador = item.id;
+			this.requestSetAgrupador(request, DATA_LOADER.hide);
+		}
 	},
 
 	requestSetAgrupador: function(request, callback) {
-		request.IDProyecto = this.getIDProyecto();
 
 		$.ajax({
 			type: 'POST',
@@ -492,9 +497,9 @@ Presupuesto = {
 		.always(callback);
 	},
 
-	openAddAgrupadorDialog: function(descripcion, callback, type) {
+	openAddAgrupadorDialog: function(descripcion, callback, request, type) {
 		
-		$('#guardar_agrupador').data({'callback': callback, type: type});
+		$('#guardar_agrupador').data({'callback': callback, 'request': request, 'type': type});
 		$('#txtDescripcionAgruapdor').val(descripcion.split('-')[1].trim());
 		$('#txtClaveAgrupador').val('');
 		$('#dialog-nuevo-agrupador').dialog('open');
@@ -505,8 +510,10 @@ Presupuesto = {
 
 		DATA_LOADER.show();
 
-		var action = '';
-		var type = $('#guardar_agrupador').data('type');
+		var action   = '';
+		var callback = $('#guardar_agrupador').data('callback');
+		var request  = $('#guardar_agrupador').data('request');
+		var type     = $('#guardar_agrupador').data('type');
 
 		switch(type) {
 			case 1: action = 'addAgrupadorPartida'; break;
@@ -515,6 +522,7 @@ Presupuesto = {
 			case 4: action = 'addAgrupadorTramo'; break;
 			case 5: action = 'addAgrupadorSubtramo'; break;
 		}
+
 		var clave = $('#txtClaveAgrupador').val(),
 			descripcion = $('#txtDescripcionAgruapdor').val();
 
@@ -534,9 +542,9 @@ Presupuesto = {
 				messageConsole.displayMessage(data.message, 'error');
 				DATA_LOADER.hide();
 			} else {
-				var callback = $('#guardar_agrupador').data('callback');
 				$('#dialog-nuevo-agrupador').dialog('close');
-				callback.call(that, data.id_agrupador);
+				request.id_agrupador = data.id_agrupador;
+				callback.call(that, request, DATA_LOADER.hide);
 			}
 		});
 	},
