@@ -883,27 +883,23 @@ ul.dropdown-list li a.with-icon
 	background-color: #9DD53C;
 	color: black;
 }
-.form-concepto-properties
+.dialog-form .buttons
 {
-
+	margin-top: 1em;
+	text-align: right;
 }
-.form-concepto-properties label
+.dialog-form label
 {
 	display: block;
 	font-weight: bold;
 	padding: 1em 0 0.2em 0;
 	width: auto;
 }
-.form-concepto-properties .buttons
-{
-	margin-top: 1em;
-	text-align: right;
-}
-.form-concepto-properties textarea.field
+.dialog-form textarea.field
 {
 	height: 50px;
 }
-.form-concepto-properties .field
+.dialog-form .field
 {
 	width: 100%;
 	height: 25px;
@@ -972,10 +968,10 @@ ul.dropdown-list li a.with-icon
 	content: "\e60a";
 	font-family: "icomoon";
 }
-.form-concepto-properties
+/*.form-concepto-properties
 {
 	white-space: nowrap;
-}
+}*/
 .inner-dialog-overlay
 {
 	background-color: black;

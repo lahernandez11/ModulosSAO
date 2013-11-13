@@ -104,7 +104,7 @@ class PresupuestoObra {
 
 	    $this->conn->executeQuery($tsql, $params);
 	}
-
+	
 	public function setAgrupadorActividad( $id_concepto, $id_agrupador ) {
 		
 		$tsql = "UPDATE [dbo].[conceptos]

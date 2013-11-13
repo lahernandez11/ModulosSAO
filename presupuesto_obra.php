@@ -86,20 +86,39 @@
 		</div> <!-- app-wrapper -->
 
 		<div id="dialog-propiedades-concepto" class="dialog" title="Propiedades">
-			<form method="get" class="form-concepto-properties">
+			<form method="get" class="dialog-form form-concepto-properties">
 				<!-- <label for="">Concepto</label>
 				<textarea id="txtDescripcion" class="field"></textarea> -->
-				<label for="">Agrupador Partida</label>
-				<a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a>
+				<label for="txtAgrupadorPartida">Agrupador Partida</label>
+				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
 				<input type="text" id="txtAgrupadorPartida" class="field" />
-				<label for="">Agrupador Subpartida</label>
-				<a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a>
+				<label for="txtAgrupadorSubpartida">Agrupador Subpartida</label>
+				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
 				<input type="text" id="txtAgrupadorSubpartida" class="field" />
-				<label for="">Agrupador Actividad</label>
-				<a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a>
+				<label for="txtAgrupadorActividad">Agrupador Actividad</label>
+				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
 				<input type="text" id="txtAgrupadorActividad" class="field" />
+				<label for="txtAgrupadorActividad">Agrupador Tramo</label>
+				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
+				<input type="text" id="txtAgrupadorTramo" class="field" />
+				<label for="txtAgrupadorActividad">Agrupador Subtramo</label>
+				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
+				<input type="text" id="txtAgrupadorSubtramo" class="field" />
 				<section class="buttons">
 					<input type="button" id="cerrar-concepto" name="cerrar" class="button" value="Cerrar" />
+				</section>
+			</form>
+		</div>
+
+		<div id="dialog-nuevo-agrupador" class="dialog" title="Nuevo Agrupador">
+			<form method="get" class="dialog-form form-nuevo-agrupador">
+				<label for="txtClaveAgrupador">Clave</label>
+				<input type="text" id="txtClaveAgrupador" class="field" />
+				<label for="txtDescripcionAgruapdor">Descripcion</label>
+				<input type="text" id="txtDescripcionAgruapdor" class="field" />
+				<section class="buttons">
+					<input type="button" id="guardar_agrupador" name="guardar" class="button" value="Guardar" />
+					<input type="button" id="cerrar_agrupador" name="cerrar" class="button" value="Cerrar" />
 				</section>
 			</form>
 		</div>

@@ -4,6 +4,7 @@ require_once 'models/Sesion.class.php';
 require_once 'models/Obra.class.php';
 require_once 'models/Util.class.php';
 require_once 'models/PresupuestoObra.class.php';
+require_once 'models/AgrupadorConceptoPresupuesto.class.php';
 
 $data['success'] = true;
 $data['message'] = null;
@@ -75,6 +76,18 @@ try {
 			$concepto = $_POST['id_concepto'];
 
 			$presupuesto->setClaveConcepto($id_concepto,  $clave);
+			break;
+
+		case 'addAgrupadorPartida':
+		case 'addAgrupadorSubpartida':
+		case 'addAgrupadorActividad':
+		case 'addAgrupadorTramo':
+		case 'addAgrupadorSubtramo':
+
+			$clave = $_POST['clave'];
+			$descripcion = $_POST['descripcion'];
+
+			$data['id_agrupador'] = AgrupadorConceptoPresupuesto::$_POST['action']($conn, $IDObra, $clave, $descripcion);
 			break;
 
 		default:

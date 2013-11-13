@@ -38,6 +38,16 @@ Presupuesto = {
 			}
 		});
 
+		$('#dialog-nuevo-agrupador').dialog({
+			autoOpen: false,
+			modal: true,
+			width: '350px',
+			// closeOnEscape: false,
+			close: function() {
+				// that.desmarcaConceptos();
+			}
+		});
+
 		$('#tabla-conceptos').on('click', '.descripcion', function(event) {
 			var id_concepto = that.getIDConcepto($(this));
 			that.marcaConcepto(id_concepto);
@@ -91,10 +101,14 @@ Presupuesto = {
 		    source: function(request, response) {
 				request.IDProyecto = Presupuesto.getIDProyecto();
 				request.action = 'getAgrupadoresPartida';
-				that.requestListaAgrupadores(request, response);
+				that.requestAgrupadoresList(request, response);
 			},
 		    select: function( event, ui ) {
-		    	that.setAgrupadorPartida(ui.item.id)
+		    	
+		    	if( ui.item.id == 0 ) {
+		    		that.openAddAgrupadorDialog(ui.item.label, that.setAgrupadorPartida, 1);
+		    	} else
+		    		that.setAgrupadorPartida(ui.item.id)
 		    }
 		});
 
@@ -103,10 +117,14 @@ Presupuesto = {
 		    source: function(request, response) {
 				request.IDProyecto = Presupuesto.getIDProyecto();
 				request.action = 'getAgrupadoresSubpartida';
-				that.requestListaAgrupadores(request, response);
+				that.requestAgrupadoresList(request, response);
 			},
 		    select: function( event, ui ) {
-		    	that.setAgrupadorSubpartida(ui.item.id)
+
+		    	if( ui.item.id == 0 ) {
+		    		that.openAddAgrupadorDialog(ui.item.label, that.setAgrupadorSubpartida, 2);
+		    	} else
+		    		that.setAgrupadorSubpartida(ui.item.id)
 		    }
 		});
 
@@ -115,11 +133,23 @@ Presupuesto = {
 		    source: function(request, response) {
 				request.IDProyecto = Presupuesto.getIDProyecto();
 				request.action = 'getAgrupadoresActividad';
-				that.requestListaAgrupadores(request, response);
+				that.requestAgrupadoresList(request, response);
 			},
 		    select: function( event, ui ) {
-		    	that.setAgrupadorActividad(ui.item.id)
+
+		    	if( ui.item.id == 0 ) {
+		    		that.openAddAgrupadorDialog(ui.item.label, that.setAgrupadorActividad, 3);
+		    	} else
+		    		that.setAgrupadorActividad(ui.item.id)
 		    }
+		});
+
+		$('#guardar_agrupador').on('click', function(){
+			that.addAgrupador();
+		});
+
+		$('#cerrar_agrupador').on('click', function(){
+			$('#dialog-nuevo-agrupador').dialog('close');
 		});
 
 		$('#cerrar-concepto').on('click', function(){
@@ -127,11 +157,15 @@ Presupuesto = {
 		});
 	},
 
+	cleanDescripcionAgrupador: function(descripcion) {
+		return descripcion.split('-')[1].trim();
+	},
+
 	getIDConcepto: function($el) {
 		return parseInt($el.parents('tr.concepto').attr('id').split('-')[1]);
 	},
 
-	requestListaAgrupadores: function(request, response) {
+	requestAgrupadoresList: function(request, response) {
 		var that = this;
 
 		$.getJSON( that.controller_url, request, function( data, status, xhr ) {
@@ -142,6 +176,13 @@ Presupuesto = {
 			   		id: data.agrupadores[i].id_agrupador,
 			   		label: data.agrupadores[i].agrupador
 			   	});
+			}
+
+			if ( data.agrupadores.length == 0) {
+				agrupadores.push({
+					id: 0,
+					label: 'Agregar - ' + request.term
+				});
 			}
 
 			response( agrupadores );
@@ -449,7 +490,56 @@ Presupuesto = {
 			}
 		})
 		.always(callback);
-	}
+	},
+
+	openAddAgrupadorDialog: function(descripcion, callback, type) {
+		
+		$('#guardar_agrupador').data({'callback': callback, type: type});
+		$('#txtDescripcionAgruapdor').val(descripcion.split('-')[1].trim());
+		$('#txtClaveAgrupador').val('');
+		$('#dialog-nuevo-agrupador').dialog('open');
+	},
+
+	addAgrupador: function() {
+		var that = this;
+
+		DATA_LOADER.show();
+
+		var action = '';
+		var type = $('#guardar_agrupador').data('type');
+
+		switch(type) {
+			case 1: action = 'addAgrupadorPartida'; break;
+			case 2: action = 'addAgrupadorSubpartida'; break;
+			case 3: action = 'addAgrupadorActividad'; break;
+			case 4: action = 'addAgrupadorTramo'; break;
+			case 5: action = 'addAgrupadorSubtramo'; break;
+		}
+		var clave = $('#txtClaveAgrupador').val(),
+			descripcion = $('#txtDescripcionAgruapdor').val();
+
+		$.ajax({
+			type: 'POST',
+			url: that.controller_url,
+			data: {
+				IDProyecto: that.getIDProyecto(),
+				clave: clave,
+				descripcion: descripcion,
+				action: action
+			},
+			dataType: 'json'
+		})
+		.done( function(data) {
+			if ( ! data.success ) {
+				messageConsole.displayMessage(data.message, 'error');
+				DATA_LOADER.hide();
+			} else {
+				var callback = $('#guardar_agrupador').data('callback');
+				$('#dialog-nuevo-agrupador').dialog('close');
+				callback.call(that, data.id_agrupador);
+			}
+		});
+	},
 }
 
 Presupuesto.init();
