@@ -310,7 +310,9 @@ var ESTIMACION = {
 		 .buttonset()
 		 .buttonset({disabled: true})
 		 .on('click', 'input', function( event ) {
+		 	$('#tabla-conceptos').css('width', 0);
 		 	$('#tabla-conceptos .' + this.id).toggleClass('hidden');
+		 	$('#tabla-conceptos').css('width', '100%');
 		 });
 
 		// Handler para la tabla de seleccion de un subcontrato a estimar
