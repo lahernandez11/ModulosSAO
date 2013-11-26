@@ -379,6 +379,7 @@ table
 	border-color: transparent;
 	border-collapse: collapse;
 	clear: both;
+	overflow: hidden;
 	table-layout: fixed;
 	width: 100%;
 }
