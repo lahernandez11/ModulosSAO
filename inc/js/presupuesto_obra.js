@@ -148,6 +148,7 @@ Presupuesto = {
 
 		$('#guardar_agrupador').on('click', function() {
 			that.addAgrupador();
+			
 		});
 
 		$('#cerrar_agrupador').on('click', function() {
