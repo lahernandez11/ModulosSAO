@@ -29,8 +29,7 @@ App.Presupuesto = {
 
 		this.$table.on('click', '.handle', function(event) {
 			event.preventDefault();
-			var id_concepto = that.getIDConcepto($(this));
-			that.toggleNode(id_concepto);
+			that.toggleNode($(this).parents('.concepto'));
 		});
 
 		$('#dialog-propiedades-concepto').dialog({
@@ -49,16 +48,17 @@ App.Presupuesto = {
 		});
 
 		this.$table.on('click', '.descripcion', function(event) {
-			var id_concepto = that.getIDConcepto($(this));
-			that.marcaConcepto(id_concepto);
-			that.getDatosConcepto(id_concepto);
+
+			var $concepto = $(this).parents('.concepto');
+			that.selectNode($concepto);
+			that.getDatosConcepto($concepto);
 			event.preventDefault();
 			event.stopPropagation();
 		});
 
-		this.$table.on('click', '.check', function(event) {
+		this.$table.on('click', '.select', function(event) {
 			event.preventDefault();
-			that.toggleMarcaConcepto($(this));
+			that.toggleMarcaConcepto($(this).parents('.concepto'));
 		});
 
 		this.$table.on('dblclick', '.clave_concepto', function(event) {
@@ -78,7 +78,7 @@ App.Presupuesto = {
 			var initial_value = $(this).data('initial_value');
 			var input_value = $(this).val();
 
-			that.setClaveConcepto(that.getIDConcepto($(this)), input_value);
+			that.setClaveConcepto($(this).parents('.concepto'), input_value);
 
 			$(this).parent().text(input_value);
 			$(this).remove();
@@ -157,7 +157,7 @@ App.Presupuesto = {
 	},
 
 	getIDConcepto: function($el) {
-		return parseInt($el.parents('tr.concepto').attr('id').split('-')[1]);
+		return parseInt($el.attr('id').split('-')[1]);
 	},
 
 	requestAgrupadoresList: function(request, response) {
@@ -194,42 +194,45 @@ App.Presupuesto = {
 		return $('#bl-proyectos').buttonlist('option', 'selectedItem').value;
 	},
 
-	toggleNode: function(id_concepto) {
+	toggleNode: function($concepto) {
 		// muestra los descendientes de un concepto
 
-		var isNodeOpen = this.isNodeOpen(id_concepto);
+		var isNodeOpen = this.isNodeOpen($concepto);
 
-		if ( this.haveDescendants(id_concepto) ) {
+		if ( this.haveDescendants($concepto) ) {
 			// esto se ejecuta si el concepto tiene descendientes
 			// ya cargados, dependiendo del estado del concepto
 			// se muestran u ocultan sus descendientes
 			if (isNodeOpen) {
-				this.hideDescendants(id_concepto);
+				this.hideDescendants($concepto);
 			} else {
-				this.showDescendants(id_concepto);
+				this.showDescendants($concepto);
 			}
 			
-			this.toggleConceptoHandle(id_concepto);
+			this.toggleConceptoHandle($concepto);
 		} else {
 			// esto se ejecuta cuando el concepto no tiene
 			// descendientes cargados, si el nodo esta cerrado
 			// los carga y muestra
 			if (isNodeOpen) {
-				this.toggleConceptoHandle(id_concepto);
+				this.toggleConceptoHandle($concepto);
 			} else {
-				this.loadDescendants(id_concepto);
+				this.loadDescendants($concepto);
 			}
 		}	
 	},
 
-	getNivelConcepto: function(id_concepto) {
-		return this.getConceptoNode(id_concepto).attr('data-nivel');
+	getNivelConcepto: function($concepto) {
+		return $concepto.attr('data-nivel');
 	},
 
-	loadDescendants: function(id_concepto) {
+	loadDescendants: function($concepto) {
 		var that = this;
 
-		id_concepto = id_concepto || null;
+		var id_concepto = null;
+
+		if ( $concepto )
+			id_concepto = this.getIDConcepto($concepto);
 
 		DATA_LOADER.show();
 
@@ -246,21 +249,29 @@ App.Presupuesto = {
 			if ( ! data.success ) {
 				messageConsole.displayMessage(data.message, 'error');
 			} else {
-				that.fillConceptos(data.conceptos, id_concepto);
-				that.toggleConceptoHandle(id_concepto);
+				that.fillConceptos(data.conceptos, $concepto);
+				that.toggleConceptoHandle($concepto);
 			}
 		})
 		.always(function(){ DATA_LOADER.hide(); })
 	},
 
-	fillConceptos: function( conceptos, id_concepto ) {
+	fillConceptos: function( conceptos, $concepto ) {
 
-		id_concepto = id_concepto || null;
-
-		if ( id_concepto == null )
-			$('#tabla-conceptos tbody').html( this.conceptosListTemplate(conceptos) );
+		if ( $concepto )
+			$concepto.after(this.conceptosListTemplate(conceptos));
 		else
-			this.getConceptoNode(id_concepto).after(this.conceptosListTemplate(conceptos));
+			$('#tabla-conceptos tbody').html( this.conceptosListTemplate(conceptos) );
+	},
+
+	conceptosListTemplate: function( conceptos ) {
+		var html = '';
+
+		for (var i = 0; i < conceptos.length; i++) {
+			html += this.conceptoTemplate( conceptos[i] );
+		}
+
+		return html;
 	},
 
 	conceptoTemplate: function(data) {
@@ -308,7 +319,7 @@ App.Presupuesto = {
 			'<tr id="c-' + data.id_concepto + '" data-nivel="' + data.nivel + '" data-numeronivel="' + data.numero_nivel + '" class="concepto">'
 			+ 	concepto_icon
 			+ 	handle
-			+   '<td class="icon-cell"><a href="#" class="check icon-checkbox-unchecked"></a></td>'
+			+   '<td class="icon-cell"><a href="#" class="select icon-checkbox-unchecked"></a></td>'
 			+ 	'<td class="clave_concepto">' + data.clave_concepto + '</td>'
 			+ 	descripcion
 			+ 	'<td>' + data.unidad + '</td>'
@@ -319,94 +330,108 @@ App.Presupuesto = {
 
 		return html;
 	},
-
-	conceptosListTemplate: function( conceptos ) {
-		var html = '';
-
-		for (var i = 0; i < conceptos.length; i++) {
-			html += this.conceptoTemplate( conceptos[i] );
-		}
-
-		return html;
-	},
 	
-	toggleConceptoHandle: function(id_concepto) {
-		this.getConceptoHandleNode(id_concepto).toggleClass('icon-minus icon-plus');
+	toggleConceptoHandle: function($concepto) {
+		if ($concepto)
+			this.getConceptoHandleNode($concepto).toggleClass('icon-minus icon-plus');
 	},
 
-	isNodeOpen: function(id_concepto) {
+	isNodeOpen: function($concepto) {
 
-		if ( id_concepto != null )
-			return this.getConceptoHandleNode(id_concepto).hasClass('icon-minus');
+		if ( $concepto )
+			return this.getConceptoHandleNode($concepto).hasClass('icon-minus');
 		else
 			return false;
 	},
 
-	getDescendants: function(id_concepto) {
+	getDescendants: function($concepto) {
 		// obtiene los descendientes de un concepto (si ya estan cargados existen)
-		var nivel_ancestro = this.getNivelConcepto(id_concepto);
+		var that = this;
+		var nivel_ancestro = this.getNivelConcepto($concepto);
 
-		return this.getConceptoNode(id_concepto).nextAll().filter(function(){
-			return $(this).attr('data-nivel').indexOf(nivel_ancestro) === 0 ? true : false;
+		return $concepto.nextAll().filter(function(){
+			return that.getNivelConcepto($(this)).indexOf(nivel_ancestro) === 0 ? true : false;
 		});
 	},
 
-	hideDescendants: function(id_concepto) {
+	haveDescendants: function($concepto) {
+		// Determina si el concepto ya tiene descendientes cargados
+		return this.getDescendants($concepto).length;
+	},
+
+	selectDescendants: function($concepto) {
+		var that = this;
+		this.getDescendants($concepto).map(function() {
+			that.selectNode($(this));
+		});
+	},
+
+	unselectDescendants: function($concepto) {
+		var that = this;
+		this.getDescendants($concepto).map(function() {
+			that.unselectNode($(this));
+		});
+	},
+
+	hideDescendants: function($concepto) {
 		// oculta todos los descendientes de un concepto
 		// y cambia su handle a + par aindicar que esta cerrado
-		this.getDescendants(id_concepto).hide()
+		this.getDescendants($concepto).hide()
 		.find('.handle').removeClass('icon-minus').addClass('icon-plus');
 	},
 
-	showDescendants: function(id_concepto) {
+	showDescendants: function($concepto) {
 		// muestra solo los descendientes inmediatos de un concepto
-		var nivel_ancestro = this.getNivelConcepto(id_concepto);
+		var that = this;
+		var nivel_ancestro = this.getNivelConcepto($concepto);
 		
-		this.getDescendants(id_concepto).filter(function() {
-			return $(this).attr('data-nivel').indexOf(nivel_ancestro) === 0 &&
-				$(this).attr('data-nivel').length === nivel_ancestro.length + 4 ?
+		this.getDescendants($concepto).filter(function() {
+			return that.getNivelConcepto($(this)).indexOf(nivel_ancestro) === 0 &&
+				that.getNivelConcepto($(this)).length === nivel_ancestro.length + 4 ?
 				true : false
 		}).show();
 	},
 
-	haveDescendants: function(id_concepto) {
-		// Determina si el concepto ya tiene descendientes cargados
-		return this.getDescendants(id_concepto).length;
+	toggleMarcaConcepto: function($concepto) {
+		$concepto.toggleClass('selected')
+		.find('.select').toggleClass('icon-checkbox-unchecked icon-checkbox-checked');
+
+		if ($concepto.hasClass('selected'))
+			this.selectDescendants($concepto);
+		else
+			this.unselectDescendants($concepto);
 	},
 
-	toggleMarcaConcepto: function($element) {
-		$element.toggleClass('icon-checkbox-unchecked icon-checkbox-checked');
-		$element.parents('tr').toggleClass('selected');
+	selectNode: function($concepto) {
+		$concepto.addClass('selected')
+		.find('.select')
+		.removeClass('icon-checkbox-unchecked')
+		.addClass('icon-checkbox-checked');
 	},
 
-	marcaConcepto: function(id_concepto) {
-		this.getConceptoNode(id_concepto).addClass('selected');
+	unselectNode: function($concepto) {
+		$concepto.removeClass('selected')
+		.find('.select')
+		.removeClass('icon-checkbox-checked')
+		.addClass('icon-checkbox-unchecked');
 	},
 
 	desmarcaConceptos: function() {
 		this.$table.find('tr.selected').removeClass('selected');
 		this.$table
-		.find('.check.icon-checkbox-checked')
+		.find('.select.icon-checkbox-checked')
 		.toggleClass('icon-checkbox-checked icon-checkbox-unchecked');
 	},
 
-	getConceptoNode: function(id_concepto) {
-		return $('#c-' + id_concepto);
-	},
-
-	getConceptoHandleNode: function(id_concepto) {
-		return this.getConceptoNode(id_concepto).find('.handle');
-	},
-
-	getConceptosSeleccionadosDom: function() {
-		return this.$table.find('.concepto.selected');
+	getConceptoHandleNode: function($concepto) {
+		return $concepto.find('.handle');
 	},
 
 	openConceptoPropertiesDialog: function() {
 		$('#dialog-propiedades-concepto').dialog('open');
 	},
 
-	getDatosConcepto: function(id_concepto) {
+	getDatosConcepto: function($concepto) {
 		var that = this;
 
 		DATA_LOADER.show();
@@ -415,7 +440,7 @@ App.Presupuesto = {
 			url: that.controller_url,
 			data: {
 				IDProyecto: that.getIDProyecto(),
-				id_concepto: id_concepto,
+				id_concepto: that.getIDConcepto($concepto),
 				action: 'getDatosConcepto'
 			},
 			dataType: 'json'
@@ -435,9 +460,14 @@ App.Presupuesto = {
 		});
 	},
 
-	fillConceptoProperties: function(data, id_concepto) {
+	fillConceptoProperties: function(data) {
+		var title = data.descripcion;
+
+		if (this.getSelected().length)
+			title = 'Varios conceptos seleccionados';
+
 		$('#dialog-propiedades-concepto')
-		.dialog({ title: 'Propiedades de: ' + data.descripcion })
+		.dialog({ title: 'Propiedades de: ' + title });
 
 		$('#txtDescripcion').val(data.descripcion);
 		$('#txtAgrupadorPartida').val(data.agrupador_partida);
@@ -447,10 +477,14 @@ App.Presupuesto = {
 		$('#txtAgrupadorSubtramo').val(data.agrupador_subtramo);
 	},
 
+	getSelected: function() {
+		return this.$table.find('.concepto.selected');
+	},
+
 	getConceptosSeleccionados: function() {
 		var conceptos = [];
 
-		this.getConceptosSeleccionadosDom().map(function(index, domElement){
+		this.getSelected().map(function(index, domElement){
 
 			conceptos.push({
 				'id_concepto': parseInt(this.id.split('-')[1])
@@ -460,7 +494,7 @@ App.Presupuesto = {
 		return conceptos;
 	},
 
-	setClaveConcepto: function(id_concepto, clave) {
+	setClaveConcepto: function($concepto, clave) {
 		var that = this;
 
 		DATA_LOADER.show();
@@ -470,14 +504,14 @@ App.Presupuesto = {
 			url: that.controller_url,
 			data: {
 				IDProyecto: that.getIDProyecto(),
-				id_concepto: id_concepto,
+				id_concepto: that.getIDConcepto($concepto),
 				clave: clave,
 				action: 'setClaveConcepto'
 			},
 			dataType: 'json'
 		})
 		.done( function(data) {
-			if( !data.success ) {
+			if( ! data.success ) {
 				messageConsole.displayMessage(data.message, 'error');
 			}
 		})
