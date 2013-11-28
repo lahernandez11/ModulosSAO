@@ -1,15 +1,20 @@
-Presupuesto = {
+var App = {};
+
+App.Presupuesto = {
 
 	controller_url: 'inc/lib/controllers/PresupuestoObraController.php',
+	$table: null,
 
 	init: function() {
 		var that = this;
+
+		this.$table = $('#tabla-conceptos');
 
 		$('#bl-proyectos').buttonlist({
 			source: 'inc/lib/controllers/ListaProyectosController.php',
 			data: {action: 'getListaProyectos'},
 			onSelect: function( selectedItem, listItem ) {
-				that.getConceptos();
+				that.loadDescendants();
 			},
 			didNotDataFound: function() {
 				$.notify({text: 'No se pudo cargar la lista de proyectos'});
@@ -22,10 +27,10 @@ Presupuesto = {
 			}
 		});
 
-		$('#tabla-conceptos').on('click', '.handle', function(event) {
-			var id_concepto = that.getIDConcepto($(this));
-			that.getConceptos(id_concepto);
+		this.$table.on('click', '.handle', function(event) {
 			event.preventDefault();
+			var id_concepto = that.getIDConcepto($(this));
+			that.toggleNode(id_concepto);
 		});
 
 		$('#dialog-propiedades-concepto').dialog({
@@ -43,7 +48,7 @@ Presupuesto = {
 			width: '350px'
 		});
 
-		$('#tabla-conceptos').on('click', '.descripcion', function(event) {
+		this.$table.on('click', '.descripcion', function(event) {
 			var id_concepto = that.getIDConcepto($(this));
 			that.marcaConcepto(id_concepto);
 			that.getDatosConcepto(id_concepto);
@@ -51,44 +56,32 @@ Presupuesto = {
 			event.stopPropagation();
 		});
 
-		$('#tabla-conceptos').on('click', '.check', function(event) {
+		this.$table.on('click', '.check', function(event) {
 			event.preventDefault();
 			that.toggleMarcaConcepto($(this));
 		});
 
-		$('#tabla-conceptos').on('dblclick', '.clave_concepto', function(event) {
+		this.$table.on('dblclick', '.clave_concepto', function(event) {
 			event.stopPropagation();
 
 			var initial_value = $(this).text();
 			
 			$(this).data('initial_value', initial_value);
 
-			var input = $('<input type="text" value="' + initial_value + '"/>');
+			var input = $('<input type="text" class="clave" value="' + initial_value + '"/>');
 
 			$(this).html(input);
 			input.focus();
 		});
 
-		$('#tabla-conceptos').on('keydown', 'input', function(event) {
-
+		this.$table.on('blur', 'input.clave', function() {
 			var initial_value = $(this).data('initial_value');
 			var input_value = $(this).val();
 
-			// determina si guardara o descartara cambios en la clave
-			switch(event.keyCode) {
-				// guarda cambios en la clave si se presiona "enter"
-				case 13:
-					that.setClaveConcepto(that.getIDConcepto($(this)), input_value);
-					$(this).parent().text(input_value);
-					$(this).remove();
-					break;
+			that.setClaveConcepto(that.getIDConcepto($(this)), input_value);
 
-				// descarta los cambios si se presiona "escape"
-				case 27:
-					$(this).parent().text(initial_value);
-					$(this).remove();
-					break;
-			}
+			$(this).parent().text(input_value);
+			$(this).remove();
 		});
 
 		$("#txtAgrupadorPartida").autocomplete({
@@ -98,7 +91,7 @@ Presupuesto = {
 				that.requestAgrupadoresList(request, response);
 			},
 		    select: function( event, ui ) {
-		    	that.setAgrupador(ui.item, 1);
+		    	that.setAgrupador(ui.item, 1, this);
 		    }
 		});
 
@@ -109,7 +102,7 @@ Presupuesto = {
 				that.requestAgrupadoresList(request, response);
 			},
 		    select: function( event, ui ) {
-		    	that.setAgrupador(ui.item, 2);
+		    	that.setAgrupador(ui.item, 2, this);
 		    }
 		});
 
@@ -120,7 +113,7 @@ Presupuesto = {
 				that.requestAgrupadoresList(request, response);
 			},
 		    select: function( event, ui ) {
-		    	that.setAgrupador(ui.item, 3);
+		    	that.setAgrupador(ui.item, 3, this);
 		    }
 		});
 
@@ -131,7 +124,7 @@ Presupuesto = {
 				that.requestAgrupadoresList(request, response);
 			},
 		    select: function( event, ui ) {
-		    	that.setAgrupador(ui.item, 4);
+		    	that.setAgrupador(ui.item, 4, this);
 		    }
 		});
 
@@ -142,13 +135,12 @@ Presupuesto = {
 				that.requestAgrupadoresList(request, response);
 			},
 		    select: function( event, ui ) {
-		    	that.setAgrupador(ui.item, 5);
+		    	that.setAgrupador(ui.item, 5, this);
 		    }
 		});
 
 		$('#guardar_agrupador').on('click', function() {
 			that.addAgrupador();
-			
 		});
 
 		$('#cerrar_agrupador').on('click', function() {
@@ -202,38 +194,63 @@ Presupuesto = {
 		return $('#bl-proyectos').buttonlist('option', 'selectedItem').value;
 	},
 
-	getConceptos: function(id_concepto) {
+	toggleNode: function(id_concepto) {
+		// muestra los descendientes de un concepto
+
+		var isNodeOpen = this.isNodeOpen(id_concepto);
+
+		if ( this.haveDescendants(id_concepto) ) {
+			// esto se ejecuta si el concepto tiene descendientes
+			// ya cargados, dependiendo del estado del concepto
+			// se muestran u ocultan sus descendientes
+			if (isNodeOpen) {
+				this.hideDescendants(id_concepto);
+			} else {
+				this.showDescendants(id_concepto);
+			}
+			
+			this.toggleConceptoHandle(id_concepto);
+		} else {
+			// esto se ejecuta cuando el concepto no tiene
+			// descendientes cargados, si el nodo esta cerrado
+			// los carga y muestra
+			if (isNodeOpen) {
+				this.toggleConceptoHandle(id_concepto);
+			} else {
+				this.loadDescendants(id_concepto);
+			}
+		}	
+	},
+
+	getNivelConcepto: function(id_concepto) {
+		return this.getConceptoNode(id_concepto).attr('data-nivel');
+	},
+
+	loadDescendants: function(id_concepto) {
 		var that = this;
 
 		id_concepto = id_concepto || null;
 
-		console.log(that.isNodeOpen(id_concepto));
+		DATA_LOADER.show();
 
-		if ( ! that.isNodeOpen(id_concepto) ) {
-			DATA_LOADER.show();
-
-			$.ajax({
-				url: that.controller_url,
-				data: {
-					'IDProyecto': that.getIDProyecto(),
-					'action': 'getConceptos',
-					id_concepto: id_concepto
-				},
-				dataType: 'json'
-			})
-			.done( function(data) {
-				if ( ! data.success ) {
-					messageConsole.displayMessage(data.message, 'error');
-				} else {
-					that.fillConceptos(data.conceptos, id_concepto);
-					that.toggleConceptoHandle(id_concepto);
-				}
-			})
-			.always(function(){ DATA_LOADER.hide(); })
-		} else {
-			that.removeChildren(id_concepto);
-			that.toggleConceptoHandle(id_concepto);
-		}
+		$.ajax({
+			url: that.controller_url,
+			data: {
+				'IDProyecto': that.getIDProyecto(),
+				'action': 'getConceptos',
+				id_concepto: id_concepto
+			},
+			dataType: 'json'
+		})
+		.done( function(data) {
+			if ( ! data.success ) {
+				messageConsole.displayMessage(data.message, 'error');
+			} else {
+				that.fillConceptos(data.conceptos, id_concepto);
+				that.toggleConceptoHandle(id_concepto);
+			}
+		})
+		.always(function(){ DATA_LOADER.hide(); })
 	},
 
 	fillConceptos: function( conceptos, id_concepto ) {
@@ -249,7 +266,8 @@ Presupuesto = {
 	conceptoTemplate: function(data) {
 
 		var html = '',
-			descripcion = '<td style="padding-left: ' + data.numero_nivel + 'em"><a href="#" title="'+ data.descripcion +'" class="descripcion">' + data.descripcion + '</a></td>',
+			descripcion = '<td style="padding-left: ' + data.numero_nivel + 'em">'
+				+ '<a href="#" title="'+ data.descripcion +'" class="descripcion">' + data.descripcion + '</a></td>',
 			concepto_icon = '<td class="icon-cell"></td>',
 			handle = '<td class="icon-cell"><a href="" class="handle icon-plus"></a></td>';
 
@@ -287,7 +305,7 @@ Presupuesto = {
 		};
 
 		html =
-			'<tr id="c-' + data.id_concepto + '" data-numeronivel="' + data.numero_nivel + '" class="concepto">'
+			'<tr id="c-' + data.id_concepto + '" data-nivel="' + data.nivel + '" data-numeronivel="' + data.numero_nivel + '" class="concepto">'
 			+ 	concepto_icon
 			+ 	handle
 			+   '<td class="icon-cell"><a href="#" class="check icon-checkbox-unchecked"></a></td>'
@@ -324,17 +342,36 @@ Presupuesto = {
 			return false;
 	},
 
-	removeChildren: function(id_concepto) {
+	getDescendants: function(id_concepto) {
+		// obtiene los descendientes de un concepto (si ya estan cargados existen)
+		var nivel_ancestro = this.getNivelConcepto(id_concepto);
 
-		numero_nivel_ancestro = parseInt(this.getConceptoNode(id_concepto).attr('data-numeronivel'));
+		return this.getConceptoNode(id_concepto).nextAll().filter(function(){
+			return $(this).attr('data-nivel').indexOf(nivel_ancestro) === 0 ? true : false;
+		});
+	},
 
-		descendientes = this.getConceptoNode(id_concepto).nextAll();
-		console.log(descendientes)
-		for (var i = 0; i < descendientes.length; i++) {
-			descendiente = $(descendientes[i]);
-			if( parseInt(descendiente.attr('data-numeronivel')) > numero_nivel_ancestro )
-				descendiente.remove();
-		};
+	hideDescendants: function(id_concepto) {
+		// oculta todos los descendientes de un concepto
+		// y cambia su handle a + par aindicar que esta cerrado
+		this.getDescendants(id_concepto).hide()
+		.find('.handle').removeClass('icon-minus').addClass('icon-plus');
+	},
+
+	showDescendants: function(id_concepto) {
+		// muestra solo los descendientes inmediatos de un concepto
+		var nivel_ancestro = this.getNivelConcepto(id_concepto);
+		
+		this.getDescendants(id_concepto).filter(function() {
+			return $(this).attr('data-nivel').indexOf(nivel_ancestro) === 0 &&
+				$(this).attr('data-nivel').length === nivel_ancestro.length + 4 ?
+				true : false
+		}).show();
+	},
+
+	haveDescendants: function(id_concepto) {
+		// Determina si el concepto ya tiene descendientes cargados
+		return this.getDescendants(id_concepto).length;
 	},
 
 	toggleMarcaConcepto: function($element) {
@@ -347,8 +384,8 @@ Presupuesto = {
 	},
 
 	desmarcaConceptos: function() {
-		$('#tabla-conceptos').find('tr.selected').removeClass('selected');
-		$('#tabla-conceptos')
+		this.$table.find('tr.selected').removeClass('selected');
+		this.$table
 		.find('.check.icon-checkbox-checked')
 		.toggleClass('icon-checkbox-checked icon-checkbox-unchecked');
 	},
@@ -362,7 +399,7 @@ Presupuesto = {
 	},
 
 	getConceptosSeleccionadosDom: function() {
-		return $('#tabla-conceptos').find('.concepto.selected');
+		return this.$table.find('.concepto.selected');
 	},
 
 	openConceptoPropertiesDialog: function() {
@@ -447,12 +484,17 @@ Presupuesto = {
 		.always( DATA_LOADER.hide );
 	},
 
-	setAgrupador: function(item, type) {
+	setAgrupador: function(item, type, input) {
 
-		var request = {};
-			request.IDProyecto = this.getIDProyecto();
-			request.conceptos = this.getConceptosSeleccionados();
-
+		var request = {
+			IDProyecto: this.getIDProyecto(),
+			conceptos: this.getConceptosSeleccionados(),
+			callback: this.requestSetAgrupador,
+			type: type,
+			$input: $(input),
+			descripcion: item.label
+		};
+		
 		switch( type ) {
 
 			case 1:
@@ -473,19 +515,26 @@ Presupuesto = {
 		}
 
 		if ( item.id == 0 ) {
-			this.openAddAgrupadorDialog(item.label, this.requestSetAgrupador, request, type);
+			this.openAddAgrupadorDialog(request);
 		} else {
 			request.id_agrupador = item.id;
-			this.requestSetAgrupador(request, DATA_LOADER.hide);
+			request.callback = DATA_LOADER.hide;
+			this.requestSetAgrupador(request);
 		}
 	},
 
-	requestSetAgrupador: function(request, callback) {
+	requestSetAgrupador: function(request) {
+		DATA_LOADER.show();
 
 		$.ajax({
 			type: 'POST',
 			url: this.controller_url,
-			data: request,
+			data: {
+				IDProyecto: request.IDProyecto,
+				conceptos: request.conceptos,
+				id_agrupador: request.id_agrupador,
+				action: request.action	
+			},
 			dataType: 'json'
 		})
 		.done( function(data) {
@@ -495,13 +544,13 @@ Presupuesto = {
 				messageConsole.displayMessage(data.message, 'error');
 			}
 		})
-		.always(callback);
+		.always(request.callback);
 	},
 
-	openAddAgrupadorDialog: function(descripcion, callback, request, type) {
-		
-		$('#guardar_agrupador').data({'callback': callback, 'request': request, 'type': type});
-		$('#txtDescripcionAgruapdor').val(descripcion.split('-')[1].trim());
+	openAddAgrupadorDialog: function(request) {
+
+		$('#guardar_agrupador').data('request', request);
+		$('#txtDescripcionAgruapdor').val(request.descripcion.split('-')[1].trim());
 		$('#txtClaveAgrupador').val('');
 		$('#dialog-nuevo-agrupador').dialog('open');
 	},
@@ -511,12 +560,11 @@ Presupuesto = {
 
 		DATA_LOADER.show();
 
-		var action   = '';
-		var callback = $('#guardar_agrupador').data('callback');
-		var request  = $('#guardar_agrupador').data('request');
-		var type     = $('#guardar_agrupador').data('type');
+		var request = $('#guardar_agrupador').data('request');
 
-		switch(type) {
+		var action   = '';
+
+		switch(request.type) {
 			case 1: action = 'addAgrupadorPartida'; break;
 			case 2: action = 'addAgrupadorSubpartida'; break;
 			case 3: action = 'addAgrupadorActividad'; break;
@@ -531,7 +579,7 @@ Presupuesto = {
 			type: 'POST',
 			url: that.controller_url,
 			data: {
-				IDProyecto: that.getIDProyecto(),
+				IDProyecto: request.IDProyecto,
 				clave: clave,
 				descripcion: descripcion,
 				action: action
@@ -545,10 +593,12 @@ Presupuesto = {
 			} else {
 				$('#dialog-nuevo-agrupador').dialog('close');
 				request.id_agrupador = data.id_agrupador;
-				callback.call(that, request, DATA_LOADER.hide);
+				request.callback = DATA_LOADER.hide;
+				request.$input.val(descripcion);
+				that.requestSetAgrupador(request);
 			}
 		});
 	},
 }
 
-Presupuesto.init();
+App.Presupuesto.init();

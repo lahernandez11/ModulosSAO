@@ -68,8 +68,8 @@ try {
 			$id_agrupador = $_POST['id_agrupador'];
 
 			foreach ($conceptos as $concepto) {
-				$presupuesto->{$_POST['action']}($concepto['id_concepto'], $id_agrupador);
-				$data['x'] = $concepto['id_concepto'];
+				// $presupuesto->{$_POST['action']}($concepto['id_concepto'], $id_agrupador);
+				$presupuesto->setAgrupador($concepto['id_concepto'], $id_agrupador, $_POST['action']);
 			}
 
 			break;
