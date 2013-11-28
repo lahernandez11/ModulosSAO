@@ -45,7 +45,8 @@ class SQLSrvDBConn {
 
 		$rowsCollection = array();
 
-		while( $rowsCollection[] = sqlsrv_fetch_object( $stmt ) );
+		while( $obj = sqlsrv_fetch_object( $stmt ) )
+			$rowsCollection[] = $obj;
 
 		return $rowsCollection;
 	}
