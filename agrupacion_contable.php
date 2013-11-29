@@ -65,7 +65,7 @@
 		</div> <!-- app-wrapper -->
 
 		<div id="dialog-propiedades-cuenta" class="dialog" title="Propiedades">
-			<form method="get" class="dialog-form form-concepto-properties">
+			<form method="get" class="dialog-form form-cuenta-properties">
 
 				<label for="txtAgrupadorProveedor">Agrupador Proveedor</label>
 				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
@@ -75,7 +75,7 @@
 				<input type="text" id="txtAgrupadorNaturaleza" class="field" />
 
 				<section class="buttons">
-					<input type="button" id="cerrar-concepto" name="cerrar" class="button" value="Cerrar" />
+					<input type="button" id="cerrar-cuenta" name="cerrar" class="button" value="Cerrar" />
 				</section>
 			</form>
 		</div>
@@ -88,7 +88,7 @@
 				<input type="text" id="txtDescripcionAgruapdor" class="field" />
 				<section class="buttons">
 					<input type="button" id="guardar_agrupador" name="guardar" class="button" value="Guardar" />
-					<input type="button" id="cerrar_agrupador" name="cerrar" class="button" value="Cerrar" />
+					<input type="button" id="cerrar_cuenta" name="cerrar" class="button" value="Cerrar" />
 				</section>
 			</form>
 		</div>
