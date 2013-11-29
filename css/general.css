@@ -449,6 +449,10 @@ table col.icon
 {
 	width: 25px;
 }
+table col.icon-header
+{
+	width: 80px;
+}
 table col.monto
 {
 	width: 130px;
@@ -556,7 +560,7 @@ table .centrado
 }
 table .icon-cell
 {
-	border: none;
+	/*border: none;*/
 	border-left: 1px solid #CCC;
 	padding: 0;
 	text-align: center;
@@ -858,19 +862,6 @@ ul.dropdown-list li a.with-icon
 	text-transform: none;
 	vertical-align: middle;
 }
-.concepto a.descripcion
-{
-	color: inherit;
-	text-decoration: none;
-}
-.concepto a.descripcion:hover
-{
-	text-decoration: underline;
-}
-.concepto-medible
-{
-	font-weight: bold;
-}
 .confirmation-message
 {
 	color: red;
@@ -911,6 +902,18 @@ ul.dropdown-list li a.with-icon
 .hz-menu li a.item
 {
 	padding-right: 0;
+}
+.icon-checkmark-circle:after
+{
+	content: "\e60e";
+	font-family: "icomoon";
+	color: green
+}
+.icon-cancel-circle:after
+{
+	content: "\e60d";
+	font-family: "icomoon";
+	color: crimson;
 }
 .icon-database:after
 {
@@ -1216,6 +1219,19 @@ ul.dropdown-list li a.with-icon
 .tab-panels
 {
 	position: relative;
+}
+.tabla-arbol a.descripcion
+{
+	color: inherit;
+	text-decoration: none;
+}
+.tabla-arbol a.descripcion:hover
+{
+	text-decoration: underline;
+}
+.tabla-arbol .importante
+{
+	font-weight: bold;
 }
 .table-toolbar
 {

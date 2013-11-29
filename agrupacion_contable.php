@@ -1,9 +1,9 @@
 <?php require_once 'setPath.php'; require_once 'models/Sesion.class.php'; Sesion::validaSesion(); ?>
 <!DOCTYPE html>
-	<html>
+	<html lang="es">
 	<head>
 		<meta charset="utf-8">
-		<title>Presupuesto de Obra</title>
+		<title>Agrupación Contable</title>
 		<link rel="stylesheet" href="css/normalize.css" />
 		<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
 		<link rel="stylesheet" href="css/general.css" />
@@ -12,23 +12,6 @@
 		<!--[if lt IE 9]><script src="inc/js/html5shiv.js"></script><![endif]-->
 	</head>
 	<body>
-		<!-- <section>
-			<div class="app-wrapper">
-				<section class="titulo">
-					<h2>Precios de Venta</h2>
-				</section>
-				<section class="toolbar">
-					<a class="toolbar-button dd-list" id="bl-proyectos">
-							<span class="button-text">Proyectos</span>
-							<span class="icon flechita-abajo"></span>
-						</a>
-						<a id="guardar" class="toolbar-button">
-							<span class="icon save"></span>
-							<span class="label">Guardar</span>
-						</a>
-				</section>
-			</div>
-		</section> -->
 		<div id="app-wrapper">
 			<?php include("inc/app-header.php"); ?>
 			<nav>
@@ -42,33 +25,29 @@
 							<span class="button-text">Proyectos</span>
 							<span class="icon flechita-abajo"></span>
 						</a>
-						<h2>Presupuesto de Obra</h2>
+						<h2>Agrupación Contable</h2>
 					</div>
 					<div id="app-module-content">
 						<section id="tran">
 
 							<section id="tran-content">
-								<table id="tabla-conceptos" class="stripped tabla-arbol">
+								<table id="tabla-cuentas" class="stripped tabla-arbol">
 									<colgroup>
 										<col class="icon"/>
 										<col class="icon"/>
-										<col class="icon"/>
+										<col class="icon-header"/>
 										<col class="clave"/>
 										<col />
-										<col class="unidad"/>
-										<col span="3" class="monto"/>
+										<col />
 									</colgroup>
 									<thead>
 										<tr>
 											<th></th>
 											<th></th>
-											<th></th>
+											<th>Afectable</th>
 											<th>Clave</th>
-											<th>Concepto</th>
-											<th>Unidad</th>
-											<th>Cantidad</th>
-											<th>Precio</th>
-											<th>Monto</th>
+											<th>Descripción</th>
+											<th>Agrupador Proveedor</th>
 										</tr>
 									</thead>
 									<tbody></tbody>
@@ -85,25 +64,16 @@
 			</footer> <!-- app-footer -->
 		</div> <!-- app-wrapper -->
 
-		<div id="dialog-propiedades-concepto" class="dialog" title="Propiedades">
+		<div id="dialog-propiedades-cuenta" class="dialog" title="Propiedades">
 			<form method="get" class="dialog-form form-concepto-properties">
-				<!-- <label for="">Concepto</label>
-				<textarea id="txtDescripcion" class="field"></textarea> -->
-				<label for="txtAgrupadorPartida">Agrupador Partida</label>
-				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
-				<input type="text" id="txtAgrupadorPartida" class="field" />
-				
-				<label for="txtAgrupadorSubpartida">Agrupador Subpartida</label>
-				<input type="text" id="txtAgrupadorSubpartida" class="field" />
-				
-				<label for="txtAgrupadorActividad">Agrupador Actividad</label>
-				<input type="text" id="txtAgrupadorActividad" class="field" />
 
-				<label for="txtAgrupadorTramo">Agrupador Tramo</label>
-				<input type="text" id="txtAgrupadorTramo" class="field" />
+				<label for="txtAgrupadorProveedor">Agrupador Proveedor</label>
+				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
+				<input type="text" id="txtAgrupadorProveedor" class="field" />
 				
-				<label for="txtAgrupadorSubtramo">Agrupador Subtramo</label>
-				<input type="text" id="txtAgrupadorSubtramo" class="field" />
+				<label for="txtAgrupadorNaturaleza">Agrupador Naturaleza</label>
+				<input type="text" id="txtAgrupadorNaturaleza" class="field" />
+
 				<section class="buttons">
 					<input type="button" id="cerrar-concepto" name="cerrar" class="button" value="Cerrar" />
 				</section>
@@ -126,14 +96,34 @@
 		<div id="message-console"><span id="console-message"></span><span id="console-toggler" class="open"></span></div>
 		<div id="cache"></div>
 
+		<script type="template" id="template-cuenta">
+			<tr id="c-<%- IdCuenta %>" data-nivel="<%- Codigo %>" data-idsup="<%- IdCtaSup %>" class="cuenta">
+				<td class="icon-cell">
+					<a href="" class="handle icon-plus"></a>
+				</td>
+				<td class="icon-cell">
+					<a href="" class="select icon-checkbox-unchecked"></a>
+				</td>
+				<td class="icon-cell">
+					<a class="<%= Afectable ? 'icon-checkmark-circle' : 'icon-cancel-circle' %>"></a>
+				</td>
+				<td class="clave <%= Afectable ? 'importante' : '' %>"><%- Codigo %></td>
+				<td><a href="" title="<%- Proveedor %>" style="margin-left: <%- Nivel %>em" class="descripcion <%= Afectable ? 'importante' : '' %>"><%- Nombre %></a></td>
+				<td class="<%= Afectable ? 'importante' : '' %>" title="<%- Proveedor %>">
+					<%- Proveedor %>
+				</td>
+			</tr>
+		</script>
+
 		<script src="inc/js/jquery-1.7.1.min.js"></script>
 		<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
 		<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
+		<script src="inc/js/lib/underscore-min.js"></script>
 
 		<script src="inc/js/general.js"></script>
 		<script src="inc/js/jquery.buttonlist.js"></script>
 		<script src="inc/js/jquery.uxtable.js"></script>
 		<script src="inc/js/jquery.notify.js"></script>
-		<script src="inc/js/presupuesto_obra.js"></script>
+		<script src="inc/js/agrupacion_contable.js"></script>
 	</body>
 </html>
