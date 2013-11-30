@@ -87,7 +87,8 @@ App.AgrupacionContable = {
 		    }
 		});
 
-		$('#guardar_agrupador').on('click', function() {
+		$('#nuevo-agrupador').on('submit', function(event) {
+			event.preventDefault();
 			that.AddCuenta();
 		});
 

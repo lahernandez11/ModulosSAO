@@ -84,11 +84,13 @@
 		</div>
 
 		<div id="dialog-nuevo-agrupador" class="dialog" title="Nuevo Agrupador">
-			<form method="get" class="dialog-form form-nuevo-agrupador">
+			<form method="get" id="nuevo-agrupador" class="dialog-form">
+				
 				<label for="txtDescripcionAgruapdor">Descripcion</label>
 				<input type="text" id="txtDescripcionAgruapdor" class="field" />
+
 				<section class="buttons">
-					<input type="button" id="guardar_agrupador" name="guardar" class="button" value="Guardar" />
+					<input type="submit" id="guardar_agrupador" name="guardar" class="button" value="Guardar" />
 					<input type="button" id="cerrar_agrupador" name="cerrar" class="button" value="Cerrar" />
 				</section>
 			</form>
