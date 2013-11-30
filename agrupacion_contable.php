@@ -71,6 +71,9 @@
 				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
 				<input type="text" id="txtAgrupadorProveedor" class="field" />
 				
+				<label for="txtAgrupadorTipoCuenta">Agrupador Tipo Cuenta</label>
+				<input type="text" id="txtAgrupadorTipoCuenta" class="field" />
+
 				<label for="txtAgrupadorNaturaleza">Agrupador Naturaleza</label>
 				<input type="text" id="txtAgrupadorNaturaleza" class="field" />
 
@@ -82,18 +85,19 @@
 
 		<div id="dialog-nuevo-agrupador" class="dialog" title="Nuevo Agrupador">
 			<form method="get" class="dialog-form form-nuevo-agrupador">
-				<label for="txtClaveAgrupador">Clave</label>
-				<input type="text" id="txtClaveAgrupador" class="field" />
 				<label for="txtDescripcionAgruapdor">Descripcion</label>
 				<input type="text" id="txtDescripcionAgruapdor" class="field" />
 				<section class="buttons">
 					<input type="button" id="guardar_agrupador" name="guardar" class="button" value="Guardar" />
-					<input type="button" id="cerrar_cuenta" name="cerrar" class="button" value="Cerrar" />
+					<input type="button" id="cerrar_agrupador" name="cerrar" class="button" value="Cerrar" />
 				</section>
 			</form>
 		</div>
 
-		<div id="message-console"><span id="console-message"></span><span id="console-toggler" class="open"></span></div>
+		<div id="message-console">
+			<span id="console-message"></span>
+			<span id="console-toggler" class="open"></span>
+		</div>
 		<div id="cache"></div>
 
 		<script type="template" id="template-cuenta">
@@ -108,7 +112,9 @@
 					<a class="<%= Afectable ? 'icon-checkmark-circle' : 'icon-cancel-circle' %>"></a>
 				</td>
 				<td class="clave <%= Afectable ? 'importante' : '' %>"><%- Codigo %></td>
-				<td><a href="" title="<%- Proveedor %>" style="margin-left: <%- Nivel %>em" class="descripcion <%= Afectable ? 'importante' : '' %>"><%- Nombre %></a></td>
+				<td>
+					<a href="" title="<%- Proveedor %>" style="margin-left: <%- Nivel %>em" class="descripcion <%= Afectable ? 'importante' : '' %>"><%- Nombre %></a>
+				</td>
 				<td class="<%= Afectable ? 'importante' : '' %>" title="<%- Proveedor %>">
 					<%- Proveedor %>
 				</td>

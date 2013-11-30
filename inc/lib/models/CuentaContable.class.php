@@ -118,6 +118,7 @@ class CuentaContable {
 					[Cuentas].[Nombre],
 					[AgrupacionCuentaContable].[IDAgrupadorNaturaleza],
 					[AgrupacionCuentaContable].[IDAgrupadorTipoCuenta],
+					[AgrupadorTipoCuenta].[AgrupadorTipoCuenta],
 					[AgrupacionCuentaContable].[IDAgrupadorProveedor],
 					[Proveedores].[Nombre] AS [Proveedor]
 				FROM
@@ -127,13 +128,19 @@ class CuentaContable {
 					ON
 						[Cuentas].[IdProyecto] = [AgrupacionCuentaContable].[IDProyecto]
 							AND
-				        [Cuentas].[IdCuenta] = [AgrupacionCuentaContable].[IDCuenta]
+						[Cuentas].[IdCuenta] = [AgrupacionCuentaContable].[IDCuenta]
+				LEFT OUTER JOIN
+					[Contabilidad].[AgrupadorTipoCuenta]
+					ON
+						[AgrupacionCuentaContable].[IDProyecto] = [AgrupadorTipoCuenta].[IDProyecto]
+							AND
+				        [AgrupacionCuentaContable].[IDAgrupadorTipoCuenta] = [AgrupadorTipoCuenta].[IDAgrupadorTipoCuenta]
 				LEFT OUTER JOIN
 					[Contabilidad].[Proveedores]
 					ON
 						[AgrupacionCuentaContable].[IDProyecto] = [Proveedores].[IdProyecto]
 							AND
-				        [AgrupacionCuentaContable].[IDAgrupadorProveedor] = [Proveedores].[IdProveedor]
+						[AgrupacionCuentaContable].[IDAgrupadorProveedor] = [Proveedores].[IdProveedor]
 				WHERE
 					[Cuentas].[IdProyecto] = ?
 						AND
@@ -320,20 +327,23 @@ class CuentaContable {
 	    $this->conn->executeQuery($tsql, $params);
 	}
 
-	private function setAgrupadorSubpartida( $id_concepto, $id_agrupador ) {
+	private function setAgrupadorTipoCuenta( $id_cuenta, $id_agrupador ) {
 		
-		$tsql = "UPDATE [dbo].[conceptos]
+		if (! $this->existeRegistroAgrupacion($id_cuenta))
+			$this->creaRegistroAgrupacion($id_cuenta);
+
+		$tsql = "UPDATE [Contabilidad].[AgrupacionCuentaContable]
 				 SET
-				 	[id_agrupador_subpartida] = ?
+				 	[IDAgrupadorTipoCuenta] = ?
 				 WHERE
-				 	[id_obra] = ?
+				 	[IDProyecto] = ?
 				 		AND
-				 	[id_concepto] = ?";
+				 	[IDCuenta] = ?";
 
 	    $params = array(
 	        array( $id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $id_concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array( $this->IDProyecto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $id_cuenta, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
 	    $this->conn->executeQuery($tsql, $params);

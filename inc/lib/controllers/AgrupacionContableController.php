@@ -22,7 +22,6 @@ try {
 	$conn = new SAO1814DBConn();
 
 	$IDProyecto = (int) $_REQUEST['IDProyecto'];
-	// $IDObra 	= Obra::getIDObraProyecto($IDProyecto);
 	$rsao_conn = new ReportesSAOConn();
 	
 	switch ( $_REQUEST['action'] ) {
@@ -45,14 +44,14 @@ try {
 		case 'getAgrupadoresProveedor':
 		case 'getAgrupadoresTipoCuenta':
 
-			$descripcion  = $_GET['term'];
+			$descripcion = $_GET['term'];
 			$data['agrupadores'] = array();
 			$data['agrupadores'] = AgrupadorCuentaContable::$_GET['action']($rsao_conn, $IDProyecto, $descripcion);
 
 			break;
 
 		case 'setAgrupadorProveedor':
-		case 'setAgrupadorSubpartida':
+		case 'setAgrupadorTipoCuenta':
 			$cuenta_contable = new CuentaContable($IDProyecto, $rsao_conn);
 			$cuentas = $_POST['cuentas'];
 			$id_agrupador = $_POST['id_agrupador'];
@@ -63,8 +62,15 @@ try {
 
 			break;
 
+		case 'addAgrupadorTipoCuenta':
+
+			$descripcion = $_POST['descripcion'];
+
+			$data['id_agrupador'] = AgrupadorCuentaContable::$_POST['action']($rsao_conn, $IDProyecto, $descripcion);
+			break;
+
 		default:
-			throw new Exception("Accion desconocida");
+			throw new Exception("Acción desconocida");
 	}
 
 } catch( Exception $e ) {

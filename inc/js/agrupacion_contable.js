@@ -79,7 +79,7 @@ App.AgrupacionContable = {
 		$("#txtAgrupadorTipoCuenta").autocomplete({
 		    minLength: 1,
 		    source: function(request, response) {
-				request.action = 'getAgrupadoresSubpartida';
+				request.action = 'getAgrupadoresTipoCuenta';
 				that.requestAgrupadoresList(request, response);
 			},
 		    select: function( event, ui ) {
@@ -88,7 +88,7 @@ App.AgrupacionContable = {
 		});
 
 		$('#guardar_agrupador').on('click', function() {
-			that.addAgrupador();
+			that.AddCuenta();
 		});
 
 		$('#cerrar_agrupador').on('click', function() {
@@ -126,12 +126,14 @@ App.AgrupacionContable = {
 				   	});
 				}
 
-				// if ( data.agrupadores.length == 0) {
-				// 	agrupadores.push({
-				// 		id: 0,
-				// 		label: 'Agregar - ' + request.term
-				// 	});
-				// }
+				if (request.action === 'getAgrupadoresTipoCuenta') {
+					if ( data.agrupadores.length == 0) {
+						agrupadores.push({
+							id: 0,
+							label: 'Agregar - ' + request.term
+						});
+					}
+				}
 			}
 
 			response( agrupadores );
@@ -369,6 +371,7 @@ App.AgrupacionContable = {
 
 		$('#txtDescripcion').val(data.Nombre);
 		$('#txtAgrupadorProveedor').val(data.Proveedor);
+		$('#txtAgrupadorTipoCuenta').val(data.AgrupadorTipoCuenta);
 	},
 
 	getSelected: function() {
@@ -393,22 +396,22 @@ App.AgrupacionContable = {
 		var request = {
 			IDProyecto: this.getIDProyecto(),
 			cuentas: this.getCuentasSeleccionadas(),
-			callback: this.requestSetAgrupador,
+			callback: this.requestSetCuenta,
 			action: method,
 			$input: $(input),
 			descripcion: item.label
 		};
 		
 		if ( item.id == 0 ) {
-			this.openAddAgrupadorDialog(request);
+			this.openAddCuentaDialog(request);
 		} else {
 			request.id_agrupador = item.id;
 			request.callback = DATA_LOADER.hide;
-			this.requestSetAgrupador(request);
+			this.requestSetCuenta(request);
 		}
 	},
 
-	requestSetAgrupador: function(request) {
+	requestSetCuenta: function(request) {
 		DATA_LOADER.show();
 
 		$.ajax({
@@ -432,25 +435,26 @@ App.AgrupacionContable = {
 		.always(request.callback);
 	},
 
-	openAddAgrupadorDialog: function(request) {
+	openAddCuentaDialog: function(request) {
 
 		$('#guardar_agrupador').data('request', request);
 		$('#txtDescripcionAgruapdor').val(request.descripcion.split('-')[1].trim());
-		$('#txtClaveAgrupador').val('');
 		$('#dialog-nuevo-agrupador').dialog('open');
 	},
 
-	addAgrupador: function() {
+	AddCuenta: function() {
 		var that = this;
 
 		DATA_LOADER.show();
 
 		var request = $('#guardar_agrupador').data('request');
+		var action = '';
 
-		var action   = '';
-
-		switch(request.type) {
-			case 1: action = 'addAgrupadorPartida'; break;
+		switch(request.$input[0].id) {
+			
+			case 'txtAgrupadorTipoCuenta':
+				action = 'addAgrupadorTipoCuenta';
+			break;
 		}
 
 		var clave = $('#txtClaveAgrupador').val(),
@@ -476,7 +480,7 @@ App.AgrupacionContable = {
 				request.id_agrupador = data.id_agrupador;
 				request.callback = DATA_LOADER.hide;
 				request.$input.val(descripcion);
-				that.requestSetAgrupador(request);
+				that.requestSetCuenta(request);
 			}
 		});
 	},
