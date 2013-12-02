@@ -103,7 +103,7 @@
 		<div id="cache"></div>
 
 		<script type="template" id="template-cuenta">
-			<tr id="c-<%- IdCuenta %>" data-nivel="<%- Codigo %>" data-idsup="<%- IdCtaSup %>" class="cuenta">
+			<tr id="c-<%- IdCuenta %>" data-nivel="<%- Codigo %>" data-idsup="<%- IdCtaSup %>" data-afectable="<%- Afectable%>" class="cuenta">
 				<td class="icon-cell">
 					<a href="" class="handle icon-plus"></a>
 				</td>

@@ -364,7 +364,7 @@ App.AgrupacionContable = {
 
 		var title = data.Nombre;
 
-		if (this.getSelected().length)
+		if (this.getSelected().length > 1)
 			title = 'Varias cuentas seleccionadas';
 
 		$('#dialog-propiedades-cuenta')
@@ -377,6 +377,15 @@ App.AgrupacionContable = {
 
 	getSelected: function() {
 		return this.$table.find('.selected');
+	},
+
+	esAfectable: function(ix, $cuenta) {
+		ix = ix || 0;
+
+		if (parseInt($($cuenta).attr('data-afectable')) === 1)
+			return true;
+		else
+			return false;
 	},
 
 	getCuentasSeleccionadas: function() {
@@ -414,6 +423,7 @@ App.AgrupacionContable = {
 
 	requestSetCuenta: function(request) {
 		DATA_LOADER.show();
+		var that = this;
 
 		$.ajax({
 			type: 'POST',
@@ -429,11 +439,17 @@ App.AgrupacionContable = {
 		.done( function(data) {
 			if ( data.success ) {
 				messageConsole.displayMessage('Agrupador asignado correctamente.', 'success');
+				that.updateAgrupadorColumna(request.$input.val());
 			} else {
 				messageConsole.displayMessage(data.message, 'error');
 			}
 		})
 		.always(request.callback);
+	},
+
+	updateAgrupadorColumna: function(descripcion) {
+
+		this.getSelected().filter(this.esAfectable).find('td:eq(5)').text(descripcion);
 	},
 
 	openAddCuentaDialog: function(request) {

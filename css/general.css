@@ -1223,11 +1223,6 @@ ul.dropdown-list li a.with-icon
 .tabla-arbol a.descripcion
 {
 	color: inherit;
-	text-decoration: none;
-}
-.tabla-arbol a.descripcion:hover
-{
-	text-decoration: underline;
 }
 .tabla-arbol .importante
 {
