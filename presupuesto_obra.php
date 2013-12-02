@@ -1,5 +1,5 @@
 <?php require_once 'setPath.php'; require_once 'models/Sesion.class.php'; Sesion::validaSesion(); ?>
-<!DOCTYPE html>
+<!DOCTYPE html lang="es">
 	<html>
 	<head>
 		<meta charset="utf-8">
@@ -129,6 +129,7 @@
 		<script src="inc/js/jquery-1.7.1.min.js"></script>
 		<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
 		<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
+		<script src="inc/js/lib/underscore.js"></script>
 
 		<script src="inc/js/general.js"></script>
 		<script src="inc/js/jquery.buttonlist.js"></script>
