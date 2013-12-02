@@ -4,10 +4,13 @@ App.Presupuesto = {
 
 	controller_url: 'inc/lib/controllers/PresupuestoObraController.php',
 	$table: null,
+	conceptoTemplate: null,
 
 	init: function() {
 		var that = this;
 
+		this.conceptoTemplate = _.template($('#template-concepto').html());
+		
 		this.$table = $('#tabla-conceptos');
 
 		$('#bl-proyectos').buttonlist({
