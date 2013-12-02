@@ -1,8 +1,3 @@
-$( function() {
-	
-	ESTIMACION.init();
-});
-
 var pubsub = PubSub();
 
 var ESTIMACION = {
@@ -119,12 +114,13 @@ var ESTIMACION = {
 				5: {
 					'onFinishEdit': function( activeCell, value ) {
 
-						var IDConcepto = parseInt( activeCell.parent().attr('data-id') );
+						var IDConcepto = parseInt( activeCell.parent().attr('data-id') ),
+							row = activeCell.parents('tr');
 
 						if ( parseInt(activeCell.parent().attr('data-esactividad')) == 1 ) {
 
 							that.setCantidadEstimada.call( this, IDConcepto, value );
-							that.setMontoTotal.call(activeCell.next().next());
+							that.setMontoTotal(row);
 						}						
 						
 						pubsub.publish('modified_tran');
@@ -133,12 +129,13 @@ var ESTIMACION = {
 				6: {
 					'onFinishEdit': function( activeCell, value ) {
 
-						var IDConcepto = parseInt( activeCell.parent().attr('data-id') );
+						var IDConcepto = parseInt( activeCell.parent().attr('data-id') ),
+							row = activeCell.parents('tr');;
 
 						if ( parseInt(activeCell.parent().attr('data-esactividad')) == 1 ) {
 							
 							that.setPrecio.call( this, IDConcepto, value );
-							that.setMontoTotal.call(activeCell.next());
+							that.setMontoTotal(row);
 						}
 
 						pubsub.publish('modified_tran');
@@ -373,8 +370,18 @@ var ESTIMACION = {
 		this.uxtable('getCell', 6).text( pu.toFixed(4).numFormat() );
 	},
 
-	setMontoTotal: function() {
-		this.text((parseFloat(this.prev().text()) * parseFloat(this.prev().prev().text())).toFixed(2).toString().numFormat());
+	cleanCantidad: function(text) {
+		return text.replace(',', '');
+	},
+
+	setMontoTotal: function($row) {
+		var that = this,
+			cantidad = parseFloat(that.cleanCantidad($row.find('.cantidad').text())),
+			precio = parseFloat(that.cleanCantidad($row.find('.precio').text()));
+
+			monto = cantidad * precio;
+
+		$row.find('.total').text(monto.toFixed(2).toString().numFormat());
 	},
 
 	cargaTransaccion: function() {
@@ -473,9 +480,9 @@ var ESTIMACION = {
 		+  '<td class="centrado">' + concepto.Unidad + '</td>'
 		+  '<td class="numerico">' + cantidadPresupuestada + '</td>'
 		+  '<td class="numerico">' + cantidadEstimadaAnterior + '</td>'
-		+  '<td class="editable-cell numerico">' + cantidadEstimada + '</td>'
-		+  '<td class="editable-cell numerico">' + (concepto.EsActividad ? concepto.PrecioVenta : '') + '</td>'
-		+  '<td class="numerico">' + (concepto.EsActividad ? concepto.Total : '') + '</td>'
+		+  '<td class="editable-cell numerico cantidad">' + cantidadEstimada + '</td>'
+		+  '<td class="editable-cell numerico precio">' + (concepto.EsActividad ? concepto.PrecioVenta : '') + '</td>'
+		+  '<td class="numerico total">' + (concepto.EsActividad ? concepto.Total : '') + '</td>'
 		+  '<td class="icon-cell cumplido">'
 		+    (concepto.EsActividad ? '<a class="icon action checkbox checkbox-' + ( concepto.Cumplido ? 'checked' : 'unchecked') + '"></a> Si' : '')
 		+  '</td>'
@@ -734,3 +741,5 @@ var notifyModifiedTran = function( event, data ) {
 			data.call(ESTIMACION);
 	}
 }
+
+ESTIMACION.init();
