@@ -1,6 +1,6 @@
 <?php require_once 'setPath.php'; require_once 'models/Sesion.class.php'; Sesion::validaSesion(); ?>
-<!DOCTYPE html lang="es">
-	<html>
+<!DOCTYPE html>
+	<html lang="es">
 	<head>
 		<meta charset="utf-8">
 		<title>Presupuesto de Obra</title>
