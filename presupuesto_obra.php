@@ -123,14 +123,24 @@
 			</form>
 		</div>
 
-		<div id="message-console"><span id="console-message"></span><span id="console-toggler" class="open"></span></div>
+		<div id="message-console">
+			<span id="console-message"></span>
+			<span id="console-toggler" class="open"></span>
+		</div>
+		
 		<div id="cache"></div>
 
 		<script type="template" id="template-concepto">
-			<tr id="c-'<%- id_concepto %>" data-nivel="<%- nivel %>" data-numeronivel="<%- numero_nivel %>" class="concepto">
-				<td class="icon-cell"></td>
+			<tr id="c-<%- id_concepto %>" data-nivel="<%- nivel %>" data-numeronivel="<%- numero_nivel %>" class="concepto">
 				<td class="icon-cell">
-					<%= if id_material > 0 ? '' : '<a href="" class="handle icon-plus"></a>' %>
+					<%= concepto_medible > 0 ? '<a class="icon-file"></a>' : '' %>
+					<%= tipo_material === 1 ? '<a class="icon-database"></a>' : '' %>
+					<%= tipo_material === 2 ? '<a class="icon-users"></a>' : '' %>
+					<%= tipo_material === 4 ? '<a class="icon-hammer"></a>' : '' %>
+					<%= tipo_material === 8 ? '<a class="icon-truck"></a>' : '' %>
+				</td>
+				<td class="icon-cell">
+					<%= id_material > 0 ? '' : '<a href="" class="handle icon-plus"></a>' %>
 				</td>
 				<td class="icon-cell">
 					<a href="" class="select icon-checkbox-unchecked"></a>
@@ -138,7 +148,7 @@
 
 				<td class="clave_concepto"><%- clave_concepto %></td>
 				<td style="padding-left: <%- numero_nivel %>em">
-					<a href="" title="<%- descripcion %>" class="descripcion <%= if concepto_medible === 3 ? 'concepto-medible' : '' %>">
+					<a href="" title="<%- descripcion %>" class="descripcion <%= concepto_medible === 3 ? 'concepto-medible' : '' %>">
 						<%- descripcion %>
 					</a>
 				</td>
@@ -153,7 +163,7 @@
 		<script src="inc/js/jquery-1.7.1.min.js"></script>
 		<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
 		<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
-		<script src="inc/js/lib/underscore.js"></script>
+		<script src="inc/js/lib/underscore-min.js"></script>
 
 		<script src="inc/js/general.js"></script>
 		<script src="inc/js/jquery.buttonlist.js"></script>

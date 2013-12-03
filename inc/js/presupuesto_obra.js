@@ -276,63 +276,6 @@ App.Presupuesto = {
 
 		return html;
 	},
-
-	conceptoTemplate: function(data) {
-
-		var html = '',
-			descripcion = '<td style="padding-left: ' + data.numero_nivel + 'em">'
-				+ '<a href="#" title="'+ data.descripcion +'" class="descripcion">' + data.descripcion + '</a></td>',
-			concepto_icon = '<td class="icon-cell"></td>',
-			handle = '<td class="icon-cell"><a href="" class="handle icon-plus"></a></td>';
-
-		if ( data.id_material > 0) {
-
-			handle = '<td class="icon-cell"></td>';
-			icon = 'icon-database';
-			title ='Materiales';
-
-			switch( data.tipo_material ) {
-
-				case 1:
-					icon = 'icon-database';
-					break;
-				case 2:
-					icon = 'icon-users';
-					title ='Mano de obra';
-					break;
-				case 4:
-					icon = 'icon-hammer';
-					title ='Herramienta';
-					break;
-				case 8:
-					icon = 'icon-truck';
-					title ='Maquinaria';
-					break;
-			}
-
-			concepto_icon = '<td class="icon-cell"><a class="'+ icon +'" title="'+ title +'"></a></td>';
-		};
-
-		if ( data.concepto_medible == 3 ) {
-			descripcion = '<td style="padding-left: ' + data.numero_nivel + 'em"><a href="#" title="'+ data.descripcion +'" class="descripcion concepto-medible">' + data.descripcion + '</a></td>',
-			concepto_icon = '<td class="icon-cell"><a class="icon-file" title="Concepto medible"></a></td>';
-		};
-
-		html =
-			'<tr id="c-' + data.id_concepto + '" data-nivel="' + data.nivel + '" data-numeronivel="' + data.numero_nivel + '" class="concepto">'
-			+ 	concepto_icon
-			+ 	handle
-			+   '<td class="icon-cell"><a href="#" class="select icon-checkbox-unchecked"></a></td>'
-			+ 	'<td class="clave_concepto">' + data.clave_concepto + '</td>'
-			+ 	descripcion
-			+ 	'<td>' + data.unidad + '</td>'
-			+ 	'<td class="numerico">' + data.cantidad_presupuestada + '</td>'
-			+ 	'<td class="numerico">' + data.precio_unitario + '</td>'
-			+ 	'<td class="numerico">' + data.monto_presupuestado + '</td>'
-			+ '</tr>';
-
-		return html;
-	},
 	
 	toggleConceptoHandle: function($concepto) {
 		if ($concepto)
