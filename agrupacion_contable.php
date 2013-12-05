@@ -25,6 +25,12 @@
 							<span class="button-text">Proyectos</span>
 							<span class="icon flechita-abajo"></span>
 						</a>
+						<span class="col-switch">
+							<input type="checkbox" name="col-switch" id="proveedor" value="5">
+							<label for="proveedor">Proveedor</label>
+							<input type="checkbox" name="col-switch" id="empresa" value="6">
+							<label for="empresa">Empresa SAO</label>
+						</span>
 						<h2>Agrupación Contable</h2>
 					</div>
 					<div id="app-module-content">
@@ -38,8 +44,8 @@
 										<col class="icon"/>
 										<col class="icon"/>
 										<col />
-										<col />
-										<col />
+										<col class="proveedor"/>
+										<col class="empresa" />
 									</colgroup>
 									<thead>
 										<tr>
@@ -48,8 +54,8 @@
 											<th></th>
 											<th></th>
 											<th>Descripción</th>
-											<th>Agrupador Proveedor</th>
-											<th>Agrupador Empresa SAO</th>
+											<th class="proveedor">Agrupador Proveedor</th>
+											<th class="empresa">Agrupador Empresa SAO</th>
 										</tr>
 									</thead>
 									<tbody></tbody>
@@ -122,10 +128,10 @@
 				<td>
 					<a href="" title="<%- Proveedor %>" style="margin-left: <%- Nivel %>em" class="descripcion <%= Afectable ? 'importante' : '' %>"><%- Nombre %></a>
 				</td>
-				<td class="<%= Afectable ? 'importante' : '' %>" title="<%- Proveedor %>">
+				<td class="proveedor<%= Afectable ? ' importante' : '' %>" title="<%- Proveedor %>">
 					<%- Proveedor %>
 				</td>
-				<td class="<%= Afectable ? 'importante' : '' %>" title="<%- Empresa %>">
+				<td class="empresa<%= Afectable ? ' importante' : '' %>" title="<%- Empresa %>">
 					<%- Empresa %>
 				</td>
 			</tr>
