@@ -77,6 +77,7 @@ class CuentaContable {
 					, [CTE_CUENTAS].[Nombre]
 					, [CTE_CUENTAS].[Nivel]
 					, [Proveedores].[Nombre] AS [Proveedor]
+					, [empresas].[razon_social] AS [Empresa]
 				FROM
 					[CTE_CUENTAS]
 				LEFT OUTER JOIN
@@ -91,6 +92,10 @@ class CuentaContable {
 						[AgrupacionCuentaContable].[IDProyecto] = [Proveedores].[IdProyecto]
 							AND
 				        [AgrupacionCuentaContable].[IDAgrupadorProveedor] = [Proveedores].[IdProveedor]
+				LEFT OUTER JOIN
+					[SAO1814Reportes].[dbo].[empresas]
+					ON
+						[AgrupacionCuentaContable].[IDAgrupadorEmpresaSAO] = [empresas].[id_empresa]
 				WHERE
 					[IDCtaSup] ";
 		
@@ -115,12 +120,13 @@ class CuentaContable {
 	public function getDatosCuenta( $id_cuenta ) {
 		
 		$tsql = "SELECT
-					[Cuentas].[Nombre],
-					[AgrupacionCuentaContable].[IDAgrupadorNaturaleza],
-					[AgrupacionCuentaContable].[IDAgrupadorTipoCuenta],
-					[AgrupadorTipoCuenta].[AgrupadorTipoCuenta],
-					[AgrupacionCuentaContable].[IDAgrupadorProveedor],
-					[Proveedores].[Nombre] AS [Proveedor]
+					  [Cuentas].[Nombre]
+					, [AgrupacionCuentaContable].[IDAgrupadorNaturaleza]
+					, [AgrupacionCuentaContable].[IDAgrupadorTipoCuenta]
+					, [AgrupadorTipoCuenta].[AgrupadorTipoCuenta]
+					, [AgrupacionCuentaContable].[IDAgrupadorProveedor]
+					, [Proveedores].[Nombre] AS [Proveedor]
+					, [empresas].[razon_social] AS [Empresa]
 				FROM
 					[Contabilidad].[Cuentas]
 				LEFT OUTER JOIN
@@ -141,6 +147,10 @@ class CuentaContable {
 						[AgrupacionCuentaContable].[IDProyecto] = [Proveedores].[IdProyecto]
 							AND
 						[AgrupacionCuentaContable].[IDAgrupadorProveedor] = [Proveedores].[IdProveedor]
+				LEFT OUTER JOIN
+					[SAO1814Reportes].[dbo].[empresas]
+					ON
+						[AgrupacionCuentaContable].[IDAgrupadorEmpresaSAO] = [empresas].[id_empresa]
 				WHERE
 					[Cuentas].[IdProyecto] = ?
 						AND
@@ -313,6 +323,28 @@ class CuentaContable {
 		$tsql = "UPDATE [Contabilidad].[AgrupacionCuentaContable]
 				 SET
 				 	[IDAgrupadorProveedor] = ?
+				 WHERE
+				 	[IDProyecto] = ?
+				 		AND
+				 	[IDCuenta] = ?";
+
+	    $params = array(
+	        array( $id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->IDProyecto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $id_cuenta, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	    );
+
+	    $this->conn->executeQuery($tsql, $params);
+	}
+
+	private function setAgrupadorEmpresa( $id_cuenta, $id_agrupador ) {
+
+		if (! $this->existeRegistroAgrupacion($id_cuenta))
+			$this->creaRegistroAgrupacion($id_cuenta);
+
+		$tsql = "UPDATE [Contabilidad].[AgrupacionCuentaContable]
+				 SET
+				 	[IDAgrupadorEmpresaSAO] = ?
 				 WHERE
 				 	[IDProyecto] = ?
 				 		AND

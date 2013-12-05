@@ -39,6 +39,7 @@
 										<col class="clave"/>
 										<col />
 										<col />
+										<col />
 									</colgroup>
 									<thead>
 										<tr>
@@ -48,6 +49,7 @@
 											<th>Clave</th>
 											<th>Descripción</th>
 											<th>Agrupador Proveedor</th>
+											<th>Agrupador Empresa SAO</th>
 										</tr>
 									</thead>
 									<tbody></tbody>
@@ -71,6 +73,9 @@
 				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
 				<input type="text" id="txtAgrupadorProveedor" class="field" />
 				
+				<label for="txtAgrupadorEmpresa">Agrupador Empresa SAO</label>
+				<input type="text" id="txtAgrupadorEmpresa" class="field" />
+
 				<label for="txtAgrupadorTipoCuenta">Agrupador Tipo Cuenta</label>
 				<input type="text" id="txtAgrupadorTipoCuenta" class="field" />
 
@@ -119,6 +124,9 @@
 				</td>
 				<td class="<%= Afectable ? 'importante' : '' %>" title="<%- Proveedor %>">
 					<%- Proveedor %>
+				</td>
+				<td class="<%= Afectable ? 'importante' : '' %>" title="<%- Empresa %>">
+					<%- Empresa %>
 				</td>
 			</tr>
 		</script>

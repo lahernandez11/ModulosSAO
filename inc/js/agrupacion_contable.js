@@ -76,6 +76,17 @@ App.AgrupacionContable = {
 		    }
 		});
 
+		$("#txtAgrupadorEmpresa").autocomplete({
+		    minLength: 1,
+		    source: function(request, response) {
+				request.action = 'getAgrupadoresEmpresa';
+				that.requestAgrupadoresList(request, response);
+			},
+		    select: function( event, ui ) {
+		    	that.setAgrupador(ui.item, 'setAgrupadorEmpresa', this);
+		    }
+		});
+
 		$("#txtAgrupadorTipoCuenta").autocomplete({
 		    minLength: 1,
 		    source: function(request, response) {
@@ -372,6 +383,7 @@ App.AgrupacionContable = {
 
 		$('#txtDescripcion').val(data.Nombre);
 		$('#txtAgrupadorProveedor').val(data.Proveedor);
+		$('#txtAgrupadorEmpresa').val(data.Empresa);
 		$('#txtAgrupadorTipoCuenta').val(data.AgrupadorTipoCuenta);
 	},
 
@@ -439,7 +451,7 @@ App.AgrupacionContable = {
 		.done( function(data) {
 			if ( data.success ) {
 				messageConsole.displayMessage('Agrupador asignado correctamente.', 'success');
-				that.updateAgrupadorColumna(request.$input.val());
+				that.updateAgrupadorColumna(request.$input);
 			} else {
 				messageConsole.displayMessage(data.message, 'error');
 			}
@@ -447,9 +459,19 @@ App.AgrupacionContable = {
 		.always(request.callback);
 	},
 
-	updateAgrupadorColumna: function(descripcion) {
+	updateAgrupadorColumna: function($input) {
 
-		this.getSelected().filter(this.esAfectable).find('td:eq(5)').text(descripcion);
+		switch ($input[0].id) {
+
+			case 'txtAgrupadorEmpresa':
+				this.getSelected().filter(this.esAfectable).find('td:eq(6)').text($input.val());
+			break;
+
+			case 'txtAgrupadorProveedor':
+				this.getSelected().filter(this.esAfectable).find('td:eq(5)').text($input.val());
+			break;
+		}
+
 	},
 
 	openAddCuentaDialog: function(request) {

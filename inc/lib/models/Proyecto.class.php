@@ -1,9 +1,9 @@
 <?php
 class Proyecto {
 	
-	private $IDProyecto = null;
-	private $SQLConn 	= null;
-	private $IDObraCDC  = null;
+	protected $IDProyecto = null;
+	protected $SQLConn 	= null;
+	protected $IDObraCDC  = null;
 
 	public function __construct( $IDProyecto, ModulosSAOConn $conn ) {
 

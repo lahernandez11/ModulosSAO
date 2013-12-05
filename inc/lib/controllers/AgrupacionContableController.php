@@ -5,6 +5,7 @@ require_once 'models/Obra.class.php';
 require_once 'db/ReportesSAOConn.class.php';
 require_once 'models/CuentaContable.class.php';
 require_once 'models/AgrupadorCuentaContable.class.php';
+require_once 'models/Empresa.class.php';
 require_once 'models/Util.class.php';
 
 $data['success'] = true;
@@ -50,8 +51,25 @@ try {
 
 			break;
 
+		case 'getAgrupadoresEmpresa':
+			$descripcion = $_GET['term'];
+			$data['agrupadores'] = array();
+
+			$empresas = Empresa::getEmpresas($conn, $descripcion,
+				array(Empresa::CONTRATISTA, Empresa::DESTAJISTA));
+
+			foreach ($empresas as $empresa) {
+				$data['agrupadores'][] = array(
+					'id' => $empresa->id_empresa,
+					'agrupador' => $empresa->razon_social
+				);
+			}
+
+			break;
+
 		case 'setAgrupadorProveedor':
 		case 'setAgrupadorTipoCuenta':
+		case 'setAgrupadorEmpresa':
 			$cuenta_contable = new CuentaContable($IDProyecto, $rsao_conn);
 			$cuentas = $_POST['cuentas'];
 			$id_agrupador = $_POST['id_agrupador'];
