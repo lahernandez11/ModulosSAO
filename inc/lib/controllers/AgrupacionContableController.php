@@ -56,7 +56,7 @@ try {
 			$data['agrupadores'] = array();
 
 			$empresas = Empresa::getEmpresas($conn, $descripcion,
-				array(Empresa::CONTRATISTA, Empresa::DESTAJISTA));
+				array(Empresa::CONTRATISTA, Empresa::DESTAJISTA, Empresa::CONTRATISTA_PROVEEDOR));
 
 			foreach ($empresas as $empresa) {
 				$data['agrupadores'][] = array(
