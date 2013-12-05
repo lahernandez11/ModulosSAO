@@ -25,6 +25,12 @@
 							<span class="button-text">Proyectos</span>
 							<span class="icon flechita-abajo"></span>
 						</a>
+						<span class="col-switch">
+							<input type="checkbox" name="col-switch" id="proveedor" value="5">
+							<label for="proveedor">Proveedor</label>
+							<input type="checkbox" name="col-switch" id="empresa" value="6">
+							<label for="empresa">Empresa SAO</label>
+						</span>
 						<h2>Agrupación Contable</h2>
 					</div>
 					<div id="app-module-content">
@@ -33,23 +39,23 @@
 							<section id="tran-content">
 								<table id="tabla-cuentas" class="stripped tabla-arbol">
 									<colgroup>
-										<col class="icon"/>
-										<col class="icon"/>
 										<col class="icon-header"/>
 										<col class="clave"/>
+										<col class="icon"/>
+										<col class="icon"/>
 										<col />
-										<col />
-										<col />
+										<col class="proveedor"/>
+										<col class="empresa" />
 									</colgroup>
 									<thead>
 										<tr>
-											<th></th>
-											<th></th>
 											<th>Afectable</th>
 											<th>Clave</th>
+											<th></th>
+											<th></th>
 											<th>Descripción</th>
-											<th>Agrupador Proveedor</th>
-											<th>Agrupador Empresa SAO</th>
+											<th class="proveedor">Agrupador Proveedor</th>
+											<th class="empresa">Agrupador Empresa SAO</th>
 										</tr>
 									</thead>
 									<tbody></tbody>
@@ -110,22 +116,22 @@
 		<script type="template" id="template-cuenta">
 			<tr id="c-<%- IdCuenta %>" data-nivel="<%- Codigo %>" data-idsup="<%- IdCtaSup %>" data-afectable="<%- Afectable%>" class="cuenta">
 				<td class="icon-cell">
+					<a class="<%= Afectable ? 'icon-checkmark-circle' : 'icon-cancel-circle' %>"></a>
+				</td>
+				<td class="clave <%= Afectable ? 'importante' : '' %>"><%- Codigo %></td>
+				<td class="icon-cell">
 					<a href="" class="handle icon-plus"></a>
 				</td>
 				<td class="icon-cell">
 					<a href="" class="select icon-checkbox-unchecked"></a>
 				</td>
-				<td class="icon-cell">
-					<a class="<%= Afectable ? 'icon-checkmark-circle' : 'icon-cancel-circle' %>"></a>
-				</td>
-				<td class="clave <%= Afectable ? 'importante' : '' %>"><%- Codigo %></td>
 				<td>
 					<a href="" title="<%- Proveedor %>" style="margin-left: <%- Nivel %>em" class="descripcion <%= Afectable ? 'importante' : '' %>"><%- Nombre %></a>
 				</td>
-				<td class="<%= Afectable ? 'importante' : '' %>" title="<%- Proveedor %>">
+				<td class="proveedor<%= Afectable ? ' importante' : '' %>" title="<%- Proveedor %>">
 					<%- Proveedor %>
 				</td>
-				<td class="<%= Afectable ? 'importante' : '' %>" title="<%- Empresa %>">
+				<td class="empresa<%= Afectable ? ' importante' : '' %>" title="<%- Empresa %>">
 					<%- Empresa %>
 				</td>
 			</tr>

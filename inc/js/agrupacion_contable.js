@@ -110,6 +110,11 @@ App.AgrupacionContable = {
 		$('#cerrar-cuenta').on('click', function() {
 			$('#dialog-propiedades-cuenta').dialog('close');
 		});
+
+		$('.col-switch').on('change', 'input', function(event){
+			that.$table.find('.' + this.id).toggleClass('hidden');
+		})
+		.find('input').prop('checked', true);
 	},
 
 	cleanDescripcionAgrupador: function(descripcion) {
