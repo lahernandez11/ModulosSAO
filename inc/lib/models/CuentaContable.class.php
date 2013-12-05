@@ -93,7 +93,7 @@ class CuentaContable {
 							AND
 				        [AgrupacionCuentaContable].[IDAgrupadorProveedor] = [Proveedores].[IdProveedor]
 				LEFT OUTER JOIN
-					[SAO1814Reportes].[dbo].[empresas]
+					[SAO1814App].[dbo].[empresas]
 					ON
 						[AgrupacionCuentaContable].[IDAgrupadorEmpresaSAO] = [empresas].[id_empresa]
 				WHERE
@@ -148,7 +148,7 @@ class CuentaContable {
 							AND
 						[AgrupacionCuentaContable].[IDAgrupadorProveedor] = [Proveedores].[IdProveedor]
 				LEFT OUTER JOIN
-					[SAO1814Reportes].[dbo].[empresas]
+					[SAO1814App].[dbo].[empresas]
 					ON
 						[AgrupacionCuentaContable].[IDAgrupadorEmpresaSAO] = [empresas].[id_empresa]
 				WHERE
