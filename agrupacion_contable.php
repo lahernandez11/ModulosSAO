@@ -33,20 +33,20 @@
 							<section id="tran-content">
 								<table id="tabla-cuentas" class="stripped tabla-arbol">
 									<colgroup>
-										<col class="icon"/>
-										<col class="icon"/>
 										<col class="icon-header"/>
 										<col class="clave"/>
+										<col class="icon"/>
+										<col class="icon"/>
 										<col />
 										<col />
 										<col />
 									</colgroup>
 									<thead>
 										<tr>
-											<th></th>
-											<th></th>
 											<th>Afectable</th>
 											<th>Clave</th>
+											<th></th>
+											<th></th>
 											<th>Descripción</th>
 											<th>Agrupador Proveedor</th>
 											<th>Agrupador Empresa SAO</th>
@@ -110,15 +110,15 @@
 		<script type="template" id="template-cuenta">
 			<tr id="c-<%- IdCuenta %>" data-nivel="<%- Codigo %>" data-idsup="<%- IdCtaSup %>" data-afectable="<%- Afectable%>" class="cuenta">
 				<td class="icon-cell">
+					<a class="<%= Afectable ? 'icon-checkmark-circle' : 'icon-cancel-circle' %>"></a>
+				</td>
+				<td class="clave <%= Afectable ? 'importante' : '' %>"><%- Codigo %></td>
+				<td class="icon-cell">
 					<a href="" class="handle icon-plus"></a>
 				</td>
 				<td class="icon-cell">
 					<a href="" class="select icon-checkbox-unchecked"></a>
 				</td>
-				<td class="icon-cell">
-					<a class="<%= Afectable ? 'icon-checkmark-circle' : 'icon-cancel-circle' %>"></a>
-				</td>
-				<td class="clave <%= Afectable ? 'importante' : '' %>"><%- Codigo %></td>
 				<td>
 					<a href="" title="<%- Proveedor %>" style="margin-left: <%- Nivel %>em" class="descripcion <%= Afectable ? 'importante' : '' %>"><%- Nombre %></a>
 				</td>
