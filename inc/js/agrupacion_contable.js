@@ -112,7 +112,10 @@ App.AgrupacionContable = {
 		});
 
 		$('.col-switch').on('change', 'input', function(event){
-			that.$table.find('.' + this.id).toggleClass('hidden');
+			if (this.checked)
+				that.$table.find('.' + this.id).removeClass('hidden');
+			else
+				that.$table.find('.' + this.id).addClass('hidden');
 		})
 		.find('input').prop('checked', true);
 	},
@@ -227,6 +230,9 @@ App.AgrupacionContable = {
 		var html = '';
 
 		for (cuenta in cuentas) {
+			cuentas[cuenta].showProveedor = $('#proveedor').prop('checked');
+			cuentas[cuenta].showEmpresa = $('#empresa').prop('checked');
+			
 			html += this.cuentaTemplate(cuentas[cuenta]);
 		}
 
