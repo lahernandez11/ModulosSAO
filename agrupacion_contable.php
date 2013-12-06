@@ -21,7 +21,7 @@
 			<div id="app-content">
 				<div id="app-module">
 					<div class="module-toolbar">
-						<a class="toolbar-button dd-list" id="bl-proyectos">
+						<a class="button dd-list" id="bl-proyectos">
 							<span class="button-text">Proyectos</span>
 							<span class="icon flechita-abajo"></span>
 						</a>

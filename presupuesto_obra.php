@@ -18,11 +18,11 @@
 					<h2>Precios de Venta</h2>
 				</section>
 				<section class="toolbar">
-					<a class="toolbar-button dd-list" id="bl-proyectos">
+					<a class="button dd-list" id="bl-proyectos">
 							<span class="button-text">Proyectos</span>
 							<span class="icon flechita-abajo"></span>
 						</a>
-						<a id="guardar" class="toolbar-button">
+						<a id="guardar" class="button">
 							<span class="icon save"></span>
 							<span class="label">Guardar</span>
 						</a>
@@ -38,7 +38,7 @@
 			<div id="app-content">
 				<div id="app-module">
 					<div class="module-toolbar">
-						<a class="toolbar-button dd-list" id="bl-proyectos">
+						<a class="button dd-list" id="bl-proyectos">
 							<span class="button-text">Proyectos</span>
 							<span class="icon flechita-abajo"></span>
 						</a>

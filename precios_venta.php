@@ -34,12 +34,11 @@
 		<div id="app-content">
 			<div id="app-module">
 				<div class="module-toolbar">
-					<a class="toolbar-button dd-list" id="bl-proyectos">
+					<a class="button dd-list" id="bl-proyectos">
 						<span class="button-text">Proyectos</span>
 						<span class="icon flechita-abajo"></span>
 					</a>
-					<a id="guardar" class="toolbar-button">
-						<span class="icon save"></span>
+					<a id="guardar" class="button">
 						<span class="label">Guardar</span>
 					</a>
 					<h2>Precios de Venta</h2>
