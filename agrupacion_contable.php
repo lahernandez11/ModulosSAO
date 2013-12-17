@@ -123,7 +123,7 @@
 					<a href="" class="select icon-checkbox-unchecked"></a>
 				</td>
 				<td>
-					<a href="" title="<%- Proveedor %>" style="margin-left: <%- Nivel %>em" class="descripcion <%= Afectable ? 'importante' : '' %>"><%- Nombre %></a>
+					<a href="" title="<%- Nombre %>" style="margin-left: <%- Nivel %>em" class="descripcion <%= Afectable ? 'importante' : '' %>"><%- Nombre %></a>
 				</td>
 				<td class="proveedor<%= Afectable ? ' importante' : '' %><%= !showProveedor ? ' hidden' : '' %>" title="<%- Proveedor %>">
 					<%- Proveedor %>

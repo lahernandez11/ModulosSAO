@@ -4,6 +4,146 @@
 		"selected_items":
 		[
 			[
+				"border",
+				"border-radius"
+			],
+			[
+				"txtA",
+				"txtAgrupadorProveedor"
+			],
+			[
+				"str_",
+				"str_repeat"
+			],
+			[
+				"toggle",
+				"toggleClass"
+			],
+			[
+				"label",
+				"label	<label>"
+			],
+			[
+				"input",
+				"input	input - checkbox"
+			],
+			[
+				"concepto",
+				"concepto_medible"
+			],
+			[
+				"monto",
+				"montoCell"
+			],
+			[
+				"txt",
+				"txtAgrupadorTipoCuenta"
+			],
+			[
+				"id_c",
+				"id_cuenta"
+			],
+			[
+				"desc",
+				"desc"
+			],
+			[
+				"getIDCu",
+				"getIDCuentaSup"
+			],
+			[
+				"for",
+				"for	for (…) {…}"
+			],
+			[
+				"templa",
+				"cuentaTemplate"
+			],
+			[
+				"get",
+				"getSelected"
+			],
+			[
+				"conce",
+				"concepto"
+			],
+			[
+				"concep",
+				"concepto"
+			],
+			[
+				"inp",
+				"input"
+			],
+			[
+				"seta",
+				"setAgrupador"
+			],
+			[
+				"reques",
+				"request2"
+			],
+			[
+				"pri",
+				"print_r"
+			],
+			[
+				"nume",
+				"numero_nivel"
+			],
+			[
+				"data",
+				"data-numeronivel"
+			],
+			[
+				"id_",
+				"id_concepto"
+			],
+			[
+				"da",
+				"data"
+			],
+			[
+				"set",
+				"setAgrupadorPartida"
+			],
+			[
+				"call",
+				"callback"
+			],
+			[
+				"open",
+				"openAddAgrupadorDialog"
+			],
+			[
+				"messa",
+				"messageConsole"
+			],
+			[
+				"text",
+				"text-align"
+			],
+			[
+				"getI",
+				"getIDConcepto"
+			],
+			[
+				"contro",
+				"controller_url"
+			],
+			[
+				"ini",
+				"initial_value"
+			],
+			[
+				"inpu",
+				"input_value"
+			],
+			[
+				"inpt",
+				"input_value"
+			],
+			[
 				"rig",
 				"right"
 			],
@@ -24,28 +164,12 @@
 				"icon-checkbox-unchecked"
 			],
 			[
-				"get",
-				"getIDProyecto"
-			],
-			[
 				"is_in",
 				"is_int"
 			],
 			[
-				"conce",
-				"concepto"
-			],
-			[
 				"id_a",
 				"id_agrupador"
-			],
-			[
-				"messa",
-				"message"
-			],
-			[
-				"reques",
-				"requestSetAgrupador"
 			],
 			[
 				"getconce",
@@ -58,10 +182,6 @@
 			[
 				"co",
 				"console"
-			],
-			[
-				"data",
-				"DATA_LOADER"
 			],
 			[
 				"agr",
@@ -80,16 +200,8 @@
 				"log"
 			],
 			[
-				"concep",
-				"concepto"
-			],
-			[
 				"select",
 				"selected"
-			],
-			[
-				"id_c",
-				"id_concepto"
 			],
 			[
 				"ag",
@@ -108,20 +220,8 @@
 				"margin-top"
 			],
 			[
-				"input",
-				"input	input - button"
-			],
-			[
 				"font",
 				"font-weight"
-			],
-			[
-				"desc",
-				"descripcion"
-			],
-			[
-				"open",
-				"openConceptoProperties"
 			],
 			[
 				"tex",
@@ -192,10 +292,6 @@
 				"border-style"
 			],
 			[
-				"border",
-				"border-bottom"
-			],
-			[
 				"te",
 				"text-align"
 			],
@@ -256,10 +352,6 @@
 				"rowKeys"
 			],
 			[
-				"for",
-				"for	for (…) {…}"
-			],
-			[
 				"margin-",
 				"margin-bottom"
 			],
@@ -286,10 +378,6 @@
 			[
 				"bac",
 				"background-color"
-			],
-			[
-				"text",
-				"text-decoration"
 			],
 			[
 				"list",
@@ -322,10 +410,6 @@
 			[
 				"_importe",
 				"_importeAcumuladoAnticipo"
-			],
-			[
-				"set",
-				"setURLFormatoPDF"
 			],
 			[
 				"pubsu",
@@ -430,196 +514,16 @@
 			[
 				"ri",
 				"right"
-			],
-			[
-				"format",
-				"formatoNumerico"
-			],
-			[
-				"col",
-				"headerCols"
-			],
-			[
-				"cell",
-				"cellWidth"
-			],
-			[
-				"ce",
-				"cellWidth"
-			],
-			[
-				"Estimac",
-				"EstimacionSubcontrato"
-			],
-			[
-				"utf8_",
-				"utf8_decode"
-			],
-			[
-				"bo",
-				"border-collapse"
-			],
-			[
-				"PDF_MA",
-				"PDF_MARGIN_BOTTOM"
-			],
-			[
-				"pdf_mar",
-				"PDF_MARGIN_RIGHT"
-			],
-			[
-				"pdf_ma",
-				"PDF_MARGIN_TOP"
-			],
-			[
-				"Apl",
-				"AplicacionCosto"
-			],
-			[
-				"PDF_DE",
-				"PDF_DEFAULT_FONTSIZE"
-			],
-			[
-				"PDF_PAGE_",
-				"PDF_PAGE_ORIENTATION"
-			],
-			[
-				"setTota",
-				"setTotalesTransaccion"
-			],
-			[
-				"est",
-				"EstimacionSubcontrato"
-			],
-			[
-				"IDPro",
-				"IDProyecto"
-			],
-			[
-				"llena",
-				"llenaTablaConceptos"
-			],
-			[
-				"numero",
-				"numeroFolio"
-			],
-			[
-				"_fecha",
-				"_fechaTermino"
-			],
-			[
-				"setFec",
-				"setFechaTermino"
-			],
-			[
-				"IDPRo",
-				"IDProyecto"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "inc/js/estimaciones.js",
+			"file": "agrupacion_contable.php",
 			"settings":
 			{
-				"buffer_size": 40196,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/models/EstimacionSubcontrato.class.php",
-			"settings":
-			{
-				"buffer_size": 21031,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/js/agrupacion.js",
-			"settings":
-			{
-				"buffer_size": 17121,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "modulos/agrupacion/GetListaInsumos.php",
-			"settings":
-			{
-				"buffer_size": 2054,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "precios_venta.php",
-			"settings":
-			{
-				"buffer_size": 2834,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "presupuesto_obra.php",
-			"settings":
-			{
-				"buffer_size": 4107,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/js/presupuesto_obra.js",
-			"settings":
-			{
-				"buffer_size": 10405,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "css/general.css",
-			"settings":
-			{
-				"buffer_size": 27376,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/models/PresupuestoObra.class.php",
-			"settings":
-			{
-				"buffer_size": 4829,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/controllers/PresupuestoObraController.php",
-			"settings":
-			{
-				"buffer_size": 3308,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "index.php",
-			"settings":
-			{
-				"buffer_size": 1260,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "estimaciones.php",
-			"settings":
-			{
-				"buffer_size": 14194,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/js/general.js",
-			"settings":
-			{
-				"buffer_size": 18863,
+				"buffer_size": 5492,
 				"line_ending": "Windows"
 			}
 		}
@@ -688,41 +592,62 @@
 	},
 	"file_history":
 	[
+		"/D/www/ModulosSAO/css/general.css",
+		"/D/www/ModulosSAO/avance_subcontratos.php",
+		"/D/www/ModulosSAO/presupuesto_obra.php",
+		"/D/www/ModulosSAO/estimacion_obra.php",
+		"/D/www/ModulosSAO/precios_venta.php",
+		"/D/www/ModulosSAO/avance_obra.php",
+		"/D/www/ModulosSAO/confirmacion_cobranza.php",
+		"/D/www/ModulosSAO/estimaciones.php",
+		"/D/www/ModulosSAO/agrupacion_contable.php",
+		"/D/www/ModulosSAO/inc/js/agrupacion_contable.js",
+		"/D/www/ModulosSAO/inc/lib/models/Empresa.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/EstimacionObra.class.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/AgrupacionContableController.php",
+		"/D/www/ModulosSAO/inc/js/presupuesto_obra.js",
+		"/D/www/ModulosSAO/inc/lib/models/CuentaContable.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/AgrupadorCuentaContable.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/Proyecto.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/PresupuestoObra.class.php",
+		"/D/www/ModulosSAO/agrupacion.php",
+		"/D/www/ModulosSAO/inc/js/estimacion_obra.js",
+		"/D/www/ModulosSAO/inc/lib/db/db_config.php",
+		"/D/www/ModulosSAO/inc/lib/db/ModulosSAOConn.class.php",
+		"/D/www/ModulosSAO/inc/lib/db/ReportesSAO.class.php",
+		"/D/www/ModulosSAO/inc/lib/db/SQLSrvDBConn.class.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/PresupuestoObraController.php",
+		"/D/www/ModulosSAO/inc/lib/models/AgrupadorConceptoPresupuesto.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontrato.class.php",
+		"/D/www/ModulosSAO/modulos/agrupacion/GetListaInsumos.php",
+		"/D/www/ModulosSAO/inc/js/estimaciones.js",
+		"/D/www/ModulosSAO/inc/js/agrupacion.js",
+		"/D/www/ModulosSAO/index.php",
+		"/D/www/ModulosSAO/inc/js/general.js",
 		"/D/www/ModulosSAO/inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css",
 		"/D/www/ModulosSAO/inc/lib/db/SAODBConn.class.php",
 		"/D/www/ModulosSAO/login.html",
 		"/D/www/ModulosSAO/css/login.css",
 		"/D/www/ModulosSAO/css/responsive.css",
-		"/D/www/ModulosSAO/inc/lib/models/PresupuestoObra.class.php",
 		"/D/www/icomoon/demo-files/demo.css",
 		"/D/www/ModulosSAO/inc/lib/controllers/EstimacionSubcontratoController.php",
 		"/D/www/ModulosSAO/inc/lib/models/TransaccionSAO.class.php",
 		"/D/www/ModulosSAO/presupuesto_obra.html",
-		"/D/www/ModulosSAO/avance_obra.php",
 		"/D/www/ModulosSAO/inc/js/avance_obra.js",
 		"/D/www/ModulosSAO/inc/js/confirmacion_cobranza.js",
 		"/D/www/ModulosSAO/inc/lib/controllers/CobranzaController.php",
-		"/D/www/ModulosSAO/confirmacion_cobranza.php",
 		"/D/www/ModulosSAO/inc/lib/models/Cobranza.class.php",
-		"/D/www/ModulosSAO/inc/lib/db/db_config.php",
 		"/D/www/ModulosSAO/inc/DBConn.php",
-		"/D/www/ModulosSAO/css/general.css",
-		"/D/www/ModulosSAO/estimaciones.php",
-		"/D/www/ModulosSAO/inc/js/estimaciones.js",
-		"/D/www/ModulosSAO/inc/js/estimacion_obra.js",
 		"/D/www/ModulosSAO/inc/js/avance_subcontratos.js",
 		"/D/www/ModulosSAO/inc/js/precios_venta.js",
-		"/D/www/ModulosSAO/inc/js/agrupacion.js",
 		"/D/www/ModulosSAO/modulos/subcontratos/GetAddendums.php",
 		"/D/www/ModulosSAO/modulos/subcontratos/GetClasificadores.php",
 		"/D/www/ModulosSAO/modulos/subcontratos/GetDatosSubcontrato.php",
 		"/D/www/ModulosSAO/modulos/subcontratos/GetListaSubcontratos.php",
 		"/D/www/ModulosSAO/inc/js/subcontratos.js",
-		"/D/www/ModulosSAO/inc/js/general.js",
 		"/D/www/ModulosSAO/modulos/agrupacion/GetListaCuentasContables.php",
 		"/D/www/ModulosSAO/modulos/agrupacion/GetInsumosGenericos.php",
 		"/D/www/ModulosSAO/modulos/agrupacion/GetFamilias.php",
-		"/D/www/ModulosSAO/modulos/agrupacion/GetListaInsumos.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/ListaProyectosController.php",
 		"/D/www/ModulosSAO/modulos/agrupacion/GetListaFacturasVarios.php",
 		"/D/www/ModulosSAO/modulos/agrupacion/GetListaSubcontratos.php",
@@ -730,26 +655,19 @@
 		"/D/www/ModulosSAO/modulos/proyectos/GetDatosGeneralesProyecto.php",
 		"/D/www/ModulosSAO/inc/lib/models/Util.class.php",
 		"/D/www/ModulosSAO/css/cobranza.css",
-		"/D/www/ModulosSAO/agrupacion.php",
-		"/D/www/ModulosSAO/inc/lib/models/EstimacionObra.class.php",
 		"/D/www/ModulosSAO/modulos/cobranza/RegistraCobranza.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/EstimacionObraController.php",
 		"/D/www/ModulosSAO/modulos/cobranza/GetConceptosCobranza.php",
 		"/D/www/ModulosSAO/inc/lib/models/Cobranza.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/ModulosSAO.class.php",
-		"/D/www/ModulosSAO/estimacion_obra.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/AvanceObraController.php",
 		"/D/www/ModulosSAO/inc/lib/models/AvanceObra.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontrato.class.php",
-		"/D/www/ModulosSAO/precios_venta.php",
-		"/D/www/ModulosSAO/avance_subcontratos.php",
 		"/D/www/icomoon79764/style.css",
 		"/D/www/icomoon34677/style.css",
 		"/D/www/icomoon93297/style.css",
 		"/D/www/icomoon14898/style.css",
 		"/D/www/ModulosSAO/inc/js/jquery.buttonlist.js",
-		"/D/www/ModulosSAO/index.php",
 		"/D/www/ModulosSAO/proyectos.php",
 		"/D/www/ModulosSAO/subcontratos.php",
 		"/D/www/ModulosSAO/inc/app-header.php",
@@ -801,21 +719,7 @@
 		"/C/AppServ/www/ModulosSAO/inc/lib/tcpdf/examples/tcpdf_include.php",
 		"/C/AppServ/www/ModulosSAO/inc/lib/tcpdf/examples/data/table_data_demo.txt",
 		"/C/AppServ/www/ModulosSAO/inc/lib/html2pdf/html2pdf.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/db/db_config.php",
-		"/C/AppServ/www/ModulosSAO/inc/DBConn.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/models/AvanceObra.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/js/avance_obra.js",
-		"/C/AppServ/www/ModulosSAO/inc/lib/models/Obra.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/AvanceSubcontratoController.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/db/SAODBConn.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/models/EstimacionObra.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/models/Subcontrato.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/js/login.js",
-		"/C/AppServ/www/ModulosSAO/inc/lib/controllers/LoginController.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/models/ModulosSAO.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/models/TransaccionSAO.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/models/AvanceSubcontrato.class.php",
-		"/C/AppServ/www/ModulosSAO/estimacion_obra.php"
+		"/C/AppServ/www/ModulosSAO/inc/lib/db/db_config.php"
 	],
 	"find":
 	{
@@ -833,6 +737,84 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"toolbar-button",
+			"button",
+			"icon",
+			"toolbar-button",
+			"icon",
+			"input",
+			"icon",
+			".toolbar-button .icon",
+			"<span class=\"icon deductivas\"></span>",
+			"icon",
+			"/>\n",
+			"setAgrupador",
+			">\n",
+			"concepto_medible",
+			"toggleNode",
+			"conceptoTemplate",
+			"setMontoTotal",
+			"cantidadCell",
+			"setCantidadEstimada",
+			"cantidad",
+			"setMontoTotal",
+			"requestSetAgrupador",
+			"addAgrupador",
+			"id_agrupador",
+			"concepto",
+			"id_concepto",
+			"conceptos",
+			"concepto",
+			"requestAgrupadoresList",
+			"getNivelConcepto",
+			"toggleConceptoHandle",
+			"getConceptoHandleNode",
+			"getConceptosSeleccionados",
+			"Concepto",
+			"fillConceptoProperties",
+			"concepto",
+			"after",
+			"afeter",
+			"concepto",
+			")",
+			"getIDConcepto",
+			"loadDescendants",
+			"concepto",
+			"Modulos",
+			"id_concepto",
+			"marcaConcepto",
+			"toggleMarcaConcepto",
+			"id_concepto",
+			"getDatosConcepto",
+			"toggleNode",
+			"public",
+			"console",
+			"getNumeroNivelConcepto",
+			"data-numeronivel",
+			"loadConceptos",
+			"getConceptos",
+			"}\n",
+			"getConceptos:",
+			"getConceptos",
+			"removeChildren",
+			"nextAll",
+			"map",
+			"getConceptos",
+			"console.log",
+			"$('#tabla-conceptos')",
+			"table",
+			"rable",
+			"actividad",
+			"requestAgrupadoresList",
+			"requestSetAgrupador",
+			"AgrupadorConceptoPresupuesto",
+			"openAddAgrupadorDialog",
+			"addAgrupador",
+			"openAddAgrupadorDialog",
+			"addAgrupador",
+			"open",
+			"requestListaAgrupadores",
+			"el",
 			"desmarcaConceptos",
 			"\n.icon-checkbox-unchecked:after\n{\n	font-family: \"icomoon\";\n	content: \"\\e62d\";\n}",
 			"toggleMarcaConcepto",
@@ -882,85 +864,7 @@
 			".toolbar-button",
 			"header",
 			"icomoon",
-			"setDatosGenerales",
-			"FORMATO_NOMBRE_ARCHIVO",
-			"TITULO",
-			"110px",
-			"toggleClass",
-			".hidden",
-			"hidden",
-			"colClasses",
-			"z-",
-			"idProyecto",
-			"clasificadores",
-			"ajax",
-			"timeout",
-			"cache",
-			"LISTA_PROYECTOS",
-			"LISTA_Proyectos",
-			"content",
-			"numerico",
-			"cargaTotales",
-			"json",
-			"cargaTotales",
-			"fillTotales",
-			"th",
-			"resumen",
-			"separador",
-			"centrado",
-			"list",
-			"z-index",
-			"a.dropdown-list-trigger",
-			"drop-down-list",
-			"drop",
-			"setCantidadCobrada",
-			"setCantidadEstimada",
-			"json",
-			"cargaCobranza",
-			"fillConceptos",
-			"setDatosGenerales",
-			"marcaConceptosError",
-			"json",
-			"deshabilitaFechaTransaccion",
-			"json",
-			"guardaTransaccion",
-			"deshabilitaFechaTransaccion",
-			"modificado",
-			"estimado",
-			"concepto",
-			"this",
-			"deshabilitaCamposTransaccion",
-			"habilitaCamposEstimacion",
-			"deshabilitaCamposEstimacion",
-			"limpiaDatosEstimacion",
-			"CobranzaController",
-			"tableBody",
-			"nuevaTransaccion",
-			"nuevaEstimacion",
-			"CO",
-			"require_once",
-			"showListaTransacciones",
-			"fillTotales",
-			"marcaConceptoError",
-			"conceptosError",
-			"avanceObra",
-			"AvanceObra",
-			"avanceObra",
-			"guardaTransaccion",
-			"-",
-			"guardaTransaccion",
-			"@",
-			"logo",
-			"@",
-			".data-loader",
-			"data-loader",
-			"logo",
-			".data-loader",
-			"data-loader",
-			"messageConsole",
-			"desmarcaConceptosError",
-			"marcaConceptoError",
-			"setCantidadEstimada"
+			"setDatosGenerales"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1028,7 +932,7 @@
 			"pos",
 			"$.fn.buttonlist.defaults"
 		],
-		"reverse": true,
+		"reverse": false,
 		"show_context": true,
 		"use_buffer2": true,
 		"whole_word": false,
@@ -1037,131 +941,23 @@
 	"groups":
 	[
 		{
-			"selected": 6,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "inc/js/estimaciones.js",
+					"file": "agrupacion_contable.php",
 					"settings":
 					{
-						"buffer_size": 40196,
+						"buffer_size": 5492,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								27880,
-								27846
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 24123.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "inc/lib/models/EstimacionSubcontrato.class.php",
-					"settings":
-					{
-						"buffer_size": 21031,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2484,
-								2989
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2750.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "inc/js/agrupacion.js",
-					"settings":
-					{
-						"buffer_size": 17121,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6509,
-								6532
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 4840.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "modulos/agrupacion/GetListaInsumos.php",
-					"settings":
-					{
-						"buffer_size": 2054,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1583,
-								1583
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "precios_venta.php",
-					"settings":
-					{
-						"buffer_size": 2834,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1132,
-								2818
+								4480,
+								4480
 							]
 						],
 						"settings":
@@ -1170,223 +966,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1320.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "presupuesto_obra.php",
-					"settings":
-					{
-						"buffer_size": 4107,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3225,
-								3225
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1650.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "inc/js/presupuesto_obra.js",
-					"settings":
-					{
-						"buffer_size": 10405,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2200,
-								2200
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1320.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "css/general.css",
-					"settings":
-					{
-						"buffer_size": 27376,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								15405,
-								15405
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 20746.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "inc/lib/models/PresupuestoObra.class.php",
-					"settings":
-					{
-						"buffer_size": 4829,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2291,
-								2291
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1320.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "inc/lib/controllers/PresupuestoObraController.php",
-					"settings":
-					{
-						"buffer_size": 3308,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1736,
-								1736
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 660.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "index.php",
-					"settings":
-					{
-						"buffer_size": 1260,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								566,
-								566
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "estimaciones.php",
-					"settings":
-					{
-						"buffer_size": 14194,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								100
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": "inc/js/general.js",
-					"settings":
-					{
-						"buffer_size": 18863,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								15172,
-								15172
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 15256.0,
+						"translation.y": 2310.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1445,7 +1025,7 @@
 		[
 			[
 				"",
-				"/D/www/ControlRemesas/ControlRemesas.sublime-project"
+				"/D/www/ControlMaquinaria/ControlMaquinaria.sublime-project"
 			]
 		],
 		"width": 380.0
