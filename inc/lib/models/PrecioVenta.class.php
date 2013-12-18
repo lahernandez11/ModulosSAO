@@ -30,8 +30,8 @@ class PrecioVenta {
 				$params = array(
 					array( $IDObra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 					array( $concepto['IDConcepto'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-					array( $concepto['precioProduccion'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19,4) ),
-					array( $concepto['precioEstimacion'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19,4) )
+					array( $concepto['precioProduccion'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19,6) ),
+					array( $concepto['precioEstimacion'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19,6) )
 				);
 
 				$conn->executeSP($tsql, $params);
