@@ -1,5 +1,5 @@
 <?php require_once 'setPath.php'; require_once 'models/Sesion.class.php'; Sesion::validaSesion(); ?>
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es-mx">
 <head>
 	<meta charset="utf-8" />
@@ -10,17 +10,13 @@
 	<link rel="stylesheet" href="css/agrupacion.css"/>
 	<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
 	
-	<script src="inc/js/jquery-1.7.1.min.js"></script>
-	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
-	<script src="inc/js/general.js"></script>
-	<script src="inc/js/agrupacion.js"></script>
 </head>
 
 <body>
 	<div id="app-wrapper">
 		<?php include("inc/app-header.php"); ?>
 		<nav>
-			<ul id="app-nav"></ul> 
+			<ul id="app-nav"></ul>
 		</nav>
 		
 		<div id="app-content">
@@ -94,5 +90,35 @@
 		<p class="confirmation-message"></p>
 	</div>
 	<div id="message-console"><span id="console-message"></span><span id="console-toggler" class="open"></span></div>
+
+	<script src="inc/js/jquery-1.7.1.min.js"></script>
+	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
+	<script src="inc/js/lib/underscore-min.min.js"></script>
+	<script src="inc/js/general.js"></script>
+	<script src="inc/js/agrupacion.js"></script>
+
+	<script type="template" id="template-cuenta">
+		<tr id="c-<%- IdCuenta %>" data-nivel="<%- Codigo %>" data-idsup="<%- IdCtaSup %>" data-afectable="<%- Afectable%>" class="cuenta">
+			<td class="clave <%= Afectable ? 'importante' : '' %>"><%- Codigo %></td>
+			<td class="icon-cell">
+				<a class="<%= Afectable ? 'icon-checkmark-circle' : 'icon-cancel-circle' %>"></a>
+			</td>
+			<td class="icon-cell">
+				<a href="" class="handle icon-plus"></a>
+			</td>
+			<td class="icon-cell">
+				<a href="" class="select icon-checkbox-unchecked"></a>
+			</td>
+			<td>
+				<a href="" title="<%- Nombre %>" style="margin-left: <%- Nivel %>em" class="descripcion <%= Afectable ? 'importante' : '' %>"><%- Nombre %></a>
+			</td>
+			<td class="proveedor<%= Afectable ? ' importante' : '' %><%= !showProveedor ? ' hidden' : '' %>" title="<%- Proveedor %>">
+				<%- Proveedor %>
+			</td>
+			<td class="empresa<%= Afectable ? ' importante' : '' %><%= !showEmpresa ? ' hidden' : '' %>" title="<%- Empresa %>">
+				<%- Empresa %>
+			</td>
+		</tr>
+	</script>
 </body>
 </html>

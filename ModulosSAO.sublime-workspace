@@ -520,10 +520,10 @@
 	"buffers":
 	[
 		{
-			"file": "agrupacion_contable.php",
+			"file": "inc/lib/models/PrecioVenta.class.php",
 			"settings":
 			{
-				"buffer_size": 5492,
+				"buffer_size": 1391,
 				"line_ending": "Windows"
 			}
 		}
@@ -592,6 +592,9 @@
 	},
 	"file_history":
 	[
+		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontrato.class.php",
+		"/D/www/ModulosSAO/agrupacion_contable.php",
+		"/D/www/ModulosSAO/.gitignore",
 		"/D/www/ModulosSAO/css/general.css",
 		"/D/www/ModulosSAO/avance_subcontratos.php",
 		"/D/www/ModulosSAO/presupuesto_obra.php",
@@ -600,7 +603,6 @@
 		"/D/www/ModulosSAO/avance_obra.php",
 		"/D/www/ModulosSAO/confirmacion_cobranza.php",
 		"/D/www/ModulosSAO/estimaciones.php",
-		"/D/www/ModulosSAO/agrupacion_contable.php",
 		"/D/www/ModulosSAO/inc/js/agrupacion_contable.js",
 		"/D/www/ModulosSAO/inc/lib/models/Empresa.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionObra.class.php",
@@ -618,7 +620,6 @@
 		"/D/www/ModulosSAO/inc/lib/db/SQLSrvDBConn.class.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/PresupuestoObraController.php",
 		"/D/www/ModulosSAO/inc/lib/models/AgrupadorConceptoPresupuesto.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontrato.class.php",
 		"/D/www/ModulosSAO/modulos/agrupacion/GetListaInsumos.php",
 		"/D/www/ModulosSAO/inc/js/estimaciones.js",
 		"/D/www/ModulosSAO/inc/js/agrupacion.js",
@@ -718,8 +719,7 @@
 		"/C/AppServ/www/ModulosSAO/inc/lib/tcpdf/examples/example_001.php",
 		"/C/AppServ/www/ModulosSAO/inc/lib/tcpdf/examples/tcpdf_include.php",
 		"/C/AppServ/www/ModulosSAO/inc/lib/tcpdf/examples/data/table_data_demo.txt",
-		"/C/AppServ/www/ModulosSAO/inc/lib/html2pdf/html2pdf.class.php",
-		"/C/AppServ/www/ModulosSAO/inc/lib/db/db_config.php"
+		"/C/AppServ/www/ModulosSAO/inc/lib/html2pdf/html2pdf.class.php"
 	],
 	"find":
 	{
@@ -737,6 +737,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"Decimal",
+			"}\n",
 			"toolbar-button",
 			"button",
 			"icon",
@@ -862,12 +864,10 @@
 			"											\n",
 			" .toolbar-button",
 			".toolbar-button",
-			"header",
-			"icomoon",
-			"setDatosGenerales"
+			"header"
 		],
 		"highlight": true,
-		"in_selection": false,
+		"in_selection": true,
 		"preserve_case": false,
 		"regex": false,
 		"replace_history":
@@ -946,18 +946,18 @@
 			[
 				{
 					"buffer": 0,
-					"file": "agrupacion_contable.php",
+					"file": "inc/lib/models/PrecioVenta.class.php",
 					"settings":
 					{
-						"buffer_size": 5492,
+						"buffer_size": 1391,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4480,
-								4480
+								1149,
+								1149
 							]
 						],
 						"settings":
@@ -966,7 +966,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2310.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

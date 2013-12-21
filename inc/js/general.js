@@ -466,6 +466,7 @@ var DROP_LIST = {
 	trigger: null,
 	selectedItem: null,
 	mainTriggerContainer: null,
+	data: {},
 	onSelect: function() {},
 
 	init: function() {
@@ -520,7 +521,7 @@ var DROP_LIST = {
 		$.ajax({
 			type: 'GET',
 			url: DL.source,
-			data: {},
+			data: DL.data,
 			dataType: 'json'
 		})
 		.done( function(json) {

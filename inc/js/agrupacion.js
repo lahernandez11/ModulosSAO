@@ -5,6 +5,7 @@ $( function() {
 
 var AGRUPACION = {
 
+	insumoController: 'inc/lib/controllers/AgrupacionInsumoController.php',
 	container: '#agrupacion',
 	dataContainer: '#conceptos',
 	currentRequest: null,
@@ -70,18 +71,21 @@ var AGRUPACION = {
 				switch( listContainer ) {
 					
 					case '#dropdown-naturaleza':
-						source = 'modulos/agrupacion/GetNaturalezas.php';
+						source = AG.insumoController;
+						action = 'getAgrupadoresNaturaleza';
 					break;
 					case '#dropdown-familia':
-						source = 'modulos/agrupacion/GetFamilias.php';
+						source = AG.insumoController;
+						action = 'getAgrupadoresFamilia';
 					break;
 					case '#dropdown-insumo-generico':
-						source = 'modulos/agrupacion/GetInsumosGenericos.php';
+						source = AG.insumoController;
+						action = 'getAgrupadoresGenerico';
 					break;
 				}
 				
 				DROP_LIST.onSelect = AG.asignaAgrupador;
-
+				DROP_LIST.data = {action: action};
 				DROP_LIST.listContainer = listContainer;
 				DROP_LIST.source = source;
 				DROP_LIST.show(event);
@@ -151,12 +155,14 @@ var AGRUPACION = {
 
 		AG.disableToolbar();
 		
-		var dataURL = null;
+		var dataURL = null,
+			action = '';
 		
 		switch( tipo ) {
 			
 			case 'cmdInsumos':
-				dataURL = 'modulos/agrupacion/GetListaInsumos.php';
+				dataURL = AG.insumoController;
+				action = 'getMateriales';
 			break;
 			case 'cmdSubcontratos':
 				dataURL = 'modulos/agrupacion/GetListaSubcontratos.php';
@@ -173,14 +179,15 @@ var AGRUPACION = {
 		$.ajax({
 			url: dataURL,
 			data: {
-				idProyecto: LISTA_PROYECTOS.selectedItem.value
+				IDProyecto: LISTA_PROYECTOS.selectedItem.value,
+				action: action
 			},
 			dataType: 'json'
 		}).success( function(json) {
 			try {
 				
 				if( ! json.success ) {
-					messageConsole.displayMessage(json.errorMessage, 'error');
+					messageConsole.displayMessage(json.message, 'error');
 					return false;
 				}
 				
@@ -193,7 +200,7 @@ var AGRUPACION = {
 				
 				if( tipo === 'cmdInsumos' ) {
 					
-					$.each( json.Insumos.Familias, function() {
+					$.each( json.materiales.Familias, function() {
 						
 						content += '<div class="section">'
 								+    '<div class="section-header">'
@@ -489,7 +496,8 @@ var AGRUPACION = {
 		
 		if( $parentRow.hasClass('insumo') ) {
 			
-			source = 'modulos/agrupacion/AgrupaInsumo.php';
+			source = AGRUPACION.insumoController;
+			action = 'setAgrupador';
 		} else if( $parentRow.hasClass('actividad') ) {
 			
 			source = 'modulos/agrupacion/AgrupaActividadSubcontrato.php';
@@ -508,12 +516,13 @@ var AGRUPACION = {
 			type: 'POST',
 			url: source,
 			data: {
-				  idProyecto: LISTA_PROYECTOS.selectedItem.value
+				  IDProyecto: LISTA_PROYECTOS.selectedItem.value
 				, idContratista: idContratista
 				, idSubcontrato: idSubcontrato
 				, idTransaccion: IDTransaccionCDC
-				, id: id
-				, idAgrupador: selectedItem.value
+				, id_material: id
+				, id_agrupador: selectedItem.value
+				, action: action
 			},
 			dataType: 'json'
 		}).success( function(json) {
@@ -521,7 +530,7 @@ var AGRUPACION = {
 				
 				if( ! json.success ) {
 					
-					messageConsole.displayMessage(json.errorMessage, 'error');
+					messageConsole.displayMessage(json.message, 'error');
 					return false;
 				}
 				
