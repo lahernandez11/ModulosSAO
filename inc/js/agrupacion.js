@@ -1,50 +1,59 @@
-$( function() {
-
-	AGRUPACION.init();
-});
-
 var AGRUPACION = {
 
 	insumoController: 'inc/lib/controllers/AgrupacionInsumoController.php',
+	subcontratoController: 'inc/lib/controllers/AgrupacionSubcontratoController.php',
+	agrupadorController: 'inc/lib/controllers/AgrupadorInsumoController.php',
 	container: '#agrupacion',
 	dataContainer: '#conceptos',
 	currentRequest: null,
+	insumosTemplate: null,
+	subcontratosTemplate: null,
+	requestType: {
+		INSUMO: 'consulta-insumos',
+		SUBCONTRATO: 'consulta-subcontrato',
+		CONTABLE: 'consulta-contable',
+		GASTOS: 'consulta-varios'
+	},
 	
 	init: function() {
 		
-		var AG = this;
+		var that = this;
 		
-		OPCIONES.disable();
-		
-		$('#opciones').click( function(event) {
-			
-			switch( event.target.id ) {
-				
-				case 'cmdInsumos':
-				case 'cmdSubcontratos':
-				case 'cmdFacturasVarios':
-				case 'cmdCuentas':
-					AG.clearDataContainer();
-					AG.cargaFilas(event.target.id);
-				break;
+		this.insumosTemplate = _.template($('#template-insumo').html());
+		this.subcontratosTemplate = _.template($('#template-subcontrato').html());
+
+		$('.actions').on('click', '.button', function(event) {
+			event.preventDefault();
+
+			if ( !that.getIDProyecto() ){
+				messageConsole.displayMessage('Debe seleccionar un proyecto.', 'info');
+			} else {
+				that.clearDataContainer();
+				that.loadData(this.id);
 			}
 		});
 		
 		// Inicializa la lista de proyectos
-		LISTA_PROYECTOS.onSelect = function(event) {
+		$('#bl-proyectos').buttonlist({
+			source: 'inc/lib/controllers/ListaProyectosController.php',
+			data: {action: 'getListaProyectos'},
+			onSelect: function( selectedItem, listItem ) {
+				that.clearDataContainer();
+			},
+			didNotDataFound: function() {
+				$.notify({text: 'No se pudo cargar la lista de proyectos'});
+			},
+			onCreateListItem: function() {
+				return {
+					id: this.IDProyecto,
+					value: this.NombreProyecto
+				}
+			}
+		});
+		
+		$(that.dataContainer).click( function(event) {
+			event.preventDefault();
 
-			if( AG.currentRequest )
-				AG.currentRequest.abort();
-			
-			AG.clearDataContainer();
-			AG.resetToolbar();
-			OPCIONES.enable('#cmdInsumos, #cmdSubcontratos, #cmdCuentas, #cmdFacturasVarios');
-		}
-		
-		LISTA_PROYECTOS.init();
-		
-		$(AG.dataContainer).click( function(event) {
-			
 			var $tgt = $(event.target);
 			
 			// Bloque que controla la expansion de las secciones
@@ -71,30 +80,28 @@ var AGRUPACION = {
 				switch( listContainer ) {
 					
 					case '#dropdown-naturaleza':
-						source = AG.insumoController;
+						source = that.agrupadorController;
 						action = 'getAgrupadoresNaturaleza';
 					break;
 					case '#dropdown-familia':
-						source = AG.insumoController;
+						source = that.agrupadorController;
 						action = 'getAgrupadoresFamilia';
 					break;
 					case '#dropdown-insumo-generico':
-						source = AG.insumoController;
+						source = that.agrupadorController;
 						action = 'getAgrupadoresGenerico';
 					break;
 				}
 				
-				DROP_LIST.onSelect = AG.asignaAgrupador;
+				DROP_LIST.onSelect = that.asignaAgrupador;
 				DROP_LIST.data = {action: action};
 				DROP_LIST.listContainer = listContainer;
 				DROP_LIST.source = source;
 				DROP_LIST.show(event);
-				
-				event.preventDefault();
 			}
 		});
 		
-		AG.resetToolbar();
+		that.resetToolbar();
 		
 		// Handler para los botones del toolbar
 		$('#radios-visibilidad, #radios-expansion').buttonset()
@@ -104,11 +111,11 @@ var AGRUPACION = {
 		 	switch( this.id ) {
 		 		
 		 		case 'rd-expand-all':
-		 			$(AG.dataContainer).find('.section:visible .section-content').show().prev().children().addClass('expanded');
+		 			$(that.dataContainer).find('.section:visible .section-content').show().prev().children().addClass('expanded');
 		 		break;
 		 		
 		 		case 'rd-collapse-all':
-		 			$(AG.dataContainer).find('.section:visible .section-content').hide().prev().children().removeClass('expanded');
+		 			$(that.dataContainer).find('.section:visible .section-content').hide().prev().children().removeClass('expanded');
 		 		break;
 		 	}
 	 	 });
@@ -117,69 +124,77 @@ var AGRUPACION = {
 	 	 	
 		 	var hiddenClassName = 'hidden';
 
-		    $(AG.dataContainer + ' tr').removeClass(hiddenClassName).show();
+		    $(that.dataContainer + ' tr').removeClass(hiddenClassName).show();
 		 	
 		 	switch( this.id ) {
-		 		
 		 		case 'rd-show-sin-naturaleza':
-		 			$(AG.dataContainer).find('tr td:nth-child(3):not(:empty)').parent().addClass('hidden').hide();
+		 			$(that.dataContainer).find('tr td:nth-child(3)').not(':empty').parent().addClass('hidden').hide();
 		 		break;
 		 		case 'rd-show-sin-familia':
-		 			$(AG.dataContainer).find('tr td:nth-child(5):not(:empty)').parent().addClass('hidden').hide();
-
+		 			$(that.dataContainer).find('tr td:nth-child(5):not(:empty)').parent().addClass('hidden').hide();
 		 		break;
 		 		case 'rd-show-sin-insumo-generico':
-		 			$(AG.dataContainer).find('tr td:nth-child(7):not(:empty)').parent().addClass('hidden').hide();
+		 			$(that.dataContainer).find('tr td:nth-child(7):not(:empty)').parent().addClass('hidden').hide();
 		 		break;
 		 	}
 
-		 	AG.cuentaFilas();
+		 	that.cuentaFilas();
 		 	
-		 	$(AG.dataContainer + ' .section').removeClass(hiddenClassName).show().each( function() {
-	    		var totalDocs = parseInt($(this).find('.item-count').text());
+		 	// $(that.dataContainer + ' .section').removeClass(hiddenClassName).show().each( function() {
+	   //  		var totalDocs = parseInt($(this).find('.item-count').text());
 	    		
-	    		if( totalDocs === 0 ) {
-	    			$(this).addClass(hiddenClassName).hide();
-	    		}
-	    	});
+	   //  		if( totalDocs === 0 ) {
+	   //  			$(this).addClass(hiddenClassName).hide();
+	   //  		}
+	   //  	});
 	 	 });
 	 	 
-		AG.disableToolbar();
+		that.disableToolbar();
+	},
+
+	getIDProyecto: function() {
+		return $('#bl-proyectos').buttonlist('option', 'selectedItem').value;
 	},
 	
-	cargaFilas: function(tipo) {
+	loadData: function(tipo) {
 		
-		var AG = this;
+		var that = this;
 
 		DATA_LOADER.show();
-
-		AG.disableToolbar();
 		
 		var dataURL = null,
-			action = '';
+			action = '',
+			callback = null;
 		
 		switch( tipo ) {
 			
-			case 'cmdInsumos':
-				dataURL = AG.insumoController;
+			case that.requestType.INSUMO:
+				dataURL = that.insumoController;
 				action = 'getMateriales';
+				callback = that.renderInsumos;
 			break;
-			case 'cmdSubcontratos':
-				dataURL = 'modulos/agrupacion/GetListaSubcontratos.php';
+			case that.requestType.SUBCONTRATO:
+				dataURL = that.subcontratoController;
+				action = 'getSubcontratos';
+				callback = that.renderSubcontratos;
 			break;
-			case 'cmdCuentas':
+			case that.requestType.CONTABLE:
 				dataURL = 'modulos/agrupacion/GetListaCuentasContables.php';
+				action = 'getCuentas';
+				callback = that.renderCuentas;
 			break;
-			case 'cmdFacturasVarios':
+			case that.requestType.GASTOS:
 				dataURL = 'modulos/agrupacion/GetListaFacturasVarios.php';
+				action = 'getGastosVarios';
+				callback = that.renderGastos;
 			break;
 		}
 		
-		AG.currentRequest = 
+		that.currentRequest = 
 		$.ajax({
 			url: dataURL,
 			data: {
-				IDProyecto: LISTA_PROYECTOS.selectedItem.value,
+				IDProyecto: that.getIDProyecto(),
 				action: action
 			},
 			dataType: 'json'
@@ -192,186 +207,13 @@ var AGRUPACION = {
 				}
 				
 				if( json.noRows ) {
-					messageConsole.displayMessage(json.noRowsMessage, 'info');
+					messageConsole.displayMessage(json.message, 'info');
 					return false;
 				}
 				
-				var content = '';
-				
-				if( tipo === 'cmdInsumos' ) {
-					
-					$.each( json.materiales.Familias, function() {
-						
-						content += '<div class="section">'
-								+    '<div class="section-header">'
-								+      '<span class="content-toggler">'
-								+        '<a class="title">' + this.Familia + '<span class="items-counter" title="Numero de insumos afectados por el filtro">(<span class="item-count">' + this.NumInsumos + '</span>)</span></a>'
-								+      '</span>'
-								+    '</div>'
-								+    '<div class="section-content">'
-								+      '<table class="insumos">'
-								+        '<colgroup>'
-								+          '<col/>'
-								+          '<col class="unidad"/>'
-								+          '<col/>'
-								+          '<col class="icon"/>'
-								+          '<col/>'
-								+          '<col class="icon"/>'
-								+          '<col/>'
-								+          '<col class="icon"/>'
-								+        '</colgroup>'
-								+        '<thead>'
-								+          '<tr>'
-								+            '<th>Insumo</th>'
-								+            '<th>Unidad</th>'
-								+            '<th colspan="2">Naturaleza</th>'
-								+            '<th colspan="2">Familia</th>'
-								+            '<th colspan="2">Insumo Genérico</th>'
-								+          '</tr>'
-								+        '</thead>'
-								+        '<tbody>';
-	
-						$.each( this.Insumos, function() {
-	
-							content += '<tr class="insumo" data-id="' + this.idInsumo + '">'
-									+    '<td>' + this.Insumo + '</td>'
-									+    '<td class="centrado">' + this.Unidad + '</td>'
-									+    '<td>' + this.AgrupadorNaturaleza + '</td>'
-									+    '<td class="icon-cell">'
-									+      '<a href="#dropdown-naturaleza" class="dropdown-list-trigger"></a>'
-									+    '</td>'
-									+    '<td>' + this.AgrupadorFamilia + '</td>'
-									+    '<td class="icon-cell">'
-									+      '<a href="#dropdown-familia" class="dropdown-list-trigger"></a>'
-									+    '</td>'
-									+    '<td>' + this.AgrupadorInsumoGenerico + '</td>'
-									+    '<td class="icon-cell">'
-									+      '<a href="#dropdown-insumo-generico" class="dropdown-list-trigger"></a>'
-									+    '</td>'
-									+  '</tr>';
-						});
-						
-						content +=      '</tbody>'
-								+     '</table>'
-								+   '</div>'
-							    + '</div>';
-					});
+				callback.call(that, json.data);
 
-				} else if( tipo === 'cmdSubcontratos' ) {
-					
-					var idContratista = null;
-					var idSubcontrato = null;
-					
-					$.each( json.Subcontratos.Contratistas, function() {
-						
-						idContratista = this.idContratista;
-						
-						content += '<div class="section">'
-								+    '<div class="section-header">'
-								+      '<span class="content-toggler">'
-								+        '<a class="title">' + this.Contratista + '<span class="items-counter" title="Numero de subcontratos afectados por el filtro">(<span class="item-count">0</span>)</span></a>'
-								+      '</span>'
-								+    '</div>'
-								+    '<div class="section-content">';
-								
-								
-						$.each( this.Subcontratos, function() {
-							
-							idSubcontrato = this.idSubcontrato;
-							
-							content += '<div class="section">'
-									+    '<div class="section-header">'
-									+      '<span class="content-toggler">'
-									+        '<a class="title">' + this.Subcontrato + '<span class="items-counter" title="Numero de subcontratos afectados por el filtro">(<span class="item-count">0</span>)</span></a>'
-									+      '</span>'
-									+    '</div>'
-									+    '<div class="section-content">'
-									+      '<table class="subcontratos">'
-									+        '<colgroup>'
-									+          '<col/>'
-									+          '<col class="unidad"/>'
-									+          '<col/>'
-									+          '<col class="icon"/>'
-									+          '<col/>'
-									+          '<col class="icon"/>'
-									+          '<col/>'
-									+          '<col class="icon"/>'
-									+        '</colgroup>'
-									+        '<thead>'
-									+          '<tr>'
-									+            '<th>Actividad</th>'
-									+            '<th>Unidad</th>'
-									+            '<th colspan="2">Naturaleza</th>'
-									+            '<th colspan="2">Familia</th>'
-									+            '<th colspan="2">Insumo Genérico</th>'
-									+          '</tr>'
-									+        '</thead>'
-									+        '<tbody>';
-		
-							$.each( this.Actividades, function() {
-		
-								content += '<tr class="actividad" data-id="' + this.idActividad + '" data-idcontratista="' + idContratista + '" data-idsubcontrato="' + idSubcontrato + '">'
-										+    '<td>' + this.Actividad + '</td>'
-										+    '<td class="centrado">' + this.Unidad + '</td>'
-										+    '<td>' + this.AgrupadorNaturaleza + '</td>'
-										+    '<td class="icon-cell">'
-										+      '<a href="#dropdown-naturaleza" class="dropdown-list-trigger"></a>'
-										+    '</td>'
-										+    '<td>' + this.AgrupadorFamilia + '</td>'
-										+    '<td class="icon-cell">'
-										+      '<a href="#dropdown-familia" class="dropdown-list-trigger"></a>'
-										+    '</td>'
-										+    '<td>' + this.AgrupadorInsumoGenerico + '</td>'
-										+    '<td class="icon-cell">'
-										+      '<a href="#dropdown-insumo-generico" class="dropdown-list-trigger"></a>'
-										+    '</td>'
-										+  '</tr>';
-							});
-							
-							content +=      '</tbody>'
-									+     '</table>'
-									+   '</div>'
-								    + '</div>';
-						});
-						
-						content += '  </div>'
-								+  '</div>';
-					});
-
-				} else if( tipo === 'cmdCuentas' ) {
-					
-					content += '<table class="insumos">'
-							+    '<colgroup>'
-							+      '<col class="cuenta"/>'
-							+      '<col/>'
-							+      '<col class="agrupador"/>'
-							+      '<col class="icon"/>'
-							+     '</colgroup>'
-							+     '<thead>'
-							+       '<tr>'
-							+         '<th>Codigo</th>'
-							+         '<th>Nombre</th>'
-							+         '<th colspan="2">Naturaleza</th>'
-							+       '</tr>'
-							+     '</thead>'
-							+     '<tbody>';
-					
-					$.each( json.Cuentas, function() {
-	
-						content += '<tr class="cuenta" data-id="' + this.idCuenta + '">'
-								+    '<td class="centrado">' + this.Codigo + '</td>'
-								+    '<td>' + this.Nombre+ '</td>'
-								+    '<td>' + this.AgrupadorNaturaleza + '</td>'
-								+    '<td class="icon-cell">'
-								+      '<a href="#dropdown-naturaleza" class="dropdown-list-trigger"></a>'
-								+    '</td>'
-								+  '</tr>';
-					});
-						
-					content +=      '</tbody>'
-							+     '</table>';
-
-				} else if( tipo === 'cmdFacturasVarios' ) {
+				if( tipo === 'cmdFacturasVarios' ) {
 					
 					var IDFactura = null;
 					
@@ -447,11 +289,8 @@ var AGRUPACION = {
 					});
 				}
 				
-				$(AG.dataContainer).html(content);
-				
-				AG.cuentaFilas();
-				AG.enableToolbar();
-
+				// that.cuentaFilas();
+				that.enableToolbar();
 			} catch(e) {
 				messageConsole.displayMessage('Error: ' + e.message, 'error');
 			}
@@ -460,6 +299,29 @@ var AGRUPACION = {
 		});
 	},
 	
+	renderInsumos: function( data ) {
+
+		var that = this,
+			html = '';
+
+		for (var i = 0; i < data.Familias.length; i++) {
+			html += that.insumosTemplate(data.Familias[i]);
+		}
+
+		$(that.dataContainer).html(html);
+	},
+
+	renderSubcontratos: function(data) {
+		var that = this,
+			html = '';
+
+		for (var i = 0; i < data.Contratistas.length; i++) {
+			html += that.subcontratosTemplate(data.Contratistas[i]);
+		}
+
+		$(that.dataContainer).html(html);
+	},
+
 	cuentaFilas: function() {
 		var AG = this;
 		
@@ -484,7 +346,7 @@ var AGRUPACION = {
 	
 	asignaAgrupador: function(selectedItem, trigger) {
 		
-		var AG = this;
+		var that = AGRUPACION;
 		
 		DATA_LOADER.show();
 		
@@ -492,15 +354,13 @@ var AGRUPACION = {
 		
 		var id = parseInt(trigger.parents('tr').attr('data-id'))
 			, IDTransaccionCDC;
-		var source = null;
 		
 		if( $parentRow.hasClass('insumo') ) {
 			
 			source = AGRUPACION.insumoController;
-			action = 'setAgrupador';
 		} else if( $parentRow.hasClass('actividad') ) {
 			
-			source = 'modulos/agrupacion/AgrupaActividadSubcontrato.php';
+			source = AGRUPACION.subcontratoController;
 			var idContratista = parseInt(trigger.parents('tr').attr('data-idcontratista'));
 			var idSubcontrato = parseInt(trigger.parents('tr').attr('data-idsubcontrato'));
 		} else if( $parentRow.hasClass('cuenta') ) {
@@ -516,19 +376,18 @@ var AGRUPACION = {
 			type: 'POST',
 			url: source,
 			data: {
-				  IDProyecto: LISTA_PROYECTOS.selectedItem.value
-				, idContratista: idContratista
-				, idSubcontrato: idSubcontrato
+				  IDProyecto: that.getIDProyecto()
+				, id_empresa: idContratista
+				, id_subcontrato: idSubcontrato
 				, idTransaccion: IDTransaccionCDC
-				, id_material: id
+				, id: id
 				, id_agrupador: selectedItem.value
-				, action: action
+				, action: 'setAgrupador'
 			},
 			dataType: 'json'
 		}).success( function(json) {
 			try {
-				
-				if( ! json.success ) {
+				if (!json.success) {
 					
 					messageConsole.displayMessage(json.message, 'error');
 					return false;
@@ -566,5 +425,6 @@ var AGRUPACION = {
 		
 		$(this.dataContainer).empty();
 	}
-
 }
+
+AGRUPACION.init();

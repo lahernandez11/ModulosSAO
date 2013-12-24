@@ -117,6 +117,44 @@ class CuentaContable {
 	    return $cuentas;
 	}
 
+	public function getCuentasAgrupacionInsumo() {
+
+		$tsql = "SELECT
+					  [Cuentas].[IdCuenta] AS [IDCuenta]
+					, LEFT([Cuentas].[Codigo], 4) + '-'
+					+ SUBSTRING([Cuentas].[Codigo], 5, 2) + '-'
+					+ SUBSTRING([Cuentas].[Codigo], 7, 2) + '-'
+					+ SUBSTRING([Cuentas].[Codigo], 9, 3) AS [Codigo]
+					, [Cuentas].[Nombre]
+					, [Cuentas].[Afectable]
+					, [AgrupacionCuentasContpaq].[id_grupador] AS [id_AgrupadorNaturaleza]
+					, CONCAT([Agrupadores].[Codigo] + ' ', [Agrupadores].[Agrupador]) AS [AgrupadorNaturaleza]
+				FROM
+					[ReportesSAO].[Contabilidad].[Cuentas]
+				LEFT OUTER JOIN
+					[Agrupadores].[AgrupacionCuentasContpaq]
+				  ON
+					[Cuentas].[IDProyecto] = [AgrupacionCuentasContpaq].[IDProyecto]
+						AND
+					[Cuentas].[Codigo] = [AgrupacionCuentasContpaq].[CodigoCuenta]
+				LEFT OUTER JOIN
+					[Agrupadores].[Agrupadores]
+				  ON
+					[AgrupacionCuentasContpaq].[IDAgrupador] = [Agrupadores].[IDAgrupador]
+				WHERE
+					[Cuentas].[IDProyecto] = ?
+				ORDER BY
+					[Codigo]"
+
+		$params = array(
+	        array( $this->IDProyecto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	    );
+
+		$data = $this->conn->executeSP($tsql, $params);
+
+		return $data;
+	}
+
 	public function getDatosCuenta( $id_cuenta ) {
 		
 		$tsql = "SELECT

@@ -9,7 +9,6 @@
 	<link rel="stylesheet" href="css/general.css" />
 	<link rel="stylesheet" href="css/agrupacion.css"/>
 	<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
-	
 </head>
 
 <body>
@@ -21,35 +20,29 @@
 		
 		<div id="app-content">
 			<div id="app-module">
+				<div class="module-toolbar">
+						<a class="button dd-list" id="bl-proyectos">
+							<span class="button-text">Proyectos</span>
+							<span class="icon flechita-abajo"></span>
+						</a>
+						<span class="actions">
+							<a id="consulta-insumos" class="button">
+							<span class="label">Insumos</span>
+							</a>
+							<a id="consulta-subcontrato" class="button">
+								<span class="label">Subcontratos</span>
+							</a>
+							<a id="consulta-contable" class="button">
+								<span class="label">Cuentas Contables</span>
+							</a>
+							<a id="consulta-varios" class="button">
+								<span class="label">Gastos Varios</span>
+							</a>
+						</span>
+						<h2>Agrupación</h2>
+				</div>
 				<div id="app-module-content">
-					<div class="options">
-						<div class="options-block">
-							<h3 class="title">Proyectos</h3>
-							<div class="content">
-								<ul id="lista-proyectos" class="options-list"></ul>
-							</div>
-						</div>
-						<div class="options-block" id="opciones">
-							<h3 class="title">Opciones</h3>
-							<div class="content">
-								<form>
-									<div>
-										<input type="button" class="button consultar" id="cmdInsumos" name="cmdInsumos" value="Consultar Insumos" />
-									</div>
-									<div>
-										<input type="button" class="button consultar" id="cmdSubcontratos" name="cmdSubcontratos" value="Consultar Subcontratos" />
-									</div>
-									<div>
-										<input type="button" class="button consultar" id="cmdCuentas" name="cmdCuentas" value="Consultar Cuentas Contables" />
-									</div>
-									<div>
-										<input type="button" class="button consultar" id="cmdFacturasVarios" name="cmdFacturasVarios" value="Fact. Gastos Varios" />
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-
+						
 					<div id="agrupacion">
 						<ul class="menu hz-menu toolbar">
 							<li id="radios-expansion">
@@ -89,36 +82,183 @@
 	<div id="confirmation-dialog" class="dialog" title="Modulos SAO">
 		<p class="confirmation-message"></p>
 	</div>
-	<div id="message-console"><span id="console-message"></span><span id="console-toggler" class="open"></span></div>
+	<div id="message-console">
+		<span id="console-message"></span>
+		<span id="console-toggler" class="open"></span>
+	</div>
+
+	<script type="template" id="template-insumo">
+		<div class="section">
+			<div class="section-header">
+				<span class="content-toggler">
+					<a class="title">
+						<%- Familia %>
+						<span class="items-counter" title="Numero de insumos afectados por el filtro">
+							(<span class="item-count"><%- NumInsumos %></span>)
+						</span>
+					</a>
+				</span>
+			</div>
+			<div class="section-content">
+				<table class="insumos">
+					<colgroup>
+						<col/>
+						<col class="unidad"/>
+						<col/>
+						<col class="icon"/>
+						<col/>
+						<col class="icon"/>
+						<col/>
+						<col class="icon"/>
+					</colgroup>
+					<thead>
+						<tr>
+							<th>Insumo</th>
+							<th>Unidad</th>
+							<th colspan="2">Naturaleza</th>
+							<th colspan="2">Familia</th>
+							<th colspan="2">Insumo Genérico</th>
+						</tr>
+					</thead>
+					<tbody>
+					<% _.each(Insumos, function(insumo) { %>
+						<tr class="insumo" data-id="<%- insumo.idInsumo %>">
+							<td><%- insumo.Insumo %></td>
+							<td class="centrado"><%- insumo.Unidad %></td>
+							<td><%- insumo.AgrupadorNaturaleza %></td>
+							<td class="icon-cell">
+								<a href="#dropdown-naturaleza" class="dropdown-list-trigger"></a>
+							</td>
+							<td><%- insumo.AgrupadorFamilia %></td>
+							<td class="icon-cell">
+								<a href="#dropdown-familia" class="dropdown-list-trigger"></a>
+							</td>
+							<td><%- insumo.AgrupadorInsumoGenerico %></td>
+							<td class="icon-cell">
+								<a href="#dropdown-insumo-generico" class="dropdown-list-trigger"></a>
+							</td>
+						</tr>
+					<% }); %>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</script>
+
+	<script type="template" id="template-subcontrato">
+		<div class="section">
+			<div class="section-header">
+				<span class="content-toggler">
+					<a class="title">
+						<%- Contratista %>
+						<span class="items-counter" title="Numero de actividades afectadas por el filtro">
+							(<span class="item-count"><%- NumActividades %></span>)
+						</span>
+					</a>
+				</span>
+			</div>
+			<div class="section-content">
+				<% _.each(Subcontratos, function(subcontrato) { %>
+				<div class="section">
+					<div class="section-header">
+						<span class="content-toggler">
+							<a class="title">
+								<%- subcontrato.Subcontrato %>
+								<span class="items-counter" title="Numero de actividades afectadas por el filtro">
+									(<span class="item-count"><%- subcontrato.NumActividades %></span>)
+								</span>
+							</a>
+						</span>
+					</div>
+					<div class="section-content">
+						<table class="subcontratos">
+							<colgroup>
+								<col/>
+								<col class="unidad"/>
+								<col/>
+								<col class="icon"/>
+								<col/>
+								<col class="icon"/>
+								<col/>
+								<col class="icon"/>
+							</colgroup>
+							<thead>
+								<tr>
+									<th>Actividad</th>
+									<th>Unidad</th>
+									<th colspan="2">Naturaleza</th>
+									<th colspan="2">Familia</th>
+									<th colspan="2">Insumo Genérico</th>
+								</tr>
+							</thead>
+							<tbody>
+							<% _.each(subcontrato.Actividades, function(actividad) { %>
+								<tr class="actividad"
+									data-id="<%- actividad.idActividad %>"
+									data-idcontratista="<%- idContratista %>"
+									data-idsubcontrato="<%- subcontrato.idSubcontrato %>">
+									<td><%- actividad.Actividad %></td>
+									<td class="centrado"><%- actividad.Unidad %></td>
+									<td><%- actividad.AgrupadorNaturaleza %></td>
+									<td class="icon-cell">
+										<a href="#dropdown-naturaleza" class="dropdown-list-trigger"></a>
+									</td>
+									<td><%- actividad.AgrupadorFamilia %></td>
+									<td class="icon-cell">
+										<a href="#dropdown-familia" class="dropdown-list-trigger"></a>
+									</td>
+									<td><%- actividad.AgrupadorInsumoGenerico %></td>
+									<td class="icon-cell">
+										<a href="#dropdown-insumo-generico" class="dropdown-list-trigger"></a>
+									</td>
+								</tr>
+							<% }); %>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<% }); %>
+			</div>
+		</div>
+	</script>
+
+	<script type="template" id="">
+		<table class="insumos">
+			<colgroup>
+				<col class="cuenta"/>
+				<col/>
+				<col class="agrupador"/>
+				<col class="icon"/>
+			</colgroup>
+			<thead>
+				<tr>
+					<th>Codigo</th>
+					<th>Nombre</th>
+					<th colspan="2">Naturaleza</th>
+				</tr>
+			</thead>
+			<tbody>
+			<% _.each( Cuentas, function(cuenta) { %>
+				<tr class="cuenta" data-id="<%- cuenta.idCuenta %>">
+					<td class="centrado"><%- cuenta.Codigo %></td>
+					<td><%- cuenta.Nombre %></td>
+					<td><%- cuenta.AgrupadorNaturaleza %></td>
+					<td class="icon-cell">
+						<a href="#dropdown-naturaleza" class="dropdown-list-trigger"></a>
+					</td>
+				</tr>
+			<% }); %>
+
+			</tbody>
+		</table>
+	</script>
 
 	<script src="inc/js/jquery-1.7.1.min.js"></script>
 	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
-	<script src="inc/js/lib/underscore-min.min.js"></script>
+	<script src="inc/js/jquery.buttonlist.js"></script>
+	<script src="inc/js/lib/underscore-min.js"></script>
+
 	<script src="inc/js/general.js"></script>
 	<script src="inc/js/agrupacion.js"></script>
-
-	<script type="template" id="template-cuenta">
-		<tr id="c-<%- IdCuenta %>" data-nivel="<%- Codigo %>" data-idsup="<%- IdCtaSup %>" data-afectable="<%- Afectable%>" class="cuenta">
-			<td class="clave <%= Afectable ? 'importante' : '' %>"><%- Codigo %></td>
-			<td class="icon-cell">
-				<a class="<%= Afectable ? 'icon-checkmark-circle' : 'icon-cancel-circle' %>"></a>
-			</td>
-			<td class="icon-cell">
-				<a href="" class="handle icon-plus"></a>
-			</td>
-			<td class="icon-cell">
-				<a href="" class="select icon-checkbox-unchecked"></a>
-			</td>
-			<td>
-				<a href="" title="<%- Nombre %>" style="margin-left: <%- Nivel %>em" class="descripcion <%= Afectable ? 'importante' : '' %>"><%- Nombre %></a>
-			</td>
-			<td class="proveedor<%= Afectable ? ' importante' : '' %><%= !showProveedor ? ' hidden' : '' %>" title="<%- Proveedor %>">
-				<%- Proveedor %>
-			</td>
-			<td class="empresa<%= Afectable ? ' importante' : '' %><%= !showEmpresa ? ' hidden' : '' %>" title="<%- Empresa %>">
-				<%- Empresa %>
-			</td>
-		</tr>
-	</script>
 </body>
 </html>

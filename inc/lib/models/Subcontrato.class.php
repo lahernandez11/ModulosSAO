@@ -5,6 +5,7 @@ class Subcontrato extends TransaccionSAO {
 
 	const TIPO_TRANSACCION = 51;
 
+	private $_id_empresa;
 	private $_nombreContratista;
 	private $_objetoSubcontrato;
 	private $_pctFondoGarantia;
@@ -36,7 +37,9 @@ class Subcontrato extends TransaccionSAO {
 		}
 	}
 
-	private function instaceFromDefault( $IDObra, $fecha, $fechaInicio, $fechaTermino, $observaciones, Array $conceptos, SAODBConn $conn ) {
+	private function instaceFromDefault( $IDObra, $fecha, $fechaInicio, $fechaTermino, 
+		$observaciones, Array $conceptos, SAODBConn $conn ) {
+
 		parent::__construct($IDObra, self::TIPO_TRANSACCION, $fecha, $observaciones, $conn);
 	}
 
@@ -59,6 +62,7 @@ class Subcontrato extends TransaccionSAO {
 
 	    $datos = $this->_SAOConn->executeSP($tsql, $params);
 
+	    $this->_id_empresa 	 		 = $datos[0]->id_empresa;
 	    $this->_objetoSubcontrato 	 = $datos[0]->ObjetoSubcontrato;
 	    $this->_nombreContratista 	 = $datos[0]->NombreContratista;
 	    $this->_pctFondoGarantia 	 = $datos[0]->PctFondoGarantia;
@@ -130,6 +134,113 @@ class Subcontrato extends TransaccionSAO {
 	public static function getListaTransacciones( $IDObra, SAODBConn $conn ) {
 
 		return parent::getListaTransacciones($IDObra, self::TIPO_TRANSACCION, $conn);
+	}
+
+	public static function getSubcontratosPorContratista( SAODBConn $conn, $id_obra ) {
+
+		$tsql = "{call [Agrupacion].[uspListaSubcontratos]( ? )}";
+
+		$params = array(
+			array($id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
+		);
+
+		$datos = $conn->executeSP($tsql, $params);
+
+		return $datos;
+	}
+
+	private function existeRegistroAgrupacion($id_actividad) {
+
+		$tsql = "SELECT 1
+				 FROM [Agrupacion].[agrupacion_subcontratos]
+				 WHERE
+				 	[id_obra] = ?
+				 		AND
+				 	[id_empresa] = ?
+				 		AND
+				 	[id_subcontrato] = ?
+				 		AND
+				 	[id_actividad] = ?";
+
+	    $params = array(
+	        array( $this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->_id_empresa, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $id_actividad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	    );
+
+	    $res = $this->_SAOConn->executeQuery($tsql, $params);
+
+	    if (count($res) > 0)
+	    	return true;
+	    else
+	    	return false;
+	}
+
+	private function creaRegistroAgrupacion($id_actividad) {
+
+		$tsql = "INSERT INTO [Agrupacion].[agrupacion_subcontratos]
+				(
+					  [id_obra]
+					, [id_empresa]
+					, [id_subcontrato]
+					, [id_actividad]
+				)
+				VALUES
+				( ?, ?, ?, ? )";
+
+	    $params = array(
+	        array( $this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->_id_empresa, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $id_actividad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	    );
+
+	    $this->_SAOConn->executeQuery($tsql, $params);
+	}
+
+	public function setAgrupadorPartida($id_actividad, AgrupadorInsumo $agrupador) {
+
+		if (! $this->existeRegistroAgrupacion($id_actividad))
+			$this->creaRegistroAgrupacion($id_actividad);
+
+		$field = '';
+
+		switch ($agrupador->getTipoAgrupador()) {
+			case AgrupadorInsumo::TIPO_NATURALEZA:
+				$field = AgrupadorInsumo::FIELD_NATURALEZA;
+				break;
+
+			case AgrupadorInsumo::TIPO_FAMILIA:
+				$field = AgrupadorInsumo::FIELD_FAMILIA;
+				break;
+
+			case AgrupadorInsumo::TIPO_GENERICO:
+				$field = AgrupadorInsumo::FIELD_GENERICO;
+				break;
+		}
+
+		$tsql = "UPDATE [Agrupacion].[agrupacion_subcontratos]
+				 SET
+				 	{$field} = ?
+				 WHERE
+				 	[id_obra] = ?
+				 		AND
+				 	[id_empresa] = ?
+				 		AND
+				 	[id_subcontrato] = ?
+				 		AND
+				 	[id_actividad] = ?";
+
+	    $params = array(
+	    	array( $agrupador->getIDAgrupador(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->_id_empresa, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $id_actividad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	    );
+
+	    $this->_SAOConn->executeQuery($tsql, $params);
 	}
 }
 ?>

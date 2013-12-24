@@ -4,6 +4,9 @@ class AgrupadorInsumo {
 	const TIPO_NATURALEZA = 1;
 	const TIPO_FAMILIA = 2;
 	const TIPO_GENERICO = 3;
+	const FIELD_NATURALEZA = 'id_agrupador_naturaleza';
+	const FIELD_FAMILIA = 'id_agrupador_familia';
+	const FIELD_GENERICO = 'id_agrupador_insumo_generico';
 
 	private $id_agrupador = null;
 	private $conn = null;

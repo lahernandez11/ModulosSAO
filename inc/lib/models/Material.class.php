@@ -51,73 +51,28 @@ class Material {
 
 	public function setAgrupador($id_obra, AgrupadorInsumo $agrupador) {
 
+		if (! $this->existeRegistroAgrupacion($id_obra))
+			$this->creaRegistroAgrupacion($id_obra);
+
+		$field = '';
+
 		switch ($agrupador->getTipoAgrupador()) {
 			case AgrupadorInsumo::TIPO_NATURALEZA:
-				$this->setAgrupadorNaturaleza($id_obra, $agrupador);
+				$field = AgrupadorInsumo::FIELD_NATURALEZA;
 				break;
 
 			case AgrupadorInsumo::TIPO_FAMILIA:
-				$this->setAgrupadorFamilia($id_obra, $agrupador);
+				$field = AgrupadorInsumo::FIELD_FAMILIA;
 				break;
 
 			case AgrupadorInsumo::TIPO_GENERICO:
-				$this->setAgrupadorGenerico($id_obra, $agrupador);
+				$field = AgrupadorInsumo::FIELD_GENERICO;
 				break;
 		}
-	}
-
-	public function setAgrupadorNaturaleza($id_obra, AgrupadorInsumo $agrupador) {
-
-		if (! $this->existeRegistroAgrupacion($id_obra))
-			$this->creaRegistroAgrupacion($id_obra);
 
 		$tsql = "UPDATE [Agrupacion].[agrupacion_insumos]
 				 SET
-				 	[id_agrupador_naturaleza] = ?
-				 WHERE
-				 	[id_obra] = ?
-				 		AND
-				 	[id_material] = ?";
-
-	    $params = array(
-	        array( $agrupador->getIDAgrupador(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id_material, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	    );
-
-	    $this->conn->executeQuery($tsql, $params);
-	}
-	
-	public function setAgrupadorFamilia($id_obra, AgrupadorInsumo $agrupador) {
-		
-		if (! $this->existeRegistroAgrupacion($id_obra))
-			$this->creaRegistroAgrupacion($id_obra);
-
-		$tsql = "UPDATE [Agrupacion].[agrupacion_insumos]
-				 SET
-				 	[id_agrupador_familia] = ?
-				 WHERE
-				 	[id_obra] = ?
-				 		AND
-				 	[id_material] = ?";
-
-	    $params = array(
-	        array( $agrupador->getIDAgrupador(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id_material, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	    );
-
-	    $this->conn->executeQuery($tsql, $params);
-	}
-	
-	public function setAgrupadorGenerico($id_obra, AgrupadorInsumo $agrupador) {
-		
-		if (! $this->existeRegistroAgrupacion($id_obra))
-			$this->creaRegistroAgrupacion($id_obra);
-
-		$tsql = "UPDATE [Agrupacion].[agrupacion_insumos]
-				 SET
-				 	[id_agrupador_insumo_generico] = ?
+				 	{$field} = ?
 				 WHERE
 				 	[id_obra] = ?
 				 		AND

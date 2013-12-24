@@ -35,6 +35,25 @@ try {
 			$data['cuentas'] = $cuenta_contable->getCuentas($id_cuenta);
 			break;
 
+		case 'getCuentasAgrupacionInsumo':
+
+			$cuenta_contable = new CuentaContable($IDProyecto, $rsao_conn);
+			$data['cuentas'] = array();
+			$cuentas = $cuenta_contable->getCuentasAgrupacionInsumo();
+
+			foreach ($cuentas as $cuenta) {
+				# code...
+			}
+			$data['Cuentas'][] = array(
+					  'idCuenta'  => $cuenta->IDCuenta
+					, 'Codigo'    => $cuenta->Codigo
+					, 'Nombre'    => $cuenta->Nombre
+					, 'Afectable' => $cuenta->Afectable
+					, 'idAgrupadorNaturaleza' => $cuenta->IDAgrupadorNaturaleza
+					, 'AgrupadorNaturaleza'   => $cuenta->AgrupadorNaturaleza
+			);
+			break;
+
 		case 'getDatosCuenta':
 			$id_cuenta = (int) $_GET['id_cuenta'];
 			$cuenta_contable = new CuentaContable($IDProyecto, $rsao_conn);
@@ -63,7 +82,6 @@ try {
 					'agrupador' => $empresa->razon_social
 				);
 			}
-
 			break;
 
 		case 'setAgrupadorProveedor':
@@ -80,7 +98,6 @@ try {
 			break;
 
 		case 'addAgrupadorTipoCuenta':
-
 			$descripcion = $_POST['descripcion'];
 
 			$data['id_agrupador'] = AgrupadorCuentaContable::$_POST['action']($rsao_conn, $IDProyecto, $descripcion);
