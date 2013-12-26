@@ -32,9 +32,6 @@
 							<a id="consulta-subcontrato" class="button">
 								<span class="label">Subcontratos</span>
 							</a>
-							<a id="consulta-contable" class="button">
-								<span class="label">Cuentas Contables</span>
-							</a>
 							<a id="consulta-varios" class="button">
 								<span class="label">Gastos Varios</span>
 							</a>
@@ -222,7 +219,7 @@
 		</div>
 	</script>
 
-	<script type="template" id="">
+	<script type="template" id="template-contable">
 		<table class="insumos">
 			<colgroup>
 				<col class="cuenta"/>
@@ -251,6 +248,77 @@
 
 			</tbody>
 		</table>
+	</script>
+
+	<script type="template" id="template-gastos">
+		<div class="section">
+			<div class="section-header">
+				<span class="content-toggler">
+					<a class="title">
+						<%- proveedor %>
+						<span class="items-counter" title="Numero de facturas">
+							(<span class="item-count">0</span>)
+						</span>
+					</a>
+				</span>
+			</div>
+			<div class="section-content">
+
+			<% _.each(facturas, function(factura) { %>
+			<div class="section">
+				<div class="section-header">
+					<span class="content-toggler">
+						<a class="title">
+							<%- factura.referencia_factura %>
+							<span class="items-counter" title="Numero de subcontratos ectados por el filtro">
+								(<span class="item-count">0</span>)
+							</span>
+						</a>
+					</span>
+				</div>
+				<div class="section-content">
+					<table class="subcontratos">
+						<colgroup>
+							<col/>
+							<col/>
+							<col class="icon"/>
+							<col/>
+							<col class="icon"/>
+							<col/>
+							<col class="icon"/>
+						</colgroup>
+					<thead>
+						<tr>
+							<th>Referencia</th>
+							<th colspan="2">Naturaleza</th>
+							<th colspan="2">Familia</th>
+							<th colspan="2">Insumo Genérico</th>
+						</tr>
+					</thead>
+					<tbody>
+
+						<% _.each( factura.items, function(item) { %>
+						<tr class="item-facturavarios" data-id="<%- item.id_item %>" data-idtransaccion="<%- factura.id_factura %>">
+							<td><%- item.referencia %></td>
+							<td><%- item.agrupador_naturaleza %></td>
+							<td class="icon-cell">
+								<a href="#dropdown-naturaleza" class="dropdown-list-trigger"></a>
+							</td>
+							<td><%- item.agrupador_familia %></td>
+							<td class="icon-cell">
+								<a href="#dropdown-familia" class="dropdown-list-trigger"></a>
+							</td>
+							<td><%- item.agrupador_insumo_generico %></td>
+							<td class="icon-cell">
+								<a href="#dropdown-insumo-generico" class="dropdown-list-trigger"></a>
+							</td>
+						</tr>
+						<% }); %>
+					</tbody>
+				</table>
+			</div>
+			<% }); %> 
+		</div>
 	</script>
 
 	<script src="inc/js/jquery-1.7.1.min.js"></script>

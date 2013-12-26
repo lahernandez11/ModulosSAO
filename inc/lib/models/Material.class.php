@@ -1,6 +1,12 @@
 <?php
 class Material {
 
+	const TIPO_MATERIAL = 1;
+	const TIPO_MANO_OBRA = 2;
+	const TIPO_SERVICIOS = 3;
+	const TIPO_HERRAMIENTA = 4;
+	const TIPO_MAQUINARIA = 8;
+
 	private $conn = null;
 	private $id_material = null;
 
@@ -87,10 +93,6 @@ class Material {
 	    $this->conn->executeQuery($tsql, $params);
 	}
 
-	public static function getMateriales() {
-
-	}
-
 	public static function getMaterialesObra( $id_obra, SAODBConn $conn ) {
 
 		$tsql = "SELECT
@@ -123,6 +125,31 @@ class Material {
 		$data = $conn->executeSP($tsql, $params);
 
 		return $data;
+	}
+
+	public static function getMateriales( SAODBConn $conn, $descripcion = null, $tipo = null ) {
+
+		switch ($tipo) {
+			case self::TIPO_MATERIAL:
+			case self::TIPO_MANO_OBRA:
+			case self::TIPO_SERVICIOS:
+			case self::TIPO_HERRAMIENTA:
+			case self::TIPO_MAQUINARIA:
+				break;
+			
+			default:
+				$tipo = null;
+				break;
+		}
+
+		$tsql = "{call [Insumos].[uspListaInsumos]( ?, ? )}";
+
+	    $params = array(
+	        array( $tipo, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $descripcion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('255') )
+	    );
+
+	    return $conn->executeSP($tsql, $params);
 	}
 }
 ?>

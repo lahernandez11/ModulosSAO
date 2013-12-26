@@ -4,7 +4,6 @@ require_once 'models/Sesion.class.php';
 require_once 'models/Obra.class.php';
 require_once 'db/ReportesSAOConn.class.php';
 require_once 'models/CuentaContable.class.php';
-require_once 'models/AgrupadorCuentaContable.class.php';
 require_once 'models/Empresa.class.php';
 require_once 'models/Util.class.php';
 
@@ -23,85 +22,54 @@ try {
 	$conn = new SAO1814DBConn();
 
 	$IDProyecto = (int) $_REQUEST['IDProyecto'];
-	$rsao_conn = new ReportesSAOConn();
+	$id_obra 	= Obra::getIDObraProyecto($IDProyecto);
 	
 	switch ( $_REQUEST['action'] ) {
 
 		case 'getCuentas':
 			$id_cuenta = (int) $_GET['id_cuenta'];
 
-			$cuenta_contable = new CuentaContable($IDProyecto, $rsao_conn);
 			$data['cuentas'] = array();
-			$data['cuentas'] = $cuenta_contable->getCuentas($id_cuenta);
-			break;
-
-		case 'getCuentasAgrupacionInsumo':
-
-			$cuenta_contable = new CuentaContable($IDProyecto, $rsao_conn);
-			$data['cuentas'] = array();
-			$cuentas = $cuenta_contable->getCuentasAgrupacionInsumo();
-
-			foreach ($cuentas as $cuenta) {
-				# code...
-			}
-			$data['Cuentas'][] = array(
-					  'idCuenta'  => $cuenta->IDCuenta
-					, 'Codigo'    => $cuenta->Codigo
-					, 'Nombre'    => $cuenta->Nombre
-					, 'Afectable' => $cuenta->Afectable
-					, 'idAgrupadorNaturaleza' => $cuenta->IDAgrupadorNaturaleza
-					, 'AgrupadorNaturaleza'   => $cuenta->AgrupadorNaturaleza
-			);
+			$data['cuentas'] = CuentaContable::getCuentas($conn, $id_obra, $id_cuenta);
 			break;
 
 		case 'getDatosCuenta':
 			$id_cuenta = (int) $_GET['id_cuenta'];
-			$cuenta_contable = new CuentaContable($IDProyecto, $rsao_conn);
+			$cuenta = new CuentaContable($conn, $id_obra, $id_cuenta);
 			$data['cuenta'] = array();
-			$data['cuenta'] = $cuenta_contable->getDatosCuenta($id_cuenta);
-			break;
-
-		case 'getAgrupadoresProveedor':
-		case 'getAgrupadoresTipoCuenta':
-
-			$descripcion = $_GET['term'];
-			$data['agrupadores'] = array();
-			$data['agrupadores'] = AgrupadorCuentaContable::$_GET['action']($rsao_conn, $IDProyecto, $descripcion);
-
+			$data['cuenta'] = $cuenta->getDatosCuenta();
 			break;
 
 		case 'getAgrupadoresEmpresa':
 			$descripcion = $_GET['term'];
-			$data['agrupadores'] = array();
+			$data['options'] = array();
 
 			$empresas = Empresa::getEmpresas($conn, $descripcion);
 
 			foreach ($empresas as $empresa) {
-				$data['agrupadores'][] = array(
-					'id' => $empresa->id_empresa,
-					'agrupador' => $empresa->razon_social
+				$data['options'][] = array(
+					'id' 	    => $empresa->id_empresa,
+					'label' => $empresa->razon_social
 				);
 			}
 			break;
 
-		case 'setAgrupadorProveedor':
-		case 'setAgrupadorTipoCuenta':
+		case 'setAgrupadorNaturaleza':
 		case 'setAgrupadorEmpresa':
-			$cuenta_contable = new CuentaContable($IDProyecto, $rsao_conn);
 			$cuentas = $_POST['cuentas'];
 			$id_agrupador = $_POST['id_agrupador'];
 
 			foreach ($cuentas as $cuenta) {
-				$cuenta_contable->setAgrupador($cuenta['id_cuenta'], $id_agrupador, $_POST['action']);
+				$cuenta_contable = new CuentaContable($conn, $id_obra, $cuenta['id_cuenta']);
+				$cuenta_contable->setAgrupador($id_agrupador, $_POST['action']);
 			}
-
 			break;
 
-		case 'addAgrupadorTipoCuenta':
-			$descripcion = $_POST['descripcion'];
+		// case 'addAgrupadorTipoCuenta':
+		// 	$descripcion = $_POST['descripcion'];
 
-			$data['id_agrupador'] = AgrupadorCuentaContable::$_POST['action']($rsao_conn, $IDProyecto, $descripcion);
-			break;
+		// 	$data['id_agrupador'] = AgrupadorCuentaContable::$_POST['action']($rsao_conn, $IDProyecto, $descripcion);
+		// 	break;
 
 		default:
 			throw new Exception("Acción desconocida");

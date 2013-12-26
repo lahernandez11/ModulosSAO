@@ -26,10 +26,10 @@
 							<span class="icon flechita-abajo"></span>
 						</a>
 						<span class="col-switch">
-							<input type="checkbox" name="col-switch" id="proveedor" value="5">
-							<label for="proveedor">Proveedor</label>
-							<input type="checkbox" name="col-switch" id="empresa" value="6">
+							<input type="checkbox" name="col-switch" id="empresa" value="5">
 							<label for="empresa">Empresa SAO</label>
+							<input type="checkbox" name="col-switch" id="naturaleza" value="6">
+							<label for="naturaleza">Naturaleza</label>
 						</span>
 						<h2>Agrupación Contable</h2>
 					</div>
@@ -39,20 +39,20 @@
 							<section id="tran-content">
 								<table id="tabla-cuentas" class="stripped tabla-arbol">
 									<colgroup>
-										<col class="clave"/>
 										<col class="icon-header"/>
 										<col class="icon"/>
 										<col class="icon"/>
+										<col class="clave"/>
 									</colgroup>
 									<thead>
 										<tr>
-											<th>Clave</th>
 											<th>Afectable</th>
 											<th></th>
 											<th></th>
+											<th>Clave</th>
 											<th>Descripción</th>
-											<th class="proveedor">Agrupador Proveedor</th>
-											<th class="empresa">Agrupador Empresa SAO</th>
+											<th class="empresa">Agrupador Proveedor SAO</th>
+											<th class="naturaleza">Agrupador Naturaleza</th>
 										</tr>
 									</thead>
 									<tbody></tbody>
@@ -69,27 +69,6 @@
 			</footer> <!-- app-footer -->
 		</div> <!-- app-wrapper -->
 
-		<div id="dialog-propiedades-cuenta" class="dialog" title="Propiedades">
-			<form method="get" class="dialog-form form-cuenta-properties">
-
-				<label for="txtAgrupadorProveedor">Agrupador Proveedor</label>
-				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
-				<input type="text" id="txtAgrupadorProveedor" class="field" />
-				
-				<label for="txtAgrupadorEmpresa">Agrupador Empresa SAO</label>
-				<input type="text" id="txtAgrupadorEmpresa" class="field" />
-
-				<label for="txtAgrupadorTipoCuenta">Agrupador Tipo Cuenta</label>
-				<input type="text" id="txtAgrupadorTipoCuenta" class="field" />
-
-				<label for="txtAgrupadorNaturaleza">Agrupador Naturaleza</label>
-				<input type="text" id="txtAgrupadorNaturaleza" class="field" />
-
-				<section class="buttons">
-					<input type="button" id="cerrar-cuenta" name="cerrar" class="button" value="Cerrar" />
-				</section>
-			</form>
-		</div>
 
 		<div id="dialog-nuevo-agrupador" class="dialog" title="Nuevo Agrupador">
 			<form method="get" id="nuevo-agrupador" class="dialog-form">
@@ -111,10 +90,9 @@
 		<div id="cache"></div>
 
 		<script type="template" id="template-cuenta">
-			<tr id="c-<%- IdCuenta %>" data-nivel="<%- Codigo %>" data-idsup="<%- IdCtaSup %>" data-afectable="<%- Afectable%>" class="cuenta">
-				<td class="clave <%= Afectable ? 'importante' : '' %>"><%- Codigo %></td>
+			<tr id="c-<%- id_cuenta %>" data-nivel="<%- codigo %>" data-idsup="<%- id_cuenta_superior %>" data-afectable="<%- afectable %>" class="cuenta">
 				<td class="icon-cell">
-					<a class="<%= Afectable ? 'icon-checkmark-circle' : 'icon-cancel-circle' %>"></a>
+					<a class="<%= afectable ? 'icon-checkmark-circle' : 'icon-cancel-circle' %>"></a>
 				</td>
 				<td class="icon-cell">
 					<a href="" class="handle icon-plus"></a>
@@ -122,16 +100,40 @@
 				<td class="icon-cell">
 					<a href="" class="select icon-checkbox-unchecked"></a>
 				</td>
+				<td class="clave <%= afectable ? 'importante' : '' %>">
+					<a href="" title="<%- codigo %>" class="descripcion <%= afectable ? 'importante' : '' %>">
+						<%- codigo %>
+					</a>
+				</td>
 				<td>
-					<a href="" title="<%- Nombre %>" style="margin-left: <%- Nivel %>em" class="descripcion <%= Afectable ? 'importante' : '' %>"><%- Nombre %></a>
+					<a href="" title="<%- nombre %>" style="margin-left: <%- nivel %>em" class="descripcion <%= afectable ? 'importante' : '' %>"><%- nombre %></a>
 				</td>
-				<td class="proveedor<%= Afectable ? ' importante' : '' %><%= !showProveedor ? ' hidden' : '' %>" title="<%- Proveedor %>">
-					<%- Proveedor %>
+				<td class="empresa<%= afectable ? ' importante' : '' %>
+				<%= !showEmpresa ? ' hidden' : '' %>" title="<%- empresa %>">
+					<%- empresa %>
 				</td>
-				<td class="empresa<%= Afectable ? ' importante' : '' %><%= !showEmpresa ? ' hidden' : '' %>" title="<%- Empresa %>">
-					<%- Empresa %>
+				<td class="naturaleza<%= afectable ? ' importante' : '' %>
+				<%= !showNaturaleza ? ' hidden' : '' %>" title="<%- agrupador_naturaleza %>">
+					<%- agrupador_naturaleza %>
 				</td>
 			</tr>
+		</script>
+
+		<script type="template" id="template-cuenta-properties">
+			<div id="dialog-propiedades-cuenta" class="dialog" title="Propiedades de: <%- nombre %>">
+				<form method="get" class="dialog-form form-cuenta-properties">
+					
+					<label for="txtAgrupadorEmpresa">Agrupador Empresa SAO</label>
+					<input type="text" id="txtAgrupadorEmpresa" class="field" value="<%- empresa %>" />
+
+					<label for="txtAgrupadorNaturaleza">Agrupador Naturaleza</label>
+					<input type="text" id="txtAgrupadorNaturaleza" class="field" value="<%- agrupador_naturaleza %>" />
+
+					<!--<section class="buttons">
+						<input type="button" id="cerrar-cuenta" name="cerrar" class="button" value="Cerrar" />
+					</section> -->
+				</form>
+			</div>
 		</script>
 
 		<script src="inc/js/jquery-1.7.1.min.js"></script>

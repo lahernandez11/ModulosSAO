@@ -2,16 +2,18 @@ var AGRUPACION = {
 
 	insumoController: 'inc/lib/controllers/AgrupacionInsumoController.php',
 	subcontratoController: 'inc/lib/controllers/AgrupacionSubcontratoController.php',
+	gastosVariosController: 'inc/lib/controllers/AgrupacionGastosVariosController.php',
 	agrupadorController: 'inc/lib/controllers/AgrupadorInsumoController.php',
 	container: '#agrupacion',
 	dataContainer: '#conceptos',
 	currentRequest: null,
 	insumosTemplate: null,
 	subcontratosTemplate: null,
+	gastosTemplate: null,
+	subcontratosTemplate: null,
 	requestType: {
 		INSUMO: 'consulta-insumos',
 		SUBCONTRATO: 'consulta-subcontrato',
-		CONTABLE: 'consulta-contable',
 		GASTOS: 'consulta-varios'
 	},
 	
@@ -21,6 +23,7 @@ var AGRUPACION = {
 		
 		this.insumosTemplate = _.template($('#template-insumo').html());
 		this.subcontratosTemplate = _.template($('#template-subcontrato').html());
+		this.gastosTemplate = _.template($('#template-gastos').html());
 
 		$('.actions').on('click', '.button', function(event) {
 			event.preventDefault();
@@ -178,13 +181,8 @@ var AGRUPACION = {
 				action = 'getSubcontratos';
 				callback = that.renderSubcontratos;
 			break;
-			case that.requestType.CONTABLE:
-				dataURL = 'modulos/agrupacion/GetListaCuentasContables.php';
-				action = 'getCuentas';
-				callback = that.renderCuentas;
-			break;
 			case that.requestType.GASTOS:
-				dataURL = 'modulos/agrupacion/GetListaFacturasVarios.php';
+				dataURL = that.gastosVariosController;
 				action = 'getGastosVarios';
 				callback = that.renderGastos;
 			break;
@@ -213,83 +211,7 @@ var AGRUPACION = {
 				
 				callback.call(that, json.data);
 
-				if( tipo === 'cmdFacturasVarios' ) {
-					
-					var IDFactura = null;
-					
-					$.each( json.Proveedores, function() {
-						
-						content += '<div class="section">'
-								+    '<div class="section-header">'
-								+      '<span class="content-toggler">'
-								+        '<a class="title">' + this.Proveedor + '<span class="items-counter" title="Numero de facturas">(<span class="item-count">0</span>)</span></a>'
-								+      '</span>'
-								+    '</div>'
-								+    '<div class="section-content">';
-								
-								
-						$.each( this.FacturasVarios, function() {
-							
-							IDFactura = this.IDTransaccionCDC;
-							
-							content += '<div class="section">'
-									+    '<div class="section-header">'
-									+      '<span class="content-toggler">'
-									+        '<a class="title">' + this.ReferenciaFactura + '<span class="items-counter" title="Numero de subcontratos afectados por el filtro">(<span class="item-count">0</span>)</span></a>'
-									+      '</span>'
-									+    '</div>'
-									+    '<div class="section-content">'
-									+      '<table class="subcontratos">'
-									+        '<colgroup>'
-									+          '<col/>'
-									+          '<col/>'
-									+          '<col class="icon"/>'
-									+          '<col/>'
-									+          '<col class="icon"/>'
-									+          '<col/>'
-									+          '<col class="icon"/>'
-									+        '</colgroup>'
-									+        '<thead>'
-									+          '<tr>'
-									+            '<th>Referencia</th>'
-									+            '<th colspan="2">Naturaleza</th>'
-									+            '<th colspan="2">Familia</th>'
-									+            '<th colspan="2">Insumo Genérico</th>'
-									+          '</tr>'
-									+        '</thead>'
-									+        '<tbody>';
-		
-							$.each( this.ItemsFactura, function() {
-		
-								content += '<tr class="item-facturavarios" data-idtransaccion="' + IDFactura + '" data-id="' + this.IDItem + '" >'
-										+    '<td>' + this.Referencia + '</td>'
-										+    '<td>' + this.AgrupadorNaturaleza + '</td>'
-										+    '<td class="icon-cell">'
-										+      '<a href="#dropdown-naturaleza" class="dropdown-list-trigger"></a>'
-										+    '</td>'
-										+    '<td>' + this.AgrupadorFamilia + '</td>'
-										+    '<td class="icon-cell">'
-										+      '<a href="#dropdown-familia" class="dropdown-list-trigger"></a>'
-										+    '</td>'
-										+    '<td>' + this.AgrupadorInsumoGenerico + '</td>'
-										+    '<td class="icon-cell">'
-										+      '<a href="#dropdown-insumo-generico" class="dropdown-list-trigger"></a>'
-										+    '</td>'
-										+  '</tr>';
-							});
-							
-							content +=      '</tbody>'
-									+     '</table>'
-									+   '</div>'
-								    + '</div>';
-						});
-						
-						content += '  </div>'
-								+  '</div>';
-					});
-				}
-				
-				// that.cuentaFilas();
+				that.cuentaFilas();
 				that.enableToolbar();
 			} catch(e) {
 				messageConsole.displayMessage('Error: ' + e.message, 'error');
@@ -317,6 +239,17 @@ var AGRUPACION = {
 
 		for (var i = 0; i < data.Contratistas.length; i++) {
 			html += that.subcontratosTemplate(data.Contratistas[i]);
+		}
+
+		$(that.dataContainer).html(html);
+	},
+
+	renderGastos: function(data) {
+		var that = this,
+			html = '';
+
+		for (var i = 0; i < data.gastos.length; i++) {
+			html += that.gastosTemplate(data.gastos[i]);
 		}
 
 		$(that.dataContainer).html(html);
@@ -363,13 +296,10 @@ var AGRUPACION = {
 			source = AGRUPACION.subcontratoController;
 			var idContratista = parseInt(trigger.parents('tr').attr('data-idcontratista'));
 			var idSubcontrato = parseInt(trigger.parents('tr').attr('data-idsubcontrato'));
-		} else if( $parentRow.hasClass('cuenta') ) {
-			
-			source = 'modulos/agrupacion/AgrupaCuentaContable.php';
 		} else if( $parentRow.hasClass('item-facturavarios') ) {
 
-			IDTransaccionCDC = parseInt($parentRow.attr('data-idtransaccion'));
-			source = 'modulos/agrupacion/AgrupaItemFacturaVarios.php';
+			id_factura = parseInt($parentRow.attr('data-idtransaccion'));
+			source = AGRUPACION.gastosVariosController;
 		}
 		
 		$.ajax({
@@ -379,7 +309,7 @@ var AGRUPACION = {
 				  IDProyecto: that.getIDProyecto()
 				, id_empresa: idContratista
 				, id_subcontrato: idSubcontrato
-				, idTransaccion: IDTransaccionCDC
+				, id_factura: id_factura
 				, id: id
 				, id_agrupador: selectedItem.value
 				, action: 'setAgrupador'

@@ -537,7 +537,7 @@ var DROP_LIST = {
 				
 				$.each( json.options, function() {
 					
-					lista += '<li><a href="#' + this.id + '">' + this.value + '</a></li>';
+					lista += '<li><a href="#' + this.id + '">' + this.label + '</a></li>';
 				});
 				
 				lista += '</ul>';

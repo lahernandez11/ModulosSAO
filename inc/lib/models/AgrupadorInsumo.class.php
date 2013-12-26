@@ -38,7 +38,8 @@ class AgrupadorInsumo {
 		return $this->id_agrupador;
 	}
 
-	public static function getAgrupadoresInsumo(SAODBConn $conn, $descripcion = null, $tipo_agrupador = null) {
+	public static function getAgrupadoresInsumo(SAODBConn $conn, 
+		$descripcion = null, $tipo_agrupador = null) {
 
 		$tsql = "SELECT
 				    [agrupadores].[id_agrupador]
@@ -48,7 +49,8 @@ class AgrupadorInsumo {
 				WHERE
 					[id_tipo_agrupador] = ISNULL(?, [id_tipo_agrupador])
 						AND
-				    [agrupador] LIKE '%' + ISNULL(?, [agrupador]) +'%'
+				    CONCAT([agrupadores].[codigo], ' ', [agrupadores].[agrupador])
+				    LIKE '%' + ISNULL(?, CONCAT([agrupadores].[codigo], ' ', [agrupadores].[agrupador])) +'%'
 				ORDER BY
 					[agrupador]";
 

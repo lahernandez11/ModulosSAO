@@ -3,9 +3,11 @@ var App = {};
 App.AgrupacionContable = {
 
 	controller_url: 'inc/lib/controllers/AgrupacionContableController.php',
+	agrupadorInsumoController: 'inc/lib/controllers/AgrupadorInsumoController.php',
 	$table: null,
 
 	cuentaTemplate: null,
+	cuentaPropertiesTemplate: null,
 
 	init: function() {
 		var that = this;
@@ -13,6 +15,7 @@ App.AgrupacionContable = {
 		this.$table = $('#tabla-cuentas');
 
 		this.cuentaTemplate = _.template($('#template-cuenta').html());
+		this.cuentaPropertiesTemplate = _.template($('#template-cuenta-properties').html());
 
 		$('#bl-proyectos').buttonlist({
 			source: 'inc/lib/controllers/ListaProyectosController.php',
@@ -36,15 +39,6 @@ App.AgrupacionContable = {
 			that.toggleNode($(this).parents('.cuenta'));
 		});
 
-		$('#dialog-propiedades-cuenta').dialog({
-			autoOpen: false,
-			modal: true,
-			width: '550px',
-			close: function() {
-				that.desmarcaConceptos();
-			}
-		});
-
 		$('#dialog-nuevo-agrupador').dialog({
 			autoOpen: false,
 			modal: true,
@@ -54,7 +48,6 @@ App.AgrupacionContable = {
 		this.$table.on('click', '.descripcion', function(event) {
 
 			event.preventDefault();
-			// event.stopPropagation();
 			var $cuenta = $(this).parents('.cuenta');
 			that.selectNode($cuenta);
 			that.getDatosCuenta($cuenta);
@@ -65,39 +58,6 @@ App.AgrupacionContable = {
 			that.toggleMarcaConcepto($(this).parents('.cuenta'));
 		});
 
-		$("#txtAgrupadorProveedor").autocomplete({
-		    minLength: 1,
-		    source: function(request, response) {
-				request.action = 'getAgrupadoresProveedor';
-				that.requestAgrupadoresList(request, response);
-			},
-		    select: function( event, ui ) {
-		    	that.setAgrupador(ui.item, 'setAgrupadorProveedor', this);
-		    }
-		});
-
-		$("#txtAgrupadorEmpresa").autocomplete({
-		    minLength: 1,
-		    source: function(request, response) {
-				request.action = 'getAgrupadoresEmpresa';
-				that.requestAgrupadoresList(request, response);
-			},
-		    select: function( event, ui ) {
-		    	that.setAgrupador(ui.item, 'setAgrupadorEmpresa', this);
-		    }
-		});
-
-		$("#txtAgrupadorTipoCuenta").autocomplete({
-		    minLength: 1,
-		    source: function(request, response) {
-				request.action = 'getAgrupadoresTipoCuenta';
-				that.requestAgrupadoresList(request, response);
-			},
-		    select: function( event, ui ) {
-		    	that.setAgrupador(ui.item, 'setAgrupadorTipoCuenta', this);
-		    }
-		});
-
 		$('#nuevo-agrupador').on('submit', function(event) {
 			event.preventDefault();
 			that.AddCuenta();
@@ -105,10 +65,6 @@ App.AgrupacionContable = {
 
 		$('#cerrar_agrupador').on('click', function() {
 			$('#dialog-nuevo-agrupador').dialog('close');
-		});
-
-		$('#cerrar-cuenta').on('click', function() {
-			$('#dialog-propiedades-cuenta').dialog('close');
 		});
 
 		$('.col-switch').on('change', 'input', function(event){
@@ -128,26 +84,26 @@ App.AgrupacionContable = {
 		return parseInt($el.attr('id').split('-')[1]);
 	},
 
-	requestAgrupadoresList: function(request, response) {
+	requestAgrupadoresList: function(request, response, url) {
 		var that = this;
 		
 		request.IDProyecto = that.getIDProyecto();
 		var agrupadores = [];
 
-		$.getJSON( that.controller_url, request, function( data, status, xhr ) {
+		$.getJSON( url, request, function( data, status, xhr ) {
             
             if ( ! data.success ) {
             	messageConsole.displayMessage(data.message, 'error');
             } else {
-	            for( i = 0; i < data.agrupadores.length; i++ ) {
+	            for( i = 0; i < data.options.length; i++ ) {
 				   agrupadores.push({
-				   		id: data.agrupadores[i].id,
-				   		label: data.agrupadores[i].agrupador
+				   		id: data.options[i].id,
+				   		label: data.options[i].label
 				   	});
 				}
 
 				if (request.action === 'getAgrupadoresTipoCuenta') {
-					if ( data.agrupadores.length == 0) {
+					if ( data.options.length == 0) {
 						agrupadores.push({
 							id: 0,
 							label: 'Agregar - ' + request.term
@@ -164,44 +120,44 @@ App.AgrupacionContable = {
 		return $('#bl-proyectos').buttonlist('option', 'selectedItem').value;
 	},
 
-	toggleNode: function($cuenta) {
+	toggleNode: function($el) {
 		// muestra los descendientes de un cuenta
 
-		var isNodeOpen = this.isNodeOpen($cuenta);
+		var isNodeOpen = this.isNodeOpen($el);
 
-		if ( this.haveDescendants($cuenta) ) {
+		if ( this.haveDescendants($el) ) {
 			// esto se ejecuta si el cuenta tiene descendientes
 			// ya cargados, dependiendo del estado del cuenta
 			// se muestran u ocultan sus descendientes
 			if (isNodeOpen) {
-				this.hideDescendants($cuenta);
+				this.hideDescendants($el);
 			} else {
-				this.showDescendants($cuenta);
+				this.showDescendants($el);
 			}
-			this.toggleHandle($cuenta);
+			this.toggleHandle($el);
 		} else {
 			// esto se ejecuta cuando el cuenta no tiene
 			// descendientes cargados, si el nodo esta cerrado
 			// los carga y muestra
 			if (isNodeOpen) {
-				this.toggleHandle($cuenta);
+				this.toggleHandle($el);
 			} else {
-				this.loadDescendants($cuenta);
+				this.loadDescendants($el);
 			}
 		}	
 	},
 
-	getIDCuentaSup: function($cuenta) {
-		return parseInt($cuenta.attr('data-idsup'));
+	getIDCuentaSup: function($el) {
+		return parseInt($el.attr('data-idsup'));
 	},
 
-	loadDescendants: function($cuenta) {
+	loadDescendants: function($el) {
 		var that = this;
 
 		var id_cuenta = null;
 
-		if ( $cuenta )
-			id_cuenta = this.getIDCuenta($cuenta);
+		if ( $el )
+			id_cuenta = this.getIDCuenta($el);
 
 		DATA_LOADER.show();
 
@@ -218,91 +174,91 @@ App.AgrupacionContable = {
 			if ( ! data.success ) {
 				messageConsole.displayMessage(data.message, 'error');
 			} else {
-				that.renderCuentas(data.cuentas, $cuenta);
-				that.toggleHandle($cuenta);
+				that.renderCuentas(data.cuentas, $el);
+				that.toggleHandle($el);
 			}
 		})
 		.always(function(){ DATA_LOADER.hide(); });
 	},
 
-	renderCuentas: function( cuentas, $cuenta ) {
+	renderCuentas: function( cuentas, $el ) {
 
 		var html = '';
 
 		for (cuenta in cuentas) {
-			cuentas[cuenta].showProveedor = $('#proveedor').prop('checked');
 			cuentas[cuenta].showEmpresa = $('#empresa').prop('checked');
+			cuentas[cuenta].showNaturaleza = $('#naturaleza').prop('checked');
 			
 			html += this.cuentaTemplate(cuentas[cuenta]);
 		}
 
-		if ($cuenta)
-			$cuenta.after(html);
+		if ($el)
+			$el.after(html);
 		else
 			$('#tabla-cuentas tbody').html(html);
 	},
 	
-	toggleHandle: function($cuenta) {
-		if ($cuenta)
-			this.getHandle($cuenta).toggleClass('icon-minus icon-plus');
+	toggleHandle: function($el) {
+		if ($el)
+			this.getHandle($el).toggleClass('icon-minus icon-plus');
 	},
 
-	isNodeOpen: function($cuenta) {
+	isNodeOpen: function($el) {
 
-		if ( $cuenta )
-			return this.getHandle($cuenta).hasClass('icon-minus');
+		if ( $el )
+			return this.getHandle($el).hasClass('icon-minus');
 		else
 			return false;
 	},
 
-	getDescendants: function($cuenta) {
+	getDescendants: function($el) {
 		// obtiene los descendientes de un concepto (si ya estan cargados existen)
 		var that = this;
-		var IdCtaSup = this.getIDCuenta($cuenta);
+		var IdCtaSup = this.getIDCuenta($el);
 		
-		return $cuenta.nextAll().filter(function() {
+		return $el.nextAll().filter(function() {
 			return that.getIDCuentaSup($(this)) === IdCtaSup ? true : false;
 		});
 	},
 
-	haveDescendants: function($cuenta) {
+	haveDescendants: function($el) {
 		// Determina si el concepto ya tiene descendientes cargados
-		return this.getDescendants($cuenta).length;
+		return this.getDescendants($el).length;
 	},
 
-	hideDescendants: function($cuenta) {
+	hideDescendants: function($el) {
 		// oculta todos los descendientes de un cuenta
 		// y cambia su handle a + par aindicar que esta cerrado
 		var that = this;
 
-		this.getDescendants($cuenta).hide().each( function() {
+		this.getDescendants($el).hide().each( function() {
 			that.hideDescendants($(this));
 		})
 		.find('.handle').removeClass('icon-minus').addClass('icon-plus');
 	},
 
-	showDescendants: function($cuenta) {
+	showDescendants: function($el) {
 		// muestra solo los descendientes inmediatos de un cuenta
 		var that = this;
-		var IdCtaSup = this.getIDCuenta($cuenta);
+		var IdCtaSup = this.getIDCuenta($el);
 		
-		this.getDescendants($cuenta).show();
+		this.getDescendants($el).show();
 	},
 
-	toggleMarcaConcepto: function($concepto) {
-		$concepto.toggleClass('selected')
+	toggleMarcaConcepto: function($el) {
+		$el.toggleClass('selected')
 		.find('.select').toggleClass('icon-checkbox-unchecked icon-checkbox-checked');
 
-		if ($concepto.hasClass('selected'))
-			this.selectDescendants($concepto);
+		if ($el.hasClass('selected'))
+			this.selectDescendants($el);
 		else
-			this.unselectDescendants($concepto);
+			this.unselectDescendants($el);
 	},
 
-	selectDescendants: function($cuenta) {
+	selectDescendants: function($el) {
 		var that = this;
 		
-		var desc = this.getDescendants($cuenta);
+		var desc = this.getDescendants($el);
 
 		this.selectNode(desc);
 
@@ -311,10 +267,10 @@ App.AgrupacionContable = {
 		});
 	},
 
-	unselectDescendants: function($cuenta) {
+	unselectDescendants: function($el) {
 		var that = this;
 
-		var desc = this.getDescendants($cuenta);
+		var desc = this.getDescendants($el);
 
 		this.unselectNode(desc);
 
@@ -323,15 +279,15 @@ App.AgrupacionContable = {
 		});
 	},
 
-	selectNode: function($concepto) {
-		$concepto.addClass('selected')
+	selectNode: function($el) {
+		$el.addClass('selected')
 		.find('.select')
 		.removeClass('icon-checkbox-unchecked')
 		.addClass('icon-checkbox-checked');
 	},
 
-	unselectNode: function($concepto) {
-		$concepto.removeClass('selected')
+	unselectNode: function($el) {
+		$el.removeClass('selected')
 		.find('.select')
 		.removeClass('icon-checkbox-checked')
 		.addClass('icon-checkbox-unchecked');
@@ -344,15 +300,15 @@ App.AgrupacionContable = {
 		.toggleClass('icon-checkbox-checked icon-checkbox-unchecked');
 	},
 
-	getHandle: function($concepto) {
-		return $concepto.find('.handle');
+	getHandle: function($el) {
+		return $el.find('.handle');
 	},
 
 	openCuentaPropertiesDialog: function() {
 		$('#dialog-propiedades-cuenta').dialog('open');
 	},
 
-	getDatosCuenta: function($cuenta) {
+	getDatosCuenta: function($el) {
 		var that = this;
 
 		DATA_LOADER.show();
@@ -361,7 +317,7 @@ App.AgrupacionContable = {
 			url: that.controller_url,
 			data: {
 				IDProyecto: that.getIDProyecto(),
-				id_cuenta: that.getIDCuenta($cuenta),
+				id_cuenta: that.getIDCuenta($el),
 				action: 'getDatosCuenta'
 			},
 			dataType: 'json'
@@ -370,45 +326,93 @@ App.AgrupacionContable = {
 
 			if (! data.success) {
 				messageConsole.displayMessage(data.message, 'error');
-				that.unselectNode($cuenta);
+				that.unselectNode($el);
 				return;
 			}
 
-			that.fillCuentaProperties(data.cuenta);
+			that.renderCuentaProperties(data.cuenta);
 
 			that.openCuentaPropertiesDialog();
 		})
 		.always(DATA_LOADER.hide());
 	},
 
-	fillCuentaProperties: function(data) {
+	renderCuentaProperties: function(data) {
+		var that = this,
+			html = '';
+
 		data = data || {};
-
-		var title = data.Nombre;
-
+		
 		if (this.getSelected().length > 1)
-			title = 'Varias cuentas seleccionadas';
+			data.nombre =  'Varias cuentas seleccionadas';
 
-		$('#dialog-propiedades-cuenta')
-		.dialog({ title: 'Propiedades de: ' + title });
+		var html = this.cuentaPropertiesTemplate(data);
+		
+		$(html).dialog({
+			modal: true,
+			width: '550px',
+			buttons: {
+				cerrar: function() {
+					$(this).dialog('close');
+				}
+			},
+			close: function() {
+				that.desmarcaConceptos();
+				$(this).remove();
+			}
+		})
 
-		$('#txtDescripcion').val(data.Nombre);
-		$('#txtAgrupadorProveedor').val(data.Proveedor);
-		$('#txtAgrupadorEmpresa').val(data.Empresa);
-		$('#txtAgrupadorTipoCuenta').val(data.AgrupadorTipoCuenta);
+		$("#txtAgrupadorEmpresa").autocomplete({
+		    minLength: 1,
+		    source: function(request, response) {
+				request.action = 'getAgrupadoresEmpresa';
+				that.requestAgrupadoresList(request, response, that.controller_url);
+			},
+		    select: function( event, ui ) {
+		    	that.setAgrupador(ui.item, 'setAgrupadorEmpresa', this);
+		    }
+		});
+
+		$("#txtAgrupadorNaturaleza").autocomplete({
+		    minLength: 1,
+		    source: function(request, response) {
+				request.action = 'getAgrupadoresNaturaleza';
+				that.requestAgrupadoresList(request, response, that.agrupadorInsumoController);
+			},
+		    select: function( event, ui ) {
+		    	that.setAgrupador(ui.item, 'setAgrupadorNaturaleza', this);
+		    }
+		});
 	},
 
 	getSelected: function() {
 		return this.$table.find('.selected');
 	},
 
-	esAfectable: function(ix, $cuenta) {
+	esAfectable: function(ix, $el) {
 		ix = ix || 0;
 
-		if (parseInt($($cuenta).attr('data-afectable')) === 1)
+		if (parseInt($($el).attr('data-afectable')) === 1)
 			return true;
 		else
 			return false;
+	},
+
+	getSelected: function() {
+		return this.$table.find('.cuenta.selected');
+	},
+
+	getConceptosSeleccionados: function() {
+		var conceptos = [];
+
+		this.getSelected().map(function(index, domElement){
+
+			conceptos.push({
+				'id_cuenta': parseInt(this.id.split('-')[1])
+			});
+		});
+
+		return conceptos;
 	},
 
 	getCuentasSeleccionadas: function() {
@@ -475,14 +479,13 @@ App.AgrupacionContable = {
 		switch ($input[0].id) {
 
 			case 'txtAgrupadorEmpresa':
-				this.getSelected().filter(this.esAfectable).find('td:eq(6)').text($input.val());
-			break;
-
-			case 'txtAgrupadorProveedor':
 				this.getSelected().filter(this.esAfectable).find('td:eq(5)').text($input.val());
 			break;
-		}
 
+			case 'txtAgrupadorNaturaleza':
+				this.getSelected().filter(this.esAfectable).find('td:eq(6)').text($input.val());
+			break;
+		}
 	},
 
 	openAddCuentaDialog: function(request) {

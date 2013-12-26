@@ -18,9 +18,6 @@ try {
 	}
 
 	$conn = new SAO1814DBConn();
-
-	// $IDProyecto = (int) $_REQUEST['IDProyecto'];
-	// $IDObra 	= Obra::getIDObraProyecto($IDProyecto);
 	
 	switch ( $_REQUEST['action'] ) {
 
@@ -28,7 +25,7 @@ try {
 		case 'getAgrupadoresFamilia':
 		case 'getAgrupadoresGenerico':
 
-			// $descripcion = $_GET['term'];
+			$descripcion = $_GET['term'];
 			$data['options'] = array();
 			$tipo = null;
 
@@ -47,15 +44,14 @@ try {
 			}
 
 			$agrupadores = AgrupadorInsumo::getAgrupadoresInsumo(
-				$conn, null, $tipo);
+				$conn, $descripcion, $tipo);
 
 			foreach ($agrupadores as $agrupador) {
 				$data['options'][] = array(
 					'id' => $agrupador->id_agrupador,
-					'value' => $agrupador->agrupador,
+					'label' => $agrupador->agrupador,
 				);
 			}
-
 			break;
 
 		default:
