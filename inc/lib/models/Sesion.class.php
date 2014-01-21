@@ -12,7 +12,9 @@ abstract class Sesion {
 	}
 */
 	public static function startSesion() {
-		session_start();
+		if ( session_status() === PHP_SESSION_NONE ) {
+			session_start();
+		}
 	}
 
 	public static function createSesion( $IDUsuario, $nombreCuenta, $nombreUsuario, $appName ) {
