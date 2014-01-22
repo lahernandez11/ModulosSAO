@@ -57,8 +57,6 @@ var AGRUPACION = {
 			}
 		});
 
-// console.log($('#bl-proyectos').buttonlist('option', 'selectedItem').extra.source);
-		
 		$(that.dataContainer).click( function(event) {
 			event.preventDefault();
 

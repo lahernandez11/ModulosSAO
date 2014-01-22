@@ -4,21 +4,17 @@ require_once 'db/SAODBConn.class.php';
 class CuentaContable {
 
 	private $conn = null;
-	private $id_obra = null;
+	private $obra = null;
 	private $id_cuenta = null;
 
-	public function __construct( SAODBConn $conn, $id_obra, $id_cuenta ) {
+	public function __construct( Obra $obra, $id_cuenta ) {
 		
-		if ( ! is_int($id_obra) || ! $id_obra > 0 ) {
-			throw new Exception("El identificador de obra no es correcto.");
-		} else {
-			$this->conn = $conn;
-			$this->id_obra = $id_obra;
-			$this->id_cuenta = $id_cuenta;
-		}
+		$this->conn = $obra->getConn();
+		$this->obra = $obra;
+		$this->id_cuenta = $id_cuenta;
 	}
 
-	public static function getCuentas( SAODBConn $conn, $id_obra, $id_cuenta ) {
+	public static function getCuentas( Obra $obra, $id_cuenta ) {
 
 		$tsql = "WITH CTE_CUENTAS([id_obra], [id_cuenta], [id_cuenta_superior], [afectable], [codigo], [nombre], [nivel])
 				AS
@@ -101,18 +97,18 @@ class CuentaContable {
 		
 		$params = array();
 
-		if ($id_cuenta === 0) {
+		if ( $id_cuenta === 0 ) {
 			$tsql .= " IS NULL";
-			$params = array( $id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT );
+			$params = array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT );
 		} else {
 			$tsql .= " = ?";
 		    $params = array(
-		        array( $id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 		        array( $id_cuenta, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 		    );
 		}
 
-	    $cuentas = $conn->executeQuery($tsql, $params);
+	    $cuentas = $obra->getConn()->executeQuery($tsql, $params);
 
 	    return $cuentas;
 	}
@@ -185,16 +181,16 @@ class CuentaContable {
 					[cuenta_contable].[id_cuenta] = ?";
 
 		$params = array(
-	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $this->id_cuenta, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-		$data = $this->conn->executeQuery($tsql, $params);
+		$data = $this->conn->executeQuery( $tsql, $params );
 
 		return $data[0];
 	}
 
-	private static function getCodigo(SAODBConn $conn, $id_obra, $id_cuenta) {
+	private static function getCodigo( Obra $obra, $id_cuenta ) {
 
 		$tsql = "SELECT
 					[codigo]
@@ -206,11 +202,11 @@ class CuentaContable {
 			        [id_cuenta] = ?";
 
 		$params = array(
-	        array( $id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_cuenta, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $cuenta = $conn->executeQuery($tsql, $params);
+	    $cuenta = $obra->getConn()->executeQuery($tsql, $params);
 
 	    return $cuenta[0]->codigo;
 	}
@@ -229,13 +225,13 @@ class CuentaContable {
 			        [afectable] = 1";
 
 		$params = array(
-	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $this->id_cuenta, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $cuenta = $this->conn->executeQuery($tsql, $params);
+	    $cuenta = $this->conn->executeQuery( $tsql, $params );
 
-		if (count($cuenta) > 0)
+		if ( count( $cuenta ) > 0 )
 	    	return true;
 	    else
 	    	return false;
@@ -311,28 +307,28 @@ class CuentaContable {
 
 			$params = array(
 		        array( $this->id_cuenta, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-		        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 		        array( $this->id_cuenta, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 		    );
 
-		    return $this->conn->executeQuery($tsql, $params);
+		    return $this->conn->executeQuery( $tsql, $params );
 	}
 
-	public function setAgrupador($id_agrupador, $method) {
+	public function setAgrupador( $id_agrupador, $method ) {
 
-		if ($this->esAfectable()) {
-			$this->{$method}($this->id_cuenta, $id_agrupador);
+		if ( $this->esAfectable() ) {
+			$this->{$method}( $this->id_cuenta, $id_agrupador );
 		} else {
 
 			$afectables = $this->getCuentasDescendientesAfectables();
 
-			foreach ($afectables as $cuenta) {
-				$this->{$method}($cuenta->id_cuenta, $id_agrupador);
+			foreach ( $afectables as $cuenta ) {
+				$this->{$method}( $cuenta->id_cuenta, $id_agrupador );
 			}
 		}
 	}
 
-	private function setAgrupadorEmpresa($id_cuenta, $id_agrupador) {
+	private function setAgrupadorEmpresa( $id_cuenta, $id_agrupador ) {
 
 		if (!$this->existeRegistroAgrupacion($id_cuenta))
 			$this->creaRegistroAgrupacion($id_cuenta);
@@ -347,17 +343,17 @@ class CuentaContable {
 
 	    $params = array(
 	        array( $id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_cuenta, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
 	    $this->conn->executeQuery($tsql, $params);
 	}
 
-	private function setAgrupadorNaturaleza($id_cuenta, $id_agrupador) {
+	private function setAgrupadorNaturaleza( $id_cuenta, $id_agrupador ) {
 
-		if (!$this->existeRegistroAgrupacion($id_cuenta))
-			$this->creaRegistroAgrupacion($id_cuenta);
+		if ( ! $this->existeRegistroAgrupacion( $id_cuenta ) )
+			$this->creaRegistroAgrupacion( $id_cuenta );
 
 		$tsql = "UPDATE [Agrupacion].[agrupacion_cuenta_contable]
 				 SET
@@ -369,14 +365,14 @@ class CuentaContable {
 
 	    $params = array(
 	        array( $id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_cuenta, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $this->conn->executeQuery($tsql, $params);
+	    $this->conn->executeQuery( $tsql, $params );
 	}
 
-	private function existeRegistroAgrupacion($id_cuenta) {
+	private function existeRegistroAgrupacion( $id_cuenta ) {
 
 		$tsql = "SELECT
 					1
@@ -388,18 +384,18 @@ class CuentaContable {
 					[id_cuenta] = ?";
 
 	    $params = array(
-	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_cuenta, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $cuenta = $this->conn->executeQuery($tsql, $params);
+	    $cuenta = $this->conn->executeQuery( $tsql, $params );
 
-		return count($cuenta) > 0 ? true : false;
+		return count( $cuenta ) > 0 ? true : false;
 	}
 
-	private function creaRegistroAgrupacion($id_cuenta) {
+	private function creaRegistroAgrupacion( $id_cuenta ) {
 
-		$codigo = self::getCodigo($this->conn, $this->id_obra, $id_cuenta);
+		$codigo = self::getCodigo( $this->obra, $id_cuenta );
 
 		$tsql = "INSERT INTO [Agrupacion].[agrupacion_cuenta_contable]
 				(
@@ -410,9 +406,9 @@ class CuentaContable {
 				VALUES
 				( ?, ?, ? )";
 
-	    $params = array($this->id_obra, $id_cuenta, $codigo);
+	    $params = array( $this->obra->getId(), $id_cuenta, $codigo );
 
-	    $this->conn->executeQuery($tsql, $params);
+	    $this->conn->executeQuery( $tsql, $params );
 	}
 
 	// private function setAgrupadorTipoCuenta($id_cuenta, $id_agrupador) {

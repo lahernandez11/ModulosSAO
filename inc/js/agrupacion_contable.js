@@ -18,7 +18,7 @@ App.AgrupacionContable = {
 		this.cuentaPropertiesTemplate = _.template($('#template-cuenta-properties').html());
 
 		$('#bl-proyectos').buttonlist({
-			source: 'inc/lib/controllers/ListaProyectosController.php',
+			source: 'inc/lib/controllers/ListaObrasController.php',
 			data: {action: 'getListaProyectos'},
 			onSelect: function( selectedItem, listItem ) {
 				that.loadDescendants();
@@ -28,8 +28,11 @@ App.AgrupacionContable = {
 			},
 			onCreateListItem: function() {
 				return {
-					id: this.IDProyecto,
-					value: this.NombreProyecto
+					id: this.id,
+					value: this.nombre,
+					extra: {
+						source: this.source_id
+					}
 				}
 			}
 		});
@@ -87,7 +90,8 @@ App.AgrupacionContable = {
 	requestAgrupadoresList: function(request, response, url) {
 		var that = this;
 		
-		request.IDProyecto = that.getIDProyecto();
+		request.id_obra = that.getIDProyecto();
+		request.base_datos = that.getBaseDatos();
 		var agrupadores = [];
 
 		$.getJSON( url, request, function( data, status, xhr ) {
@@ -118,6 +122,10 @@ App.AgrupacionContable = {
 
 	getIDProyecto: function() {
 		return $('#bl-proyectos').buttonlist('option', 'selectedItem').value;
+	},
+
+	getBaseDatos: function() {
+		return $('#bl-proyectos').buttonlist('option', 'selectedItem').extra.source
 	},
 
 	toggleNode: function($el) {
@@ -164,7 +172,8 @@ App.AgrupacionContable = {
 		$.ajax({
 			url: that.controller_url,
 			data: {
-				'IDProyecto': that.getIDProyecto(),
+				'id_obra': that.getIDProyecto(),
+				'base_datos': that.getBaseDatos(),
 				'action': 'getCuentas',
 				id_cuenta: id_cuenta
 			},
@@ -316,7 +325,8 @@ App.AgrupacionContable = {
 		$.ajax({
 			url: that.controller_url,
 			data: {
-				IDProyecto: that.getIDProyecto(),
+				id_obra: that.getIDProyecto(),
+				base_datos: that.getBaseDatos(),
 				id_cuenta: that.getIDCuenta($el),
 				action: 'getDatosCuenta'
 			},
@@ -431,7 +441,8 @@ App.AgrupacionContable = {
 	setAgrupador: function(item, method, input) {
 
 		var request = {
-			IDProyecto: this.getIDProyecto(),
+			id_obra: this.getIDProyecto(),
+			base_datos: this.getBaseDatos(),
 			cuentas: this.getCuentasSeleccionadas(),
 			callback: this.requestSetCuenta,
 			action: method,
@@ -456,7 +467,8 @@ App.AgrupacionContable = {
 			type: 'POST',
 			url: this.controller_url,
 			data: {
-				IDProyecto: request.IDProyecto,
+				id_obra: request.id_obra,
+				base_datos: request.base_datos,
 				cuentas: request.cuentas,
 				id_agrupador: request.id_agrupador,
 				action: request.action	
@@ -517,7 +529,8 @@ App.AgrupacionContable = {
 			type: 'POST',
 			url: that.controller_url,
 			data: {
-				IDProyecto: request.IDProyecto,
+				id_obra: request.id_obra,
+				base_datos: request.base_datos,
 				clave: clave,
 				descripcion: descripcion,
 				action: action
