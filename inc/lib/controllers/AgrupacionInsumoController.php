@@ -2,7 +2,7 @@
 require_once 'setPath.php';
 require_once 'models/Sesion.class.php';
 require_once 'models/Obra.class.php';
-require_once 'db/SAO1814DBConn.class.php';
+require_once 'db/SAODBConnFactory.class.php';
 require_once 'models/Material.class.php';
 require_once 'models/AgrupadorInsumo.class.php';
 require_once 'models/Util.class.php';
@@ -19,39 +19,36 @@ try {
 		throw new Exception("No fue definida una acción");
 	}
 
-	$conn = new SAO1814DBConn();
-
-	$IDProyecto = (int) $_REQUEST['IDProyecto'];
-	$IDObra 	= Obra::getIDObraProyecto($IDProyecto);
-	
 	switch ( $_REQUEST['action'] ) {
 
 		case 'getMateriales':
-			$id_cuenta = (int) $_GET['id_cuenta'];
+			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
 
+			$obra = new Obra( $conn,  (int) $_GET['id_obra'] );
 			
 			$data['data'] = array();
-			$materiales = Material::getMaterialesObra($IDObra, $conn);
+
+			$materiales = Material::getMaterialesObra( $obra );
 
 			$ultimaFamilia = null;
 			$indexFamilia = null;
 
 			$counter = 0;
-			foreach( $materiales as $material ) {
+			foreach ( $materiales as $material ) {
 
-				if( $material->familia !== $ultimaFamilia ) {
+				if ( $material->familia !== $ultimaFamilia ) {
 					
 					$data['data']['Familias'][] =
 						array(
 							  'idFamilia' => $material->id_familia
 							, 'Familia'   => $material->familia
-							, 'NumInsumosFamilia' => 0
+							, 'NumInsumos' => 0
 							, 'Insumos'   => array()
 						);
 
 					$ultimaFamilia = $material->familia;
 					
-					$indexFamilia = count($data['data']['Familias']) - 1;
+					$indexFamilia = count( $data['data']['Familias'] ) - 1;
 				}
 
 				$data['data']['Familias'][$indexFamilia]['Insumos'][] = 
@@ -75,14 +72,16 @@ try {
 			break;
 
 		case 'setAgrupador':
-			
+			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
+			$obra = new Obra( $conn, (int) $_POST['id_obra'] );
+
 			$id_agrupador = $_POST['id_agrupador'];
 			$id_material = $_POST['id'];
 
-			$material = new Material($conn, $id_material);
-			$agrupador = new AgrupadorInsumo($conn, $id_agrupador);
+			$material = new Material( $conn, $id_material );
+			$agrupador = new AgrupadorInsumo( $conn, $id_agrupador );
 			
-			$material->setAgrupador($IDObra, $agrupador);
+			$material->setAgrupador( $obra, $agrupador );
 
 			break;
 

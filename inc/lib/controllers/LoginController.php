@@ -1,39 +1,34 @@
 <?php
 require_once 'setPath.php';
+require_once 'models/App.class.php';
+require_once 'models/Usuario.class.php';
 require_once 'db/ModulosSAOConn.class.php';
-require_once 'models/ModulosSAO.class.php';
 
 $data['success'] = true;
 $data['message'] = null;
 
 try {
 
-	if ( ! isset($_GET['action']) ) {
-		throw new Exception("No fue definida una acción");
-	}
-
 	switch ( $_GET['action'] ) {
 
 		case 'logueaUsuario':
 
-			$MSAOConn = new ModulosSAOConn();
+			$username = $_GET['usr'];
+			$pwd 	  = $_GET['pwd'];
 
-			$cuentaUsuario = $_GET['usr'];
-			$password = $_GET['pwd'];
+			$usuario = new Usuario( $username );
 
-			ModulosSAO::logueaUsuario( $cuentaUsuario, $password, $MSAOConn );
-
-			$data['sess'] = array(
-				  'uid'   => Sesion::getIDUsuarioSesion()
-				, 'uName' => Sesion::getNombreUsuarioSesion()
-			);
+			App::logueaUsuario( $usuario, $pwd );
 
 			break;
 
 		case 'terminaSesion':
 
-			ModulosSAO::finalizaSesion();
+			App::finalizaSesion();
 			break;
+
+		default:
+			throw new Exception("No fue definida una acción");
 	}
 } catch( Exception $e ) {
 

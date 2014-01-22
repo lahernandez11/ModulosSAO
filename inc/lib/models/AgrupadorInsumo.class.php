@@ -11,7 +11,7 @@ class AgrupadorInsumo {
 	private $id_agrupador = null;
 	private $conn = null;
 
-	public function __construct(SAODBConn $conn, $id_agrupador) {
+	public function __construct( SAODBConn $conn, $id_agrupador ) {
 		$this->conn = $conn;
 		$this->id_agrupador = $id_agrupador;
 	}

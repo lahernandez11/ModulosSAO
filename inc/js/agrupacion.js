@@ -28,7 +28,7 @@ var AGRUPACION = {
 		$('.actions').on('click', '.button', function(event) {
 			event.preventDefault();
 
-			if ( !that.getIDProyecto() ){
+			if ( ! that.getIDProyecto() ){
 				messageConsole.displayMessage('Debe seleccionar un proyecto.', 'info');
 			} else {
 				that.clearDataContainer();
@@ -38,7 +38,7 @@ var AGRUPACION = {
 		
 		// Inicializa la lista de proyectos
 		$('#bl-proyectos').buttonlist({
-			source: 'inc/lib/controllers/ListaProyectosController.php',
+			source: 'inc/lib/controllers/ListaObrasController.php',
 			data: {action: 'getListaProyectos'},
 			onSelect: function( selectedItem, listItem ) {
 				that.clearDataContainer();
@@ -48,11 +48,16 @@ var AGRUPACION = {
 			},
 			onCreateListItem: function() {
 				return {
-					id: this.IDProyecto,
-					value: this.NombreProyecto
+					id: this.id,
+					value: this.nombre,
+					extra: {
+						source: this.source_id
+					}
 				}
 			}
 		});
+
+// console.log($('#bl-proyectos').buttonlist('option', 'selectedItem').extra.source);
 		
 		$(that.dataContainer).click( function(event) {
 			event.preventDefault();
@@ -97,7 +102,7 @@ var AGRUPACION = {
 				}
 				
 				DROP_LIST.onSelect = that.asignaAgrupador;
-				DROP_LIST.data = {action: action};
+				DROP_LIST.data = {action: action, term: ''};
 				DROP_LIST.listContainer = listContainer;
 				DROP_LIST.source = source;
 				DROP_LIST.show(event);
@@ -158,6 +163,10 @@ var AGRUPACION = {
 	getIDProyecto: function() {
 		return $('#bl-proyectos').buttonlist('option', 'selectedItem').value;
 	},
+
+	getBaseDatos: function() {
+		return $('#bl-proyectos').buttonlist('option', 'selectedItem').extra.source
+	},
 	
 	loadData: function(tipo) {
 		
@@ -192,7 +201,8 @@ var AGRUPACION = {
 		$.ajax({
 			url: dataURL,
 			data: {
-				IDProyecto: that.getIDProyecto(),
+				id_obra: that.getIDProyecto(),
+				base_datos: $('#bl-proyectos').buttonlist('option', 'selectedItem').extra.source,
 				action: action
 			},
 			dataType: 'json'
@@ -226,8 +236,8 @@ var AGRUPACION = {
 		var that = this,
 			html = '';
 
-		for (var i = 0; i < data.Familias.length; i++) {
-			html += that.insumosTemplate(data.Familias[i]);
+		for ( var i = 0; i < data.Familias.length; i++ ) {
+			html += that.insumosTemplate( data.Familias[i] );
 		}
 
 		$(that.dataContainer).html(html);
@@ -277,7 +287,7 @@ var AGRUPACION = {
 		});
 	},
 	
-	asignaAgrupador: function(selectedItem, trigger) {
+	asignaAgrupador: function( selectedItem, trigger ) {
 		
 		var that = AGRUPACION;
 		
@@ -286,40 +296,39 @@ var AGRUPACION = {
 		$parentRow = trigger.parents('tr');
 		
 		var id = parseInt(trigger.parents('tr').attr('data-id'))
-			, IDTransaccionCDC;
-		
-		if( $parentRow.hasClass('insumo') ) {
-			
+			, IDTransaccionCDC
+			request = {
+				id_obra: that.getIDProyecto(),
+				base_datos: that.getBaseDatos(),
+				id: id,
+				id_agrupador: selectedItem.value,
+				action: 'setAgrupador'
+			};
+
+		if ( $parentRow.hasClass('insumo') ) {
 			source = AGRUPACION.insumoController;
-		} else if( $parentRow.hasClass('actividad') ) {
+
+		} else if ( $parentRow.hasClass('actividad') ) {
 			
 			source = AGRUPACION.subcontratoController;
-			var idContratista = parseInt(trigger.parents('tr').attr('data-idcontratista'));
-			var idSubcontrato = parseInt(trigger.parents('tr').attr('data-idsubcontrato'));
+			request.id_empresa = parseInt(trigger.parents('tr').attr('data-idcontratista'));
+			request.id_subcontrato = parseInt(trigger.parents('tr').attr('data-idsubcontrato'));
 		} else if( $parentRow.hasClass('item-facturavarios') ) {
 
-			id_factura = parseInt($parentRow.attr('data-idtransaccion'));
+			request.id_factura = parseInt($parentRow.attr('data-idtransaccion'));
 			source = AGRUPACION.gastosVariosController;
 		}
 		
 		$.ajax({
 			type: 'POST',
 			url: source,
-			data: {
-				  IDProyecto: that.getIDProyecto()
-				, id_empresa: idContratista
-				, id_subcontrato: idSubcontrato
-				, id_factura: id_factura
-				, id: id
-				, id_agrupador: selectedItem.value
-				, action: 'setAgrupador'
-			},
+			data: request,
 			dataType: 'json'
-		}).success( function(json) {
+		}).success( function( data ) {
 			try {
-				if (!json.success) {
+				if ( ! data.success) {
 					
-					messageConsole.displayMessage(json.message, 'error');
+					messageConsole.displayMessage(data.message, 'error');
 					return false;
 				}
 				
@@ -352,7 +361,6 @@ var AGRUPACION = {
 	},
 	
 	clearDataContainer: function() {
-		
 		$(this.dataContainer).empty();
 	}
 }

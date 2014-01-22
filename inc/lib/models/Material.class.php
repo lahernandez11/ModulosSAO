@@ -1,4 +1,6 @@
 <?php
+require_once 'models/Obra.class.php';
+
 class Material {
 
 	const TIPO_MATERIAL = 1;
@@ -8,14 +10,14 @@ class Material {
 	const TIPO_MAQUINARIA = 8;
 
 	private $conn = null;
-	private $id_material = null;
+	private $id = null;
 
-	public function __construct(SAODBConn $conn, $id_material) {
+	public function __construct( SAODBConn $conn, $id_material ) {
 		$this->conn = $conn;
-		$this->id_material = $id_material;
+		$this->id = $id_material;
 	}
 
-	private function existeRegistroAgrupacion($id_obra) {
+	private function existeRegistroAgrupacion( $id_obra ) {
 
 		$tsql = "SELECT 1
 				 FROM [Agrupacion].[agrupacion_insumos]
@@ -26,18 +28,18 @@ class Material {
 
 	    $params = array(
 	        array( $id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id_material, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array( $this->id, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $res = $this->conn->executeQuery($tsql, $params);
+	    $res = $this->conn->executeQuery( $tsql, $params );
 
-	    if (count($res) > 0)
+	    if ( count( $res ) > 0 )
 	    	return true;
 	    else
 	    	return false;
 	}
 
-	private function creaRegistroAgrupacion($id_obra) {
+	private function creaRegistroAgrupacion( $id_obra ) {
 
 		$tsql = "INSERT INTO [Agrupacion].[agrupacion_insumos]
 				(
@@ -49,20 +51,20 @@ class Material {
 
 	    $params = array(
 	        array( $id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id_material, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array( $this->id, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
 	    $this->conn->executeQuery($tsql, $params);
 	}
 
-	public function setAgrupador($id_obra, AgrupadorInsumo $agrupador) {
+	public function setAgrupador( Obra $obra, AgrupadorInsumo $agrupador ) {
 
-		if (! $this->existeRegistroAgrupacion($id_obra))
-			$this->creaRegistroAgrupacion($id_obra);
+		if ( ! $this->existeRegistroAgrupacion( $obra->getId() ) )
+			$this->creaRegistroAgrupacion( $obra->getId() );
 
 		$field = '';
 
-		switch ($agrupador->getTipoAgrupador()) {
+		switch ( $agrupador->getTipoAgrupador() ) {
 			case AgrupadorInsumo::TIPO_NATURALEZA:
 				$field = AgrupadorInsumo::FIELD_NATURALEZA;
 				break;
@@ -86,14 +88,14 @@ class Material {
 
 	    $params = array(
 	        array( $agrupador->getIDAgrupador(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id_material, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->id, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $this->conn->executeQuery($tsql, $params);
+	    $this->conn->executeQuery( $tsql, $params );
 	}
 
-	public static function getMaterialesObra( $id_obra, SAODBConn $conn ) {
+	public static function getMaterialesObra( Obra $obra ) {
 
 		$tsql = "SELECT
 				    [id_obra]
@@ -119,10 +121,10 @@ class Material {
 					[material]";
 
 		$params = array(
-			array( $id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+			array( $obra->getid(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 		);
 
-		$data = $conn->executeSP($tsql, $params);
+		$data = $obra->getConn()->executeSP( $tsql, $params );
 
 		return $data;
 	}

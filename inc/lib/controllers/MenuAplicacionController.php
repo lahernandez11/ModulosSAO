@@ -1,7 +1,6 @@
 <?php
 require_once 'setPath.php';
-require_once 'db/ModulosSAOConn.class.php';
-require_once 'models/ModulosSAO.class.php';
+require_once 'models/App.class.php';
 
 $data['success'] = true;
 $data['message'] = null;
@@ -18,17 +17,15 @@ try {
 
 		case 'getMenu':
 
-			$MSAOConn = new ModulosSAOConn();
-			
 			$data['menu'] = null;
 
-			$menu = ModulosSAO::getMenu( $MSAOConn );
+			$menu = App::getMenu();
 
 			$nivelAnterior = null;
 
 			foreach ($menu as $nodo) {
 
-				if( $nodo->NodoNivel > $nivelAnterior && $nodo->NodoNivel !== 1) {
+				if( $nodo->NodoNivel > $nivelAnterior && $nodo->NodoNivel !== 1 ) {
 					$data['menu'] .= '<ul>';
 				}
 
@@ -44,7 +41,7 @@ try {
 				$direccion = $nodo->Direccion;
 				// $icono = 'img/app/nav-icons/'.$nodo->NombreIcono;
 				
-				if( $nodo->EsSubmenu == 0 || strlen($direccion) > 0 )
+				if( $nodo->EsSubmenu == 0 || strlen( $direccion ) > 0 )
 					$direccion = ' href="'.$direccion.'"';
 				else
 					$direccion = '';
@@ -64,12 +61,10 @@ try {
 			if( $nivelAnterior !== 1 )
 				$data['menu'] .= '</ul>';
 
-			unset( $MSAOConn );
 			break;
 	}
 } catch( Exception $e ) {
 
-	unset( $MSAOConn );
 	$data['success'] = false;
 	$data['message'] = $e->getMessage();
 }

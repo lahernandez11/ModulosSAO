@@ -1,5 +1,5 @@
 <?php
-require_once 'db/DBConf.class.php';
+require_once 'DBConf.class.php';
 
 /**
 * Clase de configuracion para realizar una conexion al
@@ -24,36 +24,34 @@ class SQLSrvDBConf extends DBConf {
 	}
 
 	public function getAppName() {
-
 		return $this->appName;
 	}
 
 	public function getConnectionInfo() {
-
 		return $this->connectionInfo;
-	}
-
-	public function __toString() {
-
-		$connectionString  = parent::__toString();
-
-		$connectionString .= "APP={$this->appName};"
-						  ."ReturnDatesAsStrings=".$this->connectionInfo["ReturnDatesAsStrings"].";"
-						  ."CharacterSet=".$this->connectionInfo["CharacterSet"];
-
-		return $connectionString;
 	}
 
 	private function setConnectionInfo() {
 
 		sqlsrv_configure("WarningsReturnAsErrors", 0);
 
-		$this->connectionInfo["UID"] 	  			  = $this->getDBUser();
-		$this->connectionInfo["PWD"] 	  			  = $this->getUserPassword();
+		$this->connectionInfo["UID"] 	  			  = $this->getUser();
+		$this->connectionInfo["PWD"] 	  			  = $this->getPwd();
 		$this->connectionInfo["Database"] 			  = $this->getDBName();
-		$this->connectionInfo["APP"] 	  			  = $this->appName;
+		$this->connectionInfo["APP"] 	  			  = $this->getAppName();
 		$this->connectionInfo["ReturnDatesAsStrings"] = "1";
 		$this->connectionInfo["CharacterSet"] 		  = "UTF-8";
+	}
+	
+	public function __toString() {
+		
+		$conf  = parent::__toString();
+
+		$conf .= "APP={$this->getAppName()};\n"
+			  ."ReturnDatesAsStrings=".$this->connectionInfo["ReturnDatesAsStrings"].";\n"
+			  ."CharacterSet=".$this->connectionInfo["CharacterSet"];
+
+		return $conf;
 	}
 }
 ?>

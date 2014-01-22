@@ -1,7 +1,8 @@
 <?php
+require_once 'db/SAODBConn.class.php';
 require_once 'db/ModulosSAOConn.class.php';
 
-abstract class Obra {
+class Obra {
 	
 	private $id;
 	private $nombre;
@@ -11,7 +12,7 @@ abstract class Obra {
 	private $id_moneda;
 	private $conn;
 
-	public function __construct(SAODBConn $conn, $id_obra) {
+	public function __construct( SAODBConn $conn, $id_obra ) {
 		$this->conn = $conn;
 		$this->id = $id_obra;
 		$this->init();
@@ -21,7 +22,7 @@ abstract class Obra {
 
 		$tsql = "SELECT
 					  [id_obra]
-					, [nombre]
+					, IIF( LEN([nombre_publico]) = 0, [nombre], [nombre_publico]) as [nombre]
 					, [nombre_publico]
 					, [tipo_obra]
 					, [fecha_inicial]
@@ -32,14 +33,14 @@ abstract class Obra {
 				WHERE
 					[obras].[id_obra] = ?";
 
-		$params = array($this->id);
+		$params = array( $this->id );
 
-		$data = $this->conn->executeQuery($tsql, $params);
+		$data = $this->conn->executeQuery( $tsql, $params );
 
-		if (count($data) < 1) {
+		if ( count( $data ) < 1 ) {
 			throw new Exception("No se encontró la obra.");
 		} else {
-			$this->nombre 		 = $data[0]->nombre_publico;
+			$this->nombre 		 = $data[0]->nombre;
 			$this->tipo_obra 	 = $data[0]->tipo_obra;
 			$this->fecha_inicial = $data[0]->fecha_inicial;
 			$this->fecha_final 	 = $data[0]->fecha_final;
@@ -49,6 +50,14 @@ abstract class Obra {
 
 	public function getId() {
 		return $this->id;
+	}
+
+	public function getConn() {
+		return $this->conn;
+	}
+
+	public function getDBName() {
+		return $this->conn->dbConf->getDBName();
 	}
 
 	public function getSourceId() {
@@ -79,32 +88,32 @@ abstract class Obra {
 		return $this->id_moneda;
 	}
 
-	public static function getIDObraProyecto( $IDProyecto, $IDTipoBaseDatos = 1 ) {
+	// public static function getIDObraProyecto( $IDProyecto, $IDTipoBaseDatos = 1 ) {
 
-		$conn = new ModulosSAOConn();
+	// 	$conn = new ModulosSAOConn();
 
-		$tsql = "SELECT
-					[idProyectoUnificado]
-				FROM
-					[Proyectos].[vwListaProyectosUnificados]
-				WHERE
-					[idProyecto] = ?
-						AND
-					[idTipoSistemaOrigen] = 1
-						AND
-					[idTipoBaseDatos] = ?";
+	// 	$tsql = "SELECT
+	// 				[idProyectoUnificado]
+	// 			FROM
+	// 				[Proyectos].[vwListaProyectosUnificados]
+	// 			WHERE
+	// 				[idProyecto] = ?
+	// 					AND
+	// 				[idTipoSistemaOrigen] = 1
+	// 					AND
+	// 				[idTipoBaseDatos] = ?";
 
-		$params = array(
-			array($IDProyecto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-			array($IDTipoBaseDatos, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
-		);
+	// 	$params = array(
+	// 		array($IDProyecto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+	// 		array($IDTipoBaseDatos, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
+	// 	);
 
-		$rsObra = $conn->executeQuery( $tsql, $params );
+	// 	$rsObra = $conn->executeQuery( $tsql, $params );
 
-		$IDObra = $rsObra[0]->idProyectoUnificado;
+	// 	$IDObra = $rsObra[0]->idProyectoUnificado;
 		
-		return $IDObra;
-	}
+	// 	return $IDObra;
+	// }
 
 	public static function getFoliosTransaccion( $IDObra, $tipoTransaccion, SAODBConn $conn) {
 
@@ -139,14 +148,44 @@ abstract class Obra {
 		}
 	}
 
+	public function getProyecto() {
+
+		$conn = ModulosSAOConn::getInstance();
+
+		$tsql = "SELECT
+					[UnificacionProyectoObra].[IDProyecto]
+				FROM
+					[dbo].[UnificacionProyectoObra]
+				INNER JOIN
+					[BaseDatosObra]
+					ON
+						[UnificacionProyectoObra].[IDBaseDatos] = [BaseDatosObra].[IDBaseDatos]
+				WHERE
+					[BaseDatosObra].[BaseDatos] = ?
+						AND
+				    [UnificacionProyectoObra].[id_obra] = ?";
+
+		$params = array( $this->getDBName(), $this->getId() );
+
+		$data = $conn->executeQuery( $tsql, $params );
+
+		if ( count( $data ) < 1 ) {
+			throw new Exception( "La obra aun no esta relacionada con un proyecto." );
+		} else {
+			return new Proyecto( $data[0]->IDProyecto );
+		}
+	}
+
 	public function __toString() {
 		$obra = "id_obra:{$this->id};\n"
 			  . "nombre:{$this->nombre};\n"
 			  . "tipo_obra:{$this->tipo_obra}\n"
-			  . "source_id:{$this->getSourceId}\n"
-			  . "source_name:{$this->getSourceName}";
+			  . "source_id:{$this->getSourceId()}\n"
+			  . "source_name:{$this->getSourceName()}";
 
 		return $obra;
 	}
 }
+
+class ObraNoAsociadaProyectoException extends Exception {}
 ?>

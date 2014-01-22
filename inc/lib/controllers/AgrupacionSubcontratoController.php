@@ -2,7 +2,7 @@
 require_once 'setPath.php';
 require_once 'models/Sesion.class.php';
 require_once 'models/Obra.class.php';
-require_once 'db/SAO1814DBConn.class.php';
+require_once 'db/SAODBConnFactory.class.php';
 require_once 'models/Subcontrato.class.php';
 require_once 'models/AgrupadorInsumo.class.php';
 require_once 'models/Util.class.php';
@@ -15,27 +15,25 @@ try {
 
 	Sesion::validaSesionAsincrona();
 
-	if ( ! isset($_REQUEST['action']) ) {
+	if ( ! isset( $_REQUEST['action'] ) ) {
 		throw new Exception("No fue definida una acción");
 	}
-
-	$conn = new SAO1814DBConn();
-
-	$IDProyecto = (int) $_REQUEST['IDProyecto'];
-	$IDObra 	= Obra::getIDObraProyecto($IDProyecto);
 	
 	switch ( $_REQUEST['action'] ) {
 
 		case 'getSubcontratos':
+			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
+			$obra = new Obra( $conn,  (int) $_GET['id_obra'] );
+
 			$data['data'] = array();
-			$datos = Subcontrato::getSubcontratosPorContratista($conn, $IDObra);
+			$datos = Subcontrato::getSubcontratosPorContratista( $obra );
 
 			$lastContratista = null;
 			$ixContratista = null;
 			$lastSubcontrato = null;
 			$ixSubcontrato = null;
 
-			foreach ($datos as $dataRow) {
+			foreach ( $datos as $dataRow ) {
 
 				if( $dataRow->id_empresa !== $lastContratista ) {
 					
@@ -88,16 +86,19 @@ try {
 			break;
 
 		case 'setAgrupador':
+
+			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
+			$obra = new Obra( $conn,  (int) $_POST['id_obra'] );
 			
 			$id_actividad   = (int) $_POST['id'];
 			$id_agrupador   = (int) $_POST['id_agrupador'];
 			$id_subcontrato = (int) $_POST['id_subcontrato'];
 			$id_empresa     = (int) $_POST['id_empresa'];
 
-			$agrupador = new AgrupadorInsumo($conn, $id_agrupador);
+			$agrupador = new AgrupadorInsumo( $conn, $id_agrupador );
 
-			$subcontrato = new Subcontrato($id_subcontrato, $conn);
-			$subcontrato->setAgrupadorPartida($id_actividad, $agrupador);
+			$subcontrato = new Subcontrato( $id_subcontrato, $conn );
+			$subcontrato->setAgrupadorPartida( $id_actividad, $agrupador );
 			break;
 
 		default:

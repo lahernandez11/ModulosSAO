@@ -60,7 +60,7 @@ class Subcontrato extends TransaccionSAO {
 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $datos = $this->_SAOConn->executeSP($tsql, $params);
+	    $datos = $this->_SAOConn->executeSP( $tsql, $params );
 
 	    $this->_id_empresa 	 		 = $datos[0]->id_empresa;
 	    $this->_objetoSubcontrato 	 = $datos[0]->ObjetoSubcontrato;
@@ -131,25 +131,25 @@ class Subcontrato extends TransaccionSAO {
 	public static function getFoliosTransaccion( $IDObra, SAODBConn $conn ) {
 		return null;
 	}
-	public static function getListaTransacciones( $IDObra, SAODBConn $conn ) {
+	public static function getListaTransacciones( $IDObra, $tipo_transaccion = null, SAODBConn $conn ) {
 
 		return parent::getListaTransacciones($IDObra, self::TIPO_TRANSACCION, $conn);
 	}
 
-	public static function getSubcontratosPorContratista( SAODBConn $conn, $id_obra ) {
+	public static function getSubcontratosPorContratista( Obra $obra ) {
 
 		$tsql = "{call [Agrupacion].[uspListaSubcontratos]( ? )}";
 
 		$params = array(
-			array($id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
+			array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 		);
 
-		$datos = $conn->executeSP($tsql, $params);
+		$datos = $obra->getConn()->executeSP( $tsql, $params );
 
 		return $datos;
 	}
 
-	private function existeRegistroAgrupacion($id_actividad) {
+	private function existeRegistroAgrupacion( $id_actividad ) {
 
 		$tsql = "SELECT 1
 				 FROM [Agrupacion].[agrupacion_subcontratos]

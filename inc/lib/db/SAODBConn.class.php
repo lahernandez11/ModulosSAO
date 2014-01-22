@@ -1,33 +1,26 @@
 <?php
 require_once 'SQLSrvDBConn.class.php';
 
-abstract class SAODBConn extends SQLSrvDBConn {
+class SAODBConn extends SQLSrvDBConn {
 	
-	public function __construct( SQLSrvDBConf $SQLSrvConf ) {
-
-		parent::__construct($SQLSrvConf);
-	}
-
-	public static function getInstance( $name ) {		
-		$SQLSrvDBConf;
+	public static function getInstance( SQLSrvDBConf $conf ) {
 		
-		$conn;
-
-		switch ($name) {
-			case 'SUB':
-				$SQLSrvConf = new SQLSrvDBConf( 'SAO1814_SUB', 'ModulosSAO' );
-				$conn = new SAOSubcontratosDBConn();
-				break;
-			
-			default:
-			$SQLSrvConf = new SQLSrvDBConf( 'SAO1814', 'ModulosSAO' );
-				$conn = new SAO1814DBConn();
-				break;
+		if ( empty( self::$instance ) ) {
+			self::$instance = new self( $conf );
+		} elseif ( self::$instance->dbConf->getSourceName() !== $conf->getSourceName() ) {
+			self::$instance = new self( $conf );
 		}
 
-		return $conn;
+		return self::$instance;
+	}
+
+	protected function __construct( SQLSrvDBConf $SQLSrvConf ) {
+
+		parent::__construct( $SQLSrvConf );
+	}
+
+	public function __toString() {
+		return parent::__toString();
 	}
 }
-require_once 'SAO1814DBConn.class.php';
-require_once 'SAOSubcontratosDBConn.class.php';
 ?>

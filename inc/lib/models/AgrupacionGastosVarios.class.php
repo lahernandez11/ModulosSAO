@@ -3,7 +3,7 @@ require_once 'db/SAODBConn.class.php';
 
 class AgrupacionGastosVarios {
 
-	public static function getGastosVarios(SAODBConn $conn, $id_obra ) {
+	public static function getGastosVarios( Obra $obra ) {
 
 		$tsql = "SELECT
 					  [transacciones].[id_obra]
@@ -72,14 +72,14 @@ class AgrupacionGastosVarios {
 					  [empresas].[razon_social]
 					, [transacciones].[id_transaccion]";
 
-		$params = array(array($id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT));
+		$params = array( array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT) );
 		
-		$data = $conn->executeSP($tsql, $params);
+		$data = $obra->getConn()->executeSP( $tsql, $params );
 
 		return $data;
 	}
 
-	private static function existeRegistroAgrupacion(SAODBConn $conn, $id_obra, $id_factura, $id_item) {
+	private static function existeRegistroAgrupacion( $obra, $id_factura, $id_item ) {
 
 		$tsql = "SELECT 1
 				 FROM
@@ -92,12 +92,12 @@ class AgrupacionGastosVarios {
 				 	[id_item] = ?";
 
 	    $params = array(
-	        array( $id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_factura, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_item, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $res = $conn->executeQuery($tsql, $params);
+	    $res = $obra->getConn()->executeQuery( $tsql, $params );
 
 	    if (count($res) > 0)
 	    	return true;
@@ -105,7 +105,7 @@ class AgrupacionGastosVarios {
 	    	return false;
 	}
 
-	private static function creaRegistroAgrupacion(SAODBConn $conn, $id_obra, $id_factura, $id_item) {
+	private static function creaRegistroAgrupacion( $obra, $id_factura, $id_item ) {
 
 		$tsql = "INSERT INTO [Agrupacion].[agrupacion_gastos_varios]
 				(
@@ -116,19 +116,19 @@ class AgrupacionGastosVarios {
 				VALUES ( ?, ?, ? )";
 
 	    $params = array(
-	        array( $id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_factura, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_item, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $conn->executeQuery($tsql, $params);
+	    $obra->getConn()->executeQuery($tsql, $params);
 	}
 
-	public function setAgrupador(SAODBConn $conn, $id_obra, $id_factura, 
-		$id_item, AgrupadorInsumo $agrupador) {
+	public static function setAgrupador( Obra $obra, $id_factura, 
+		$id_item, AgrupadorInsumo $agrupador ) {
 
-		if ( !self::existeRegistroAgrupacion($conn, $id_obra, $id_factura, $id_item) )
-			self::creaRegistroAgrupacion($conn, $id_obra, $id_factura, $id_item);
+		if ( !self::existeRegistroAgrupacion( $obra, $id_factura, $id_item ) )
+			self::creaRegistroAgrupacion( $obra, $id_factura, $id_item);
 
 		$field = '';
 
@@ -158,11 +158,11 @@ class AgrupacionGastosVarios {
 
 	    $params = array(
 			  array( $agrupador->getIDAgrupador(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
-			, array( $id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
+			, array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 			, array( $id_factura, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 			, array( $id_item, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 		);
 
-	    $conn->executeQuery($tsql, $params);
+	    $obra->getConn()->executeQuery($tsql, $params);
 	}
 }

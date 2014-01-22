@@ -72,9 +72,9 @@ abstract class TransaccionSAO {
 
 	    $rsDatosTran = $this->_SAOConn->executeSP($tsql, $params);
 
-	    if ( count($rsDatosTran) > 0 ) {
+	    if ( count( $rsDatosTran ) > 0 ) {
 
-			foreach ($rsDatosTran as $datosTran) {
+			foreach ( $rsDatosTran as $datosTran ) {
 
 				$this->_IDObra 		    = $datosTran->id_obra;
 				$this->_nombreObra	    = $datosTran->NombreObra;
@@ -118,16 +118,16 @@ abstract class TransaccionSAO {
 
 	public function setFecha( $fecha ) {
 		
-		if ( ! $this->fechaEsValida($fecha) )
-			throw new Exception("El formato de fecha es incorrecto.");
-		else
+		// if ( ! $this->fechaEsValida( $fecha ) )
+		// 	throw new Exception("El formato de fecha es incorrecto.");
+		// else
 			$this->_fecha = $fecha;
 	}
 
 	protected function fechaEsValida( $fecha ) {
 
-		if ( is_string($fecha)
-			 && ! preg_match("/^(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/", $Fecha) )
+		if ( is_string( $fecha )
+			 && ! preg_match("/^(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/", $fecha) )
 			return true;
 		else
 			return false;
@@ -165,7 +165,7 @@ abstract class TransaccionSAO {
 	    $this->_SAOConn->executeSP($tsql, $params);
 	}
 
-	public static abstract function getFoliosTransaccion( $IDObra, SAODBConn $conn );
+	// public static abstract function getFoliosTransaccion( $IDObra, SAODBConn $conn );
 	
 	public static function getListaTransacciones( $IDObra, $tipoTransaccion, SAODBConn $conn ) {
 
@@ -179,7 +179,7 @@ abstract class TransaccionSAO {
 	        array( $tipoTransaccion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $listaTran = $conn->executeSP($tsql, $params);
+	    $listaTran = $conn->executeSP( $tsql, $params );
 
 		return $listaTran;
 	}

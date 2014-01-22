@@ -286,6 +286,17 @@
 	*/
 	function selectListItem( listItem, callCallback ) {
 
+	var extra = {};
+
+	for ( prop in listItem[0].attributes ) {
+
+		if ( typeof listItem[0].attributes[prop] !== 'function'
+			&& listItem[0].attributes[prop].name !== undefined
+			&& listItem[0].attributes[prop].name.indexOf('data-') > -1 ) {
+			extra[listItem[0].attributes[prop].name.split('data-')[1]] = listItem[0].attributes[prop].value
+		}
+	}
+
 		var data = restoreData.call(this);
 
 		clearSelectedListItem.call(this);
@@ -293,7 +304,8 @@
 		// Se crea un objeto literal para almacenar los datos del item
 		var item = {
 			label: listItem.text(),
-			value: listItem.attr('href').split('#')[1]
+			value: listItem.attr('href').split('#')[1],
+			extra: extra
 		}
 
 		data.selectedItem = item;
@@ -348,7 +360,7 @@
 						return false;
 					}
 
-					buildList.call($this, json.options);
+					buildList.call( $this, json.options );
 					opts.isLoaded = true;
 				} catch( e ) {
 
@@ -391,7 +403,13 @@
 	function itemTemplate( itemData ) {
 		var html = "";
 
-		html = '<li><a href="#' + itemData.id + '">' + itemData.value + '</a></li>';
+		var dataExtra = '';
+
+		for ( prop in itemData.extra ) {
+			dataExtra += ' data-' + prop + '=' + itemData.extra[prop];
+		}
+
+		html = '<li><a href="#' + itemData.id + '"' + dataExtra + '>' + itemData.value + '</a></li>';
 
 		return html;
 	}
@@ -434,6 +452,7 @@
 		selectedItem: null,
 		request: null,
 		insertItemPosition: 'end',
+		extra: {},
 		beforeLoad: function() { return true },
 		beforeShow: function() { return true; },
 		onSelect: function( selectedItem, listItem ) { return true; },

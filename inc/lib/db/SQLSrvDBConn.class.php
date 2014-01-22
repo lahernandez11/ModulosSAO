@@ -11,28 +11,34 @@ require_once 'DBExceptions.class.php';
 */
 class SQLSrvDBConn {
 
-	private $dbConn;
+	protected static $instance;
 
-	//static $instance;
+	protected $dbConn;
+	public $dbConf;
 
-	/*
-	public static function getInstance() {
-
-		if( ! self::$instance instanceof self ) {
-
-			self::$instance = new self();
+	public static function getInstance( SQLSrvDBConf $conf ) {
+		
+		if ( empty( self::$instance ) ) {
+			self::$instance = new self( $conf );
+		} elseif ( self::$instance->dbConf->getSourceName() !== $conf->getSourceName() ) {
+			self::$instance = new self( $conf );
 		}
 
 		return self::$instance;
 	}
-	*/
 
-	public function __construct( SQLSrvDBConf $SQLSrvConf ) {
+	protected function __construct( SQLSrvDBConf $conf ) {
+
+		$this->dbConf = $conf;
 		
-		$this->dbConn = sqlsrv_connect( $SQLSrvConf->getDBServer(), $SQLSrvConf->getConnectionInfo() );
+		$this->dbConn = sqlsrv_connect( $conf->getHost(), $conf->getConnectionInfo() );
 
 		if( ! $this->dbConn )
-			throw new DBServerConnectionException($this->getStatementExecutionError());
+			throw new DBServerConnectionException( $this->getStatementExecutionError() );
+	}
+
+	public function prepare( $stmt, array $values ) {
+		return sqlsrv_prepare( $this->dbConn, $stmt, $values );
 	}
 
 	public function executeQuery( $tsql, $params = array() ) {
@@ -40,12 +46,12 @@ class SQLSrvDBConn {
 		$stmt = sqlsrv_query( $this->dbConn, $tsql, $params );
 
 		if( ! $stmt ) {
-			throw new DBServerStatementExecutionException($this->getStatementExecutionError());
+			throw new DBServerStatementExecutionException( $this->getStatementExecutionError() );
 		}
 
 		$rowsCollection = array();
 
-		while( $obj = sqlsrv_fetch_object( $stmt ) )
+		while ( $obj = sqlsrv_fetch_object( $stmt ) )
 			$rowsCollection[] = $obj;
 
 		return $rowsCollection;
@@ -55,7 +61,7 @@ class SQLSrvDBConn {
 
 		$stmt = sqlsrv_query( $this->dbConn, $tsql, $params );
 
-		if( ! $stmt ) {
+		if ( ! $stmt ) {
 			throw new DBServerStatementExecutionException($this->getStatementExecutionError());
 		}
 
@@ -69,21 +75,15 @@ class SQLSrvDBConn {
 
 	private function getStatementExecutionError() {
 
-		$errors = sqlsrv_errors(SQLSRV_ERR_ERRORS);
-	
-		//$errorNumber = getErrorNumber();
+		$errors = sqlsrv_errors( SQLSRV_ERR_ERRORS );
+		$message = $errors[0]["message"];
+		$message = substr( $message, strrpos( $errors[0]["message"], "]" ) + 1 );
 		
-		$errorMessage = '';
-		
-		//if( $errorNumber >= 50000 ) {
-		$errorMessage = utf8_encode(str_replace("[Microsoft][SQL Server Native Client 10.0][SQL Server]", "", $errors[0]['message']));
-		//}
-		//else
-		//	$errorMessage = 'Ocurrió un error al realizar la petición. Intentelo nuevamente.';
+		// $message = utf8_encode(str_replace("[Microsoft][SQL Server Native Client 10.0][SQL Server]", "", $errors[0]['message']));
 
 		$this->logDBError();
 	
-		return $errorMessage;
+		return $message;
 	}
 
 	private function logDBError() {
@@ -92,7 +92,12 @@ class SQLSrvDBConn {
 	
 		$errorMessage = date('d.m.Y h:i:s').' - [SQLSTATE]=>'.$errors[0]['SQLSTATE'].'[CODE]=>'.$errors[0]['code'].'[MESSAGE]=>'.$errors[0]['message'];
 		
-		error_log($errorMessage);
+		error_log( $errorMessage );
+	}
+
+	public function __toString() {
+
+		return $this->dbConf->__toString();
 	}
 
 	public function __destruct() {

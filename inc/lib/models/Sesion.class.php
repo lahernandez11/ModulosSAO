@@ -17,35 +17,11 @@ abstract class Sesion {
 		}
 	}
 
-	public static function createSesion( $IDUsuario, $nombreCuenta, $nombreUsuario, $appName ) {
+	public static function createSesion( Usuario $usuario, $appName ) {
 		
 		self::startSesion();
 
-		$_SESSION['uid'] 	 	   = $IDUsuario;
-		$_SESSION['nombreUsuario'] = $nombreUsuario;
-		$_SESSION['cuentaUsuario'] = $nombreCuenta;
-		$_SESSION['AppName'] 	   = $appName;
-	}
-
-	public static function getIDUsuarioSesion() {
-
-		self::startSesion();
-
-		return $_SESSION['uid'];		
-	}
-
-	public static function getNombreUsuarioSesion() {
-
-		self::startSesion();
-
-		return $_SESSION['nombreUsuario'];		
-	}
-
-	public static function getCuentaUsuarioSesion() {
-
-		self::startSesion();
-
-		return $_SESSION['cuentaUsuario'];		
+		$_SESSION['user'] = $usuario;
 	}
 
 	public static function getAplicacionSesion() {
@@ -59,9 +35,8 @@ abstract class Sesion {
 
 		self::startSesion();
 
-		if ( ! isset($_SESSION['uid']) ) {
-
-			header('Location:login.html');
+		if ( ! isset( $_SESSION['user'] ) ) {
+			header( 'Location:' . APP::LOGIN_PAGE );
 		}
 	}
 
@@ -69,7 +44,7 @@ abstract class Sesion {
 
 		self::startSesion();
 
-		if ( ! isset($_SESSION['uid']) ) {
+		if ( ! isset($_SESSION['user']) ) {
 
 			throw new SesionNoIniciadaException();
 		}
@@ -80,6 +55,17 @@ abstract class Sesion {
 		self::startSesion();
 
 		session_destroy();
+	}
+
+	public static function getUser() {
+		self::startSesion();
+
+		if ( ! isset( $_SESSION['user'] ) ) {
+
+			throw new SesionNoIniciadaException();
+		} else {
+			return $_SESSION['user'];
+		}
 	}
 }
 
