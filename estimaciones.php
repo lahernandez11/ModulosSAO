@@ -12,16 +12,6 @@
 	<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
 
 	<!--[if lt IE 9]><script src="inc/js/html5shiv.js"></script><![endif]-->
-	<script src="inc/js/jquery-1.7.1.min.js"></script>
-	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
-	<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
-
-	<script src="inc/js/general.js"></script>
-	<script src="inc/js/jquery.buttonlist.js"></script>
-	<script src="inc/js/jquery.listaTransacciones.js"></script>
-	<script src="inc/js/jquery.uxtable.js"></script>
-	<script src="inc/js/jquery.notify.js"></script>
-	<script src="inc/js/estimaciones.js"></script>
 </head>
 
 <body>
@@ -143,15 +133,15 @@
 						<div style="clear:both"></div>
 						<section id="tran-content">
 							<div id="column-switchers" class="checkboxgroup">
-								<input type="checkbox" id="contratado" name="col-viz" checked />
+								<input type="checkbox" id="contratado" name="col-viz" />
 								<label for="contratado">Contratado</label>
-								<input type="checkbox" id="avance-volumen" name="col-viz" checked />
+								<input type="checkbox" id="avance-volumen" name="col-viz" />
 								<label for="avance-volumen">Avance Volumen</label>
-								<input type="checkbox" id="avance-importe" name="col-viz" checked />
+								<input type="checkbox" id="avance-importe" name="col-viz" />
 								<label for="avance-importe">Avance Importe</label>
-								<input type="checkbox" id="saldo" name="col-viz" checked />
+								<input type="checkbox" id="saldo" name="col-viz" />
 								<label for="saldo">Saldo</label>
-								<input type="checkbox" id="destino" name="col-viz" checked />
+								<input type="checkbox" id="destino" name="col-viz" />
 								<label for="destino">Destino</label>
 							</div>
 							<table id="tabla-conceptos">
@@ -407,7 +397,73 @@
 		<textarea id="txtObservacionesLiberacion"></textarea>
 		<label><strong>Importe por liberar del contratista: <span id="txtImportePorLiberar"></span></strong></label>
 	</div>
-	<div id="message-console"><span id="console-message"></span><span id="console-toggler" class="open"></span></div>
+	<div id="message-console">
+		<span id="console-message"></span>
+		<span id="console-toggler" class="open"></span>
+	</div>
 	<div id="cache"></div>
+
+	<script type="text/template" id="template-concepto">
+		<tr data-id="<%- IDConceptoContrato %>" <%= EsActividad ? 'data-iddestino="' + IDConceptoDestino + '"' : '' %>>
+			<td class="icon-cell">
+				<a class="icon fixed"></a>
+			</td>
+			<<%= EsActividad ? 'td' : 'th' %> title="<%- Descripcion %>">
+				<%= '&nbsp;&nbsp;'.repeat(NumeroNivel) + Descripcion %>
+			</<%= EsActividad ? 'td' : 'th' %>>
+			<td class="centrado"><%- Unidad %></td>
+			<td class="numerico contratado"><%- CantidadSubcontratada %></td>
+			<td class="numerico contratado"><%- PrecioUnitario %></td>
+
+			<td class="numerico avance-volumen"></td>
+			<td class="numerico avance-volumen"><%- CantidadEstimadaTotal %></td>
+			<td class="numerico avance-volumen"><%- PctAvance %></td>
+			
+			<td class="numerico avance-importe"></td>
+			<td class="numerico avance-importe"><%- MontoEstimadoTotal %></td>
+			
+			<td class="numerico saldo"><%- CantidadSaldo %></td>
+			<td class="numerico saldo"><%- MontoSaldo %></td>
+			
+			<td class="editable-cell numerico"><%- CantidadEstimada %></td>
+			<td class="editable-cell numerico"><%- PctEstimado %></td>
+			<td class="numerico"><%- PrecioUnitario %></td>
+			<td class="editable-cell numerico"><%- ImporteEstimado %></td>
+			<td title="<%- RutaDestino %>" class="destino"><%- RutaDestino %></td>
+		</tr>
+	</script>
+	<script type="text/template" id="template-deductiva">
+		<tr data-id="<%- id %>">
+			<td><%- tipo %></td>
+			<td title="<%- concepto %>"><%- concepto %></td>
+			<td class="numerico"><%= importe.numFormat() %></td>
+			<td title="<%- observaciones %>"><%- observaciones %></td>
+			<td class="icon-cell">
+				<a class="icon action delete"></a>
+			</td>
+		</tr>;
+	</script>
+	<script type="text/template" id="template-retencion">
+		<tr data-id="<%- IDRetencion %>">
+			<td><%- TipoRetencion %></td>
+			<td class="numerico"><%= importe.numFormat() %></td>
+			<td title="<%- concepto %>"><%- concepto %></td>
+			<td title="<%- observaciones %>"><%- observaciones %></td>
+			<td class="icon-cell">
+				<span class="icon action delete"></span>
+			</td>
+		</tr>
+	</script>
+
+	<script src="inc/js/lib/underscore-min.js"></script>
+	<script src="inc/js/jquery-1.7.1.min.js"></script>
+	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
+	<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
+	<script src="inc/js/general.js"></script>
+	<script src="inc/js/jquery.buttonlist.js"></script>
+	<script src="inc/js/jquery.listaTransacciones.js"></script>
+	<script src="inc/js/jquery.uxtable.js"></script>
+	<script src="inc/js/jquery.notify.js"></script>
+	<script src="inc/js/estimaciones.js"></script>
 </body>
 </html>

@@ -19,11 +19,13 @@ var ESTIMACION = {
 		contratado: 'contratado',
 		avance_volumen: 'avance-volumen',
 		avance_importe: 'avance-importe',
-		saldo: 'saldo', destino: 'destino'
+		saldo: 'saldo',
+		destino: 'destino'
 	},
 	urls: {
 		tranController: 'inc/lib/controllers/EstimacionSubcontratoController.php'
 	},
+	templateConcepto: null,
 
 	init: function() {
 
@@ -34,6 +36,7 @@ var ESTIMACION = {
 
 		this.deshabilitaCamposTransaccion();
 		this.limpiaDatosTransaccion();
+		this.templateConcepto = _.template($('#template-concepto').html());
 
 		// Suscripcion al evento transaccion modificada
 		var modifiedTranSubscription = pubsub.subscribe('modified_tran', modifiedTran);
@@ -117,7 +120,7 @@ var ESTIMACION = {
 			onLoad: function() { DATA_LOADER.show() },
 			beforeLoad: function() {
 
-				if( ! that.getIDProyecto() ) {
+				if( ! that.getIdObra() ) {
 					$.notify({text: 'Seleccione un proyecto para cargar las transacciones.'});
 					return false;
 				} else {
@@ -210,7 +213,7 @@ var ESTIMACION = {
 			// 	pubsub.publish('notify_modtran', that.nuevaTransaccion);
 			// else {
 
-				if ( ! that.getIDProyecto() ) {
+				if ( ! that.getIdObra() ) {
 					$.notify({text: 'Seleccione un proyecto.'});
 					return;
 				}
@@ -331,6 +334,8 @@ var ESTIMACION = {
 		 	$('#tabla-conceptos').css('width', '100%');
 		 });
 
+		that.setConceptosVisibility();
+
 		// Handler para la tabla de seleccion de un subcontrato a estimar
 		$('#tabla-subcontratos tbody').on({
 			click: function( event ) {
@@ -402,7 +407,7 @@ var ESTIMACION = {
 		    		url: that.urls.tranController,
 		    		data: {
 		    			base_datos: that.getBaseDatos(),
-		    			id_obra: that.getIDProyecto(),
+		    			id_obra: that.getIdObra(),
 		    			id_transaccion: that.getIDTransaccion(),
 		    			tipoTotal: tipoTotal,
 		    			importe: inputText.val(),
@@ -438,7 +443,7 @@ var ESTIMACION = {
 			url: that.urls.tranController,
 			data: {
 				base_datos: that.getBaseDatos(),
-				id_obra: that.getIDProyecto(),
+				id_obra: that.getIdObra(),
 				id_subcontrato: that.getIDSubcontrato(),
 				action: 'nuevaTransaccion'
 			},
@@ -456,10 +461,9 @@ var ESTIMACION = {
 				$('#txtNombreContratista').text(json.datosSubcontrato.NombreContratista);
 				// Conceptos del subcontrato para estimacion
 				
-				that.fillConceptosList(json.conceptos);
-				
+				that.renderConceptos(json.conceptos);
 				that.habilitaCamposTransaccion();
-				
+				that.setConceptosVisibility();
 				pubsub.publish('modified_tran');
 				
 				that.setURLFormatoPDF();
@@ -501,7 +505,7 @@ var ESTIMACION = {
 		$('#resumen-total td.numerico').text('');
 	},
 
-	getIDProyecto: function() {
+	getIdObra: function() {
 		return $('#bl-proyectos').buttonlist('option', 'selectedItem').value;
 	},
 
@@ -528,7 +532,7 @@ var ESTIMACION = {
 			url: that.urls.tranController,
 			data: {
 				base_datos: that.getBaseDatos(),
-				id_obra: that.getIDProyecto(),
+				id_obra: that.getIdObra(),
 				action: 'getListaSubcontratos'
 			},
 			dataType: 'json'
@@ -586,7 +590,7 @@ var ESTIMACION = {
 			type: 'GET',
 			url: that.urls.tranController,
 			data: {
-				id_obra: that.getIDProyecto(),
+				id_obra: that.getIdObra(),
 				base_datos: that.getBaseDatos(),
 				id_transaccion: that.getIDTransaccion(),
 				action: 'getDatosTransaccion'
@@ -615,7 +619,7 @@ var ESTIMACION = {
 				$('#txtFechaTermino').datepicker( 'setDate', json.datos.FechaTermino );
 
 				// llena la tabla de conceptos
-				that.fillConceptosList( json.conceptos );
+				that.renderConceptos( json.conceptos );
 
 				// Establece los totales de transaccion
 				that.setTotalesTransaccion(json.totales);
@@ -623,10 +627,7 @@ var ESTIMACION = {
 				that.habilitaCamposTransaccion();
 				that.deshabilitaFechaTransaccion();
 				that.setURLFormatoPDF();
-
-				$('#column-switchers input').not(':checked').each(function() {
-				     $('#tabla-conceptos .' + this.id).addClass('hidden');
-				});
+				that.setConceptosVisibility()
 
 			} catch( e ) {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
@@ -640,13 +641,19 @@ var ESTIMACION = {
 		});
 	},
 
+	setConceptosVisibility: function() {
+		$('#column-switchers input').not(':checked').each(function() {
+		     $('#tabla-conceptos .' + this.id).addClass('hidden');
+		});
+	},
+
 	setURLFormatoPDF: function() {
 		// Establece los datos de la url para la descarga del formato
 		// de estimacion en pdf. Cuando se consulte una transaccion
 		// esta url debe cambiar
 		var url = $('#btnFormatoPDF').attr('href');
 
-		url = url.replace(/(id_obra=)[0-9]*/ig, '$1' + this.getIDProyecto());
+		url = url.replace(/(id_obra=)[0-9]*/ig, '$1' + this.getIdObra());
 		url = url.replace(/(base_datos=)\w*/ig, '$1' + this.getBaseDatos());
 		url = url.replace(/(id_transaccion=)[0-9]*/ig, '$1' + this.getIDTransaccion());
 
@@ -662,8 +669,8 @@ var ESTIMACION = {
 		$.ajax({
 			url: that.urls.tranController,
 			data: {
-				id_obra: that.getIDProyecto(),
 				base_datos: that.getBaseDatos(),
+				id_obra: that.getIdObra(),
 				id_transaccion: that.getIDTransaccion(),
 				action: 'getTotalesTransaccion'
 			},
@@ -695,54 +702,12 @@ var ESTIMACION = {
 		});
 	},
 
-	conceptosListTemplate: function( conceptos ) {
-
-		var html = '',
-			cellType = 'td',
-			that = this;
+	renderConceptos: function( conceptos ) {
+		var html = '';
 
 		for (var i = 0; i < conceptos.length; i++) {
-			
-			var concepto = conceptos[i];
-
-			if ( concepto.EsActividad )
-				cellType = 'td';
-			else
-				cellType = 'th';
-
-			html +=
-				  '<tr data-id="' + concepto.IDConceptoContrato + '" data-iddestino="' + concepto.IDConceptoDestino + '">'
-				+    '<td class="icon-cell"><a class="icon fixed"></a></td>'
-				+    '<' + cellType + ' title="' + concepto.Descripcion + '">' + '&nbsp;&nbsp;'.repeat(concepto.NumeroNivel) + concepto.Descripcion + ' </' + cellType + '>'
-				+    '<td class="centrado">' + concepto.Unidad + '</td>'
-
-				+    '<td class="numerico ' + that.colClasses.contratado + '">' + concepto.CantidadSubcontratada + '</td>'
-				+    '<td class="numerico ' + that.colClasses.contratado + '">' + concepto.PrecioUnitario + '</td>'
-
-				+    '<td class="numerico ' + that.colClasses.avance_volumen + '"></td>'
-				+    '<td class="numerico ' + that.colClasses.avance_volumen + '">' + concepto.CantidadEstimadaTotal + '</td>'
-				+    '<td class="numerico ' + that.colClasses.avance_volumen + '">' + concepto.PctAvance + '</td>'
-
-				+    '<td class="numerico ' + that.colClasses.avance_importe + '"></td>'
-				+    '<td class="numerico ' + that.colClasses.avance_importe + '">' + concepto.MontoEstimadoTotal + '</td>'
-
-				+    '<td class="numerico ' + that.colClasses.saldo + '">' + concepto.CantidadSaldo + '</td>'
-				+    '<td class="numerico ' + that.colClasses.saldo + '">' + concepto.MontoSaldo + '</td>'
-				
-				+    '<td class="editable-cell numerico">' + concepto.CantidadEstimada + '</td>'
-				+    '<td class="editable-cell numerico">' + concepto.PctEstimado + '</td>'
-				+    '<td class="numerico">' + concepto.PrecioUnitario + '</td>'
-				+    '<td class="editable-cell numerico">' + concepto.ImporteEstimado + '</td>'
-				+    '<td title="' + concepto.RutaDestino + '" class="' + that.colClasses.destino + '">' + concepto.RutaDestino + '</td>'
-			    +  '</tr>';
-		};
-		
-		return html;
-	},
-
-	fillConceptosList: function( data ) {
-
-		var html = this.conceptosListTemplate( data );
+			html += this.templateConcepto(conceptos[i]);
+		}
 
 		$('#tabla-conceptos tbody').html( html );
 	},
@@ -760,7 +725,7 @@ var ESTIMACION = {
 			url: that.urls.tranController,
 			data: {
 				base_datos: that.getBaseDatos(),
-				id_obra: that.getIDProyecto(),
+				id_obra: that.getIdObra(),
 				id_transaccion: that.getIDTransaccion(),
 				id_subcontrato: that.getIDSubcontrato(),
 				datosGenerales: {
@@ -826,7 +791,7 @@ var ESTIMACION = {
 			url: that.urls.tranController,
 			data: {
 				base_datos: that.getBaseDatos(),
-				id_obra: that.getIDProyecto(),
+				id_obra: that.getIdObra(),
 				id_transaccion: that.getIDTransaccion(),
 				action: 'eliminaTransaccion'
 			},
@@ -1002,10 +967,13 @@ var Deductivas = {
 	},
 	id_material: 0,
 	selectedTipoDeductiva: 0,
+	template: null,
 
 	init: function() {
 
 		var that = this;
+
+		this.template = _.template($('#template-deductiva').html());
 
 		$('#tipo_deductiva').buttonset();
 
@@ -1092,7 +1060,7 @@ var Deductivas = {
 	        	case 3:
 	        		src = that.urls.almacenController;
 	        		request.base_datos = ESTIMACION.getBaseDatos();
-	        		request.id_obra    = ESTIMACION.getIDProyecto();
+	        		request.id_obra    = ESTIMACION.getIdObra();
 	        		request.tipo_almacen = that.tiposAlmacen.maquinaria;
 	        		request.action = 'getListaAlmacenes';
 	        		$.getJSON( src, request, function( data, status, xhr ) {
@@ -1142,7 +1110,7 @@ var Deductivas = {
 			url: ESTIMACION.urls.tranController,
 			data: {
 				base_datos: ESTIMACION.getBaseDatos(),
-				id_obra: ESTIMACION.getIDProyecto(),
+				id_obra: ESTIMACION.getIdObra(),
 				id_transaccion: ESTIMACION.getIDTransaccion(),
 				id_material: that.id_material,
 				IDTipoDeductiva: that.selectedTipoDeductiva,
@@ -1167,7 +1135,7 @@ var Deductivas = {
 				observaciones: $('#txtObservacionesDeductiva').val()
 			}
 			// Ingresar la deduccion a la lista
-			that.agregaDeductiva( deductiva );
+			that.renderDeductiva( deductiva );
 
 			ESTIMACION.cargaTotales();
 			
@@ -1175,16 +1143,8 @@ var Deductivas = {
 		}).always( DATA_LOADER.hide );
 	},
 
-	agregaDeductiva: function( deductiva ) {
-
-		var html =
-			  '<tr data-id="' + deductiva.id + '">'
-			+   '<td>' + deductiva.tipo + '</td>'
-			+   '<td>' + deductiva.concepto + '</td>'
-			+   '<td class="numerico">' + deductiva.importe.numFormat() + '</td>'
-			+   '<td title="' + deductiva.observaciones + '">' + deductiva.observaciones + '</td>'
-			+   '<td class="icon-cell"><a class="icon action delete"></a></td>'
-			+ '</tr>';
+	renderDeductiva: function( deductiva ) {
+		var html = this.template( deductiva );
 
 		$('#registros_deductivas table tbody').append(html);
 	},
@@ -1201,7 +1161,7 @@ var Deductivas = {
 			url: ESTIMACION.urls.tranController,
 			data: {
 				base_datos: ESTIMACION.getBaseDatos(),
-				id_obra: ESTIMACION.getIDProyecto(),
+				id_obra: ESTIMACION.getIdObra(),
 				id_transaccion: ESTIMACION.getIDTransaccion(),
 				action: 'getDeductivas'
 			},
@@ -1220,7 +1180,7 @@ var Deductivas = {
 				}
 
 				$.each( data.deductivas, function() {
-					that.agregaDeductiva({
+					that.renderDeductiva({
 						id: this.IDDeductiva,
 						tipo: this.TipoDeductiva,
 						concepto: this.Concepto,
@@ -1256,7 +1216,7 @@ var Deductivas = {
 			url: ESTIMACION.urls.tranController,
 			data: {
 				base_datos: ESTIMACION.getBaseDatos(),
-				id_obra: ESTIMACION.getIDProyecto(),
+				id_obra: ESTIMACION.getIdObra(),
 				id_transaccion: ESTIMACION.getIDTransaccion(),
 				IDDeductiva: IDDeductiva,
 				action: 'eliminaDeductiva'
@@ -1284,7 +1244,8 @@ var Deductivas = {
 }
 
 var Retenciones = {
-
+	template: _.template($('#template-retencion').html()),
+	
 	init: function() {
 
 		var that = this;
@@ -1367,8 +1328,8 @@ var Retenciones = {
 		$.ajax({
 			url: ESTIMACION.urls.tranController,
 			data: {
-				id_obra: ESTIMACION.getIDProyecto(),
 				base_datos: ESTIMACION.getBaseDatos(),
+				id_obra: ESTIMACION.getIdObra(),
 				id_transaccion: ESTIMACION.getIDTransaccion(),
 				action: 'getImportePorLiberar'
 			},
@@ -1380,19 +1341,10 @@ var Retenciones = {
 		}).always( DATA_LOADER.hide );
 	},
 
-	agregaRetencion: function( retObj ) {
+	renderRetencion: function( retencion ) {
+		var html = this.template(retencion);
 
-		row = '<tr data-id="' + retObj.IDRetencion + '">'
-			 +   '<td>' + retObj.TipoRetencion + '</td>'
-			 +   '<td class="numerico">' + retObj.importe + '</td>'
-			 +   '<td>' + retObj.concepto + '</td>'
-			 +   '<td>' + retObj.observaciones + '</td>'
-			 +   '<td class="icon-cell">'
-			 +     '<span class="icon action delete"></span>'
-			 +   '</td>'
-			 + '</tr>';
-				
-		$('#registros_retenciones tbody').append(row);
+		$('#registros_retenciones tbody').append(html);
 	},
 
 	agregaLiberacion: function( libObj ) {
@@ -1417,7 +1369,7 @@ var Retenciones = {
 			url: ESTIMACION.urls.tranController,
 			data: {
 				base_datos: ESTIMACION.getBaseDatos(),
-				id_obra: ESTIMACION.getIDProyecto(),
+				id_obra: ESTIMACION.getIdObra(),
 				id_transaccion: ESTIMACION.getIDTransaccion(),
 				IDTipoRetencion: parseInt($('#tipos-retencion').buttonlist('option', 'selectedItem').value),
 				importe: $('#txtImporteRetencion').val(),
@@ -1439,7 +1391,7 @@ var Retenciones = {
 					'observaciones': $('#txtObservacionesRetencion').val()
 				};
 
-				that.agregaRetencion( retObj );
+				that.renderRetencion( retObj );
 				
 				$('#dialog-nueva-retencion').dialog('close');
 
@@ -1460,7 +1412,7 @@ var Retenciones = {
 			url: ESTIMACION.urls.tranController,
 			data: {
 				base_datos: ESTIMACION.getBaseDatos(),
-				id_obra: ESTIMACION.getIDProyecto(),
+				id_obra: ESTIMACION.getIdObra(),
 				id_transaccion: ESTIMACION.getIDTransaccion(),
 				importe: $('#txtImporteLiberacion').val(),
 				observaciones: $('#txtObservacionesLiberacion').val(),
@@ -1506,8 +1458,8 @@ var Retenciones = {
 			type: 'POST',
 			url: ESTIMACION.urls.tranController,
 			data: {
-				id_obra: ESTIMACION.getIDProyecto(),
 				base_datos: ESTIMACION.getBaseDatos(),
+				id_obra: ESTIMACION.getIdObra(),
 				id_transaccion: ESTIMACION.getIDTransaccion(),
 				IDRetencion: IDRetencion,
 				action: 'eliminaRetencion'
@@ -1548,9 +1500,9 @@ var Retenciones = {
 			type: 'POST',
 			url: ESTIMACION.urls.tranController,
 			data: {
-				id_obra: ESTIMACION.getIDProyecto(),
 				base_datos: ESTIMACION.getBaseDatos(),
 				id_transaccion: ESTIMACION.getIDTransaccion(),
+				id_obra: ESTIMACION.getIdObra(),
 				IDLiberacion: IDLiberacion,
 				action: 'eliminaLiberacion'
 			},
@@ -1588,8 +1540,8 @@ var Retenciones = {
 		$.ajax({
 			url: ESTIMACION.urls.tranController,
 			data: {
-				id_obra: ESTIMACION.getIDProyecto(),
 				base_datos: ESTIMACION.getBaseDatos(),
+				id_obra: ESTIMACION.getIdObra(),
 				id_transaccion: ESTIMACION.getIDTransaccion(),
 				action: 'getRetenciones'
 			},
@@ -1603,7 +1555,7 @@ var Retenciones = {
 				}
 				
 				$.each( json.retenciones, function() {
-					that.agregaRetencion( this );
+					that.renderRetencion( this );
 				});
 
 				$.each( json.liberaciones, function() {

@@ -413,7 +413,7 @@ try {
 			$id_transaccion = (int) $_POST['id_transaccion'];
 			$IDDeductiva 	= (int) $_POST['IDDeductiva'];
 
-			$transaccion = new EstimacionSubcontrato( $ora, $id_transaccion );
+			$transaccion = new EstimacionSubcontrato( $obra, $id_transaccion );
 			$transaccion->eliminaDeductiva( $IDDeductiva );
 			break;
 
