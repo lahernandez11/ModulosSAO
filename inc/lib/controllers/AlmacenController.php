@@ -1,9 +1,9 @@
 <?php
 require_once 'setPath.php';
 require_once 'models/Sesion.class.php';
+require_once 'db/SAODBConnFactory.class.php';
 require_once 'models/Obra.class.php';
 require_once 'models/Almacen.class.php';
-require_once 'db/SAODBConn.class.php';
 
 $data['success'] = true;
 $data['message'] = null;
@@ -16,27 +16,24 @@ try {
 	if ( ! isset($_REQUEST['action']) ) {
 		throw new Exception("No fue definida una acción");
 	}
-
-	$conn = new SAO1814DBConn();
-	$IDProyecto = (int) $_REQUEST['IDProyecto'];
-	$IDObra 	= Obra::getIDObraProyecto($IDProyecto);
 	
 	switch ( $_REQUEST['action'] ) {
 
-		case 'listaAlmacenes':
+		case 'getListaAlmacenes':
+			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
+			$obra = new Obra( $conn, (int) $_GET['id_obra'] );
 
 			$data['almacenes'] = array();
 
-			$IDTipoAlmacen = (int) $_REQUEST['IDTipoAlmacen'];
-			$descripcion  = $_REQUEST['term'];
+			$tipo_almacen = (int) $_GET['tipo_almacen'];
+			$descripcion  = $_GET['term'];
 
-			$data['almacenes'] = Almacen::getAlmacenes( $IDObra, $IDTipoAlmacen, $descripcion, $conn );
+			$data['almacenes'] = Almacen::getAlmacenes( $obra, $tipo_almacen, $descripcion );
 
 			break;
 	}
 
 } catch( Exception $e ) {
-
 	$data['success'] = false;
 	$data['message'] = $e->getMessage();
 }

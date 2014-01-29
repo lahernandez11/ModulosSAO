@@ -1,4 +1,6 @@
 <?php
+require_once 'models/Obra.class.php';
+
 class Almacen {
 	
 	const ALMACEN_X 		  = 0;
@@ -8,17 +10,17 @@ class Almacen {
 	const ALMACEN_SERVICIOS   = 4;
 	const ALMACEN_HERRAMIENTA = 5;
 
-	public static function getAlmacenes( $IDObra, $tipoAlmacen = null, $descripcion = null, SAODBConn $conn ) {
+	public static function getAlmacenes( Obra $obra, $tipo_almacen = null, $descripcion = null ) {
 
 		$tsql = "{call [Almacenes].[uspListaAlmacenes]( ?, ?, ? )}";
 
 	    $params = array(
-	        array( $IDObra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $tipoAlmacen, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $tipo_almacen, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $descripcion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('255') )
 	    );
 
-	    return $conn->executeSP($tsql, $params);
+	    return $obra->getConn()->executeSP($tsql, $params);
 	}
 }
 ?>
