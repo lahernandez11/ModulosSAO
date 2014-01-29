@@ -35,8 +35,7 @@ $( function() {
 
 						return;
 					}
-
-					// window.location.replace('index.php');
+					window.location.replace('index.php');
 					
 				} catch(e) {
 					$('.LoginErrorBar span').html(e.message);

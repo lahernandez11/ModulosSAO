@@ -15,17 +15,15 @@ try {
 	if ( ! isset($_REQUEST['action']) ) {
 		throw new Exception("No fue definida una acción");
 	}
-
-	$conn = new SAO1814DBConn();
 	
 	switch ( $_REQUEST['action'] ) {
 
 		case 'listaInsumos':
-
+			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
+			$tipo_material = (int) $_GET['IDTipoInsumo'];
+			$descripcion  = $_GET['term'];
+			
 			$data['insumos'] = array();
-
-			$tipo_material = (int) $_REQUEST['IDTipoInsumo'];
-			$descripcion  = $_REQUEST['term'];
 
 			$data['insumos'] = Material::getMateriales( $conn, $descripcion, $tipo_material );
 
@@ -33,7 +31,6 @@ try {
 	}
 
 } catch( Exception $e ) {
-
 	$data['success'] = false;
 	$data['message'] = $e->getMessage();
 }

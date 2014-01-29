@@ -69,7 +69,7 @@
 									<span class="label">Retenciones</span></a>
 								<a id="btnResumen" class="button op">
 									<span class="label">Resumen</span></a>
-								<a id="btnFormatoPDF" class="button op" target="_blank" href="inc/lib/controllers/EstimacionSubcontratoController.php?action=generaFormato&IDTransaccion=">
+								<a id="btnFormatoPDF" class="button op" target="_blank" href="inc/lib/controllers/EstimacionSubcontratoController.php?action=generaFormato&id_obra=&base_datos=&id_transaccion=">
 									<span class="label">Formato</span></a>
 							</section>
 
@@ -405,7 +405,7 @@
 		<input type="text" id="txtImporteLiberacion" class="amount" value="0" />
 		<label for="txtObservacionesLiberacion">Observaciones</label>
 		<textarea id="txtObservacionesLiberacion"></textarea>
-		<label>Importe por liberar: <span id="txtImportePorLiberar"></span></label>
+		<label><strong>Importe por liberar del contratista: <span id="txtImportePorLiberar"></span></strong></label>
 	</div>
 	<div id="message-console"><span id="console-message"></span><span id="console-toggler" class="open"></span></div>
 	<div id="cache"></div>

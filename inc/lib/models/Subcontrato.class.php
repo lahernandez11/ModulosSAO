@@ -27,24 +27,24 @@ class Subcontrato extends TransaccionSAO {
 
 		switch ( func_num_args() ) {
 
-			case 7:
-				call_user_func_array(array($this, "instaceFromDefault"), $params);
+			case 6:
+				call_user_func_array( array( $this, "instaceFromDefault" ), $params );
 				break;
 
 			case 2:
-				call_user_func_array(array($this, "instanceFromID"), $params);
+				call_user_func_array( array( $this, "instanceFromID" ), $params );
 				break;
 		}
 	}
 
-	private function instaceFromDefault( $IDObra, $fecha, $fechaInicio, $fechaTermino, 
-		$observaciones, Array $conceptos, SAODBConn $conn ) {
+	private function instaceFromDefault( Obra $obra, $fecha, $fechaInicio, $fechaTermino, 
+		$observaciones, Array $conceptos ) {
 
-		parent::__construct($IDObra, self::TIPO_TRANSACCION, $fecha, $observaciones, $conn);
+		parent::__construct( $obra, self::TIPO_TRANSACCION, $fecha, $observaciones );
 	}
 
-	private function instanceFromID( $IDTransaccion, SAODBConn $conn ) {
-		parent::__construct( $IDTransaccion, $conn );
+	private function instanceFromID( Obra $obra, $IDTransaccion ) {
+		parent::__construct( $obra, $IDTransaccion );
 		
 		$this->setDatosGenerales();
 	}
@@ -60,7 +60,7 @@ class Subcontrato extends TransaccionSAO {
 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $datos = $this->_SAOConn->executeSP( $tsql, $params );
+	    $datos = $this->conn->executeSP( $tsql, $params );
 
 	    $this->_id_empresa 	 		 = $datos[0]->id_empresa;
 	    $this->_objetoSubcontrato 	 = $datos[0]->ObjetoSubcontrato;
@@ -73,11 +73,11 @@ class Subcontrato extends TransaccionSAO {
 	    $this->_iva 	 			 = $datos[0]->IVA;
 	    $this->_total 	 			 = $datos[0]->Total;
 
-	    $this->_importeAcumuladoEstimado = $datos[0]->ImporteAcumuladoEstimado;
-	    $this->_importeAcumuladoAnticipo = $datos[0]->ImporteAcumuladoAnticipo;
+	    $this->_importeAcumuladoEstimado 	= $datos[0]->ImporteAcumuladoEstimado;
+	    $this->_importeAcumuladoAnticipo 	= $datos[0]->ImporteAcumuladoAnticipo;
 	    $this->_importeAcumuladoFondoGarantia = $datos[0]->ImporteAcumuladoFondoGarantia;
 	    $this->_importeAcumuladoRetenciones = $datos[0]->ImporteAcumuladoRetenciones;
-	    $this->_importeAcumuladoDeductivas = $datos[0]->ImporteAcumuladoDeductivas;
+	    $this->_importeAcumuladoDeductivas 	= $datos[0]->ImporteAcumuladoDeductivas;
 	}
 
 	public function getObjetoSubcontrato() {
@@ -128,12 +128,13 @@ class Subcontrato extends TransaccionSAO {
 		return $this->_total;
 	}
 
-	public static function getFoliosTransaccion( $IDObra, SAODBConn $conn ) {
+	public static function getFoliosTransaccion( Obra $obra ) {
 		return null;
 	}
-	public static function getListaTransacciones( $IDObra, $tipo_transaccion = null, SAODBConn $conn ) {
+	
+	public static function getListaTransacciones( Obra $obra, $tipo_transaccion=null ) {
 
-		return parent::getListaTransacciones($IDObra, self::TIPO_TRANSACCION, $conn);
+		return parent::getListaTransacciones( $obra, self::TIPO_TRANSACCION );
 	}
 
 	public static function getSubcontratosPorContratista( Obra $obra ) {
@@ -169,7 +170,7 @@ class Subcontrato extends TransaccionSAO {
 	        array( $id_actividad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $res = $this->_SAOConn->executeQuery($tsql, $params);
+	    $res = $this->conn->executeQuery( $tsql, $params );
 
 	    if (count($res) > 0)
 	    	return true;
@@ -177,7 +178,7 @@ class Subcontrato extends TransaccionSAO {
 	    	return false;
 	}
 
-	private function creaRegistroAgrupacion($id_actividad) {
+	private function creaRegistroAgrupacion( $id_actividad ) {
 
 		$tsql = "INSERT INTO [Agrupacion].[agrupacion_subcontratos]
 				(
@@ -196,17 +197,17 @@ class Subcontrato extends TransaccionSAO {
 	        array( $id_actividad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $this->_SAOConn->executeQuery($tsql, $params);
+	    $this->conn->executeQuery( $tsql, $params );
 	}
 
-	public function setAgrupadorPartida($id_actividad, AgrupadorInsumo $agrupador) {
+	public function setAgrupadorPartida( $id_actividad, AgrupadorInsumo $agrupador ) {
 
-		if (! $this->existeRegistroAgrupacion($id_actividad))
-			$this->creaRegistroAgrupacion($id_actividad);
+		if ( ! $this->existeRegistroAgrupacion( $id_actividad ) )
+			$this->creaRegistroAgrupacion( $id_actividad );
 
 		$field = '';
 
-		switch ($agrupador->getTipoAgrupador()) {
+		switch ( $agrupador->getTipoAgrupador() ) {
 			case AgrupadorInsumo::TIPO_NATURALEZA:
 				$field = AgrupadorInsumo::FIELD_NATURALEZA;
 				break;
@@ -240,7 +241,20 @@ class Subcontrato extends TransaccionSAO {
 	        array( $id_actividad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $this->_SAOConn->executeQuery($tsql, $params);
+	    $this->conn->executeQuery( $tsql, $params );
+	}
+
+	public static function getListaSubcontratos( Obra $obra ) {
+
+		$tsql = '{call [SubcontratosEstimaciones].[uspListaSubcontratos]( ? )}';
+
+		$params = array(
+	        array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	    );
+
+	    $lista = $obra->getConn()->executeSP( $tsql, $params );
+
+		return $lista;
 	}
 }
 ?>

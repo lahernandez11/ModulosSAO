@@ -1,13 +1,15 @@
 <?php
 abstract class TransaccionSAO {
+	const TIPO_TRANSACCION = 0;
 
-	protected $_IDTransaccion = 0;
-	protected $_IDObra = 0;
+	protected $obra;
+	protected $id_transaccion;
+	protected $tipo_transaccion;
+	protected $conn = null;
 	protected $_estado = 0;
 	protected $_numeroFolio = 0;
 	protected $_fecha = null;
 	protected $_observaciones = "";
-	protected $_SAOConn = null;
 	private $_nombreObra;
 
 	public function __construct() {
@@ -17,40 +19,40 @@ abstract class TransaccionSAO {
 		switch ( func_num_args() ) {
 			
 			case 2:
-				$this->instanceFromID($params[0], $params[1]);
+				$this->instanceFromID( $params[0], $params[1] );
 				//call_user_func_array(array($this, "instanceFromID"), $params);
 				break;
 
-			case 5:
-				call_user_func_array(array($this, "init"), $params);
+			case 4:
+				call_user_func_array( array( $this, "init" ), $params );
 				break;
 		}
 	}
 
-	private function init( $IDObra, $tipoTransaccion, $fecha, $observaciones, SAODBConn $conn ) {
-
-		$this->setIDObra( $IDObra );
-		$this->_tipoTransaccion = $tipoTransaccion;
+	private function init( Obra $obra, $tipoTransaccion, $fecha, $observaciones ) {
+		
+		$this->obra = $obra;
+		$this->tipo_transaccion = $tipoTransaccion;
 		$this->setFecha( $fecha );
 		$this->setObservaciones( $observaciones );
-		$this->_SAOConn = $conn;
+		$this->conn = $obra->getConn();
 	}
 	
-	private function instanceFromID( $IDTransaccion, SAODBConn $conn ) {
+	private function instanceFromID( Obra $obra, $id_transaccion ) {
 		
-		if ( ! is_int($IDTransaccion) ) {
-			throw new Exception("No es un identificador de transacción válido.");
+		if ( ! is_int( $id_transaccion ) ) {
+			throw new Exception( "No es un identificador de transacción válido." );
 		}
 
-		$this->_SAOConn = $conn;
-		$this->setIDTransaccion( $IDTransaccion );
+		$this->obra = $obra;
+		$this->conn = $obra->getConn();
+		$this->setIDTransaccion( $id_transaccion );
 	}
 
 	protected function setDatosGenerales() {
 
 		$tsql = "SELECT
 					  [transacciones].[id_transaccion]
-					, [transacciones].[id_obra]
 					, [obras].[nombre] AS [NombreObra]
 					, [transacciones].[tipo_transaccion]
 					, [transacciones].[estado]
@@ -64,44 +66,42 @@ abstract class TransaccionSAO {
 					ON
 						[transacciones].[id_obra] = [obras].[id_obra]
 				WHERE
+					[transacciones].[id_obra] = ?
+						AND
 					[transacciones].[id_transaccion] = ?";
 		
 	    $params = array(
-	        array( $this->_IDTransaccion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->id_transaccion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $rsDatosTran = $this->_SAOConn->executeSP($tsql, $params);
+	    $rsDatosTran = $this->conn->executeQuery( $tsql, $params );
 
 	    if ( count( $rsDatosTran ) > 0 ) {
 
 			foreach ( $rsDatosTran as $datosTran ) {
 
-				$this->_IDObra 		    = $datosTran->id_obra;
 				$this->_nombreObra	    = $datosTran->NombreObra;
-				$this->_tipoTransaccion = $datosTran->tipo_transaccion;
+				$this->tipo_transaccion = $datosTran->tipo_transaccion;
 				$this->_estado 		    = $datosTran->estado;
 				$this->_numeroFolio     = $datosTran->numero_folio;
-				$this->setFecha($datosTran->fecha);
+				$this->setFecha( $datosTran->fecha );
 				$this->_observaciones   = $datosTran->observaciones;
 			}
 		} else
 			throw new Exception("No se encontro la transacción.");
 	}
 
-	protected function setIDTransaccion( $IDTransaccion ) {
-		$this->_IDTransaccion = $IDTransaccion;
+	protected function setIDTransaccion( $id_transaccion ) {
+		$this->id_transaccion = $id_transaccion;
 	}
 
 	public function getIDTransaccion() {
-		return $this->_IDTransaccion;
+		return $this->id_transaccion;
 	}
 
 	public function getIDObra() {
-		return $this->_IDObra;
-	}
-
-	protected function setIDObra( $IDObra ) {
-		$this->_IDObra = $IDObra;
+		return $this->obra->getId();
 	}
 
 	public function getNombreObra() {
@@ -109,7 +109,7 @@ abstract class TransaccionSAO {
 	}
 
 	public function getTipoTransaccion() {
-		return $this->_tipoTransaccion;
+		return $this->tipo_transaccion;
 	}
 
 	public function getFecha() {
@@ -125,12 +125,13 @@ abstract class TransaccionSAO {
 	}
 
 	protected function fechaEsValida( $fecha ) {
-
-		if ( is_string( $fecha )
-			 && ! preg_match("/^(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/", $fecha) )
+		
+		if ( preg_match( "/^(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/", $fecha ) === 1) {
 			return true;
-		else
+		}
+		else {
 			return false;
+		}
 	}
 
 	protected function esImporte( $importe ) {
@@ -159,36 +160,37 @@ abstract class TransaccionSAO {
 		$tsql = "{call [dbo].[sp_borra_transaccion]( ? )}";
 
 	    $params = array(
-	        array( $this->_IDTransaccion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array( $this->id_transaccion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $this->_SAOConn->executeSP($tsql, $params);
+	    $this->conn->executeSP( $tsql, $params );
 	}
 
 	// public static abstract function getFoliosTransaccion( $IDObra, SAODBConn $conn );
 	
-	public static function getListaTransacciones( $IDObra, $tipoTransaccion, SAODBConn $conn ) {
+	public static function getListaTransacciones( Obra $obra, $tipo_transaccion=null ) {
 
-		if ( ! is_int( (int) $IDObra ) )
-			throw new Exception("El identificador de la obra no es correcto.");
+		if ( is_null( $tipo_transaccion ) ) {
+			$tipo_transaccion = self::TIPO_TRANSACCION;
+		}
 
 		$tsql = '{call [SAO].[uspListaTransacciones]( ?, ? )}';
 
 		$params = array(
-	        array( $IDObra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $tipoTransaccion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $tipo_transaccion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $listaTran = $conn->executeSP( $tsql, $params );
+	    $listaTran = $obra->getConn()->executeSP( $tsql, $params );
 
 		return $listaTran;
 	}
 
 	public function __toString() {
 
-		$data =  "IDTransaccion: {$this->_IDTransaccion}, ";
-		$data .= "TipoTransaccion: {$this->_tipoTransaccion}, ";
-		$data .= "IDObra: {$this->_IDObra}, ";
+		$data =  "IDTransaccion: {$this->id_transaccion}, ";
+		$data .= "TipoTransaccion: {$this->tipo_transaccion}, ";
+		$data .= "IDObra: {$this->obra->getId()}, ";
 		$data .= "Estado: {$this->_estado}, ";
 		$data .= "Fecha: {$this->_fecha}, ";
 		$data .= "NumeroFolio: {$this->_numeroFolio}, ";

@@ -1,4 +1,6 @@
 <?php
+require_once 'models/App.class.php';
+
 abstract class Sesion {
 
 /*	

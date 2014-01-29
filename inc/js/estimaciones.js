@@ -46,16 +46,26 @@ var ESTIMACION = {
 		});
 
 		$('#bl-proyectos').buttonlist({
-			source: 'inc/lib/controllers/ListaProyectosController.php',
+			source: 'inc/lib/controllers/ListaObrasController.php',
 			data: {action: 'getListaProyectos'},
 			onSelect: function( selectedItem, listItem ) {
 
 				$('#btnLista-transacciones').listaTransacciones('option', 'data', 
-					{IDProyecto: selectedItem.value, action: 'getListaTransacciones'});
+					{
+						base_datos: that.getBaseDatos(),
+						id_obra: selectedItem.value,
+						action: 'getListaTransacciones'
+					}
+				);
 
 				$('#folios-transaccion')
 				.buttonlist('option', 'data', 
-					{IDProyecto: selectedItem.value, action: 'getFoliosTransaccion'});
+					{
+						base_datos: that.getBaseDatos(),
+						id_obra: selectedItem.value,
+						action: 'getFoliosTransaccion'
+					}
+				);
 
 				$('#folios-transaccion').buttonlist('refresh');
 
@@ -67,8 +77,11 @@ var ESTIMACION = {
 			},
 			onCreateListItem: function() {
 				return {
-					id: this.IDProyecto,
-					value: this.NombreProyecto
+					id: this.id,
+					value: this.nombre,
+					extra: {
+						source: this.source_id
+					}
 				}
 			}
 		});
@@ -101,13 +114,15 @@ var ESTIMACION = {
 		$('#btnLista-transacciones').listaTransacciones({
 			source: that.urls.tranController,
 			data: { action: 'getListaTransacciones'},
+			onLoad: function() { DATA_LOADER.show() },
 			beforeLoad: function() {
 
 				if( ! that.getIDProyecto() ) {
 					$.notify({text: 'Seleccione un proyecto para cargar las transacciones.'});
 					return false;
-				} else
+				} else {
 					return true;
+				}
 			},
 			onSelectItem: function( item ) {
 				$('#folios-transaccion').buttonlist('selectItemById', item.value, true );
@@ -119,7 +134,8 @@ var ESTIMACION = {
 					fecha: this.Fecha,
 					observaciones: this.Observaciones
 				};
-			}
+			},
+			onFinishLoad: function() { DATA_LOADER.hide() }
 		});
 
 		$('#tabla-conceptos').uxtable({
@@ -382,10 +398,12 @@ var ESTIMACION = {
 				DATA_LOADER.show();
 
 		    	$.ajax({
-		    		type: 'GET',
+		    		type: 'POST',
 		    		url: that.urls.tranController,
 		    		data: {
-		    			IDTransaccion: that.getIDTransaccion(),
+		    			base_datos: that.getBaseDatos(),
+		    			id_obra: that.getIDProyecto(),
+		    			id_transaccion: that.getIDTransaccion(),
 		    			tipoTotal: tipoTotal,
 		    			importe: inputText.val(),
 		    			action: 'actualizaImporte'
@@ -419,7 +437,9 @@ var ESTIMACION = {
 		$.ajax({
 			url: that.urls.tranController,
 			data: {
-				IDSubcontrato: that.getIDSubcontrato(),
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDProyecto(),
+				id_subcontrato: that.getIDSubcontrato(),
 				action: 'nuevaTransaccion'
 			},
 			dataType: 'json'
@@ -446,9 +466,7 @@ var ESTIMACION = {
 			} catch( e ) {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
 			}
-		}).always( function() {
-			DATA_LOADER.hide();
-		});
+		}).always( DATA_LOADER.hide );
 	},
 
 	deshabilitaCamposTransaccion: function() {
@@ -487,6 +505,10 @@ var ESTIMACION = {
 		return $('#bl-proyectos').buttonlist('option', 'selectedItem').value;
 	},
 
+	getBaseDatos: function() {
+		return $('#bl-proyectos').buttonlist('option', 'selectedItem').extra.source
+	},
+
 	getIDSubcontrato: function() {
 		return this.IDSubcontrato;
 	},
@@ -505,7 +527,8 @@ var ESTIMACION = {
 			type: 'GET',
 			url: that.urls.tranController,
 			data: {
-				IDProyecto: $('#bl-proyectos').buttonlist('option', 'selectedItem').value,
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDProyecto(),
 				action: 'getListaSubcontratos'
 			},
 			dataType: 'json'
@@ -563,7 +586,9 @@ var ESTIMACION = {
 			type: 'GET',
 			url: that.urls.tranController,
 			data: {
-				IDTransaccion: that.getIDTransaccion(),
+				id_obra: that.getIDProyecto(),
+				base_datos: that.getBaseDatos(),
+				id_transaccion: that.getIDTransaccion(),
 				action: 'getDatosTransaccion'
 			},
 			dataType: 'json'
@@ -616,13 +641,14 @@ var ESTIMACION = {
 	},
 
 	setURLFormatoPDF: function() {
-
+		// Establece los datos de la url para la descarga del formato
+		// de estimacion en pdf. Cuando se consulte una transaccion
+		// esta url debe cambiar
 		var url = $('#btnFormatoPDF').attr('href');
 
-		if ( url.match(/=(\d+\d$|null)/ig) ) {
-			url = url.replace(/(=)(\d+\d$|null)/ig, '$1' + this.getIDTransaccion());
-		} else
-			url += (this.getIDTransaccion() != null ? this.getIDTransaccion() : "");
+		url = url.replace(/(id_obra=)[0-9]*/ig, '$1' + this.getIDProyecto());
+		url = url.replace(/(base_datos=)\w*/ig, '$1' + this.getBaseDatos());
+		url = url.replace(/(id_transaccion=)[0-9]*/ig, '$1' + this.getIDTransaccion());
 
 		$('#btnFormatoPDF').attr('href', url);
 	},
@@ -634,10 +660,11 @@ var ESTIMACION = {
 		DATA_LOADER.show();
 
 		$.ajax({
-			type: 'GET',
 			url: that.urls.tranController,
 			data: {
-				IDTransaccion: that.getIDTransaccion(),
+				id_obra: that.getIDProyecto(),
+				base_datos: that.getBaseDatos(),
+				id_transaccion: that.getIDTransaccion(),
 				action: 'getTotalesTransaccion'
 			},
 			dataType: 'json'
@@ -729,12 +756,13 @@ var ESTIMACION = {
 		that.desmarcaConceptosError();
 
 		$.ajax({
-			type: 'GET',
+			type: 'POST',
 			url: that.urls.tranController,
 			data: {
-				IDProyecto: that.getIDProyecto(),
-				IDTransaccion: that.getIDTransaccion(),
-				IDSubcontrato: that.getIDSubcontrato(),
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDProyecto(),
+				id_transaccion: that.getIDTransaccion(),
+				id_subcontrato: that.getIDSubcontrato(),
 				datosGenerales: {
 					'Fecha': $('#txtFechaDB').val(),
 					'FechaInicio': $('#txtFechaInicioDB').val(),
@@ -776,9 +804,7 @@ var ESTIMACION = {
 	 			messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success');
 	 		}
 	 		
-		}).always( function() {
-			DATA_LOADER.hide();
-		});
+		}).always( DATA_LOADER.hide );
 	},
 
 	eliminaTransaccion: function() {
@@ -796,10 +822,12 @@ var ESTIMACION = {
 		DATA_LOADER.show();
 
 		$.ajax({
-			type: 'GET',
+			type: 'POST',
 			url: that.urls.tranController,
 			data: {
-				IDTransaccion: that.getIDTransaccion(),
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDProyecto(),
+				id_transaccion: that.getIDTransaccion(),
 				action: 'eliminaTransaccion'
 			},
 			dataType: 'json'
@@ -819,9 +847,7 @@ var ESTIMACION = {
 			} catch( e ) {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
 			}
-		}).always( function() {
-			DATA_LOADER.hide();
-		});
+		}).always( DATA_LOADER.hide );
 	},
 
 	setTotalesTransaccion: function( totales ) {
@@ -974,7 +1000,7 @@ var Deductivas = {
 		insumoController: 'inc/lib/controllers/InsumoController.php',
 		almacenController: 'inc/lib/controllers/AlmacenController.php'
 	},
-	selectedIDInsumo: 0,
+	id_material: 0,
 	selectedTipoDeductiva: 0,
 
 	init: function() {
@@ -1001,7 +1027,7 @@ var Deductivas = {
 			close: function() {
 				$('#tipo_deductiva input').prop('checked', false);
 				$('#tipo_deductiva').buttonset('refresh');
-				that.selectedIDInsumo = 0;
+				that.id_material = 0;
 				that.selectedTipoDeductiva = 0;
 			}
 		});
@@ -1009,7 +1035,7 @@ var Deductivas = {
 		$("#txtConceptoDeductiva").autocomplete({
 		    minLength: 3,
 		    select: function( event, ui ) {
-		    	that.selectedIDInsumo = ui.item.id
+		    	that.id_material = ui.item.id
 		    }
 		});
 
@@ -1060,46 +1086,49 @@ var Deductivas = {
 
 		return function( request, response ) {
 		        
-		        var src;
+	        var src;
 
-		        switch ( that.selectedTipoDeductiva ) {
-		        	case 3:
-		        		src = that.urls.almacenController;
-		        		request.IDTipoAlmacen = that.tiposAlmacen.maquinaria;
-		        		request.IDProyecto    = ESTIMACION.getIDProyecto();
-		        		request.action = 'listaAlmacenes';
-		        		$.getJSON( src, request, function( data, status, xhr ) {
-							var almacenes = [];
-				            
-				            for( i = 0; i < data.almacenes.length; i++ ){
-							   almacenes.push({
-							   		id: data.almacenes[i].IDAlmacen,
-							   		label: data.almacenes[i].Descripcion
-							   	});
-							}
-							
-							response( almacenes );
-						});
-		        		break;
-		        	default:
-		        		src = that.urls.insumoController;
-		        		request.IDTipoInsumo = tipoMaterial;
-		        		request.action = 'listaInsumos';
-		        		$.getJSON( src, request, function( data, status, xhr ) {
-							var insumos = [];
-				            	
-				            for( i = 0; i < data.insumos.length; i++ ){
-							   insumos.push({
-							   		id: data.insumos[i].IDInsumo,
-							   		label: data.insumos[i].Descripcion
-							   	});
-							}
-							
-							response( insumos );
-						});
-		        		break;
-		        }
-			}
+	        switch ( that.selectedTipoDeductiva ) {
+	        	case 3:
+	        		src = that.urls.almacenController;
+	        		request.base_datos = ESTIMACION.getBaseDatos();
+	        		request.id_obra    = ESTIMACION.getIDProyecto();
+	        		request.tipo_almacen = that.tiposAlmacen.maquinaria;
+	        		request.action = 'getListaAlmacenes';
+	        		$.getJSON( src, request, function( data, status, xhr ) {
+						var almacenes = [];
+			            
+			            for( i = 0; i < data.almacenes.length; i++ ){
+						   almacenes.push({
+						   		id: data.almacenes[i].IDAlmacen,
+						   		label: data.almacenes[i].Descripcion
+						   	});
+						}
+						
+						response( almacenes );
+					});
+	        		break;
+
+	        	default:
+	        		src = that.urls.insumoController;
+	        		request.base_datos = ESTIMACION.getBaseDatos();
+	        		request.IDTipoInsumo = tipoMaterial;
+	        		request.action = 'listaInsumos';
+	        		$.getJSON( src, request, function( data, status, xhr ) {
+						var insumos = [];
+			            	
+			            for( i = 0; i < data.insumos.length; i++ ){
+						   insumos.push({
+						   		id: data.insumos[i].IDInsumo,
+						   		label: data.insumos[i].Descripcion
+						   	});
+						}
+						
+						response( insumos );
+					});
+	        		break;
+	        }
+		}
 	},
 
 	guardaDeductiva: function() {
@@ -1109,11 +1138,13 @@ var Deductivas = {
 		DATA_LOADER.show();
 
 		$.ajax({
-			type: 'GET',
+			type: 'POST',
 			url: ESTIMACION.urls.tranController,
 			data: {
-				IDTransaccion: ESTIMACION.getIDTransaccion(),
-				IDInsumo: that.selectedIDInsumo,
+				base_datos: ESTIMACION.getBaseDatos(),
+				id_obra: ESTIMACION.getIDProyecto(),
+				id_transaccion: ESTIMACION.getIDTransaccion(),
+				id_material: that.id_material,
 				IDTipoDeductiva: that.selectedTipoDeductiva,
 				concepto: $('#txtConceptoDeductiva').val(),
 				importe: $('#txtImporteDeductiva').val(),
@@ -1121,34 +1152,41 @@ var Deductivas = {
 				action: 'guardaDeductiva'
 			},
 			dataType: 'json'
-		}).done( function(json) {
+		}).done( function(data) {
 
-			if( ! json.success ) {
-				messageConsole.displayMessage( json.message, 'error' );
+			if( ! data.success ) {
+				messageConsole.displayMessage( data.message, 'error' );
 				return;
 			}
 			
+			var deductiva = {
+				id: data.IDDeductiva,
+				tipo: that.selectedTipoDeductiva,
+				concepto: $('#txtConceptoDeductiva').val(),
+				importe: $('#txtImporteDeductiva').val(),
+				observaciones: $('#txtObservacionesDeductiva').val()
+			}
 			// Ingresar la deduccion a la lista
-			that.agregaDeductiva(json.IDDeductiva, that.selectedTipoDeductiva, $('#txtConceptoDeductiva').val(), $('#txtImporteDeductiva').val(), $('#txtObservacionesDeductiva').val());
+			that.agregaDeductiva( deductiva );
+
 			ESTIMACION.cargaTotales();
+			
 			$('#dialog-nueva-deduccion').dialog('close');
-		}).always( function() {
-			DATA_LOADER.hide();
-		});
+		}).always( DATA_LOADER.hide );
 	},
 
-	agregaDeductiva: function( IDDeductiva, tipo, concepto, importe, observaciones ) {
+	agregaDeductiva: function( deductiva ) {
 
-		var deductiva =
-			  '<tr data-id="' + IDDeductiva + '">'
-			+   '<td>' + tipo + '</td>'
-			+   '<td>' + concepto + '</td>'
-			+   '<td class="numerico">' + importe.numFormat() + '</td>'
-			+   '<td>' + observaciones + '</td>'
+		var html =
+			  '<tr data-id="' + deductiva.id + '">'
+			+   '<td>' + deductiva.tipo + '</td>'
+			+   '<td>' + deductiva.concepto + '</td>'
+			+   '<td class="numerico">' + deductiva.importe.numFormat() + '</td>'
+			+   '<td title="' + deductiva.observaciones + '">' + deductiva.observaciones + '</td>'
 			+   '<td class="icon-cell"><a class="icon action delete"></a></td>'
 			+ '</tr>';
 
-		$('#registros_deductivas table tbody').append(deductiva);
+		$('#registros_deductivas table tbody').append(html);
 	},
 
 	cargaDeductivas: function() {
@@ -1160,28 +1198,35 @@ var Deductivas = {
 		DATA_LOADER.show();
 
 		$.ajax({
-			type: 'GET',
 			url: ESTIMACION.urls.tranController,
 			data: {
-				IDTransaccion: ESTIMACION.getIDTransaccion(),
+				base_datos: ESTIMACION.getBaseDatos(),
+				id_obra: ESTIMACION.getIDProyecto(),
+				id_transaccion: ESTIMACION.getIDTransaccion(),
 				action: 'getDeductivas'
 			},
 			dataType: 'json'
-		}).done( function( json ) {
+		}).done( function( data ) {
 			try {
 
-				if( ! json.success ) {
-					messageConsole.displayMessage(json.message, 'error');
+				if( ! data.success ) {
+					messageConsole.displayMessage(data.message, 'error');
 					return;
 				}
 
-				if( json.noRows ) {
-					$.notify({text: json.message});
+				if( data.noRows ) {
+					$.notify({text: data.message});
 					return;
 				}
 
-				$.each(json.deductivas, function() {
-					that.agregaDeductiva( this.IDDeductiva, this.TipoDeductiva, this.Concepto, this.Importe, this.Observaciones );
+				$.each( data.deductivas, function() {
+					that.agregaDeductiva({
+						id: this.IDDeductiva,
+						tipo: this.TipoDeductiva,
+						concepto: this.Concepto,
+						importe: this.Importe,
+						observaciones: this.Observaciones
+					});
 				});
 
 				$('#dialog-deductivas').dialog('open');
@@ -1192,9 +1237,7 @@ var Deductivas = {
 		.fail( function() {
 			$.notify({text: 'Ocurrió un error al cargar los datos.'});
 		})
-		.always( function() {
-			DATA_LOADER.hide();
-		});
+		.always( DATA_LOADER.hide );
 	},
 
 	eliminaDeductiva: function( event ) {
@@ -1209,10 +1252,12 @@ var Deductivas = {
 		DATA_LOADER.show();
 
 		$.ajax({
-			type: 'GET',
+			type: 'POST',
 			url: ESTIMACION.urls.tranController,
 			data: {
-				IDTransaccion: ESTIMACION.getIDTransaccion(),
+				base_datos: ESTIMACION.getBaseDatos(),
+				id_obra: ESTIMACION.getIDProyecto(),
+				id_transaccion: ESTIMACION.getIDTransaccion(),
 				IDDeductiva: IDDeductiva,
 				action: 'eliminaDeductiva'
 			},
@@ -1234,9 +1279,7 @@ var Deductivas = {
 		.fail( function() {
 			$.notify({text: 'Ocurrió un error al cargar los datos.'});
 		})
-		.always( function() {
-			DATA_LOADER.hide();
-		});
+		.always( DATA_LOADER.hide );
 	}
 }
 
@@ -1281,7 +1324,6 @@ var Retenciones = {
 
 		$('#tipos-retencion').buttonlist({
 			source: ESTIMACION.urls.tranController,
-			data: {action: 'getTiposRetencion'},
 			onSelect: function( selectedItem, listItem ) {
 			},
 			didNotDataFound: function() {
@@ -1311,6 +1353,9 @@ var Retenciones = {
 		$('#txtImporteRetencion').val(0);
 		$('#tipos-retencion').buttonlist('refresh');
 		$('#dialog-nueva-retencion').dialog('open');
+
+		$('#tipos-retencion').buttonlist('option', 'data', {base_datos: ESTIMACION.getBaseDatos(), action: 'getTiposRetencion'});
+
 	},
 
 	showNuevaLiberacion: function() {
@@ -1320,10 +1365,11 @@ var Retenciones = {
 		DATA_LOADER.show();
 
 		$.ajax({
-			type: 'GET',
 			url: ESTIMACION.urls.tranController,
 			data: {
-				IDTransaccion: ESTIMACION.getIDTransaccion(),
+				id_obra: ESTIMACION.getIDProyecto(),
+				base_datos: ESTIMACION.getBaseDatos(),
+				id_transaccion: ESTIMACION.getIDTransaccion(),
 				action: 'getImportePorLiberar'
 			},
 			dataType: 'json'
@@ -1331,9 +1377,7 @@ var Retenciones = {
 
 			$('#txtImportePorLiberar').text(json.importePorLiberar);
 			$('#dialog-nueva-liberacion').dialog('open');
-		}).always(function() {
-			DATA_LOADER.hide();
-		});
+		}).always( DATA_LOADER.hide );
 	},
 
 	agregaRetencion: function( retObj ) {
@@ -1369,15 +1413,17 @@ var Retenciones = {
 		var that = this;
 
 		$.ajax({
-			type: 'GET',
+			type: 'POST',
 			url: ESTIMACION.urls.tranController,
 			data: {
-				  IDTransaccion: ESTIMACION.getIDTransaccion()
-				, IDTipoRetencion: parseInt($('#tipos-retencion').buttonlist('option', 'selectedItem').value)
-				, importe: $('#txtImporteRetencion').val()
-				, concepto: $('#txtConceptoRetencion').val()
-				, observaciones: $('#txtObservacionesRetencion').val()
-				, action: 'guardaRetencion'
+				base_datos: ESTIMACION.getBaseDatos(),
+				id_obra: ESTIMACION.getIDProyecto(),
+				id_transaccion: ESTIMACION.getIDTransaccion(),
+				IDTipoRetencion: parseInt($('#tipos-retencion').buttonlist('option', 'selectedItem').value),
+				importe: $('#txtImporteRetencion').val(),
+				concepto: $('#txtConceptoRetencion').val(),
+				observaciones: $('#txtObservacionesRetencion').val(),
+				action: 'guardaRetencion'
 			},
 			dataType: 'json'
 		}).success( function(json) {
@@ -1410,13 +1456,15 @@ var Retenciones = {
 		var that = this;
 
 		$.ajax({
-			type: 'GET',
+			type: 'POST',
 			url: ESTIMACION.urls.tranController,
 			data: {
-				  IDTransaccion: ESTIMACION.getIDTransaccion()
-				, importe: $('#txtImporteLiberacion').val()
-				, observaciones: $('#txtObservacionesLiberacion').val()
-				, action: 'guardaLiberacion'
+				base_datos: ESTIMACION.getBaseDatos(),
+				id_obra: ESTIMACION.getIDProyecto(),
+				id_transaccion: ESTIMACION.getIDTransaccion(),
+				importe: $('#txtImporteLiberacion').val(),
+				observaciones: $('#txtObservacionesLiberacion').val(),
+				action: 'guardaLiberacion'
 			},
 			dataType: 'json'
 		}).success( function(json) {
@@ -1455,10 +1503,12 @@ var Retenciones = {
 		DATA_LOADER.show();
 
 		$.ajax({
-			type: 'GET',
+			type: 'POST',
 			url: ESTIMACION.urls.tranController,
 			data: {
-				IDTransaccion: ESTIMACION.getIDTransaccion(),
+				id_obra: ESTIMACION.getIDProyecto(),
+				base_datos: ESTIMACION.getBaseDatos(),
+				id_transaccion: ESTIMACION.getIDTransaccion(),
 				IDRetencion: IDRetencion,
 				action: 'eliminaRetencion'
 			},
@@ -1479,9 +1529,7 @@ var Retenciones = {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
 			}
 		})
-		.always( function() {
-			DATA_LOADER.hide();
-		});
+		.always( DATA_LOADER.hide );
 	},
 
 	eliminaLiberacion: function() {
@@ -1497,10 +1545,12 @@ var Retenciones = {
 		DATA_LOADER.show();
 
 		$.ajax({
-			type: 'GET',
+			type: 'POST',
 			url: ESTIMACION.urls.tranController,
 			data: {
-				IDTransaccion: ESTIMACION.getIDTransaccion(),
+				id_obra: ESTIMACION.getIDProyecto(),
+				base_datos: ESTIMACION.getBaseDatos(),
+				id_transaccion: ESTIMACION.getIDTransaccion(),
 				IDLiberacion: IDLiberacion,
 				action: 'eliminaLiberacion'
 			},
@@ -1536,10 +1586,11 @@ var Retenciones = {
 		DATA_LOADER.show();
 
 		$.ajax({
-			type: 'GET',
 			url: ESTIMACION.urls.tranController,
 			data: {
-				IDTransaccion: ESTIMACION.getIDTransaccion(),
+				id_obra: ESTIMACION.getIDProyecto(),
+				base_datos: ESTIMACION.getBaseDatos(),
+				id_transaccion: ESTIMACION.getIDTransaccion(),
 				action: 'getRetenciones'
 			},
 			dataType: 'json'
@@ -1552,7 +1603,6 @@ var Retenciones = {
 				}
 				
 				$.each( json.retenciones, function() {
-
 					that.agregaRetencion( this );
 				});
 
@@ -1566,9 +1616,7 @@ var Retenciones = {
 			}
 		}).fail( function() {
 			$.notify({text: 'Ocurrió un error al cargar las retenciones.'});
-		}).always( function() {
-			DATA_LOADER.hide();
-		});;
+		}).always( DATA_LOADER.hide );
 	}
 };
 

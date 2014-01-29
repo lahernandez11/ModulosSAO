@@ -77,10 +77,10 @@
 
 				$that.on('click', function(event) {
 					
-					if ( restoreData.call($that).beforeLoad.call($that) ) {
+					// if ( restoreData.call($that).beforeLoad.call($that) ) {
 						loadData.call($that);
-						abreListaTransacciones.call($that);
-					}
+						// abreListaTransacciones.call($that);
+					// }
 				});
 
 				$dialogcontainer.find('tbody').on( 'click dblclick', 'tr', function(event) {
@@ -161,6 +161,11 @@
 		if ( ! options.source )
 			return;
 
+		if ( ! options.beforeLoad.call(this) )
+			return;
+		
+		options.onLoad.call($this);
+
 		options.request = $.ajax({
 			type: 'GET',
 			url: options.source,
@@ -178,12 +183,14 @@
 
 				buildList.call($this, json.options);
 
+				abreListaTransacciones.call($this);
+
 			} catch( e ) {
 				$.error( e.message );
 			}
 		})
 		.always( function() {
-			options.onFinishLoadData.call($this);
+			options.onFinishLoad.call($this);
 		});
 	}
 
@@ -242,8 +249,9 @@
 		selectedItem: {value: null},
 		request: null,
 		beforeLoad: function() { return true },
+		onLoad: function() {},
 		onSelectItem: function( item ) { return true; },
-		onFinishLoadData: function() {},
+		onFinishLoad: function() {},
 		onCreateListItem: function() {}
 	}
 })( jQuery );

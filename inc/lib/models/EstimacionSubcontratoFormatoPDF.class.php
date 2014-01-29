@@ -351,7 +351,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$totalesEstimacion = $this->_estimacion->getTotalesTransaccion();
 		$totales = array();
 
-		foreach ($totalesEstimacion as $total) {
+		foreach ( $totalesEstimacion as $total ) {
 			
 			$totales = array(
 				'SumaImportes'  			  => $total->SumaImportes,
@@ -428,6 +428,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 			)
 		);
 
+		$subtotal = 0;
 		$subtotal = $sumaEstaEstimacion - $sumaDeductivas - $sumaRetenciones 
 			- $totales['ImporteAmortizacionAnticipo']
 			- $totales['ImporteFondoGarantia'];
@@ -458,6 +459,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 			)
 		);
 
+		$total = 0;
 		$total += $subtotal + $totales['IVA'];
 
 		$this->Row(
@@ -504,12 +506,12 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->Cell(50, 3, "gerente de proyecto", 1, 0, "C", true);
 	}
 
-	public function Output() {
+	public function Output( $nombre=null, $i='I' ) {
 
 		$this->writeDatosGeneralesEstimacion();
 		$this->writeConceptosEstimados();
 
-		parent::Output(self::FORMATO_NOMBRE_ARCHIVO, 'I');
+		parent::Output( self::FORMATO_NOMBRE_ARCHIVO, 'I' );
 	}
 }
 ?>
