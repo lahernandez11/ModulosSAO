@@ -18,10 +18,10 @@ try {
 		throw new Exception("No fue definida una acción");
 	}
 
-	$conn = new SAO1814DBConn();
+	// $conn = new SAO1814DBConn();
 
-	$IDProyecto = (int) $_REQUEST['IDProyecto'];
-	$IDObra 	= Obra::getIDObraProyecto($IDProyecto);
+	// $IDProyecto = (int) $_REQUEST['IDProyecto'];
+	// $IDObra 	= Obra::getIDObraProyecto($IDProyecto);
 	
 	switch ( $_REQUEST['action'] ) {
 
@@ -214,12 +214,14 @@ try {
 			break;
 
 		case 'getListaTransacciones':
+			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
+			$obra = new Obra( $conn, (int) $_GET['id_obra'] );
 
 			$data['options'] = array();
 
-			$listaTran = EstimacionObra::getListaTransacciones( $IDObra , $conn );
+			$listaTran = EstimacionObra::getListaTransacciones( $obra );
 
-			foreach ($listaTran as $tran) {
+			foreach ( $listaTran as $tran ) {
 				
 				$data['options'][] = array(
 					'IDTransaccion'  => $tran->IDTransaccion,

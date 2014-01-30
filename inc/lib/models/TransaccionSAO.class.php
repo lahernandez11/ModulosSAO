@@ -5,12 +5,11 @@ abstract class TransaccionSAO {
 	protected $obra;
 	protected $id_transaccion;
 	protected $tipo_transaccion;
-	protected $conn = null;
 	protected $_estado = 0;
 	protected $_numeroFolio = 0;
 	protected $_fecha = null;
 	protected $_observaciones = "";
-	private $_nombreObra;
+	protected $conn = null;
 
 	public function __construct() {
 
@@ -20,7 +19,6 @@ abstract class TransaccionSAO {
 			
 			case 2:
 				$this->instanceFromID( $params[0], $params[1] );
-				//call_user_func_array(array($this, "instanceFromID"), $params);
 				break;
 
 			case 4:
@@ -81,7 +79,6 @@ abstract class TransaccionSAO {
 
 			foreach ( $rsDatosTran as $datosTran ) {
 
-				$this->_nombreObra	    = $datosTran->NombreObra;
 				$this->tipo_transaccion = $datosTran->tipo_transaccion;
 				$this->_estado 		    = $datosTran->estado;
 				$this->_numeroFolio     = $datosTran->numero_folio;

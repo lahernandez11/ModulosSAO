@@ -5,10 +5,10 @@ class EstimacionObra extends TransaccionSAO {
 
 	const TIPO_TRANSACCION = 103;
 
-	private $_referencia;
-	private $_fechaInicio;
-	private $_fechaTermino;
-	private $_conceptos;
+	private $referencia;
+	private $fecha_inicio;
+	private $fecha_termino;
+	private $conceptos;
 
 	public function __construct() {
 		
@@ -16,7 +16,7 @@ class EstimacionObra extends TransaccionSAO {
 
 		switch ( func_num_args() ) {
 
-			case 8:
+			case 7:
 				call_user_func_array(array($this, "instanceFromDefault"), $params);
 				break;
 
@@ -26,26 +26,26 @@ class EstimacionObra extends TransaccionSAO {
 		}
 	}
 
-	private function instanceFromDefault( $IDObra, $fecha, $fechaInicio, 
-		$fechaTermino, $observaciones, $referencia, Array $conceptos, SAODBConn $conn ) {
+	private function instanceFromDefault( Obra $obra, $fecha, $fechaInicio, 
+		$fechaTermino, $observaciones, $referencia, Array $conceptos) {
 
-		parent::__construct($IDObra, self::TIPO_TRANSACCION, $fecha, $observaciones, $conn);
+		parent::__construct( $obra, self::TIPO_TRANSACCION, $fecha, $observaciones );
 
-		$this->_referencia = $referencia;
+		$this->referencia = $referencia;
 		$this->setFechaInicio( $fechaInicio );
 		$this->setFechaTermino( $fechaTermino );
 		$this->setConceptos( $conceptos );
 	}
 
-	private function instanceFromID( $IDTransaccion, SAODBConn $conn ) {
-		parent::__construct( $IDTransaccion, $conn );
+	private function instanceFromID( Obra $obra, $id_transaccion ) {
+		parent::__construct( $obra, $id_transaccion );
 		
 		$this->setDatosGenerales();
 	}
 
 	public function guardaTransaccion() {
 
-		if ( ! empty($this->_IDTransaccion) ) {
+		if ( ! empty($this->id_transaccion) ) {
 
 			$tsql = "{call [EstimacionObra].[uspActualizaDatosGenerales]( ?, ?, ?, ?, ?, ?, ? )}";
 
@@ -72,7 +72,7 @@ class EstimacionObra extends TransaccionSAO {
 		        array( $this->getReferencia(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(64) ),
 		        array( $this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096) ),
 		        array( Sesion::getCuentaUsuarioSesion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
-		        array( &$this->_IDTransaccion, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT ),
+		        array( &$this->id_transaccion, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT ),
 		        array( &$this->_numeroFolio, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
 		    );
 
@@ -83,7 +83,7 @@ class EstimacionObra extends TransaccionSAO {
 
 		$tsql = "{call [EstimacionObra].[uspEstimaConcepto]( ?, ?, ?, ?, ? )}";
 
-		foreach ( $this->_conceptos as $concepto ) {
+		foreach ( $this->conceptos as $concepto ) {
 			
 			try {
 				// Limpia y valida la cantidad y precio
@@ -118,19 +118,19 @@ class EstimacionObra extends TransaccionSAO {
 	}
 
 	public function getReferencia() {
-		return $this->_referencia;
+		return $this->referencia;
 	}
 
 	public function setReferencia( $referencia ) {
-		$this->_referencia = $referencia;
+		$this->referencia = $referencia;
 	}
 
 	public function setConceptos( Array $conceptos ) {
-		$this->_conceptos = $conceptos;
+		$this->conceptos = $conceptos;
 	}
 
 	public function getFechaInicio() {
-		return $this->_fechaInicio;
+		return $this->fecha_inicio;
 	}
 
 	public function setFechaInicio( $fecha ) {
@@ -138,11 +138,11 @@ class EstimacionObra extends TransaccionSAO {
 		if ( ! $this->fechaEsValida( $fecha ) )
 			throw new Exception("El formato de fecha inicial es incorrecto.");
 		else
-			$this->_fechaInicio = $fecha;
+			$this->fecha_inicio = $fecha;
 	}
 
 	public function getFechaTermino() {
-		return $this->_fechaTermino;
+		return $this->fecha_termino;
 	}
 
 	public function setFechaTermino( $fecha ) {
@@ -150,7 +150,7 @@ class EstimacionObra extends TransaccionSAO {
 		if ( ! $this->fechaEsValida( $fecha ) )
 			throw new Exception("El formato de fecha término es incorrecto.");
 		else
-			$this->_fechaTermino = $fecha;
+			$this->fecha_termino = $fecha;
 	}
 
 	// @override
@@ -166,7 +166,7 @@ class EstimacionObra extends TransaccionSAO {
 
 	    $datos = $this->_SAOConn->executeSP($tsql, $params);
 
-	    $this->_referencia = $datos[0]->Referencia;
+	    $this->referencia = $datos[0]->Referencia;
 	    $this->setFechaInicio($datos[0]->FechaInicio);
 	    $this->setFechaTermino($datos[0]->FechaTermino);
 	}
@@ -228,17 +228,17 @@ class EstimacionObra extends TransaccionSAO {
 		}
 	}
 
-	public static function getListaTransacciones( $IDObra, SAODBConn $conn ) {
+	public static function getListaTransacciones( Obra $obra, $tipo_transaccion=null ) {
 
-		return parent::getListaTransacciones($IDObra, self::TIPO_TRANSACCION, $conn);
+		return parent::getListaTransacciones( $obra, self::TIPO_TRANSACCION );
 	}
 
 	public function __toString() {
 
 		$data  = parent::__toString() . ', ';
-		$data .= "FechaInicio: {$this->_fechaInicio}, ";
-		$data .= "FechaTermino: {$this->_fechaTermino}, ";
-		$data .= "Referencia: {$this->_referencia}, ";
+		$data .= "FechaInicio: {$this->fecha_inicio}, ";
+		$data .= "FechaTermino: {$this->fecha_termino}, ";
+		$data .= "Referencia: {$this->referencia}, ";
 
 		return $data;
 	}

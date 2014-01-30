@@ -32,12 +32,16 @@ var COBRANZA = {
 		});
 
 		$('#bl-proyectos').buttonlist({
-			source: 'inc/lib/controllers/ListaProyectosController.php',
+			source: 'inc/lib/controllers/ListaObrasController.php',
 			data: {action: 'getListaProyectos'},
 			'onSelect': function( selectedItem, listItem ) {
 				
 				$('#folios-transaccion').buttonlist('option', 'data', {
-					IDProyecto: selectedItem.value, action: 'getTransacciones'
+						base_datos: that.getBaseDatos(),
+						id_obra: selectedItem.value,
+						action: 'getFoliosTransaccion'
+					
+					// IDProyecto: selectedItem.value, action: 'getTransacciones'
 				});
 
 				$('#folios-transaccion').buttonlist('refresh');
@@ -50,8 +54,11 @@ var COBRANZA = {
 			},
 			onCreateListItem: function() {
 				return {
-					id: this.IDProyecto,
-					value: this.NombreProyecto
+					id: this.id,
+					value: this.nombre,
+					extra: {
+						source: this.source_id
+					}
 				}
 			}
 		});
@@ -290,7 +297,9 @@ var COBRANZA = {
     		type: 'POST',
     		url: that.urls.tranController,
     		data: {
-    			IDTransaccion: that.getIDTransaccion(),
+    			base_datos: that.getBaseDatos(),
+    			id_obra: that.getIDObra(),
+    			id_transaccion: that.getIDTransaccion(),
     			tipoTotal: tipoTotal,
     			importe: importe,
     			action: 'actualizaTotal'
@@ -310,7 +319,11 @@ var COBRANZA = {
     	.always( function() { alwaysCallback(); DATA_LOADER.hide(); });
 	},
 
-	getIDProyecto: function() {
+	getBaseDatos: function() {
+		return $('#bl-proyectos').buttonlist('option', 'selectedItem').extra.source
+	},
+
+	getIDObra: function() {
 		return $('#bl-proyectos').buttonlist('option', 'selectedItem').value;
 	},
 
@@ -372,27 +385,27 @@ var COBRANZA = {
 		DATA_LOADER.show();
 
 		$.ajax({
-			type: 'GET',
 			url: 'inc/lib/controllers/EstimacionObraController.php',
 			data: {
-				IDProyecto: that.getIDProyecto(),
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDObra(),
 				action: 'getListaTransacciones'
 			},
 			dataType: 'json'
-		}).done( function( json ) {
+		}).done( function( data ) {
 			try {
 
-				if( ! json.success ) {
-					messageConsole.displayMessage( json.message, 'error' );
+				if( ! data.success ) {
+					messageConsole.displayMessage( data.message, 'error' );
 					return;
 				}
 
-				if( json.noRows ) {
-					$.notify( {text: json.message} );
+				if( data.noRows ) {
+					$.notify( {text: data.message} );
 					return;
 				}
 
-				that.fillEstimacionesObra(json.options);
+				that.fillEstimacionesObra(data.options);
 
 				$('#dialog-estimaciones-obra').dialog('open');
 
@@ -449,8 +462,9 @@ var COBRANZA = {
 		$.ajax({
 			url: that.urls.tranController,
 			data: {
-				IDProyecto: that.getIDProyecto(),
-				IDEstimacionObra: that.getIDEstimacionObra(),
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDObra(),
+				id_estimacion_obra: that.getIDEstimacionObra(),
 				action: 'nuevaTransaccion'
 			},
 			dataType: 'json'
@@ -545,7 +559,9 @@ var COBRANZA = {
 		$.ajax({
 			url: that.urls.tranController,
 			data: {
-				IDTransaccion: that.getIDTransaccion(),
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDObra(),
+				id_transaccion: that.getIDTransaccion(),
 				action: 'getDatosTransaccion'
 			},
 			dataType: 'json'
@@ -624,19 +640,25 @@ var COBRANZA = {
 
 		that.desmarcaConceptosError();
 
+		requestData = {
+			base_datos: that.getBaseDatos(),
+			id_obra: that.getIDObra(),
+			fecha: $('#txtFechaDB').val(),
+			id_estimacion_obra: that.getIDEstimacionObra(),
+			observaciones: $('#txtObservaciones').val(),
+			folio_factura: $('#txtFolioFactura').val(),
+			conceptos: that.getConceptosModificados(),
+			action: 'guardaTransaccion'
+		}
+
+		if ( that.getIDTransaccion() ) {
+			requestData.id_transaccion = that.getIDTransaccion()
+		}
+
 		$.ajax({
 			type: 'POST',
 			url: that.urls.tranController,
-			data: {
-				IDProyecto: that.getIDProyecto(),
-				IDTransaccion: that.getIDTransaccion(),
-				fecha: $('#txtFechaDB').val(),
-				IDEstimacionObra: that.getIDEstimacionObra(),
-				observaciones: $('#txtObservaciones').val(),
-				folio_factura: $('#txtFolioFactura').val(),
-				conceptos: that.getConceptosModificados(),
-				action: 'guardaTransaccion'
-			},
+			data: requestData,
 			dataType: 'json'
 		}).done( function(data) {
 
@@ -705,9 +727,12 @@ var COBRANZA = {
 		DATA_LOADER.show();
 
 		$.ajax({
+			type: 'POST',
 			url: that.urls.tranController,
 			data: {
-				'IDTransaccion': that.getIDTransaccion(),
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDObra(),
+				'id_transaccion': that.getIDTransaccion(),
 				action: 'eliminaTransaccion'
 			},
 			dataType: 'json'
@@ -739,7 +764,9 @@ var COBRANZA = {
 		$.ajax({
 			url: that.urls.tranController,
 			data: {
-				IDTransaccion: that.getIDTransaccion(),
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDObra(),
+				id_transaccion: that.getIDTransaccion(),
 				action: 'getTotalesTransaccion'
 			},
 			dataType: 'json'
@@ -838,7 +865,7 @@ var modifiedTran = function( event, data ) {
 
 var notifyModifiedTran = function( event, data ) {
 	if( confirm('Desea continuar sin guardar los cambios?...') ) {
-		if( typeof data === 'object')
+		if( typeof data === 'function')
 			data.call(ESTIMACION);
 	}
 }
