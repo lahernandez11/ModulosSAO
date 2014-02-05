@@ -146,7 +146,8 @@
 									<col class="unidad"/>
 									<col span="2" class="monto"/>
 									<col class="monto editable"/>
-									<col span="5" class="monto"/>
+									<col span="4" class="monto"/>
+									<col class="cumplido"/>
 								</colgroup>
 								<thead>
 									<tr>

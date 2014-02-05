@@ -293,14 +293,14 @@
 			 <%= '&nbsp;&nbsp;'.repeat( NumeroNivel ) + Descripcion %>
 			</<%= EsActividad === 1 ? 'td' : 'th' %>>
 			<td class="centrado"><%- Unidad %></td>
-			<td class="numerico"><%- CantidadPresupuestada %></td>
+			<td class="numerico"><%= EsActividad ? CantidadPresupuestada : '' %></td>
 			<td class="numerico"></td>
-			<td class="numerico"><%- CantidadEstimada %></td>
-			<td class="numerico"><%- PrecioUnitarioEstimado %></td>
-			<td class="numerico"><%- ImporteEstimado %></td>
-			<td class="editable-cell numerico"><%- CantidadCobrada %></td>
-			<td class="editable-cell numerico"><%- PrecioUnitarioCobrado %></td>
-			<td class="numerico"><%- ImporteCobrado %></td>
+			<td class="numerico"><%= EsActividad ? CantidadEstimada : '' %></td>
+			<td class="numerico"><%= EsActividad ? PrecioUnitarioEstimado : '' %></td>
+			<td class="numerico"><%= EsActividad ? ImporteEstimado : '' %></td>
+			<td class="editable-cell numerico"><%= EsActividad ? CantidadCobrada : '' %></td>
+			<td class="editable-cell numerico"><%= EsActividad ? PrecioUnitarioCobrado : '' %></td>
+			<td class="numerico"><%= EsActividad ? ImporteCobrado : '' %></td>
 		</tr>
 	</script>
 

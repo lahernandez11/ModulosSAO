@@ -26,7 +26,6 @@ try {
 			$id_transaccion = (int) $_POST['id_transaccion'];
 
 			$avanceObra = new AvanceObra( $obra, $id_transaccion );
-
 			$avanceObra->eliminaTransaccion();
 
 			break;

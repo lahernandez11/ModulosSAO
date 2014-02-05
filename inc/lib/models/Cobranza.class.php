@@ -88,12 +88,16 @@ class Cobranza extends TransaccionSAO {
 			
 			try {
 				// Limpia y valida la cantidad y precio
-				$concepto['cantidad'] = str_replace(',', '', $concepto['cantidad']);
-				$concepto['precio'] = str_replace(',', '', $concepto['precio']);
+				$concepto['cantidad'] = (float) str_replace( ',', '', $concepto['cantidad'] );
+				$concepto['precio'] = (float) str_replace( ',', '', $concepto['precio'] );
 
 				// Si el importe no es valido agrega el concepto con error
-				if( ! $this->esImporte($concepto['cantidad']) || ! $this->esImporte($concepto['precio'])) {
+				if( ! $this->esImporte( $concepto['cantidad'] ) || ! $this->esImporte( $concepto['precio'] ) ) {
 					throw new Exception("El numero ingresado no es correcto");
+				}
+
+				if ( $concepto['cantidad'] === 0.0 ) {
+					continue;
 				}
 
 				$params = array(

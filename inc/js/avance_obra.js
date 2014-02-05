@@ -587,7 +587,7 @@ var AVANCE = {
 		this.requestingData = true;
 
 		$.ajax({
-			type: 'GET',
+			type: 'POST',
 			url: that.urls.tranController,
 			data: {
 				base_datos: that.getBaseDatos(),
