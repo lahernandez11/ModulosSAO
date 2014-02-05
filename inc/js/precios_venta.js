@@ -1,5 +1,4 @@
-$( function() {
-	
+$( function() {	
 	PRECIOS_VENTA.init();
 });
 
@@ -13,10 +12,13 @@ var PRECIOS_VENTA = {
 	urls: {
 		tranController: 'inc/lib/controllers/PrecioVentaController.php'
 	},
+	conceptoTemplate: null,
 
 	init: function() {
 
 		var that = this;
+		
+		this.conceptoTemplate = _.template($('#concepto-template').html());
 
 		// Suscripcion al evento transaccion modificada
 		var modifiedTranSubscription = pubsub.subscribe('modified_tran', modifiedTran);
@@ -31,7 +33,7 @@ var PRECIOS_VENTA = {
 		});
 
 		$('#bl-proyectos').buttonlist({
-			source: 'inc/lib/controllers/ListaProyectosController.php',
+			source: 'inc/lib/controllers/ListaObrasController.php',
 			data: { action: 'getListaProyectos'},
 			onSelect: function( selectedItem, listItem ) {
 				
@@ -42,8 +44,11 @@ var PRECIOS_VENTA = {
 			},
 			onCreateListItem: function() {
 				return {
-					id: this.IDProyecto,
-					value: this.NombreProyecto
+					id: this.id,
+					value: this.nombre,
+					extra: {
+						source: this.source_id
+					}
 				}
 			}
 		});
@@ -85,7 +90,11 @@ var PRECIOS_VENTA = {
 		this.limpiaDatosTransaccion();
 	},
 
-	getIDProyecto: function() {
+	getBaseDatos: function() {
+		return $('#bl-proyectos').buttonlist('option', 'selectedItem').extra.source
+	},
+
+	getIDObra: function() {
 		return $('#bl-proyectos').buttonlist('option', 'selectedItem').value;
 	},
 
@@ -122,81 +131,45 @@ var PRECIOS_VENTA = {
 		DATA_LOADER.show();
 
 		$.ajax({
-			type: 'GET',
 			url: that.urls.tranController,
 			data: {
-				IDProyecto: that.getIDProyecto(),
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDObra(),
 				action: 'getPreciosVenta'
 			},
 			dataType: 'json'
-		}).done( function( json ) {
+		}).done( function( data ) {
 			try {
 
-				if( ! json.success ) {
-					messageConsole.displayMessage(json.message, 'error');
+				if( ! data.success ) {
+					messageConsole.displayMessage(data.message, 'error');
 					return;
 				}
 
-				if( json.noRows ) {
-					$.notify({text: json.message});
+				if( data.noRows ) {
+					$.notify({text: data.message});
 					return;
 				}
 
 				// llena la tabla de conceptos
-				that.llenaTablaConceptos( json.conceptos );
+				that.renderConceptos( data.conceptos );
 
 			} catch( e ) {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
 			}
 		})
-		.fail( function() {
-			$.notify({text: 'Ocurrió un error al cargar la transaccion.'});
-		})
-		.always( function() {
-			DATA_LOADER.hide();
-		});
+		.always( DATA_LOADER.hide );
 	},
 
-	llenaTablaConceptos: function( conceptos ) {
+	renderConceptos: function( conceptos ) {
+		var html = '';
 
-		var rows = '',
-			cellType = 'td',
-			precioProduccion = '',
-			precioEstimacion = '',
-			fechaModificacion = '';
+		for( var i = 0; i < conceptos.length; i++ ) {
+			console.log(conceptos[i]);
+			html += this.conceptoTemplate( conceptos[i] );
+		}
 
-		$.each( conceptos, function() {
-
-			if ( this.EsActividad ) {
-				cellType = 'td';
-				precioProduccion  = this.PrecioProduccion;
-				precioEstimacion = this.PrecioEstimacion;
-
-				if ( this.ConPrecio ) {
-					fechaModificacion = this.FechaUltimaModificacion;
-				} else
-					fechaModificacion = '';
-			}
-			else {
-				cellType = 'th';
-				precioProduccion  = '';
-				precioEstimacion = '';
-				fechaModificacion = '';
-			}
-
-			rows +=
-				 '<tr data-id="' + this.IDConcepto + '" data-esactividad="' + this.EsActividad + '">'
-				+  '<td class="icon-cell"><a class="icon fixed"></a></td>'
-				+  '<' + cellType + ' title="' + this.Descripcion + '">'
-				+  '&nbsp;&nbsp;'.repeat(this.NumeroNivel) + this.Descripcion + ' </' + cellType + '>'
-				+  '<td class="centrado">' + this.Unidad + '</td>'
-				+  '<td class="editable-cell numerico">' + precioProduccion + '</td>'
-				+  '<td class="editable-cell numerico">' + precioEstimacion + '</td>'
-				+  '<td class="centrado">' + fechaModificacion + '</td>'
-				+ '</tr>';
-		});
-		
-		$('#tabla-conceptos tbody').html( rows );
+		$('#tabla-conceptos tbody').html( html );
 	},
 
 	getConceptosModificados: function() {
@@ -222,26 +195,24 @@ var PRECIOS_VENTA = {
 
 		var that = this;
 
-		var IDProyecto = that.getIDProyecto(),
-			conceptos = that.getConceptosModificados();
-
 		DATA_LOADER.show();
 
 		$.ajax({
 			type: 'POST',
 			url: that.urls.tranController,
 			data: {
-				IDProyecto: IDProyecto,
-				conceptos: conceptos,
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDObra(),
+				conceptos: that.getConceptosModificados(),
 				action: 'setPreciosVenta'
 			},
 			dataType: 'json'
 		})
-		.done( function( json ) {
+		.done( function( data ) {
 			try {
 
-				if( ! json.success ) {
-					messageConsole.displayMessage( json.message, 'error' );
+				if( ! data.success ) {
+					messageConsole.displayMessage( data.message, 'error' );
 					return;
 				}
 
@@ -252,9 +223,7 @@ var PRECIOS_VENTA = {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
 			}
 		})
-		.always( function() {
-			DATA_LOADER.hide();
-		});
+		.always( DATA_LOADER.hide );
 	},
 
 	marcaConcepto: function( IDConcepto ) {
@@ -286,7 +255,7 @@ var notifyModifiedTran = function( event, data ) {
 	
 	if( confirm('Existen cambios sin guardar, desea continuar?...') ) {
 
-		//if( typeof data === 'object' )
-			data.call(PRECIOS_VENTA);
+		if( typeof data === 'function' )
+			data.call( PRECIOS_VENTA );
 	}
 }

@@ -12,15 +12,6 @@
 	<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
 
 	<!--[if lt IE 9]><script src="inc/js/html5shiv.js"></script><![endif]-->
-	<script src="inc/js/jquery-1.7.1.min.js"></script>
-	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
-	<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
-
-	<script src="inc/js/general.js"></script>
-	<script src="inc/js/jquery.buttonlist.js"></script>
-	<script src="inc/js/jquery.uxtable.js"></script>
-	<script src="inc/js/jquery.notify.js"></script>
-	<script src="inc/js/confirmacion_cobranza.js"></script>
 </head>
 
 <body>
@@ -67,7 +58,6 @@
 							<section id="tran-info">
 								<form>
 									<fieldset>
-										
 										<div class="multi-field">
 											<label>Referencia</label>
 											<input type="text" id="txtReferencia" class="roField"></input>
@@ -112,18 +102,6 @@
 
 						<div style="clear:both"></div>
 						<section id="tran-content">
-						<!-- 	<div id="column-switchers" class="checkboxgroup">
-								<input type="checkbox" id="contratado" name="col-viz" checked />
-								<label for="contratado">Contratado</label>
-								<input type="checkbox" id="avance-volumen" name="col-viz" checked />
-								<label for="avance-volumen">Avance Volumen</label>
-								<input type="checkbox" id="avance-importe" name="col-viz" checked />
-								<label for="avance-importe">Avance Importe</label>
-								<input type="checkbox" id="saldo" name="col-viz" checked />
-								<label for="saldo">Saldo</label>
-								<input type="checkbox" id="destino" name="col-viz" checked />
-								<label for="destino">Destino</label>
-							</div> -->
 							<table id="tabla-conceptos">
 								<colgroup>
 									<col class="icon"/>
@@ -304,8 +282,36 @@
 		</table>
 	</div>
 	<div id="message-console"><span id="console-message"></span><span id="console-toggler" class="open"></span></div>
-	<div id="cache">
-		
-	</div>
+	<div id="cache"></div>
+
+	<script type="text/template" id="concepto-template">
+		<tr <%= Estimado === 1 ? 'class="modificado"' : "" %> data-id="<%- IDConcepto %>" data-esactividad="<%- EsActividad %>">
+			<td class="icon-cell">
+				<a class="icon fixed"></a>
+			</td>
+			<<%= EsActividad === 1 ? 'td' : 'th' %> title="<%- Descripcion %>">
+			 <%= '&nbsp;&nbsp;'.repeat( NumeroNivel ) + Descripcion %>
+			</<%= EsActividad === 1 ? 'td' : 'th' %>>
+			<td class="centrado"><%- Unidad %></td>
+			<td class="numerico"><%- CantidadPresupuestada %></td>
+			<td class="numerico"></td>
+			<td class="numerico"><%- CantidadEstimada %></td>
+			<td class="numerico"><%- PrecioUnitarioEstimado %></td>
+			<td class="numerico"><%- ImporteEstimado %></td>
+			<td class="editable-cell numerico"><%- CantidadCobrada %></td>
+			<td class="editable-cell numerico"><%- PrecioUnitarioCobrado %></td>
+			<td class="numerico"><%- ImporteCobrado %></td>
+		</tr>
+	</script>
+
+	<script src="inc/js/lib/underscore-min.js"></script>
+	<script src="inc/js/jquery-1.7.1.min.js"></script>
+	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
+	<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
+	<script src="inc/js/general.js"></script>
+	<script src="inc/js/jquery.buttonlist.js"></script>
+	<script src="inc/js/jquery.uxtable.js"></script>
+	<script src="inc/js/jquery.notify.js"></script>
+	<script src="inc/js/confirmacion_cobranza.js"></script>
 </body>
 </html>

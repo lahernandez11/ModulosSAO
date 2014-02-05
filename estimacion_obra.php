@@ -157,13 +157,36 @@
 		</footer> <!-- app-footer -->
 	</div> <!-- app-wrapper -->
 
-	<div id="message-console"><span id="console-message"></span><span id="console-toggler" class="open"></span></div>
+	<div id="message-console">
+		<span id="console-message"></span>
+		<span id="console-toggler" class="open"></span>
+	</div>
 	<div id="cache"></div>
 
+	<script type="text/template" id="concepto-template">
+		<tr data-id="<%- IDConcepto %>" data-esactividad="<%- EsActividad %>">
+			<td class="icon-cell">
+				<a class="icon fixed"></a>
+			</td>
+			<<%= EsActividad ? 'td': 'th' %> title="<%- Descripcion %>">
+				<%= '&nbsp;&nbsp;'.repeat(NumeroNivel) + Descripcion %>
+			</<%= EsActividad ? 'td': 'th' %>>
+			<td class="centrado"><%- Unidad %></td>
+			<td class="numerico"><%= EsActividad ? CantidadPresupuestada : '' %></td>
+			<td class="numerico"><%= EsActividad ? CantidadEstimadaAnterior : '' %></td>
+			<td class="editable-cell numerico cantidad"><%= EsActividad ? CantidadEstimada : '' %></td>
+			<td class="editable-cell numerico precio"><%= EsActividad ? PrecioVenta : '' %></td>
+			<td class="numerico total"><%= EsActividad ? Total : '' %></td>
+			<td class="icon-cell cumplido">
+				<%= EsActividad ? '<a class="icon action checkbox checkbox-' + (Cumplido ? 'checked' : 'unchecked') + '"></a> Si' : '' %>
+			</td>
+		</tr>
+	</script>
+
+	<script src="inc/js/lib/underscore-min.js"></script>
 	<script src="inc/js/jquery-1.7.1.min.js"></script>
 	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
 	<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
-	
 	<script src="inc/js/general.js"></script>
 	<script src="inc/js/jquery.buttonlist.js"></script>
 	<script src="inc/js/jquery.listaTransacciones.js"></script>

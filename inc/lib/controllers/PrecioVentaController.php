@@ -1,10 +1,10 @@
 <?php
 require_once 'setPath.php';
+require_once 'db/SAODBConnFactory.class.php';
 require_once 'models/Sesion.class.php';
 require_once 'models/Obra.class.php';
-require_once 'models/Util.class.php';
-require_once 'db/SAODBConn.class.php';
 require_once 'models/PrecioVenta.class.php';
+require_once 'models/Util.class.php';
 
 $data['success'] = true;
 $data['message'] = null;
@@ -18,20 +18,16 @@ try {
 		throw new Exception("No fue definida una acción");
 	}
 
-	$conn = new SAO1814DBConn();
-
-	$IDProyecto = (int) $_REQUEST['IDProyecto'];
-	$IDObra 	= Obra::getIDObraProyecto($IDProyecto);
-	
 	switch ( $_REQUEST['action'] ) {
 
 		case 'getPreciosVenta':
+			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
+			$obra = new Obra( $conn, $_GET['id_obra'] );
+			$precios = PrecioVenta::getPreciosVenta( $obra);
 
 			$data['conceptos'] = array();
 
-			$precios = PrecioVenta::getPreciosVenta($conn, $IDObra);
-
-			foreach ($precios as $precio) {
+			foreach ( $precios as $precio ) {
 				
 				$data['conceptos'][] = array(
 
@@ -41,32 +37,31 @@ try {
 					'EsActividad' 	   => $precio->EsActividad,
 					'ConPrecio' 	   => $precio->ConPrecio,
 					'Unidad' 	   	   => $precio->Unidad,
-					'PrecioProduccion' => Util::formatoNumerico($precio->PrecioProduccion),
-					'PrecioEstimacion' => Util::formatoNumerico($precio->PrecioEstimacion),
-					'FechaUltimaModificacion' => Util::formatoFecha($precio->FechaUltimaModificacion),
+					'PrecioProduccion' => Util::formatoNumerico( $precio->PrecioProduccion ),
+					'PrecioEstimacion' => Util::formatoNumerico( $precio->PrecioEstimacion ),
+					'FechaUltimaModificacion' => Util::formatoFecha( $precio->FechaUltimaModificacion ),
 				);
 			}
 
 			break;
 
 		case 'setPreciosVenta':
+			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
+			$obra = new Obra( $conn, $_POST['id_obra'] );
 
-			$conceptos = is_array($_REQUEST['conceptos']) ? $_REQUEST['conceptos'] : array();
+			$conceptos = is_array( $_POST['conceptos'] ) ? $_POST['conceptos'] : array();
 
 			$data['conceptosError'] = array();
 
-			$data['conceptosError'] = PrecioVenta::setPreciosVenta($conn, $IDObra, $conceptos);
+			$data['conceptosError'] = PrecioVenta::setPreciosVenta( $obra, $conceptos );
 
 			break;
 	}
 
-	unset($conn);
 } catch( Exception $e ) {
-
-	unset($conn);
 	$data['success'] = false;
 	$data['message'] = $e->getMessage();
 }
 
-echo json_encode($data);
+echo json_encode( $data );
 ?>

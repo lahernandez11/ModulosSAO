@@ -31,22 +31,33 @@ var AVANCE = {
 		});
 
 		$('#bl-proyectos').buttonlist({
-			source: 'inc/lib/controllers/ListaProyectosController.php',
+			source: 'inc/lib/controllers/ListaObrasController.php',
 			data: { action: 'getListaProyectos'},
 			onSelect: function( selectedItem, listItem ) {
 				
 				$('#folios-transaccion')
 				.buttonlist('option', 'data', 
-					{IDProyecto: selectedItem.value, action: 'getFoliosTransaccion'});
+					{
+						base_datos: that.getBaseDatos(),
+						id_obra: selectedItem.value,
+						action: 'getFoliosTransaccion'
+					});
 
 				$('#folios-transaccion').buttonlist('refresh');
 
-				$('#txtConceptoRaiz')
-				.presupuestoObra('option', 'data', 
-					{IDProyecto: selectedItem.value, action: 'getDescendantsOf'});
+				$('#txtConceptoRaiz').presupuestoObra('option', 'data', 
+					{
+						base_datos: that.getBaseDatos(),
+						id_obra: selectedItem.value,
+						action: 'getDescendantsOf'
+					});
 
 				$('#btnLista-transacciones').listaTransacciones('option', 'data', 
-					{IDProyecto: selectedItem.value, action: 'getListaTransacciones'});
+					{
+						base_datos: that.getBaseDatos(),
+						id_obra: selectedItem.value,
+						action: 'getListaTransacciones'
+					});
 				
 				that.limpiaDatosTransaccion();
 				that.deshabilitaCamposTransaccion();
@@ -56,8 +67,11 @@ var AVANCE = {
 			},
 			onCreateListItem: function() {
 				return {
-					id: this.IDProyecto,
-					value: this.NombreProyecto
+					id: this.id,
+					value: this.nombre,
+					extra: {
+						source: this.source_id
+					}
 				}
 			}
 		});
@@ -66,7 +80,7 @@ var AVANCE = {
 			source: that.urls.tranController,
 			beforeLoad: function() {
 
-				if( ! that.getIDProyecto() ) {
+				if( ! that.getIDObra() ) {
 
 					$.notify({text: 'Seleccione un proyecto para cargar los folios.'});
 					return false;
@@ -90,9 +104,10 @@ var AVANCE = {
 		$('#btnLista-transacciones').listaTransacciones({
 			source: that.urls.tranController,
 			data: { action: 'getListaTransacciones'},
+			onLoad: function() { DATA_LOADER.show() },
 			beforeLoad: function() {
 
-				if( ! that.getIDProyecto() ) {
+				if( ! that.getIDObra() ) {
 					$.notify({text: 'Seleccione un proyecto para cargar las transacciones.'});
 					return false;
 				} else
@@ -108,7 +123,8 @@ var AVANCE = {
 					fecha: this.Fecha,
 					observaciones: this.Observaciones
 				};
-			}
+			},
+			onFinishLoad: function() { DATA_LOADER.hide() }
 		});
 		
 		$('#txtConceptoRaiz').presupuestoObra({
@@ -219,7 +235,7 @@ var AVANCE = {
 
 	nuevaTransaccion: function() {
 
-		if ( ! this.getIDProyecto() ) {
+		if ( ! this.getIDObra() ) {
 			$.notify({text: 'Seleccione un proyecto'});
 			return;
 		}
@@ -229,12 +245,20 @@ var AVANCE = {
 		$('#folios-transaccion').buttonlist('reset');
 	},
 
-	getIDProyecto: function() {
+	getBaseDatos: function() {
+		return $('#bl-proyectos').buttonlist('option', 'selectedItem').extra.source
+	},
+
+	getIDObra: function() {
 		return $('#bl-proyectos').buttonlist('option', 'selectedItem').value;
 	},
 
 	getIDTransaccion: function() {
 		return $('#folios-transaccion').buttonlist('option', 'selectedItem').value;
+	},
+
+	getIDConceptoRaiz: function() {
+		return $('#txtConceptoRaiz').presupuestoObra('option', 'selectedNode').id
 	},
 
 	deshabilitaConceptoRaiz: function() {
@@ -274,27 +298,27 @@ var AVANCE = {
 
 	getTotalesTransaccion: function() {
 
-		var that = this,
-			IDTransaccion = this.getIDTransaccion();
+		var that = this;
 
 		var request =
 			$.ajax({
-				type: 'GET',
 				url: urls.tranController,
 				data: {
-					IDTransaccion: IDTransaccion,
+					base_datos: that.getBaseDatos(),
+					id_obra: that.getIDObra(),
+					id_transaccion: that.getIDTransaccion(),
 					action: 'getTotalesTransaccion'
 				},
 				dataType: 'json'
-			}).done( function( json ) {
+			}).done( function( data ) {
 				try {
 
-					if( ! json.success ) {
-						messageConsole.displayMessage(json.message, 'error');
+					if( ! data.success ) {
+						messageConsole.displayMessage(data.message, 'error');
 						return;
 					}
 
-					that.fillTotales( json.totales );
+					that.fillTotales( data.totales );
 
 				} catch( e ) {
 					messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
@@ -345,38 +369,39 @@ var AVANCE = {
 		DATA_LOADER.show();
 
 		$.ajax({
-			type: 'GET',
 			url: that.urls.tranController,
 			data: {
-				IDTransaccion: $('#folios-transaccion').buttonlist('option', 'selectedItem').value,
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDObra(),
+				id_transaccion: that.getIDTransaccion(),
 				action: 'getDatosTransaccion'
 			},
 			dataType: 'json'
-		}).done( function( json ) {
+		}).done( function( data ) {
 			try {
 
-				if( ! json.success ) {
-					messageConsole.displayMessage(json.message, 'error');
+				if( ! data.success ) {
+					messageConsole.displayMessage(data.message, 'error');
 					return;
 				}
 
-				if( json.noRows ) {
-					$.notify({text: json.message});
+				if( data.noRows ) {
+					$.notify({text: data.message});
 					return;
 				}
 
 				// Establece los datos generales
-				$('#txtFechaTransaccion').datepicker( 'setDate', json.datos.Fecha );
-				$('#txtConceptoRaiz').val( json.datos.ConceptoRaiz );
-				$('#txtObservaciones').val( json.datos.Observaciones );
-				$('#txtFechaInicio').datepicker( 'setDate', json.datos.FechaInicio );
-				$('#txtFechaTermino').datepicker( 'setDate', json.datos.FechaTermino );
+				$('#txtFechaTransaccion').datepicker( 'setDate', data.datos.Fecha );
+				$('#txtConceptoRaiz').val( data.datos.ConceptoRaiz );
+				$('#txtObservaciones').val( data.datos.Observaciones );
+				$('#txtFechaInicio').datepicker( 'setDate', data.datos.FechaInicio );
+				$('#txtFechaTermino').datepicker( 'setDate', data.datos.FechaTermino );
 
 				// llena la tabla de conceptos
-				that.llenaTablaConceptos( json.conceptos );
+				that.llenaTablaConceptos( data.conceptos );
 
 				// Establece los totales de transaccion
-				that.fillTotales( json.totales );
+				that.fillTotales( data.totales );
 
 				that.habilitaCamposTransaccion();
 				that.deshabilitaFechaTransaccion();
@@ -387,38 +412,37 @@ var AVANCE = {
 			}
 		})
 		.fail( function() {	$.notify({text: 'Ocurrió un error al cargar la transaccion.'});	})
-		.always( function() { DATA_LOADER.hide(); });
+		.always( DATA_LOADER.hide );
 	},
 
 	cargaConceptos: function() {
 		
-		var IDProyecto = this.getIDProyecto(),
-			IDConceptoRaiz = $('#txtConceptoRaiz').presupuestoObra('option', 'selectedNode').id
-			that = this;
+		var that = this;
 
 		DATA_LOADER.show();
 
 		$.ajax({
-			type: 'GET',
 			url: that.urls.tranController,
 			data: {
-				IDProyecto: IDProyecto,
-				IDConceptoRaiz: IDConceptoRaiz,
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDObra(),
+				id_concepto_raiz: that.getIDConceptoRaiz(),
 				action: 'getConceptosNuevoAvance'
 			},
 			dataType: 'json'
 		})
-		.done( function( json ) {
+		.done( function( data ) {
 
-			if ( ! json.success ) {
-				messageConsole.displayMessage( json.message, 'error' );
+			if ( ! data.success ) {
+				messageConsole.displayMessage( data.message, 'error' );
 			}
 
-			that.llenaTablaConceptos( json.conceptos, DATA_LOADER.hide() );
-		});
+			that.llenaTablaConceptos( data.conceptos );
+		})
+		.always( DATA_LOADER.hide );
 	},
 
-	llenaTablaConceptos: function( conceptos, callback ) {
+	llenaTablaConceptos: function( conceptos ) {
 
 		var rows = '',
 			cellType = 'td',
@@ -493,61 +517,65 @@ var AVANCE = {
 
 		DATA_LOADER.show();
 
+		var requestData = {
+			base_datos: that.getBaseDatos(),
+			id_obra: that.getIDObra(),
+			id_concepto_raiz: that.getIDConceptoRaiz(),
+			fecha: $('#txtFechaTransaccionDB').val(),
+			fechaInicio: $('#txtFechaInicioDB').val(),
+			fechaTermino: $('#txtFechaTerminoDB').val(),
+			observaciones: $('#txtObservaciones').val(),
+			conceptos: that.getConceptosModificados(),
+			action: 'guardaTransaccion'
+		}
+
+		if ( that.getIDTransaccion() ) {
+			requestData.id_transaccion = that.getIDTransaccion()
+		}
+
 		$.ajax({
 			type: 'POST',
 			url: that.urls.tranController,
-			data: {
-				IDProyecto: that.getIDProyecto(),
-				IDTransaccion: that.getIDTransaccion(),
-				IDConceptoRaiz: $('#txtConceptoRaiz').presupuestoObra('option', 'selectedNode').id,
-				fecha: $('#txtFechaTransaccionDB').val(),
-				fechaInicio: $('#txtFechaInicioDB').val(),
-				fechaTermino: $('#txtFechaTerminoDB').val(),
-				observaciones: $('#txtObservaciones').val(),
-				conceptos: that.getConceptosModificados(),
-				action: 'guardaTransaccion'
-			},
+			data: requestData,
 			dataType: 'json'
-		}).done( function(json) {
+		}).done( function( data ) {
 
-			if( ! json.success ) {
-				messageConsole.displayMessage( json.message, 'error' );
+			if( ! data.success ) {
+				messageConsole.displayMessage( data.message, 'error' );
 				return;
 			}
 
 			if ( ! that.getIDTransaccion() ) {
-				console.log(json.IDTransaccion);
+				console.log(data.IDTransaccion);
 				$('#folios-transaccion').buttonlist('addListItem', 
-					{id: json.IDTransaccion, text: json.numeroFolio}, 'start');
+					{id: data.IDTransaccion, text: data.numeroFolio}, 'start');
 				
 				$('#folios-transaccion').buttonlist('setSelectedItemById', 
-					json.IDTransaccion, false );
+					data.IDTransaccion, false );
 				
 				that.deshabilitaFechaTransaccion();
 				that.deshabilitaConceptoRaiz();
 			}
 
-	 		that.fillTotales( json.totales );
+	 		that.fillTotales( data.totales );
 
-	 		if ( json.errores.length > 0 ) {
-	 			that.marcaConceptosError( json.errores );
+	 		if ( data.errores.length > 0 ) {
+	 			that.marcaConceptosError( data.errores );
 	 			messageConsole.displayMessage( 'Existen errores en algunos conceptos, por favor revise y guarde otra vez.', 'error');
 	 		} else {
 	 			$('#guardar').removeClass('alert');
 	 			messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success');
 	 		}
 	 		
-		}).always( function() {
-			DATA_LOADER.hide();
-		});
+		}).always( DATA_LOADER.hide );
 	},
 
 	eliminaTransaccion: function() {
 
 		var that = this
-			IDTransaccion = this.getIDTransaccion();
+			id_transaccion = this.getIDTransaccion();
 
-		if ( ! IDTransaccion ) {
+		if ( ! id_transaccion ) {
 			return;
 		}
 
@@ -562,15 +590,17 @@ var AVANCE = {
 			type: 'GET',
 			url: that.urls.tranController,
 			data: {
-				IDTransaccion: IDTransaccion,
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDObra(),
+				id_transaccion: id_transaccion,
 				action: 'eliminaTransaccion'
 			},
 			dataType: 'json'
-		}).done( function( json ) {
+		}).done( function( data ) {
 			try {
 
-				if( ! json.success ) {
-					messageConsole.displayMessage( json.message, 'error' );
+				if( ! data.success ) {
+					messageConsole.displayMessage( data.message, 'error' );
 					return;
 				}
 
@@ -592,8 +622,7 @@ var AVANCE = {
 
 	apruebaTransaccion: function() {
 
-		var that = this
-			IDTransaccion = this.getIDTransaccion();
+		var that = this;
 
 		if ( ! confirm('La transacción será aprobada, desea continuar?') )
 			return;
@@ -603,18 +632,20 @@ var AVANCE = {
 		this.requestingData = true;
 
 		$.ajax({
-			type: 'GET',
+			type: 'POST',
 			url: that.urls.tranController,
 			data: {
-				IDTransaccion: IDTransaccion,
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDObra(),
+				id_transaccion: that.getIDTransaccion(),
 				action: 'apruebaTransaccion'
 			},
 			dataType: 'json'
-		}).done( function( json ) {
+		}).done( function( data ) {
 			try {
 
-				if( ! json.success ) {
-					messageConsole.displayMessage( json.message, 'error' );
+				if( ! data.success ) {
+					messageConsole.displayMessage( data.message, 'error' );
 					return;
 				}
 
@@ -630,8 +661,7 @@ var AVANCE = {
 
 	revierteAprobacion: function() {
 
-		var that = this
-			IDTransaccion = this.getIDTransaccion();
+		var that = this;
 
 		if ( ! confirm('La aprobación será revertida, desea continuar?') )
 			return;
@@ -641,18 +671,20 @@ var AVANCE = {
 		this.requestingData = true;
 
 		$.ajax({
-			type: 'GET',
+			type: 'POST',
 			url: that.urls.tranController,
 			data: {
-				IDTransaccion: IDTransaccion,
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDObra(),
+				id_transaccion: that.getIDTransaccion(),
 				action: 'revierteAprobacion'
 			},
 			dataType: 'json'
-		}).done( function( json ) {
+		}).done( function( data ) {
 			try {
 
-				if( ! json.success ) {
-					messageConsole.displayMessage( json.message, 'error' );
+				if( ! data.success ) {
+					messageConsole.displayMessage( data.message, 'error' );
 					return;
 				}
 
@@ -716,7 +748,7 @@ var notifyModifiedTran = function( event, data ) {
 	
 	if( confirm('Existen cambios sin guardar, desea continuar?...') ) {
 
-		//if( typeof data === 'object' )
+		if( typeof data === 'function' )
 			data.call(AVANCE);
 	}
 }

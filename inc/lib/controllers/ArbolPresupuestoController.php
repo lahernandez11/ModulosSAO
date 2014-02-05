@@ -13,25 +13,22 @@ try {
 
 	Sesion::validaSesionAsincrona();
 
-	if ( ! isset($_GET['action']) ) {
+	if ( ! isset($_REQUEST['action']) ) {
 		throw new Exception("No fue definida una acción");
 	}
 
-	$conn = SAODBConn::getInstance( $_GET['base'] );
-
-	$IDProyecto = (int) $_GET['IDProyecto'];
-	$IDObra 	= Obra::getIDObraProyecto($IDProyecto);
-
-	switch ( $_GET['action'] ) {
+	switch ( $_REQUEST['action'] ) {
 
 		case 'getDescendantsOf':
+			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
+			$obra = new Obra( $conn, $_GET['id_obra'] );
 			
-			$IDConceptoRaiz = (isset($_GET['parentID']) ? (int) $_GET['parentID'] : null);
-			$data['IDRAIZ'] = $IDConceptoRaiz;
-			$data['IDOBRA'] = $IDObra;
+			$id_concepto_raiz = isset( $_GET['parentID'] ) ? (int) $_GET['parentID'] : null;
+			// $data['IDRAIZ'] = $id_concepto_raiz;
+			// $data['IDOBRA'] = $obra->getId();
 			$data['nodes'] = array();
 
-			$data['nodes'] = PresupuestoObra::$_GET['action']( $IDObra, $IDConceptoRaiz, $conn );
+			$data['nodes'] = PresupuestoObra::getDescendantsOf( $obra, $id_concepto_raiz );
 
 			break;
 	}

@@ -14,11 +14,12 @@ var COBRANZA = {
 		tranController: 'inc/lib/controllers/CobranzaController.php'
 	},
 	IDEstimacionObra: null,
+	conceptoTemplate: null,
 
 	init: function() {
 
 		var that = this;
-
+		this.conceptoTemplate = _.template($('#concepto-template').html());
 		// Suscripcion al evento transaccion modificada
 		var modifiedTranSubscription = pubsub.subscribe('modified_tran', modifiedTran);
 		// Suscripcion al evento que notifica cuando la transaccion tiene cambios por guardar
@@ -478,7 +479,7 @@ var COBRANZA = {
 
 				that.setReferencia($(estimacionObra).children().last().text());
 
-				that.fillConceptos( data.conceptos );
+				that.renderConceptos( data.conceptos );
 
 				that.habilitaObservaciones();
 				that.habilitaFechaTransaccion();
@@ -489,63 +490,14 @@ var COBRANZA = {
 		.always( function() { DATA_LOADER.hide(); });
 	},
 
-	fillConceptos: function( conceptos ) {
-
-		$('#tabla-conceptos tbody').html( this.conceptosListTemplate(conceptos) );
-	},
-
-	conceptosListTemplate: function( conceptos ) {
+	renderConceptos: function( conceptos ) {
 		var html = '';
 
 		for (var i = 0; i < conceptos.length; i++) {
 			html += this.conceptoTemplate( conceptos[i] );
 		}
 
-		return html;
-	},
-
-	conceptoTemplate: function( concepto ) {
-
-		var html = '',
-			cellType = 'td',
-			cantidad = '',
-			precio = '',
-			importe = '',
-			rowClass = '';
-
-		if ( concepto.EsActividad ) {
-			cellType = 'td';
-			cantidad = concepto.CantidadCobrada;
-			precio   = concepto.PrecioUnitarioCobrado;
-			importe  = concepto.ImporteCobrado;
-		} else {
-			cellType = 'th';
-			cantidad = '';
-			precio   = '';
-			importe  = '';
-		}
-
-		if ( concepto.Estimado == 1 )
-			rowClass = ' class="modificado"';
-
-		html =
-		'<tr' + rowClass + ' data-id="' + concepto.IDConcepto + '" data-esactividad="' + concepto.EsActividad + '">'
-		+  '<td class="icon-cell"><a class="icon fixed"></a></td>'
-		+  '<' + cellType + ' title="' + concepto.Descripcion + '">'
-		+    '&nbsp;&nbsp;'.repeat(concepto.NumeroNivel) + concepto.Descripcion
-		+ ' </' + cellType + '>'
-		+  '<td class="centrado">' + concepto.Unidad + '</td>'
-		+  '<td class="numerico">' + concepto.CantidadPresupuestada + '</td>'
-		+  '<td class="numerico"></td>'
-		+  '<td class="numerico">' + concepto.CantidadEstimada + '</td>'
-		+  '<td class="numerico">' + concepto.PrecioUnitarioEstimado + '</td>'
-		+  '<td class="numerico">' + concepto.ImporteEstimado + '</td>'
-		+  '<td class="editable-cell numerico">' + cantidad + '</td>'
-		+  '<td class="editable-cell numerico">' + precio + '</td>'
-		+  '<td class="numerico">' + importe + '</td>'
-		+ '</tr>';
-
-		return html;
+		$('#tabla-conceptos tbody').html(html);
 	},
 	
 	cargaTransaccion: function() {
@@ -580,7 +532,7 @@ var COBRANZA = {
 
 				that.fillDatosGenerales( json.datos );
 
-				that.fillConceptos( json.conceptos );
+				that.renderConceptos( json.conceptos );
 
 				that.fillTotales( json.totales );
 

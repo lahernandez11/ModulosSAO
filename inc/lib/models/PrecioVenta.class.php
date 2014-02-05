@@ -1,20 +1,22 @@
 <?php
+require_once 'models/Obra.class.php';
+
 class PrecioVenta {
 
-	public static function getPreciosVenta( SAODBConn $conn, $IDObra ) {
+	public static function getPreciosVenta( Obra $obra ) {
 
 		$tsql = "{call [Precios].[uspPreciosVenta]( ? )}";
 
 		$params = array(
-	        array( $IDObra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $preciosConceptos = $conn->executeSP($tsql, $params);
+	    $preciosConceptos = $obra->getConn()->executeSP( $tsql, $params );
 
 	    return $preciosConceptos;
 	}
 
-	public static function setPreciosVenta( SAODBConn $conn, $IDObra, Array $conceptos ) {
+	public static function setPreciosVenta( Obra $obra, Array $conceptos ) {
 
 		$conceptosError = array();
 
@@ -28,13 +30,13 @@ class PrecioVenta {
 				$concepto['precioEstimacion'] = str_replace(',', '', $concepto['precioEstimacion']);
 
 				$params = array(
-					array( $IDObra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+					array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 					array( $concepto['IDConcepto'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 					array( $concepto['precioProduccion'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19,6) ),
 					array( $concepto['precioEstimacion'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19,6) )
 				);
 
-				$conn->executeSP($tsql, $params);
+				$obra->getConn()->executeSP( $tsql, $params );
 			} catch( Exception $e ) {
 
 				$conceptosError[] = array(

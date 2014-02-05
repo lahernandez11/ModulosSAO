@@ -43,9 +43,9 @@ class EstimacionObra extends TransaccionSAO {
 		$this->setDatosGenerales();
 	}
 
-	public function guardaTransaccion() {
+	public function guardaTransaccion( Usuario $usuario ) {
 
-		if ( ! empty($this->id_transaccion) ) {
+		if ( ! empty( $this->id_transaccion ) ) {
 
 			$tsql = "{call [EstimacionObra].[uspActualizaDatosGenerales]( ?, ?, ?, ?, ?, ?, ? )}";
 
@@ -56,10 +56,10 @@ class EstimacionObra extends TransaccionSAO {
 		        array( $this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
 		        array( $this->getReferencia(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(64) ),
 		        array( $this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096) ),
-		        array( Sesion::getCuentaUsuarioSesion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
+		        array( $usuario->getUsername(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
 		    );
 
-		    $this->_SAOConn->executeSP($tsql, $params);
+		    $this->conn->executeSP( $tsql, $params );
 		} else {
 
 			$tsql = "{call [EstimacionObra].[uspRegistraTransaccion]( ?, ?, ?, ?, ?, ?, ?, ?, ? )}";
@@ -71,12 +71,12 @@ class EstimacionObra extends TransaccionSAO {
 		        array( $this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
 		        array( $this->getReferencia(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(64) ),
 		        array( $this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096) ),
-		        array( Sesion::getCuentaUsuarioSesion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
+		        array( $usuario->getUsername(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
 		        array( &$this->id_transaccion, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT ),
 		        array( &$this->_numeroFolio, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
 		    );
 
-		    $this->_SAOConn->executeSP($tsql, $params);
+		    $this->conn->executeSP( $tsql, $params );
 		}
 
 		$errores = array();
@@ -91,7 +91,7 @@ class EstimacionObra extends TransaccionSAO {
 				$concepto['precio'] = str_replace(',', '', $concepto['precio']);
 
 				// Si el importe no es valido agrega el concepto con error
-				if( ! $this->esImporte($concepto['cantidad']) || ! $this->esImporte($concepto['precio'])) {
+				if( ! $this->esImporte( $concepto['cantidad']) || ! $this->esImporte( $concepto['precio'] ) ) {
 					throw new Exception("El numero ingresado no es correcto");
 				}
 
@@ -103,7 +103,7 @@ class EstimacionObra extends TransaccionSAO {
 					array( $concepto['cumplido'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT )
 				);
 
-				$this->_SAOConn->executeSP($tsql, $params);
+				$this->conn->executeSP( $tsql, $params );
 			} catch( Exception $e ) {
 
 				$errores[] = array(
@@ -164,11 +164,11 @@ class EstimacionObra extends TransaccionSAO {
 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $datos = $this->_SAOConn->executeSP($tsql, $params);
+	    $datos = $this->conn->executeSP( $tsql, $params );
 
 	    $this->referencia = $datos[0]->Referencia;
-	    $this->setFechaInicio($datos[0]->FechaInicio);
-	    $this->setFechaTermino($datos[0]->FechaTermino);
+	    $this->setFechaInicio( $datos[0]->FechaInicio );
+	    $this->setFechaTermino( $datos[0]->FechaTermino );
 	}
 
 	public function getConceptos() {
@@ -176,11 +176,11 @@ class EstimacionObra extends TransaccionSAO {
 		$tsql = "{call [EstimacionObra].[uspConceptosEstimacion]( ?, ? )}";
 
 	    $params = array(
-	        array( $this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $conceptos = $this->_SAOConn->executeSP($tsql, $params);
+	    $conceptos = $this->conn->executeSP( $tsql, $params );
 
 	    return $conceptos;
 	}
@@ -193,39 +193,35 @@ class EstimacionObra extends TransaccionSAO {
 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $totales = $this->_SAOConn->executeSP($tsql, $params);
+	    $totales = $this->conn->executeSP( $tsql, $params );
 
 	    return $totales;
 	}
 
-	public static function getConceptosNuevaEstimacion( $IDObra, SAODBConn $conn ) {
+	public static function getConceptosNuevaEstimacion( Obra $obra ) {
 
 		$tsql = "{call [EstimacionObra].[uspConceptosEstimacion]( ? )}";
 
 	    $params = array(
-	        array( $IDObra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $conceptos = $conn->executeSP($tsql, $params);
+	    $conceptos = $obra->getConn()->executeSP( $tsql, $params );
 
 	    return $conceptos;
 	}
 
-	public static function getFoliosTransaccion( $IDObra, SAODBConn $conn) {
+	public static function getFoliosTransaccion( Obra $obra ) {
 
-		if ( ! is_int($IDObra) )
-			throw new Exception("El identificador de la obra no es correcto.");
-		else {
-			$tsql = '{call [EstimacionObra].[uspListaFolios]( ? )}';
+		$tsql = '{call [EstimacionObra].[uspListaFolios]( ? )}';
 
-			$params = array(
-		        array( $IDObra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-		    );
+		$params = array(
+	        array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	    );
 
-		    $foliosTran = $conn->executeSP($tsql, $params);
+	    $foliosTran = $obra->getConn()->executeSP( $tsql, $params );
 
-			return $foliosTran;
-		}
+		return $foliosTran;
 	}
 
 	public static function getListaTransacciones( Obra $obra, $tipo_transaccion=null ) {

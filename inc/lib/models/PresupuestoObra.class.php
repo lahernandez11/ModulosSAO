@@ -1,35 +1,27 @@
 <?php
-require_once 'db/SAODBConn.class.php';
+require_once 'models/Obra.class.php';
 
 class PresupuestoObra {
 
 	/*const TIPO_TRANSACCION = 100000000;*/
-	private $conn = null;
-	private $id_obra = null;
+	private $conn;
+	private $obra;
 
-	public function __construct( $id_obra, SAODBConn $conn ) {
-		
-		if ( ! is_int($id_obra) || ! $id_obra > 0 ) {
-			throw new Exception("El identificador de obra no es correcto.");
-		} else {
-			$this->conn = $conn;
-			$this->id_obra = $id_obra;
-		}
+	public function __construct( Obra $obra ) {
+		$this->conn = $obra->getConn();
+		$this->obra = $obra;
 	}
 
-	public function getConceptos( $id_concepto ) {
-
-		if ( $id_concepto == 0 )
-			$id_concepto = null;
+	public function getConceptos( $id_concepto=null ) {
 
 		$tsql = "{call [PresupuestoObra].[uspConceptosPresupuesto]( ?, ? )}";
 
 	    $params = array(
-	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $conceptos = $this->conn->executeSP($tsql, $params);
+	    $conceptos = $this->conn->executeSP( $tsql, $params );
 
 	    return $conceptos;
 	}
@@ -39,16 +31,16 @@ class PresupuestoObra {
 		$tsql = "{call [PresupuestoObra].[uspDatosConcepto](?, ?)}";
 
 		$params = array(
-	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-		$data = $this->conn->executeSP($tsql, $params);
+		$data = $this->conn->executeSP( $tsql, $params );
 
 		return $data[0];
 	}
 
-	public function setClaveConcepto($id_concepto, $clave) {
+	public function setClaveConcepto( $id_concepto, $clave ) {
 
 		$tsql = "UPDATE [dbo].[conceptos]
 				 SET
@@ -60,14 +52,14 @@ class PresupuestoObra {
 
 	    $params = array(
 	        array( $clave, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(140) ),
-	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $this->conn->executeQuery($tsql, $params);
+	    $this->conn->executeQuery( $tsql, $params );
 	}
 
-	private function esMedibleFacturable($id_concepto) {
+	private function esMedibleFacturable( $id_concepto ) {
 
 		$tsql = "SELECT 1
 				 FROM [dbo].[conceptos]
@@ -79,22 +71,22 @@ class PresupuestoObra {
 				 	[concepto_medible] > 0";
 
 	    $params = array(
-	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $res = $this->conn->executeQuery($tsql, $params);
+	    $res = $this->conn->executeQuery( $tsql, $params );
 
-	    if (count($res) > 0)
+	    if ( count( $res ) > 0 )
 	    	return true;
 	    else
 	    	return false;
 	}
 
-	public function setAgrupador($id_concepto, $id_agrupador, $method) {
+	public function setAgrupador( $id_concepto, $id_agrupador, $method ) {
 
-		if( $this->esMedibleFacturable($id_concepto) ) {
-			$this->{$method}($id_concepto, $id_agrupador);
+		if( $this->esMedibleFacturable( $id_concepto ) ) {
+			$this->{$method}( $id_concepto, $id_agrupador );
 		} else {
 
 			$tsql = "SELECT
@@ -119,14 +111,14 @@ class PresupuestoObra {
 						[concepto_medible] > 0";
 
 			$params = array(
-		        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 		        array( $id_concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 		    );
 
-			$medibles = $this->conn->executeQuery($tsql, $params);
+			$medibles = $this->conn->executeQuery( $tsql, $params );
 
-			foreach ($medibles as $concepto) {
-				$this->{$method}($concepto->id_concepto, $id_agrupador);
+			foreach ( $medibles as $concepto ) {
+				$this->{$method}( $concepto->id_concepto, $id_agrupador );
 			}
 		}
 	}
@@ -143,11 +135,11 @@ class PresupuestoObra {
 
 	    $params = array(
 	        array( $id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $this->conn->executeQuery($tsql, $params);
+	    $this->conn->executeQuery( $tsql, $params );
 	}
 
 	private function setAgrupadorSubpartida( $id_concepto, $id_agrupador ) {
@@ -162,11 +154,11 @@ class PresupuestoObra {
 
 	    $params = array(
 	        array( $id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $this->conn->executeQuery($tsql, $params);
+	    $this->conn->executeQuery( $tsql, $params );
 	}
 	
 	private function setAgrupadorActividad( $id_concepto, $id_agrupador ) {
@@ -181,11 +173,11 @@ class PresupuestoObra {
 
 	    $params = array(
 	        array( $id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $this->conn->executeQuery($tsql, $params);
+	    $this->conn->executeQuery( $tsql, $params );
 	}
 
 	private function setAgrupadorTramo( $id_concepto, $id_agrupador ) {
@@ -200,11 +192,11 @@ class PresupuestoObra {
 
 	    $params = array(
 	        array( $id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $this->conn->executeQuery($tsql, $params);
+	    $this->conn->executeQuery( $tsql, $params );
 	}
 
 	private function setAgrupadorSubtramo( $id_concepto, $id_agrupador ) {
@@ -219,29 +211,28 @@ class PresupuestoObra {
 
 	    $params = array(
 	        array( $id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $this->conn->executeQuery($tsql, $params);
+	    $this->conn->executeQuery( $tsql, $params );
 	}
 
-	public static function getDescendantsOf( $IDObra, $IDConceptoRaiz, SAODBConn $conn ) {
+	public static function getDescendantsOf( Obra $obra, $id_concepto_raiz ) {
 
 		$tsql = "{call [SAO].[uspPresupuestoObra]( ?, ? )}";
 
 		$params = array(
-			array( $IDObra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-			array( $IDConceptoRaiz, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+			array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+			array( $id_concepto_raiz, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 		);
 
-		$nodes = $conn->executeSP($tsql, $params);
+		$nodes = $obra->getConn()->executeSP( $tsql, $params );
 
 		return $nodes;
 	}
 
 	public function __toString() {
-
 		$data  = "FechaInicio: {}, ";
 		$data .= "FechaTermino: {}, ";
 		$data .= "Referencia: {}, ";
