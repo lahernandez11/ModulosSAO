@@ -8,6 +8,7 @@ abstract class TransaccionSAO {
 	protected $_estado = 0;
 	protected $_numeroFolio = 0;
 	protected $_fecha = null;
+	protected $referencia;
 	protected $_observaciones = "";
 	protected $conn = null;
 
@@ -38,7 +39,7 @@ abstract class TransaccionSAO {
 	
 	private function instanceFromID( Obra $obra, $id_transaccion ) {
 		
-		if ( ! is_int( $id_transaccion ) ) {
+		if ( (int) $id_transaccion <= 0 ) {
 			throw new Exception( "No es un identificador de transacción válido." );
 		}
 
@@ -55,6 +56,7 @@ abstract class TransaccionSAO {
 					, [transacciones].[tipo_transaccion]
 					, [transacciones].[estado]
 					, [transacciones].[numero_folio]
+					, [transacciones].[referencia]
 					, CAST([transacciones].[fecha] AS DATE) AS [fecha]
 					, [transacciones].[observaciones]
 				FROM
@@ -80,6 +82,7 @@ abstract class TransaccionSAO {
 			foreach ( $rsDatosTran as $datosTran ) {
 
 				$this->tipo_transaccion = $datosTran->tipo_transaccion;
+				$this->referencia = $datosTran->referencia;
 				$this->_estado 		    = $datosTran->estado;
 				$this->_numeroFolio     = $datosTran->numero_folio;
 				$this->setFecha( $datosTran->fecha );
@@ -91,6 +94,10 @@ abstract class TransaccionSAO {
 
 	protected function setIDTransaccion( $id_transaccion ) {
 		$this->id_transaccion = $id_transaccion;
+	}
+
+	public function getConn() {
+		return $this->conn;
 	}
 
 	public function getIDTransaccion() {
@@ -122,6 +129,16 @@ abstract class TransaccionSAO {
 	}
 
 	protected function fechaEsValida( $fecha ) {
+		
+		if ( preg_match( "/^(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/", $fecha ) === 1) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	protected function esFecha( $fecha ) {
 		
 		if ( preg_match( "/^(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/", $fecha ) === 1) {
 			return true;

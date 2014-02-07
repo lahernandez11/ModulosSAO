@@ -14,7 +14,7 @@ App.Presupuesto = {
 		this.$table = $('#tabla-conceptos');
 
 		$('#bl-proyectos').buttonlist({
-			source: 'inc/lib/controllers/ListaProyectosController.php',
+			source: 'inc/lib/controllers/ListaObrasController.php',
 			data: {action: 'getListaProyectos'},
 			onSelect: function( selectedItem, listItem ) {
 				that.loadDescendants();
@@ -24,8 +24,11 @@ App.Presupuesto = {
 			},
 			onCreateListItem: function() {
 				return {
-					id: this.IDProyecto,
-					value: this.NombreProyecto
+					id: this.id,
+					value: this.nombre,
+					extra: {
+						source: this.source_id
+					}
 				}
 			}
 		});
@@ -51,12 +54,12 @@ App.Presupuesto = {
 		});
 
 		this.$table.on('click', '.descripcion', function(event) {
+			event.preventDefault();
+			event.stopPropagation();
 
 			var $concepto = $(this).parents('.concepto');
 			that.selectNode($concepto);
 			that.getDatosConcepto($concepto);
-			event.preventDefault();
-			event.stopPropagation();
 		});
 
 		this.$table.on('click', '.select', function(event) {
@@ -153,6 +156,14 @@ App.Presupuesto = {
 		$('#cerrar-concepto').on('click', function() {
 			$('#dialog-propiedades-concepto').dialog('close');
 		});
+
+		$('.col-switch').on('change', 'input', function(event){
+			if (this.checked)
+				that.$table.find('.' + this.id).removeClass('hidden');
+			else
+				that.$table.find('.' + this.id).addClass('hidden');
+		})
+		.find('input').prop('checked', true);
 	},
 
 	cleanDescripcionAgrupador: function(descripcion) {
@@ -166,7 +177,8 @@ App.Presupuesto = {
 	requestAgrupadoresList: function(request, response) {
 		var that = this;
 		
-		request.IDProyecto = that.getIDProyecto();
+		request.base_datos = that.getBaseDatos();
+		request.id_obra = that.getIDObra();
 		var agrupadores = [];
 
 		$.getJSON( that.controller_url, request, function( data, status, xhr ) {
@@ -193,7 +205,11 @@ App.Presupuesto = {
 		});
 	},
 
-	getIDProyecto: function() {
+	getBaseDatos: function() {
+		return $('#bl-proyectos').buttonlist('option', 'selectedItem').extra.source
+	},
+
+	getIDObra: function() {
 		return $('#bl-proyectos').buttonlist('option', 'selectedItem').value;
 	},
 
@@ -230,25 +246,24 @@ App.Presupuesto = {
 	},
 
 	loadDescendants: function($concepto) {
-		var that = this;
-
-		var id_concepto = null;
+		var that = this,
+			requestData = {
+			base_datos: that.getBaseDatos(),
+			id_obra: that.getIDObra(),
+			action: 'getConceptos'
+		};
 
 		if ( $concepto )
-			id_concepto = this.getIDConcepto($concepto);
+			requestData.id_concepto = this.getIDConcepto($concepto);
 
 		DATA_LOADER.show();
 
 		$.ajax({
 			url: that.controller_url,
-			data: {
-				'IDProyecto': that.getIDProyecto(),
-				'action': 'getConceptos',
-				id_concepto: id_concepto
-			},
+			data: requestData,
 			dataType: 'json'
 		})
-		.done( function(data) {
+		.done( function( data ) {
 			if ( ! data.success ) {
 				messageConsole.displayMessage(data.message, 'error');
 			} else {
@@ -256,7 +271,7 @@ App.Presupuesto = {
 				that.toggleConceptoHandle($concepto);
 			}
 		})
-		.always(function(){ DATA_LOADER.hide(); })
+		.always( DATA_LOADER.hide );
 	},
 
 	fillConceptos: function( conceptos, $concepto ) {
@@ -271,6 +286,9 @@ App.Presupuesto = {
 		var html = '';
 
 		for (var i = 0; i < conceptos.length; i++) {
+			conceptos[i].showPartida = $('#partida').prop('checked');
+			conceptos[i].showSubpartida = $('#subpartida').prop('checked');
+			conceptos[i].showActividad = $('#actividad').prop('checked');
 			html += this.conceptoTemplate( conceptos[i] );
 		}
 
@@ -342,7 +360,7 @@ App.Presupuesto = {
 		$concepto.toggleClass('selected')
 		.find('.select').toggleClass('icon-checkbox-unchecked icon-checkbox-checked');
 
-		if ($concepto.hasClass('selected'))
+		if ( $concepto.hasClass('selected') )
 			this.selectDescendants($concepto);
 		else
 			this.unselectDescendants($concepto);
@@ -385,7 +403,8 @@ App.Presupuesto = {
 		$.ajax({
 			url: that.controller_url,
 			data: {
-				IDProyecto: that.getIDProyecto(),
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDObra(),
 				id_concepto: that.getIDConcepto($concepto),
 				action: 'getDatosConcepto'
 			},
@@ -401,15 +420,13 @@ App.Presupuesto = {
 			that.fillConceptoProperties(data.concepto);
 			that.openConceptoPropertiesDialog();
 		})
-		.always( function() {
-			DATA_LOADER.hide();
-		});
+		.always( DATA_LOADER.hide );
 	},
 
 	fillConceptoProperties: function(data) {
 		var title = data.descripcion;
 
-		if (this.getSelected().length)
+		if ( this.getSelected().length > 1)
 			title = 'Varios conceptos seleccionados';
 
 		$('#dialog-propiedades-concepto')
@@ -449,7 +466,8 @@ App.Presupuesto = {
 			type: 'POST',
 			url: that.controller_url,
 			data: {
-				IDProyecto: that.getIDProyecto(),
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDObra(),
 				id_concepto: that.getIDConcepto($concepto),
 				clave: clave,
 				action: 'setClaveConcepto'
@@ -467,7 +485,8 @@ App.Presupuesto = {
 	setAgrupador: function(item, type, input) {
 
 		var request = {
-			IDProyecto: this.getIDProyecto(),
+			base_datos: this.getBaseDatos(),
+			id_obra: this.getIDObra(),
 			conceptos: this.getConceptosSeleccionados(),
 			callback: this.requestSetAgrupador,
 			type: type,
@@ -504,13 +523,16 @@ App.Presupuesto = {
 	},
 
 	requestSetAgrupador: function(request) {
+		var that = this;
+
 		DATA_LOADER.show();
 
 		$.ajax({
 			type: 'POST',
 			url: this.controller_url,
 			data: {
-				IDProyecto: request.IDProyecto,
+				base_datos: request.base_datos,
+				id_obra: request.id_obra,
 				conceptos: request.conceptos,
 				id_agrupador: request.id_agrupador,
 				action: request.action	
@@ -520,11 +542,39 @@ App.Presupuesto = {
 		.done( function(data) {
 			if ( data.success ) {
 				messageConsole.displayMessage('Agrupador asignado correctamente.', 'success');
+				that.updateAgrupadorColumna(request.$input);
 			} else {
 				messageConsole.displayMessage(data.message, 'error');
 			}
 		})
 		.always(request.callback);
+	},
+
+	esMedible: function(ix, $el) {
+		ix = ix || 0;
+
+		if ( parseInt($($el).attr('data-medible')) > 0 )
+			return true;
+		else
+			return false;
+	},
+
+	updateAgrupadorColumna: function($input) {
+
+		switch ($input[0].id) {
+
+			case 'txtAgrupadorPartida':
+				this.getSelected().filter(this.esMedible).find('td:eq(9)').text($input.val());
+			break;
+
+			case 'txtAgrupadorSubpartida':
+				this.getSelected().filter(this.esMedible).find('td:eq(10)').text($input.val());
+			break;
+
+			case 'txtAgrupadorActividad':
+				this.getSelected().filter(this.esMedible).find('td:eq(11)').text($input.val());
+			break;
+		}
 	},
 
 	openAddAgrupadorDialog: function(request) {
@@ -559,7 +609,8 @@ App.Presupuesto = {
 			type: 'POST',
 			url: that.controller_url,
 			data: {
-				IDProyecto: request.IDProyecto,
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIDObra(),
 				clave: clave,
 				descripcion: descripcion,
 				action: action

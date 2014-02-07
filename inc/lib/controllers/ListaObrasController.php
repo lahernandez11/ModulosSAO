@@ -25,10 +25,6 @@ try {
 					'source_id' => $obra->getSourcename()
 				);
 			}
-
-			// if ( ! count( $data['options'] ) ) {
-			// 	throw new Exception("No se encontraron obras asignadas.");
-			// }
 		break;
 
 		default:

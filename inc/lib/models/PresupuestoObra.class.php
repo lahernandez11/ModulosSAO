@@ -3,7 +3,6 @@ require_once 'models/Obra.class.php';
 
 class PresupuestoObra {
 
-	/*const TIPO_TRANSACCION = 100000000;*/
 	private $conn;
 	private $obra;
 

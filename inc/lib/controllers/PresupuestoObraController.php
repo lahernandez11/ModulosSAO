@@ -1,10 +1,11 @@
 <?php 
 require_once 'setPath.php';
+require_once 'db/SAODBConnFactory.class.php';
 require_once 'models/Sesion.class.php';
 require_once 'models/Obra.class.php';
-require_once 'models/Util.class.php';
 require_once 'models/PresupuestoObra.class.php';
 require_once 'models/AgrupadorConceptoPresupuesto.class.php';
+require_once 'models/Util.class.php';
 
 $data['success'] = true;
 $data['message'] = null;
@@ -13,37 +14,33 @@ $data['noRows']  = false;
 try {
 
 	Sesion::validaSesionAsincrona();
-
-	if ( ! isset($_REQUEST['action']) ) {
-		throw new Exception("No fue definida una acción");
-	}
-
-	$conn = new SAO1814DBConn();
-
-	$IDProyecto = (int) $_REQUEST['IDProyecto'];
-	$IDObra 	= Obra::getIDObraProyecto($IDProyecto);
 	
 	switch ( $_REQUEST['action'] ) {
 
 		case 'getConceptos':
-			$id_concepto = (int) $_GET['id_concepto'];
-			$presupuesto = new PresupuestoObra($IDObra, $conn);
+			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
+			$obra = new Obra( $conn, $_GET['id_obra'] );
+			$id_concepto = isset( $_GET['id_concepto'] ) ? (int) $_GET['id_concepto'] : null;
+
+			$presupuesto = new PresupuestoObra( $obra );
+			$conceptos = $presupuesto->getConceptos( $id_concepto );
+
 			$data['conceptos'] = array();
-			$conceptos = $presupuesto->getConceptos($id_concepto);
 
-			foreach ($conceptos as $concepto) {
-
-				$data['conceptos'][] = formatDatosConcepto($concepto);
+			foreach ( $conceptos as $concepto ) {
+				$data['conceptos'][] = formatDatosConcepto( $concepto );
 			}
-
 			break;
 
 		case 'getDatosConcepto':
+			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
+			$obra = new Obra( $conn, $_GET['id_obra'] );
+			
 			$id_concepto = (int) $_GET['id_concepto'];
-			$presupuesto = new PresupuestoObra($IDObra, $conn);
-			$data['concepto'] = array();
-			$data['concepto'] = formatDatosConcepto($presupuesto->getDatosConcepto($id_concepto));
+			$presupuesto = new PresupuestoObra( $obra );
 
+			$data['concepto'] = array();
+			$data['concepto'] = $presupuesto->getDatosConcepto( $id_concepto );
 			break;
 
 		case 'getAgrupadoresPartida':
@@ -52,9 +49,12 @@ try {
 		case 'getAgrupadoresTramo':
 		case 'getAgrupadoresSubtramo':
 
+			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
+			$obra = new Obra( $conn, $_GET['id_obra'] );
+			
 			$descripcion  = $_GET['term'];
 			$data['agrupadores'] = array();
-			$data['agrupadores'] = AgrupadorConceptoPresupuesto::$_GET['action']($conn, $IDObra, $descripcion);
+			$data['agrupadores'] = AgrupadorConceptoPresupuesto::$_GET['action']( $obra, $descripcion );
 
 			break;
 
@@ -63,23 +63,27 @@ try {
 		case 'setAgrupadorActividad':
 		case 'setAgrupadorTramo':
 		case 'setAgrupadorSubtramo':
-			$presupuesto = new PresupuestoObra($IDObra, $conn);
-			$conceptos = $_POST['conceptos'];
+			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
+			$obra = new Obra( $conn, $_POST['id_obra'] );
+			
+			$presupuesto = new PresupuestoObra( $obra );
+			$conceptos = isset( $_POST['conceptos'] ) ? $_POST['conceptos'] : array() ;
 			$id_agrupador = $_POST['id_agrupador'];
 
-			foreach ($conceptos as $concepto) {
-				// $presupuesto->{$_POST['action']}($concepto['id_concepto'], $id_agrupador);
-				$presupuesto->setAgrupador($concepto['id_concepto'], $id_agrupador, $_POST['action']);
+			foreach ( $conceptos as $concepto ) {
+				$presupuesto->setAgrupador( $concepto['id_concepto'], $id_agrupador, $_POST['action'] );
 			}
 
 			break;
 
 		case 'setClaveConcepto':
-			$presupuesto = new PresupuestoObra($IDObra, $conn);
-			$clave = $_POST['clave'];
-			$concepto = $_POST['id_concepto'];
-
-			$presupuesto->setClaveConcepto($id_concepto,  $clave);
+			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
+			$obra = new Obra( $conn, $_POST['id_obra'] );
+			$clave       = $_POST['clave'];
+			$id_concepto    = $_POST['id_concepto'];
+			
+			$presupuesto = new PresupuestoObra( $obra );
+			$presupuesto->setClaveConcepto( $id_concepto, $clave );
 			break;
 
 		case 'addAgrupadorPartida':
@@ -87,11 +91,13 @@ try {
 		case 'addAgrupadorActividad':
 		case 'addAgrupadorTramo':
 		case 'addAgrupadorSubtramo':
-
-			$clave = $_POST['clave'];
+			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
+			$obra = new Obra( $conn, $_POST['id_obra'] );
+			
+			$clave 		 = $_POST['clave'];
 			$descripcion = $_POST['descripcion'];
 
-			$data['id_agrupador'] = AgrupadorConceptoPresupuesto::$_POST['action']($conn, $IDObra, $clave, $descripcion);
+			$data['id_agrupador'] = AgrupadorConceptoPresupuesto::$_POST['action']( $obra, $clave, $descripcion );
 			break;
 
 		default:
@@ -99,10 +105,11 @@ try {
 	}
 
 } catch( Exception $e ) {
-
 	$data['success'] = false;
 	$data['message'] = $e->getMessage();
 }
+
+echo json_encode( $data );
 
 function formatDatosConcepto( $concepto ) {
 	return array(
@@ -126,13 +133,7 @@ function formatDatosConcepto( $concepto ) {
 		'id_agrupador_subpartida' => $concepto->id_agrupador_subpartida,
 		'agrupador_subpartida' 	  => $concepto->agrupador_subpartida,
 		'id_agrupador_actividad'  => $concepto->id_agrupador_actividad,
-		'agrupador_actividad' 	  => $concepto->agrupador_actividad,
-		'id_agrupador_tramo'  	  => $concepto->id_agrupador_tramo,
-		'agrupador_tramo' 	  	  => $concepto->agrupador_tramo,
-		'id_agrupador_subtramo'   => $concepto->id_agrupador_subtramo,
-		'agrupador_subtramo' 	  => $concepto->agrupador_subtramo
+		'agrupador_actividad' 	  => $concepto->agrupador_actividad
 	);
 }
-
-echo json_encode($data);
 ?>

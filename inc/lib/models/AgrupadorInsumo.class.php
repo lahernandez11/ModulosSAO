@@ -63,22 +63,5 @@ class AgrupadorInsumo {
 
 		return $data;
 	}
-	
-	// public static function addAgrupadorTipoCuenta(ReportesSAOConn $conn, $IDProyecto, $descripcion) {
-
-	// 	$tsql = "{call [Contabilidad].[uspRegistraAgrupadorTipoCuenta](?, ?, ?)}";
-
-	// 	$id_cuenta = null;
-
-	//     $params = array(
-	//         array( $IDProyecto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	//         array( $descripcion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(140) ),
-	//         array( $id_cuenta, SQLSRV_PARAM_OUT, SQLSRV_PHPTYPE_INT, SQLSRV_SQLTYPE_INT )
-	//     );
-
-	//     $conn->executeSP($tsql, $params);
-
-	//     return $id_cuenta;
-	// }
 }
 ?>

@@ -524,18 +524,18 @@ var DROP_LIST = {
 			data: DL.data,
 			dataType: 'json'
 		})
-		.done( function(json) {
+		.done( function(data) {
 			try {
 				
-				if( !json.success ) {
+				if( !data.success ) {
 					
-					messageConsole.displayMessage(json.errorMessage, 'error');
+					messageConsole.displayMessage(data.errorMessage, 'error');
 					return false;
 				}
 				
 				var lista = '<ul id="' + DL.listContainer.split('#')[1] + '" class="dropdown-list">';
 				
-				$.each( json.options, function() {
+				$.each( data.options, function() {
 					
 					lista += '<li><a href="#' + this.id + '">' + this.label + '</a></li>';
 				});

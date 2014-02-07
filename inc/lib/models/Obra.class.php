@@ -13,8 +13,13 @@ class Obra {
 	private $conn;
 
 	public function __construct( SAODBConn $conn, $id_obra ) {
+
+		if ( (int) $id_obra <= 0 ) {
+			throw new Exception("El identificador de obra es incorrecto.", 1);
+		}
+
 		$this->conn = $conn;
-		$this->id = $id_obra;
+		$this->id = (int) $id_obra;
 		$this->init();
 	}
 
@@ -87,33 +92,6 @@ class Obra {
 	public function getIdMoneda() {
 		return $this->id_moneda;
 	}
-
-	// public static function getIDObraProyecto( $IDProyecto, $IDTipoBaseDatos = 1 ) {
-
-	// 	$conn = new ModulosSAOConn();
-
-	// 	$tsql = "SELECT
-	// 				[idProyectoUnificado]
-	// 			FROM
-	// 				[Proyectos].[vwListaProyectosUnificados]
-	// 			WHERE
-	// 				[idProyecto] = ?
-	// 					AND
-	// 				[idTipoSistemaOrigen] = 1
-	// 					AND
-	// 				[idTipoBaseDatos] = ?";
-
-	// 	$params = array(
-	// 		array($IDProyecto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-	// 		array($IDTipoBaseDatos, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
-	// 	);
-
-	// 	$rsObra = $conn->executeQuery( $tsql, $params );
-
-	// 	$IDObra = $rsObra[0]->idProyectoUnificado;
-		
-	// 	return $IDObra;
-	// }
 
 	public static function getFoliosTransaccion( $IDObra, $tipoTransaccion, SAODBConn $conn) {
 

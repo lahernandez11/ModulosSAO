@@ -28,7 +28,10 @@ abstract class Util {
 	}
 
 	public static function formatoFecha( $fecha ) {
-		return date("d-m-Y",  strtotime($fecha));
+		if ( $fecha === null )
+			return "";
+		else
+			return date( "d-m-Y",  strtotime( $fecha ) );
 	}
 
 	public static function esImporte( $importe ) {
@@ -43,6 +46,16 @@ abstract class Util {
 
 	public static function aPorcentaje( $numero ) {
 		return round(($numero * 100), 2);
+	}
+
+	public static function esFecha( $fecha ) {
+		
+		if ( preg_match( "/^(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/", $fecha ) === 1) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 }
 ?>

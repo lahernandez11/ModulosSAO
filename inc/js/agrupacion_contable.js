@@ -460,8 +460,9 @@ App.AgrupacionContable = {
 	},
 
 	requestSetCuenta: function(request) {
-		DATA_LOADER.show();
 		var that = this;
+		
+		DATA_LOADER.show();
 
 		$.ajax({
 			type: 'POST',

@@ -164,7 +164,7 @@ form fieldset
 	background-color: #FBFCEF;
     border: 2px solid #9ED53E;
     margin-bottom: 1em;
-    padding: 5px;
+    /*padding: 5px;*/
 	-moz-border-radius: 10px;
 	-ms-border-radius: 10px;
 	-webkit-border-radius: 10px;
@@ -263,7 +263,7 @@ select
 	-webkit-border-radius: 5px 5px 5px 5px;
     border-radius: 5px 5px 5px 5px;
     padding-left: 3px;
-    width: 260px;
+    /*width: 260px;*/
     font-family: inherit;
     font-size: inherit;
 }
@@ -682,10 +682,7 @@ ul.tree li
 	line-height: 22px;
 	white-space: nowrap;
 }
-ul.tree li a,
-ul.tree li a:link,
-ul.tree li a:visited,
-ul.tree li a:active
+ul.tree li a
 {
 	color: black;
 	padding: 2px;
@@ -712,7 +709,7 @@ ul.tree .icon
 ul.tree .text
 {
 	cursor: pointer;
-	padding: 0 5px;
+	padding: 2px 5px;
 }
 ul.tree .text.selected
 {
@@ -1168,7 +1165,9 @@ ul.dropdown-list li a.with-icon
 .roField
 {
 	border: 1px solid #CCC;
-	padding: 0 5px;
+	padding: 0;
+	padding-right: 5px;
+	padding-left: 2px;
 	background-color: white;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
@@ -1376,11 +1375,11 @@ ul.dropdown-list li a.with-icon
 }
 .two-panel-app .left-panel
 {
-    width: 25%;
+    width: 35%;
 }
 .two-panel-app .right-panel
 {
-	width: 74%;
+	width: 64%;
 }
 .ui-autocomplete
 {
@@ -1436,7 +1435,7 @@ ul.dropdown-list li a.with-icon
 	background-color: white;
 	border: 1px solid #DDDDDD;
 	overflow: hidden;
-    padding: 0 1em 1em 1em;
+    /*padding: 0 1em 1em 1em;*/
 }
 #app-name
 {

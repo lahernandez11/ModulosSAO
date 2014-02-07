@@ -3,12 +3,30 @@
 	float: right;
 }
 
-form div {
-	clear: left;
-}
 form div input,
 form div textarea,
 form div select,
 form div.select input {
 	width: 300px;
 }
+.panel .panel-header .title .dropd/*own-list-trigger {
+	background-image: url("../img/cc/blacks/16x16/cog.png");
+	float: right;
+}
+.formux .field
+{
+	display: block;
+	width: 100%;
+	margin-top: 0.2em;
+}
+.formux div
+{
+	margin-bottom: 0.5em;
+}
+@media screen and (min-width: 768px)
+{
+	.formux .field
+	{
+		width: 460px;
+	}
+}*/

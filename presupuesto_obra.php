@@ -42,6 +42,14 @@
 							<span class="button-text">Proyectos</span>
 							<span class="icon flechita-abajo"></span>
 						</a>
+						<span class="col-switch">
+							<input type="checkbox" name="col-switch" id="partida" value="5">
+							<label for="partida">Partida</label>
+							<input type="checkbox" name="col-switch" id="subpartida" value="6">
+							<label for="subpartida">Subpartida</label>
+							<input type="checkbox" name="col-switch" id="actividad" value="6">
+							<label for="actividad">Actividad</label>
+						</span>
 						<h2>Presupuesto de Obra</h2>
 					</div>
 					<div id="app-module-content">
@@ -69,6 +77,9 @@
 											<th>Cantidad</th>
 											<th>Precio</th>
 											<th>Monto</th>
+											<th class="partida">Agrupador Partida</th>
+											<th class="subpartida">Agrupador Subpartida</th>
+											<th class="actividad">Agrupador Actividad</th>
 										</tr>
 									</thead>
 									<tbody></tbody>
@@ -89,7 +100,7 @@
 			<form method="get" class="dialog-form form-concepto-properties">
 				<!-- <label for="">Concepto</label>
 				<textarea id="txtDescripcion" class="field"></textarea> -->
-				<label for="txtAgrupadorPartida">Agrupador Partida</label>
+				<label for="txtAgrupadorSubpartida">Agrupador Partida</label>
 				<!-- <a title="Eliminar agrupador" class="elimina-agrupador icon-close"></a> -->
 				<input type="text" id="txtAgrupadorPartida" class="field" />
 				
@@ -99,11 +110,6 @@
 				<label for="txtAgrupadorActividad">Agrupador Actividad</label>
 				<input type="text" id="txtAgrupadorActividad" class="field" />
 
-				<label for="txtAgrupadorTramo">Agrupador Tramo</label>
-				<input type="text" id="txtAgrupadorTramo" class="field" />
-				
-				<label for="txtAgrupadorSubtramo">Agrupador Subtramo</label>
-				<input type="text" id="txtAgrupadorSubtramo" class="field" />
 				<section class="buttons">
 					<input type="button" id="cerrar-concepto" name="cerrar" class="button" value="Cerrar" />
 				</section>
@@ -131,7 +137,7 @@
 		<div id="cache"></div>
 
 		<script type="template" id="template-concepto">
-			<tr id="c-<%- id_concepto %>" data-nivel="<%- nivel %>" data-numeronivel="<%- numero_nivel %>" class="concepto">
+			<tr id="c-<%- id_concepto %>" data-nivel="<%- nivel %>" data-numeronivel="<%- numero_nivel %>" data-medible="<%- concepto_medible %>"class="concepto">
 				<td class="icon-cell">
 					<%= concepto_medible > 0 ? '<a class="icon-file"></a>' : '' %>
 					<%= tipo_material === 1 ? '<a class="icon-database"></a>' : '' %>
@@ -147,24 +153,26 @@
 				</td>
 
 				<td class="clave_concepto"><%- clave_concepto %></td>
-				<td style="padding-left: <%- numero_nivel %>em">
+				<td style="padding-left: <%- numero_nivel %>em" class="<%= concepto_medible > 0 ? ' importante' : '' %>">
 					<a href="" title="<%- descripcion %>" class="descripcion <%= concepto_medible === 3 ? 'concepto-medible' : '' %>">
 						<%- descripcion %>
 					</a>
 				</td>
 
-				<td><%- unidad %></td>
-				<td class="numerico"><%- cantidad_presupuestada %></td>
-				<td class="numerico"><%- precio_unitario %></td>
-				<td class="numerico"><%- monto_presupuestado %></td>
+				<td class="<%= concepto_medible > 0 ? ' importante' : '' %>"><%- unidad %></td>
+				<td class="numerico<%= concepto_medible > 0 ? ' importante' : '' %>"><%- cantidad_presupuestada %></td>
+				<td class="numerico<%= concepto_medible > 0 ? ' importante' : '' %>"><%- precio_unitario %></td>
+				<td class="numerico<%= concepto_medible > 0 ? ' importante' : '' %>"><%- monto_presupuestado %></td>
+				<td class="partida<%= concepto_medible > 0 ? ' importante' : '' %><%= !showPartida ? ' hidden' : '' %>" title="<%- agrupador_partida %>"><%- agrupador_partida %></td>
+				<td class="subpartida<%= concepto_medible > 0 ? ' importante' : '' %><%= !showSubpartida ? ' hidden' : '' %>" title="<%- agrupador_subpartida %>"><%- agrupador_subpartida %></td>
+				<td class="actividad<%= concepto_medible > 0 ? ' importante' : '' %><%= !showActividad ? ' hidden' : '' %>" title="<%- agrupador_actividad %>"><%- agrupador_actividad %></td>
 			</tr>
 		</script>
 
+		<script src="inc/js/lib/underscore-min.js"></script>
 		<script src="inc/js/jquery-1.7.1.min.js"></script>
 		<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
 		<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
-		<script src="inc/js/lib/underscore-min.js"></script>
-
 		<script src="inc/js/general.js"></script>
 		<script src="inc/js/jquery.buttonlist.js"></script>
 		<script src="inc/js/jquery.uxtable.js"></script>

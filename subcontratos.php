@@ -3,19 +3,14 @@
 <html lang="es-mx">
 <head>
 	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	<title>Subcontratos</title>
 
 	<link rel="stylesheet" href="css/normalize.css" />
+	<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
 	<link rel="stylesheet" href="css/general.css" />
 	<link rel="stylesheet" href="css/subcontratos.css"/>
-	<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
-	
 	<!--[if lt IE 9]><script src="inc/js/html5shiv.js"></script><![endif]-->
-	<script src="inc/js/jquery-1.7.1.min.js"></script>
-	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
-	<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
-	<script src="inc/js/general.js"></script>
-	<script src="inc/js/subcontratos.js"></script>
 </head>
 
 <body>
@@ -46,12 +41,46 @@
 			    				</ul>
 			    				<div class="tab-panels">
 				    				<section id="general" class="tab-panel">
+				    				<!-- <form id="form-datos-generales">
+				    					<fieldset>
+				    						<legend>INFORMACION GENERAL</legend>
+					    					<div class="formux">
+						    					<div>
+				    								<label for="txtNombreSubcontrato">Nombre:</label>
+				    								<textarea class="field" id="txtNombreSubcontrato" name="txtNombreSubcontrato" disabled="disabled"></textarea>
+				    							</div>
+				    							<div>
+				    								<label for="txtDescripcionSubcontrato">Descripción:</label>
+				    								<textarea class="field" id="txtDescripcionSubcontrato" name="txtDescripcionSubcontrato"></textarea>
+				    							</div>
+				    							<div>
+				    								<label for="txtTipoContrato">Tipo de Contrato:</label>
+				    								<input type="text" class="field" id="txtTipoContrato" name="txtTipoContrato" disabled="disabled" />
+				    							</div>
+				    							<div>
+				    								<label for="txtContratista">Contratista:</label>
+				    								<textarea class="field" id="txtContratista" name="txtContratista" disabled="disabled"></textarea>
+				    							</div>
+				    							<div>
+					    								<label for="txtMontoSubcontrato">Monto de Subcontrato:</label>
+					    								<input type="text" class="field" id="txtMontoSubcontrato" name="txtMontoSubcontrato" class="amount" />
+					    						</div>
+					    						<div>
+					    								<label for="txtMontoAnticipo">Monto de Anticipo:</label>
+					    								<input type="text" class="field" id="txtMontoAnticipo" name="txtMontoAnticipo" class="amount" />
+
+					    								<label for="txtPctFG">% Ret. FG.:</label>
+					    								<input type="text" class="field" id="txtPctFG" name="txtPctFG" class="amount" />
+				    							</div>
+					    					</div>
+					    				</fieldset>
+					    			</form> -->
 				    					<form id="form-datos-generales">
 				    						<fieldset>
 				    							<legend>INFORMACION GENERAL</legend>
 				    							<div>
-				    								<label for="txtNombreSubcontrato">Nombre:</label>
-				    								<textarea id="txtNombreSubcontrato" name="txtNombreSubcontrato" disabled="disabled"></textarea>
+				    								<label for="txtReferenciaSubcontrato">Referencia:</label>
+				    								<textarea id="txtReferenciaSubcontrato" name="txtReferenciaSubcontrato" disabled="disabled"></textarea>
 				    							</div>
 				    							<div>
 				    								<label for="txtDescripcionSubcontrato">Descripción:</label>
@@ -203,11 +232,6 @@
 	<div id="dialog-nuevo-addendum" class="dialog" title="Nuevo Addendum">
 		<form>
 			<div>
-				<label>Fecha:</label>
-				<input type="text" id="txtFechaAddendum" name="txtFechaAddendum" class="date" />
-				<input type="hidden" id="txtFechaAddendumDB" name="txtFechaAddendumDB" />
-			</div>
-			<div>
 				<label for="txtMontoAddendum">Monto:</label>
 				<input type="text" id="txtMontoAddendum" name="txtMontoAddendum" class="amount" value="0" />
 			</div>
@@ -219,12 +243,60 @@
 				<label for="txtRetencionFG">% Ret. FG.:</label>
 				<input type="text" id="txtRetencionFG" name="txtRetencionFG" class="amount" value="0" />
 			</div>
+			<div>
+				<label>Fecha:</label>
+				<input type="text" id="txtFechaAddendum" name="txtFechaAddendum" class="date" />
+				<input type="hidden" id="txtFechaAddendumDB" name="txtFechaAddendumDB" />
+			</div>
 		</form>
 		<p class="validation-tips"></p>
 	</div>
 	<div id="confirmation-dialog" class="dialog" title="Modulos SAO">
 		<p class="confirmation-message"></p>
 	</div>
-	<div id="message-console"><span id="console-message"></span><span id="console-toggler" class="open"></span></div>
+	<div id="message-console">
+		<span id="console-message"></span>
+		<span id="console-toggler" class="open"></span>
+	</div>
+
+	<script type="text/template" id="obra-item-template">
+		<li class="obra">
+			<span class="handle closed"></span>
+			<a class="text" data-basedatos="<%- source_id %>" data-id="<%- id %>"><%- nombre %></a>
+		</li>
+	</script>
+
+	<script type="text/template" id="empresa-item-template">
+		<li class="empresa">
+			<span class="handle closed"></span>
+			<a class="text" data-id="<%- id_empresa %>"><%- empresa %></a>
+		</li>
+	</script>
+
+	<script type="text/template" id="subcontrato-item-template">
+		<li class="transaccion">
+			<span class="icon"></span>
+			<a class="text selectable" data-id="<%- id_transaccion %>"><%= numero_folio + ' (' + fecha + ') - ' + referencia %></a>
+		</li>
+	</script>
+
+	<script type="text/template" id="addendum-template">
+		<tr data-id="<%- id_addendum %>">
+			<td class="icon-cell">
+				<span class="icon action delete"></span>
+			</td>
+			<td class="centrado"><%- fecha %></td>
+			<td class="numerico"><%- monto %></td>
+			<td class="numerico"><%- monto_anticipo %></td>
+			<td class="centrado"><%- porcentaje_retencion_fg %></td>
+		</tr>
+	</script>
+
+	<script src="inc/js/lib/underscore-min.js"></script>
+	<script src="inc/js/jquery-1.7.1.min.js"></script>
+	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
+	<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
+	<script src="inc/js/general.js"></script>
+	<script src="inc/js/subcontratos.js"></script>
 </body>
 </html>
