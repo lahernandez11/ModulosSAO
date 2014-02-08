@@ -86,7 +86,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 
 		$this->setFontStyle("B");
 		$this->Cell(80, 5, "Organización:", $printBorder);
-		$this->Cell(0, 5, $this->_estimacion->getNombreObra(), $printBorder, 0, "C");
+		$this->Cell(0, 5, $this->_estimacion->obra->getNombre(), $printBorder, 0, "C");
 		$this->Ln();
 
 		$this->Cell(80, 5, "Contratista:", $printBorder, 0, "L");

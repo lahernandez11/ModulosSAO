@@ -30,6 +30,16 @@ div.checkboxgroup input
 {
 	width: auto;
 }
+@-webkit-keyframes rotate {
+	from
+	{
+		-webkit-transform: scale(0.9);
+	}
+	to
+	{ 
+		-webkit-transform: scale(1);
+	}
+}
 div.data-loader
 {
 
@@ -41,6 +51,11 @@ div.data-loader
     width: 150px;
     z-index: 2001;
     display: none;
+    -webkit-animation-name:             rotate; 
+	-webkit-animation-duration:         0.5s; 
+	-webkit-animation-iteration-count:  infinite;
+	-webkit-animation-timing-function: linear;
+	-webkit-animation-direction: alternate;
 }
 div.options
 {

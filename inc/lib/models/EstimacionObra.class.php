@@ -5,7 +5,6 @@ class EstimacionObra extends TransaccionSAO {
 
 	const TIPO_TRANSACCION = 103;
 
-	private $referencia;
 	private $fecha_inicio;
 	private $fecha_termino;
 	private $conceptos;
@@ -117,14 +116,6 @@ class EstimacionObra extends TransaccionSAO {
 		return $errores;
 	}
 
-	public function getReferencia() {
-		return $this->referencia;
-	}
-
-	public function setReferencia( $referencia ) {
-		$this->referencia = $referencia;
-	}
-
 	public function setConceptos( Array $conceptos ) {
 		$this->conceptos = $conceptos;
 	}
@@ -166,7 +157,6 @@ class EstimacionObra extends TransaccionSAO {
 
 	    $datos = $this->conn->executeSP( $tsql, $params );
 
-	    $this->referencia = $datos[0]->Referencia;
 	    $this->setFechaInicio( $datos[0]->FechaInicio );
 	    $this->setFechaTermino( $datos[0]->FechaTermino );
 	}

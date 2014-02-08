@@ -40,7 +40,8 @@ try {
 					'CantidadEstimadaAnterior' => Util::formatoNumerico( $concepto->CantidadEstimadaAnterior ),
 					'CantidadEstimada' 		   => Util::formatoNumerico( $concepto->CantidadEstimada ),
 					'PrecioVenta' 		 	   => Util::formatoNumerico( $concepto->PrecioVenta ),
-					'Total' 		 		   => Util::formatoNumerico( $concepto->Total )
+					'Total' 		 		   => Util::formatoNumerico( $concepto->Total ),
+					'Cumplido' 		 		   => $concepto->Cumplido
 				);
 			}
 

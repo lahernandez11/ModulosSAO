@@ -6,7 +6,6 @@ class Cobranza extends TransaccionSAO {
 
 	const TIPO_TRANSACCION = 104;
 
-	private $referencia;
 	private $id_estimacion_obra;
 	private $conceptos = array();
 	private $folio_factura;
@@ -189,14 +188,6 @@ class Cobranza extends TransaccionSAO {
 		$this->id_estimacion_obra = $datos[0]->IDEstimacionObra;
 		$this->folio_factura 	  = $datos[0]->FolioFactura;
 		$this->setFecha( $datos[0]->Fecha );
-	}
-
-	public function setReferencia( $referencia ) {
-		$this->referencia = $referencia;
-	}
-
-	public function getReferencia() {
-		return $this->referencia;
 	}
 
 	public function getIDEstimacionObra() {

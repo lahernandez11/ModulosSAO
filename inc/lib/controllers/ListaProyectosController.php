@@ -1,7 +1,6 @@
 <?php
 require_once 'setPath.php';
-require_once 'db/ModulosSAOConn.class.php';
-require_once 'models/ModulosSAO.class.php';
+require_once 'models/App.class.php';
 
 $data['success'] = true;
 $data['message'] = null;
@@ -14,25 +13,21 @@ try {
 		throw new Exception("No fue definida una acción");
 	}
 
-	// $MSAOConn = new ModulosSAOConn();
+	switch ( $_GET['action'] ) {
 
-	// switch ( $_GET['action'] ) {
+		case 'getListaProyectos':
 
-	// 	case 'getListaProyectos':
-
-	// 		$data['options'] = array();
+			$data['options'] = array();
 			
-	// 		$proyectos = ModulosSAO::getListaProyectos( $MSAOConn );
+			$proyectos = App::getListaProyectos();
 
-	// 		if ( ! count($proyectos) ) {
-	// 			throw new Exception("No se encontraron proyectos asignados.");
-	// 		}
+			if ( ! count( $proyectos ) ) {
+				throw new Exception("No se encontraron proyectos asignados.");
+			}
 
-	// 		$data['options'] = $proyectos;
-	// }
-
+			$data['options'] = $proyectos;
+	}
 } catch( Exception $e ) {
-
 	$data['success'] = false;
 	$data['message'] = $e->getMessage();
 }

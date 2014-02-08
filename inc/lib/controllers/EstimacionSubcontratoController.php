@@ -86,7 +86,7 @@ try {
 			$subcontrato = new Subcontrato( $obra, $id_subcontrato );
 
 			$data['datosSubcontrato'] = array(
-				'ObjetoSubcontrato' => $subcontrato->getObjetoSubcontrato(),
+				'ObjetoSubcontrato' => $subcontrato->getReferencia(),
 				'NombreContratista' => $subcontrato->getNombreContratista()
 			);
 

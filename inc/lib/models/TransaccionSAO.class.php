@@ -2,7 +2,7 @@
 abstract class TransaccionSAO {
 	const TIPO_TRANSACCION = 0;
 
-	protected $obra;
+	public $obra;
 	protected $id_transaccion;
 	protected $tipo_transaccion;
 	protected $_estado = 0;
@@ -108,16 +108,20 @@ abstract class TransaccionSAO {
 		return $this->obra->getId();
 	}
 
-	public function getNombreObra() {
-		return $this->_nombreObra;
-	}
-
 	public function getTipoTransaccion() {
 		return $this->tipo_transaccion;
 	}
 
 	public function getFecha() {
 		return $this->_fecha;
+	}
+
+	public function getReferencia() {
+		return $this->referencia;
+	}
+
+	public function setReferencia( $referencia ) {
+		$this->referencia = $referencia;
 	}
 
 	public function setFecha( $fecha ) {
