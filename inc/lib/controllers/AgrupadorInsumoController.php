@@ -1,7 +1,7 @@
 <?php 
 require_once 'setPath.php';
 require_once 'models/Sesion.class.php';
-require_once 'db/SAO1814DBConn.class.php';
+require_once 'db/SAODBConnFactory.class.php';
 require_once 'models/AgrupadorInsumo.class.php';
 require_once 'models/Util.class.php';
 
@@ -16,8 +16,6 @@ try {
 	if ( ! isset($_REQUEST['action']) ) {
 		throw new Exception("No fue definida una acción");
 	}
-
-	$conn = new SAO1814DBConn();
 	
 	switch ( $_REQUEST['action'] ) {
 
@@ -25,6 +23,9 @@ try {
 		case 'getAgrupadoresFamilia':
 		case 'getAgrupadoresGenerico':
 
+			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
+			$obra = new Obra( $conn, $_GET['id_obra'] );
+			
 			$descripcion = $_GET['term'];
 			$data['options'] = array();
 			$tipo = null;
@@ -44,11 +45,11 @@ try {
 			}
 
 			$agrupadores = AgrupadorInsumo::getAgrupadoresInsumo(
-				$conn, $descripcion, $tipo);
+				$conn, $descripcion, $tipo );
 
-			foreach ($agrupadores as $agrupador) {
+			foreach ( $agrupadores as $agrupador ) {
 				$data['options'][] = array(
-					'id' => $agrupador->id_agrupador,
+					'id'    => $agrupador->id_agrupador,
 					'label' => $agrupador->agrupador,
 				);
 			}

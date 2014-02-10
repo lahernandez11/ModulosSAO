@@ -49,15 +49,15 @@ class AgrupacionGastosVarios {
 							AND
 						[items].[id_item] = [agrupacion_gastos_varios].[id_item]
 				LEFT OUTER JOIN
-					[Agrupacion].[Agrupadores] AS [Naturaleza]
+					[Agrupacion].[Agrupador] AS [Naturaleza]
 					ON
 						[agrupacion_gastos_varios].[id_agrupador_naturaleza] = [Naturaleza].[id_agrupador]
 				LEFT OUTER JOIN
-					[Agrupacion].[Agrupadores] AS [Familia]
+					[Agrupacion].[Agrupador] AS [Familia]
 					ON
 						[agrupacion_gastos_varios].[id_agrupador_familia] = [Familia].[id_agrupador]
 				LEFT OUTER JOIN
-					[Agrupacion].[Agrupadores] AS [Generico]
+					[Agrupacion].[Agrupador] AS [Generico]
 					ON
 						[agrupacion_gastos_varios].[id_agrupador_insumo_generico] = [Generico].[id_agrupador]
 				WHERE

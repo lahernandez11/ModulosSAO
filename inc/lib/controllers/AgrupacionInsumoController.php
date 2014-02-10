@@ -90,10 +90,9 @@ try {
 	}
 
 } catch( Exception $e ) {
-
 	$data['success'] = false;
 	$data['message'] = $e->getMessage();
 }
 
-echo json_encode($data);
+echo json_encode( $data );
 ?>

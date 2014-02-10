@@ -19,9 +19,9 @@ class AgrupadorInsumo {
 	public function getTipoAgrupador() {
 
 		$tsql = "SELECT
-				    [agrupadores].[id_tipo_agrupador]
+				    [agrupador].[id_tipo_agrupador]
 				FROM
-					[Agrupacion].[agrupadores]
+					[Agrupacion].[agrupador]
 				WHERE
 					[id_agrupador] = ?";
 
@@ -38,19 +38,19 @@ class AgrupadorInsumo {
 		return $this->id_agrupador;
 	}
 
-	public static function getAgrupadoresInsumo(SAODBConn $conn, 
-		$descripcion = null, $tipo_agrupador = null) {
+	public static function getAgrupadoresInsumo( SAODBConn $conn, 
+		$descripcion = null, $tipo_agrupador = null ) {
 
 		$tsql = "SELECT
-				    [agrupadores].[id_agrupador]
-				  , CONCAT([agrupadores].[codigo], ' ', [agrupadores].[agrupador]) AS [agrupador]
+				    [agrupador].[id_agrupador]
+				  , CONCAT([agrupador].[codigo], ' ', [agrupador].[agrupador]) AS [agrupador]
 				FROM
-					[Agrupacion].[agrupadores]
+					[Agrupacion].[agrupador]
 				WHERE
 					[id_tipo_agrupador] = ISNULL(?, [id_tipo_agrupador])
 						AND
-				    CONCAT([agrupadores].[codigo], ' ', [agrupadores].[agrupador])
-				    LIKE '%' + ISNULL(?, CONCAT([agrupadores].[codigo], ' ', [agrupadores].[agrupador])) +'%'
+				    CONCAT([agrupador].[codigo], ' ', [agrupador].[agrupador])
+				    LIKE '%' + ISNULL(?, CONCAT([agrupador].[codigo], ' ', [agrupador].[agrupador])) +'%'
 				ORDER BY
 					[agrupador]";
 

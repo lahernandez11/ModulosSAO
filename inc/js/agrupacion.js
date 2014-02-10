@@ -28,8 +28,8 @@ var AGRUPACION = {
 		$('.actions').on('click', '.button', function(event) {
 			event.preventDefault();
 
-			if ( ! that.getIDProyecto() ){
-				messageConsole.displayMessage('Debe seleccionar un proyecto.', 'info');
+			if ( ! that.getIDObra() ){
+				messageConsole.displayMessage('Debe seleccionar una obra.', 'info');
 			} else {
 				that.clearDataContainer();
 				that.loadData(this.id);
@@ -100,7 +100,12 @@ var AGRUPACION = {
 				}
 				
 				DROP_LIST.onSelect = that.asignaAgrupador;
-				DROP_LIST.data = {action: action, term: ''};
+				DROP_LIST.data = {
+					id_obra: that.getIDObra(),
+					base_datos: that.getBaseDatos(),
+					action: action,
+					term: ''
+				};
 				DROP_LIST.listContainer = listContainer;
 				DROP_LIST.source = source;
 				DROP_LIST.show(event);
@@ -158,7 +163,7 @@ var AGRUPACION = {
 		that.disableToolbar();
 	},
 
-	getIDProyecto: function() {
+	getIDObra: function() {
 		return $('#bl-proyectos').buttonlist('option', 'selectedItem').value;
 	},
 
@@ -199,7 +204,7 @@ var AGRUPACION = {
 		$.ajax({
 			url: dataURL,
 			data: {
-				id_obra: that.getIDProyecto(),
+				id_obra: that.getIDObra(),
 				base_datos: $('#bl-proyectos').buttonlist('option', 'selectedItem').extra.source,
 				action: action
 			},
@@ -296,7 +301,7 @@ var AGRUPACION = {
 		var id = parseInt(trigger.parents('tr').attr('data-id'))
 			, IDTransaccionCDC
 			request = {
-				id_obra: that.getIDProyecto(),
+				id_obra: that.getIDObra(),
 				base_datos: that.getBaseDatos(),
 				id: id,
 				id_agrupador: selectedItem.value,

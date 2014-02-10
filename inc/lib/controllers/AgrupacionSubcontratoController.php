@@ -88,7 +88,7 @@ try {
 		case 'setAgrupador':
 
 			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
-			$obra = new Obra( $conn,  (int) $_POST['id_obra'] );
+			$obra = new Obra( $conn,  $_POST['id_obra'] );
 			
 			$id_actividad   = (int) $_POST['id'];
 			$id_agrupador   = (int) $_POST['id_agrupador'];
@@ -97,7 +97,7 @@ try {
 
 			$agrupador = new AgrupadorInsumo( $conn, $id_agrupador );
 
-			$subcontrato = new Subcontrato( $id_subcontrato, $conn );
+			$subcontrato = new Subcontrato( $obra, $id_subcontrato );
 			$subcontrato->setAgrupadorPartida( $id_actividad, $agrupador );
 			break;
 

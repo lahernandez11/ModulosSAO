@@ -85,7 +85,7 @@ class CuentaContable {
 							AND
 						[CTE_CUENTAS].[id_cuenta] = [agrupacion_cuenta_contable].[id_cuenta]
 				LEFT OUTER JOIN
-					[Agrupacion].[agrupadores] AS [naturaleza]
+					[Agrupacion].[agrupador] AS [naturaleza]
 					ON
 						[agrupacion_cuenta_contable].[id_agrupador_naturaleza] = [naturaleza].[id_agrupador]
 				LEFT OUTER JOIN
@@ -168,7 +168,7 @@ class CuentaContable {
 							AND
 						[cuenta_contable].[id_cuenta] = [agrupacion_cuenta_contable].[id_cuenta]
 				LEFT OUTER JOIN
-					[Agrupacion].[agrupadores] AS [naturaleza]
+					[Agrupacion].[agrupador] AS [naturaleza]
 					ON
 						[agrupacion_cuenta_contable].[id_agrupador_naturaleza] = [naturaleza].[id_agrupador]
 				LEFT OUTER JOIN
