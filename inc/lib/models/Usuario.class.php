@@ -43,7 +43,7 @@ class Usuario {
 		$filter = '';
 
 		if ( ! $this->tieneAccesoATodasObras( $conn ) ) {
-			$filter = " INNER JOIN 
+			$filter = " INNER JOIN
 					[dbo].[usuarios_obras]
 					ON
 						[obras].[id_obra] = [usuarios_obras].[id_obra]
@@ -135,9 +135,11 @@ class Usuario {
         $obraList = array();
         foreach ( $connList as $conn ) {
         	foreach ( $this->getObrasBaseDatos( $conn ) as $obra ) {
-        		$obraList[] = $obra;
+        		$obraList[$obra->getNombre()] = $obra;
         	}
         }
+
+        ksort( $obraList );
 
         return $obraList;
 	}

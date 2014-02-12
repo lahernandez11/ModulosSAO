@@ -26,6 +26,13 @@ $db_name['SAO1814_CIRCUITO'] = 'SAO1814_CIRCUITO';
 $db_type['SAO1814_CIRCUITO'] = 'OBRA';
 $db_source_id['SAO1814_CIRCUITO'] = 2;
 
+$db_host['SAO_CORP'] = '172.20.74.3';
+$db_user['SAO_CORP'] = 'App_ModulosSAO';
+$db_pwd['SAO_CORP']  = '@msApp85%';
+$db_name['SAO_CORP'] = 'SAO_CORP';
+$db_type['SAO_CORP'] = 'OBRA';
+$db_source_id['SAO_CORP'] = 3;
+
 // $dbServer['SAO1814_SUB'] 	 = '172.20.74.3';
 // $dbUser['SAO1814_SUB']   	 = 'App_ModulosSAO';
 // $userPassword['SAO1814_SUB'] = '@msApp85%';

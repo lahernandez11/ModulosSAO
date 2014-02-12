@@ -351,17 +351,18 @@
 				data: opts.data,
 				dataType: 'json'
 			})
-			.done( function( json ) {
+			.done( function( data ) {
 
 				try {
 
-					if ( ! json.success ) {
-						$.error( json.message );
+					if ( ! data.success ) {
+						$.error( data.message );
 						return false;
 					}
 
-					buildList.call( $this, json.options );
+					buildList.call( $this, data.options );
 					opts.isLoaded = true;
+					opts.onFinishLoad.call( $this, data );
 				} catch( e ) {
 
 					opts.isLoaded = false;
@@ -456,7 +457,8 @@
 		beforeLoad: function() { return true },
 		beforeShow: function() { return true; },
 		onSelect: function( selectedItem, listItem ) { return true; },
-		onCreateListItem: function(){}
+		onCreateListItem: function(){},
+		onFinishLoad: function() {}
 	}
 
 })( jQuery );

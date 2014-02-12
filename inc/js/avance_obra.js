@@ -65,6 +65,11 @@ var AVANCE = {
 			didNotDataFound: function() {
 				$.notify({text: 'No se pudo cargar la lista de proyectos'});
 			},
+			onFinishLoad: function( data ) {
+				if ( ! data.success ) {
+					messageConsole.displayMessage( data.message, 'error');
+				};
+			},
 			onCreateListItem: function() {
 				return {
 					id: this.id,

@@ -4,6 +4,94 @@
 		"selected_items":
 		[
 			[
+				"mon",
+				"monto"
+			],
+			[
+				"porcenta",
+				"porcentaje_retencion_fg"
+			],
+			[
+				"monto",
+				"monto_anticipo"
+			],
+			[
+				"por",
+				"porcentaje_retencion_fg"
+			],
+			[
+				"_",
+				"_POST"
+			],
+			[
+				"render",
+				"renderAddendumList"
+			],
+			[
+				"adde",
+				"addendum"
+			],
+			[
+				"adden",
+				"addendumTemplate"
+			],
+			[
+				"guarda",
+				"guardaTransaccion"
+			],
+			[
+				"creaRe",
+				"creaRegistroSubcontrato"
+			],
+			[
+				"Subcontr",
+				"SubcontratoController"
+			],
+			[
+				"padd",
+				"padding-right"
+			],
+			[
+				"mar",
+				"margin-top"
+			],
+			[
+				"subcon",
+				"subcontrato"
+			],
+			[
+				"Subc",
+				"SubcontratoController"
+			],
+			[
+				"fecha",
+				"fecha_inicio_cliente"
+			],
+			[
+				"clas",
+				"clasificador"
+			],
+			[
+				"subcontrato",
+				"Subcontrato"
+			],
+			[
+				"conce",
+				"concepto_medible"
+			],
+			[
+				"concep",
+				"conceptos"
+			],
+			[
+				"request",
+				"requestData"
+			],
+			[
+				"concept",
+				"conceptoTemplate"
+			],
+			[
 				"id_co",
 				"id_concepto_raiz"
 			],
@@ -70,10 +158,6 @@
 			[
 				"gas",
 				"gastos"
-			],
-			[
-				"subcon",
-				"subcontratosTemplate"
 			],
 			[
 				"id_agrupador",
@@ -148,10 +232,6 @@
 				"concepto_medible"
 			],
 			[
-				"monto",
-				"montoCell"
-			],
-			[
 				"txt",
 				"txtAgrupadorTipoCuenta"
 			],
@@ -174,14 +254,6 @@
 			[
 				"get",
 				"getSelected"
-			],
-			[
-				"conce",
-				"concepto"
-			],
-			[
-				"concep",
-				"concepto"
 			],
 			[
 				"inp",
@@ -320,10 +392,6 @@
 				"height"
 			],
 			[
-				"mar",
-				"margin-top"
-			],
-			[
 				"font",
 				"font-weight"
 			],
@@ -444,126 +512,26 @@
 				"activeCell"
 			],
 			[
-				"_",
-				"_POST"
-			],
-			[
 				"fill",
 				"fillTotales"
-			],
-			[
-				"row",
-				"rowKeys"
-			],
-			[
-				"margin-",
-				"margin-bottom"
-			],
-			[
-				"__",
-				"__toString"
-			],
-			[
-				"max",
-				"max-width"
-			],
-			[
-				"fon",
-				"font-size"
-			],
-			[
-				"selecte",
-				"selectedItem"
-			],
-			[
-				"bac",
-				"background-color"
-			],
-			[
-				"list",
-				"list-style"
-			],
-			[
-				"ma",
-				"max-width"
-			],
-			[
-				"min",
-				"min-width"
-			],
-			[
-				"lis",
-				"list"
-			],
-			[
-				"load",
-				"loadData"
-			],
-			[
-				"conceo",
-				"conceptosListTemplate"
-			],
-			[
-				"_importea",
-				"_importeAcumuladoRetenciones"
-			],
-			[
-				"_importe",
-				"_importeAcumuladoAnticipo"
-			],
-			[
-				"pubsu",
-				"pubsub"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "inc/lib/models/TransaccionSAO.class.php",
+			"file": "inc/lib/controllers/PrecioVentaController.php",
 			"settings":
 			{
-				"buffer_size": 5075,
+				"buffer_size": 1825,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "inc/lib/models/AvanceObra.class.php",
+			"file": "inc/lib/db/db_config.php",
 			"settings":
 			{
-				"buffer_size": 7881,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/controllers/AvanceObraController.php",
-			"settings":
-			{
-				"buffer_size": 8304,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "avance_obra.php",
-			"settings":
-			{
-				"buffer_size": 6521,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/js/avance_obra.js",
-			"settings":
-			{
-				"buffer_size": 19084,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/js/confirmacion_cobranza.js",
-			"settings":
-			{
-				"buffer_size": 20565,
+				"buffer_size": 1356,
 				"line_ending": "Windows"
 			}
 		},
@@ -571,23 +539,47 @@
 			"file": "inc/lib/models/Obra.class.php",
 			"settings":
 			{
-				"buffer_size": 4314,
+				"buffer_size": 2910,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "inc/lib/controllers/ArbolPresupuestoController.php",
+			"file": "inc/lib/models/Usuario.class.php",
 			"settings":
 			{
-				"buffer_size": 1041,
+				"buffer_size": 3266,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "inc/lib/models/PresupuestoObra.class.php",
+			"file": "inc/lib/db/SAODBConn.class.php",
 			"settings":
 			{
-				"buffer_size": 6299,
+				"buffer_size": 561,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "inc/lib/db/SQLSrvDBConn.class.php",
+			"settings":
+			{
+				"buffer_size": 2581,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "inc/lib/db/DBConf.class.php",
+			"settings":
+			{
+				"buffer_size": 2243,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "inc/lib/controllers/ListaObrasController.php",
+			"settings":
+			{
+				"buffer_size": 701,
 				"line_ending": "Windows"
 			}
 		}
@@ -598,6 +590,10 @@
 		"height": 392.0,
 		"selected_items":
 		[
+			[
+				"sql",
+				"Set Syntax: SQL"
+			],
 			[
 				"html",
 				"Set Syntax: HTML5"
@@ -656,93 +652,106 @@
 	},
 	"file_history":
 	[
-		"/D/www/ModulosSAO/inc/js/estimaciones.js",
-		"/D/www/ModulosSAO/confirmacion_cobranza.php",
-		"/D/www/ModulosSAO/inc/lib/models/EstimacionObra.class.php",
-		"/D/www/ModulosSAO/inc/lib/controllers/EstimacionObraController.php",
-		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontrato.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/AgrupadorInsumo.class.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/AgrupadorInsumoController.php",
+		"/D/www/ModulosSAO/inc/js/agrupacion.js",
+		"/D/www/ModulosSAO/inc/lib/models/Material.class.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/AgrupacionInsumoController.php",
+		"/D/www/ModulosSAO/inc/lib/models/AgrupacionGastosVarios.class.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/AgrupacionSubcontratoController.php",
+		"/D/www/ModulosSAO/inc/lib/models/CuentaContable.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/AgrupadorConceptoPresupuesto.class.php",
+		"/D/www/ModulosSAO/inc/js/general.js",
+		"/D/www/ModulosSAO/inc/lib/controllers/ListaProyectosController.php",
+		"/D/www/ModulosSAO/inc/lib/models/App.class.php",
+		"/D/www/ModulosSAO/subcontratos.php",
+		"/D/www/ModulosSAO/inc/lib/models/Subcontrato.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/Addendum.class.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/SubcontratoController.php",
+		"/D/www/ModulosSAO/inc/js/subcontratos.js",
+		"/D/www/ModulosSAO/inc/js/presupuesto_obra.js",
+		"/D/www/ModulosSAO/inc/lib/models/ClasificadorSubcontrato.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/Util.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/TransaccionSAO.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/Obra.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/Cobranza.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/EstimacionObra.class.php",
+		"/D/www/ModulosSAO/css/general.css",
+		"/D/www/ModulosSAO/inc/lib/controllers/EstimacionSubcontratoController.php",
+		"/D/www/ModulosSAO/inc/js/estimacion_obra.js",
+		"/D/www/ModulosSAO/estimacion_obra.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/EstimacionObraController.php",
+		"/D/www/ModulosSAO/modulos/subcontratos/GetDatosSubcontrato.php",
+		"/D/www/ModulosSAO/css/subcontratos.css",
+		"/D/www/ModulosSAO/inc/lib/models/Usuario.class.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/ListaObrasController.php",
+		"/D/www/ModulosSAO/presupuesto_obra.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/ObraController.php",
+		"/D/www/ModulosSAO/avance_subcontratos.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/AvanceSubcontratoController.php",
+		"/D/www/ModulosSAO/inc/lib/models/AvanceSubcontrato.class.php",
+		"/D/www/ModulosSAO/inc/js/avance_subcontratos.js",
+		"/D/www/ModulosSAO/agrupacion_contable.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/PresupuestoObraController.php",
 		"/D/www/ModulosSAO/inc/js/confirmacion_cobranza.js",
+		"/D/www/ModulosSAO/inc/lib/models/PresupuestoObra.class.php",
+		"/D/www/ModulosSAO/inc/js/agrupacion_contable.js",
+		"/D/www/ModulosSAO/inc/js/avance_obra.js",
+		"/D/www/ModulosSAO/inc/js/precios_venta.js",
+		"/D/www/ModulosSAO/confirmacion_cobranza.php",
+		"/D/www/ModulosSAO/avance_obra.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/AvanceObraController.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/PrecioVentaController.php",
+		"/D/www/ModulosSAO/inc/lib/models/PrecioVenta.class.php",
+		"/D/www/ModulosSAO/precios_venta.php",
+		"/D/www/ModulosSAO/inc/lib/models/AvanceObra.class.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/ArbolPresupuestoController.php",
+		"/D/www/ModulosSAO/inc/js/estimaciones.js",
+		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontrato.class.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/CobranzaController.php",
 		"/D/www/ModulosSAO/inc/js/lib/underscore-min.js",
-		"/D/www/ModulosSAO/inc/lib/models/Subcontrato.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/TransaccionSAO.class.php",
-		"/D/www/ModulosSAO/inc/lib/controllers/EstimacionSubcontratoController.php",
-		"/D/www/ModulosSAO/inc/lib/controllers/ListaProyectosController.php",
 		"/D/www/ModulosSAO/estimaciones.php",
-		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/Almacen.class.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/AlmacenController.php",
 		"/D/www/ModulosSAO/inc/js/jquery.buttonlist.js",
 		"/D/www/ModulosSAO/inc/lib/models/Sesion.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/Usuario.class.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/InsumoController.php",
-		"/D/www/ModulosSAO/inc/lib/models/Material.class.php",
-		"/D/www/ModulosSAO/inc/js/general.js",
 		"/D/www/ModulosSAO/inc/js/jquery.listaTransacciones.js",
 		"/D/www/ModulosSAO/inc/js/login.js",
-		"/D/www/ModulosSAO/inc/js/agrupacion_contable.js",
-		"/D/www/ModulosSAO/agrupacion_contable.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/AgrupacionContableController.php",
-		"/D/www/ModulosSAO/inc/lib/models/CuentaContable.class.php",
-		"/D/www/ModulosSAO/inc/js/agrupacion.js",
-		"/D/www/ModulosSAO/inc/lib/models/Obra.class.php",
 		"/D/www/ModulosSAO/inc/lib/db/SQLSrvDBConf.class.php",
-		"/D/www/ModulosSAO/inc/lib/controllers/AgrupacionInsumoController.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/AgrupacionGastosVariosController.php",
-		"/D/www/ModulosSAO/inc/lib/controllers/ListaObrasController.php",
-		"/D/www/ModulosSAO/inc/lib/controllers/AgrupacionSubcontratoController.php",
-		"/D/www/ModulosSAO/inc/lib/controllers/AgrupadorInsumoController.php",
-		"/D/www/ModulosSAO/inc/lib/models/AgrupadorInsumo.class.php",
 		"/D/www/ModulosSAO/agrupacion.php",
-		"/D/www/ModulosSAO/inc/lib/models/AgrupacionGastosVarios.class.php",
 		"/D/www/ModulosSAO/inc/lib/db/db_config.php",
 		"/D/www/ModulosSAO/inc/lib/db/DBConf.class.php",
-		"/D/www/ModulosSAO/css/general.css",
 		"/D/www/ModulosSAO/login.html",
 		"/D/www/ModulosSAO/inc/lib/controllers/LoginController.php",
 		"/D/www/ModulosSAO/index.php",
-		"/D/www/ModulosSAO/inc/lib/models/App.class.php",
 		"/D/www/ModulosSAO/inc/lib/db/SQLSrvDBConn.class.php",
 		"/D/www/ModulosSAO/inc/lib/db/ModulosSAOConn.class.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/MenuAplicacionController.php",
 		"/D/www/ModulosSAO/inc/lib/db/SAODBConnFactory.class.php",
-		"/D/www/ModulosSAO/avance_obra.php",
 		"/D/www/ModulosSAO/inc/app-footer.php",
 		"/D/www/ModulosSAO/inc/lib/db/SAODBConn.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/ModulosSAO.class.php",
-		"/D/www/ModulosSAO/inc/js/presupuesto_obra.js",
 		"/D/www/ModulosSAO/inc/lib/models/AgrupadorCuentaContable.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/Insumo.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/AgrupacionFactutraVarios.class.php",
 		"/D/www/ModulosSAO/inc/DBConn.php",
 		"/D/www/ModulosSAO/modulos/agrupacion/GetListaInsumos.php",
-		"/D/www/ModulosSAO/inc/lib/models/PrecioVenta.class.php",
 		"/D/www/ModulosSAO/.gitignore",
-		"/D/www/ModulosSAO/avance_subcontratos.php",
-		"/D/www/ModulosSAO/presupuesto_obra.php",
-		"/D/www/ModulosSAO/estimacion_obra.php",
-		"/D/www/ModulosSAO/precios_venta.php",
 		"/D/www/ModulosSAO/inc/lib/models/Empresa.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/Proyecto.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/PresupuestoObra.class.php",
-		"/D/www/ModulosSAO/inc/js/estimacion_obra.js",
 		"/D/www/ModulosSAO/inc/lib/db/ReportesSAO.class.php",
-		"/D/www/ModulosSAO/inc/lib/controllers/PresupuestoObraController.php",
-		"/D/www/ModulosSAO/inc/lib/models/AgrupadorConceptoPresupuesto.class.php",
 		"/D/www/ModulosSAO/inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css",
 		"/D/www/ModulosSAO/css/login.css",
 		"/D/www/ModulosSAO/css/responsive.css",
 		"/D/www/icomoon/demo-files/demo.css",
 		"/D/www/ModulosSAO/presupuesto_obra.html",
-		"/D/www/ModulosSAO/inc/js/avance_obra.js",
-		"/D/www/ModulosSAO/inc/js/avance_subcontratos.js",
-		"/D/www/ModulosSAO/inc/js/precios_venta.js",
 		"/D/www/ModulosSAO/modulos/subcontratos/GetAddendums.php",
 		"/D/www/ModulosSAO/modulos/subcontratos/GetClasificadores.php",
-		"/D/www/ModulosSAO/modulos/subcontratos/GetDatosSubcontrato.php",
 		"/D/www/ModulosSAO/modulos/subcontratos/GetListaSubcontratos.php",
-		"/D/www/ModulosSAO/inc/js/subcontratos.js",
 		"/D/www/ModulosSAO/modulos/agrupacion/GetListaCuentasContables.php",
 		"/D/www/ModulosSAO/modulos/agrupacion/GetInsumosGenericos.php",
 		"/D/www/ModulosSAO/modulos/agrupacion/GetFamilias.php",
@@ -750,19 +759,15 @@
 		"/D/www/ModulosSAO/modulos/agrupacion/GetListaSubcontratos.php",
 		"/D/www/ModulosSAO/modulos/agrupacion/GetNaturalezas.php",
 		"/D/www/ModulosSAO/modulos/proyectos/GetDatosGeneralesProyecto.php",
-		"/D/www/ModulosSAO/inc/lib/models/Util.class.php",
 		"/D/www/ModulosSAO/css/cobranza.css",
 		"/D/www/ModulosSAO/modulos/cobranza/RegistraCobranza.php",
 		"/D/www/ModulosSAO/modulos/cobranza/GetConceptosCobranza.php",
 		"/D/www/ModulosSAO/inc/lib/models/Cobranza.php",
-		"/D/www/ModulosSAO/inc/lib/controllers/AvanceObraController.php",
-		"/D/www/ModulosSAO/inc/lib/models/AvanceObra.class.php",
 		"/D/www/icomoon79764/style.css",
 		"/D/www/icomoon34677/style.css",
 		"/D/www/icomoon93297/style.css",
 		"/D/www/icomoon14898/style.css",
 		"/D/www/ModulosSAO/proyectos.php",
-		"/D/www/ModulosSAO/subcontratos.php",
 		"/D/www/ModulosSAO/inc/app-header.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/setPath.php",
 		"/D/www/ModulosSAO/setPath.php",
@@ -774,16 +779,7 @@
 		"/D/Dropbox/www/ModulosSAO/css/general.css",
 		"/D/Dropbox/www/ModulosSAO/inc/lib/models/Subcontrato.class.php",
 		"/D/Dropbox/www/ModulosSAO/estimaciones.php",
-		"/D/Dropbox/www/ModulosSAO/inc/js/jquery.buttonlist.js",
-		"/D/Dropbox/www/ModulosSAO/css/agrupacion.css",
-		"/D/Dropbox/www/ModulosSAO/css/login.css",
-		"/D/Dropbox/www/ModulosSAO/css/normalize.css",
-		"/D/Dropbox/www/ModulosSAO/css/estimaciones.css",
-		"/D/Dropbox/www/ModulosSAO/inc/js/general.js",
-		"/D/Dropbox/www/ModulosSAO/inc/lib/fpdf/fpdf.php",
-		"/D/Dropbox/www/ModulosSAO/inc/lib/tcpdf/tcpdf.php",
-		"/D/Dropbox/www/ModulosSAO/inc/lib/tcpdf/tcpdf_autoconfig.php",
-		"/D/Dropbox/www/ModulosSAO/inc/lib/tcpdf/include/tcpdf_static.php"
+		"/D/Dropbox/www/ModulosSAO/inc/js/jquery.buttonlist.js"
 	],
 	"find":
 	{
@@ -791,145 +787,146 @@
 	},
 	"find_in_files":
 	{
-		"height": 102.0,
+		"height": 0.0,
 		"where_history":
 		[
+			"D:\\www\\ModulosSAO\\inc\\js",
 			""
 		]
 	},
 	"find_state":
 	{
-		"case_sensitive": false,
+		"case_sensitive": true,
 		"find_history":
 		[
-			"IDConceptoRaiz",
-			"_POST",
-			"_GET",
-			"json",
-			"IDTransaccion",
-			"json",
-			"$('#txtConceptoRaiz').presupuestoObra('option', 'selectedNode').id",
-			"cargaConceptos",
-			"llenaTablaConceptos",
-			"json",
-			"getIDConcepto",
-			"json",
-			"_POST",
-			"AvanceObra",
-			"avanceObra",
-			"IDTransaccion",
-			"IDConceptoRaiz",
-			"IDTransaccion",
-			"_REQUEST",
-			"_GET",
-			"IDTransaccion",
-			"_POST",
-			"IDConceptoRaiz",
-			"_GET",
-			"IDTransaccion",
-			"getBase",
-			"IDProyecto",
+			"SAOCORP",
+			"SAO",
+			"agrupadores",
+			"[Agrupadores]",
+			"[agrupadores]",
+			"getSubcontratosPorContratista",
+			"agrupadores",
+			"[Agrupadores]",
+			"[agrupadores]",
 			"getIDProyecto",
-			"IDConceptoRaiz",
-			"_SAOConn",
-			"_numeroFolio",
-			"_IDTransaccion",
-			"_conceptos",
-			"_fechaTermino",
-			"_fechaInicio",
-			"_conceptoRaiz",
-			"id_concepto_raiz",
-			"IDConceptoRaiz",
-			"_IDConceptoRaiz",
-			"IDConceptoRaiz",
-			"_IDConceptoRaiz",
-			"conceptosListTemplate",
-			"fillConceptos",
+			"agrupadorController",
+			"INNER_DIALOG",
+			"render",
+			"referencia",
+			"Referencia",
+			"referencia",
+			"Referencia",
+			"referencia",
+			"Referencia",
+			"referencia",
+			"getNombreObra",
+			"clearDa",
+			"clear",
+			"dadta",
+			"json",
+			"();\n",
+			"get$",
+			"monto_anticipo",
+			"private $;",
+			"_GET",
 			"+ '",
 			"' + ",
+			"json",
+			"registraAddendum",
+			"adden",
+			"adde",
+			"cargaAddendums",
+			"_POST",
+			"json",
+			"asignaClasificacionSubcontrato",
+			"modificaFechaSubcontrato",
+			"$valor)",
+			"es",
+			"$this",
+			"set",
+			"get",
+			"val",
+			"_GET",
+			"getIDObra",
+			"asignaClasificacionSubcontrato",
+			"json",
+			"getClasificadores",
+			"dataRow",
+			"id_agrupador",
+			"_objetoSubcontrato",
+			";\n",
+			"txtNombreSubcontrato",
+			"<span>",
+			"textarea",
+			"data",
+			"};",
+			"transaccion->his",
+			"_objetoSubcontrato",
+			"IDTransaccion",
+			"private",
+			"[Subcontratos]",
+			"[SAO1814App].",
+			"json",
+			"cargaDatosGenerales",
+			"TreeView",
+			"empresas",
+			"[transacciones].",
+			");\n",
+			"concepto",
+			"showDescendants",
+			"toggleNode",
+			"json",
+			"S",
+			"s",
+			"S",
+			"cuenta",
+			"conceptoTemplate",
+			"render",
+			"esAfectable",
+			"esConce",
+			"esMed",
+			"esAfectable",
+			"case 'txtAgrupadorSubpartida':\n				this.getSelected().filter(this.esAfectable).find('td:eq(6)').text($input.val());\n			break;",
+			"updateAgrupadorColumna",
+			"setAgr",
+			"subpartida",
+			"naturaleza",
+			"id_obra",
+			"requestAgrupadoresList",
+			"getIDP",
+			"getConceptos",
+			"_GET",
+			"SAODBConnFactory",
+			"$conn->",
+			"$id_agrupador = null",
+			"elimina",
+			"esImporte",
+			"guardaConceptos",
+			"fillConceptos",
+			"Things",
 			"concepto.",
 			" + '",
 			"' + ",
-			"+",
-			"formatoTotales",
-			"elimina",
-			"_GET",
-			"actualizaTotal",
-			"_GET",
-			"_IDTransaccion",
-			"_IDTR",
-			"_IDTransaccion",
-			"nuevaT",
-			"nuevaR",
-			"getIDTransaccion",
-			"is_array",
-			"_GET",
-			"IDTransaccion",
-			"IDEstimacionObra",
-			"json",
-			"IDTransaccion",
-			"_conceptos",
-			"_fechaTermino",
-			"_fechaInicio",
-			"_referencia",
-			"referencia",
-			"_conceptos",
-			"_IDEstimacionObra",
-			"_folioFactura",
-			"getId",
-			"setDat",
-			"_SAOConn",
-			"IDTransaccion",
-			"getListaTransacciones",
-			"getBaseDatos",
-			"getBase",
-			"getFolio",
-			"transacciones",
-			"agregaRetencion",
-			" + '",
-			"' + retObj.",
-			"agregaDeductiva",
-			" + '",
-			"' + ",
-			" checked",
-			"nueva",
-			"column-switchers",
-			"cargaTran",
-			"setTotalesTransaccion",
-			"cellTy",
-			"fillConceptosList",
-			"colClasses",
-			"<%- that.colClasses.avance_volumen %>",
-			" + '",
-			"' + ",
-			"+",
-			"fillConceptosList",
-			"cargaTr",
-			"cargaConceptos",
-			"getCOnceptos",
+			"guardaTransaccion",
+			"guardaTra",
 			"getIDProyecto",
-			"eliminaTr",
-			"_GET",
-			"tipoAlmacen",
-			"IDTipoAlmacen",
-			"selectedTipoDeductiva",
 			"json",
-			"agregaDeductiva",
+			"},\n",
 			"_GET",
-			"IDReferencia",
+			"_SAOConn",
+			"this.",
 			"json",
-			"selectedIDInsumo",
-			"guardaDed",
-			"DATA_LO",
-			"onFinishLoadData",
-			"beforeLoad",
-			"_POST",
-			"eliminaRetencion",
-			"dialog-nueva-liberacion",
-			"agregaLiberacion",
-			"guardaLiberacion",
-			"IDSubcontrato",
-			"nuevaT"
+			"llenaTablaConceptos",
+			"+ '",
+			"' + ",
+			"_GET",
+			"_REQUEST",
+			"guardaTransaccion",
+			"guarda",
+			"guardaTran",
+			"guardaTransa",
+			"IDConceptoRaiz",
+			"_POST"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -937,6 +934,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"that",
 			"IDProyecto",
 			"eliminaTransaccion",
 			"guardaTransaccion",
@@ -1000,29 +998,29 @@
 		"reverse": false,
 		"show_context": true,
 		"use_buffer2": true,
-		"whole_word": false,
+		"whole_word": true,
 		"wrap": true
 	},
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "inc/lib/models/TransaccionSAO.class.php",
+					"file": "inc/lib/controllers/PrecioVentaController.php",
 					"settings":
 					{
-						"buffer_size": 5075,
+						"buffer_size": 1825,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4063,
-								4097
+								266,
+								266
 							]
 						],
 						"settings":
@@ -1031,52 +1029,51 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3271.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "inc/lib/models/AvanceObra.class.php",
+					"file": "inc/lib/db/db_config.php",
 					"settings":
 					{
-						"buffer_size": 7881,
+						"buffer_size": 1356,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5053,
-								5053
+								431,
+								431
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 2774.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "inc/lib/controllers/AvanceObraController.php",
+					"file": "inc/lib/models/Obra.class.php",
 					"settings":
 					{
-						"buffer_size": 8304,
+						"buffer_size": 2910,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								631,
-								516
+								2123,
+								2123
 							]
 						],
 						"settings":
@@ -1085,25 +1082,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 880.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "avance_obra.php",
+					"file": "inc/lib/models/Usuario.class.php",
 					"settings":
 					{
-						"buffer_size": 6521,
+						"buffer_size": 3266,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								3068,
+								3068
 							]
 						],
 						"settings":
@@ -1112,71 +1109,17 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2310.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "inc/js/avance_obra.js",
+					"file": "inc/lib/db/SAODBConn.class.php",
 					"settings":
 					{
-						"buffer_size": 19084,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2671,
-								2671
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2057.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "inc/js/confirmacion_cobranza.js",
-					"settings":
-					{
-						"buffer_size": 20565,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1671,
-								1564
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1100.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "inc/lib/models/Obra.class.php",
-					"settings":
-					{
-						"buffer_size": 4314,
+						"buffer_size": 561,
 						"regions":
 						{
 						},
@@ -1199,19 +1142,19 @@
 					"type": "text"
 				},
 				{
-					"buffer": 7,
-					"file": "inc/lib/controllers/ArbolPresupuestoController.php",
+					"buffer": 5,
+					"file": "inc/lib/db/SQLSrvDBConn.class.php",
 					"settings":
 					{
-						"buffer_size": 1041,
+						"buffer_size": 2581,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								789,
-								789
+								317,
+								317
 							]
 						],
 						"settings":
@@ -1226,19 +1169,47 @@
 					"type": "text"
 				},
 				{
-					"buffer": 8,
-					"file": "inc/lib/models/PresupuestoObra.class.php",
+					"buffer": 6,
+					"file": "inc/lib/db/DBConf.class.php",
 					"settings":
 					{
-						"buffer_size": 6299,
+						"buffer_size": 2243,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6178,
-								6178
+								1661,
+								1661
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 440.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "inc/lib/controllers/ListaObrasController.php",
+					"settings":
+					{
+						"buffer_size": 701,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								406,
+								406
 							]
 						],
 						"settings":
@@ -1247,7 +1218,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 4400.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1297,6 +1268,218 @@
 		"selected_items":
 		[
 			[
+				"listao",
+				"inc/lib/controllers/ListaObrasController.php"
+			],
+			[
+				"dbc",
+				"inc/lib/db/DBConf.class.php"
+			],
+			[
+				"sqls",
+				"inc/lib/db/SQLSrvDBConn.class.php"
+			],
+			[
+				"saodbc",
+				"inc/lib/db/SAODBConn.class.php"
+			],
+			[
+				"usua",
+				"inc/lib/models/Usuario.class.php"
+			],
+			[
+				"obra",
+				"inc/lib/models/Obra.class.php"
+			],
+			[
+				"db_c",
+				"inc/lib/db/db_config.php"
+			],
+			[
+				"agrupacion",
+				"inc/js/agrupacion.js"
+			],
+			[
+				"material",
+				"inc/lib/models/Material.class.php"
+			],
+			[
+				"agrupado",
+				"inc/lib/controllers/AgrupadorInsumoController.php"
+			],
+			[
+				"agrupad",
+				"inc/lib/models/AgrupadorInsumo.class.php"
+			],
+			[
+				"app",
+				"inc/lib/models/App.class.php"
+			],
+			[
+				"listapro",
+				"inc/lib/controllers/ListaProyectosController.php"
+			],
+			[
+				"subcontrato",
+				"inc/lib/models/Subcontrato.class.php"
+			],
+			[
+				"estimacionsu",
+				"inc/lib/controllers/EstimacionSubcontratoController.php"
+			],
+			[
+				"general.css",
+				"css/general.css"
+			],
+			[
+				"estimaciono",
+				"inc/lib/controllers/EstimacionObraController.php"
+			],
+			[
+				"estimacion",
+				"estimacion_obra.php"
+			],
+			[
+				"estimacion_",
+				"inc/js/estimacion_obra.js"
+			],
+			[
+				"cobra",
+				"inc/lib/models/Cobranza.class.php"
+			],
+			[
+				"format",
+				"inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php"
+			],
+			[
+				"general",
+				"inc/js/general.js"
+			],
+			[
+				"transa",
+				"inc/lib/models/TransaccionSAO.class.php"
+			],
+			[
+				"util",
+				"inc/lib/models/Util.class.php"
+			],
+			[
+				"tra",
+				"inc/lib/models/TransaccionSAO.class.php"
+			],
+			[
+				"genera",
+				"inc/js/general.js"
+			],
+			[
+				"transac",
+				"inc/lib/models/TransaccionSAO.class.php"
+			],
+			[
+				"subcontra",
+				"css/subcontratos.css"
+			],
+			[
+				"subcontr",
+				"inc/lib/models/Subcontrato.class.php"
+			],
+			[
+				"uti",
+				"inc/lib/models/Util.class.php"
+			],
+			[
+				"pres",
+				"presupuesto_obra.php"
+			],
+			[
+				"obrac",
+				"inc/lib/controllers/ObraController.php"
+			],
+			[
+				"controller",
+				"inc/lib/controllers/ObraController.php"
+			],
+			[
+				"subcontrat",
+				"subcontratos.php"
+			],
+			[
+				"subcon",
+				"subcontratos.php"
+			],
+			[
+				"subco",
+				"inc/js/subcontratos.js"
+			],
+			[
+				"avance_s",
+				"inc/js/avance_subcontratos.js"
+			],
+			[
+				"avances",
+				"inc/lib/models/AvanceSubcontrato.class.php"
+			],
+			[
+				"avance",
+				"inc/lib/controllers/AvanceSubcontratoController.php"
+			],
+			[
+				"agrupac",
+				"agrupacion_contable.php"
+			],
+			[
+				"agrupacion_c",
+				"inc/js/agrupacion_contable.js"
+			],
+			[
+				"agrupadorcon",
+				"inc/lib/models/AgrupadorConceptoPresupuesto.class.php"
+			],
+			[
+				"agrupadorconceptopresupuesto",
+				"inc/lib/models/AgrupadorConceptoPresupuesto.class.php"
+			],
+			[
+				"cobranza",
+				"inc/js/confirmacion_cobranza.js"
+			],
+			[
+				"presu",
+				"inc/lib/controllers/PresupuestoObraController.php"
+			],
+			[
+				"presupuesto",
+				"inc/js/presupuesto_obra.js"
+			],
+			[
+				"avanceo",
+				"inc/lib/controllers/AvanceObraController.php"
+			],
+			[
+				"transacc",
+				"inc/lib/models/TransaccionSAO.class.php"
+			],
+			[
+				"estimacion_o",
+				"estimacion_obra.php"
+			],
+			[
+				"estimacionobr",
+				"inc/lib/models/EstimacionObra.class.php"
+			],
+			[
+				"estimacionobra",
+				"inc/lib/controllers/EstimacionObraController.php"
+			],
+			[
+				"precio",
+				"inc/js/precios_venta.js"
+			],
+			[
+				"preciov",
+				"inc/lib/models/PrecioVenta.class.php"
+			],
+			[
 				"estimaciones",
 				"inc/js/estimaciones.js"
 			],
@@ -1307,18 +1490,6 @@
 			[
 				"arbolpre",
 				"inc/lib/controllers/ArbolPresupuestoController.php"
-			],
-			[
-				"obra",
-				"inc/lib/models/Obra.class.php"
-			],
-			[
-				"cobranza",
-				"inc/js/confirmacion_cobranza.js"
-			],
-			[
-				"avance",
-				"inc/js/avance_obra.js"
 			],
 			[
 				"avance_",
@@ -1341,24 +1512,8 @@
 				"confirmacion_cobranza.php"
 			],
 			[
-				"subcontrato",
-				"inc/lib/models/Subcontrato.class.php"
-			],
-			[
-				"estimaciono",
-				"inc/lib/models/EstimacionObra.class.php"
-			],
-			[
-				"estimacionobra",
-				"inc/lib/controllers/EstimacionObraController.php"
-			],
-			[
 				"estimacions",
 				"inc/lib/models/EstimacionSubcontrato.class.php"
-			],
-			[
-				"transa",
-				"inc/lib/models/TransaccionSAO.class.php"
 			],
 			[
 				"estim",
@@ -1367,14 +1522,6 @@
 			[
 				"estimac",
 				"inc/lib/controllers/EstimacionSubcontratoController.php"
-			],
-			[
-				"transacc",
-				"inc/lib/models/TransaccionSAO.class.php"
-			],
-			[
-				"cobra",
-				"inc/lib/models/Cobranza.class.php"
 			],
 			[
 				"conf",
@@ -1389,24 +1536,12 @@
 				"inc/lib/controllers/AlmacenController.php"
 			],
 			[
-				"general",
-				"inc/js/general.js"
-			],
-			[
 				"listatra",
 				"inc/js/jquery.listaTransacciones.js"
 			],
 			[
-				"material",
-				"inc/lib/models/Material.class.php"
-			],
-			[
 				"insumocon",
 				"inc/lib/controllers/InsumoController.php"
-			],
-			[
-				"subcontrat",
-				"inc/lib/models/Subcontrato.class.php"
 			],
 			[
 				"usuario",
@@ -1427,10 +1562,6 @@
 			[
 				"ses",
 				"inc/lib/models/Sesion.class.php"
-			],
-			[
-				"agrupacion_c",
-				"inc/js/agrupacion_contable.js"
 			],
 			[
 				"estimacionsub",
@@ -1457,10 +1588,6 @@
 				"inc/js/agrupacion.js"
 			],
 			[
-				"agrupac",
-				"inc/js/agrupacion_contable.js"
-			],
-			[
 				"agrupaco",
 				"agrupacion_contable.php"
 			],
@@ -1473,16 +1600,8 @@
 				"inc/lib/controllers/AgrupacionGastosVariosController.php"
 			],
 			[
-				"db_c",
-				"inc/lib/db/db_config.php"
-			],
-			[
 				"transaccion",
 				"inc/lib/models/TransaccionSAO.class.php"
-			],
-			[
-				"agrupacion",
-				"inc/lib/controllers/AgrupacionSubcontratoController.php"
 			],
 			[
 				"agrupadorins",
@@ -1505,16 +1624,8 @@
 				"inc/lib/db/SAODBConnFactory.class.php"
 			],
 			[
-				"usua",
-				"inc/lib/models/Usuario.class.php"
-			],
-			[
 				"sess",
 				"inc/lib/models/Sesion.class.php"
-			],
-			[
-				"app",
-				"inc/lib/models/App.class.php"
 			],
 			[
 				"modulos",
@@ -1523,10 +1634,6 @@
 			[
 				"menuaplo",
 				"inc/lib/controllers/MenuAplicacionController.php"
-			],
-			[
-				"sqls",
-				"inc/lib/db/SQLSrvDBConf.class.php"
 			],
 			[
 				"dbconf",
@@ -1543,10 +1650,6 @@
 			[
 				"logincon",
 				"inc/lib/controllers/LoginController.php"
-			],
-			[
-				"genera",
-				"css/general.css"
 			],
 			[
 				"insumo",
@@ -1570,7 +1673,7 @@
 	"show_minimap": true,
 	"show_open_files": false,
 	"show_tabs": true,
-	"side_bar_visible": false,
+	"side_bar_visible": true,
 	"side_bar_width": 260.0,
 	"status_bar_visible": true
 }
