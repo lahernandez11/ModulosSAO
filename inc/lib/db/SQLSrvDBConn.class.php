@@ -73,7 +73,7 @@ class SQLSrvDBConn {
 		return $rowsCollection;
 	}
 
-	private function getStatementExecutionError() {
+	protected function getStatementExecutionError() {
 
 		$errors = sqlsrv_errors( SQLSRV_ERR_ERRORS );
 		$message = $errors[0]["message"];

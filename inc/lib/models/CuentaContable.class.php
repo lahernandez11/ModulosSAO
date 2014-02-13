@@ -75,7 +75,7 @@ class CuentaContable {
 					, [CTE_CUENTAS].[nombre]
 					, [CTE_CUENTAS].[nivel]
 					, [empresas].[razon_social] AS [empresa]
-					, [naturaleza].[agrupador] AS [agrupador_naturaleza]
+					, CONCAT([naturaleza].[codigo], ' ', [naturaleza].[agrupador]) AS [agrupador_naturaleza]
 				FROM
 					[CTE_CUENTAS]
 				LEFT OUTER JOIN
@@ -347,7 +347,7 @@ class CuentaContable {
 	        array( $id_cuenta, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $this->conn->executeQuery($tsql, $params);
+	    $this->conn->executeQuery( $tsql, $params );
 	}
 
 	private function setAgrupadorNaturaleza( $id_cuenta, $id_agrupador ) {
