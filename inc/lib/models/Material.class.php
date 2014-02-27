@@ -131,7 +131,7 @@ class Material {
 
 	public static function getMateriales( SAODBConn $conn, $descripcion = null, $tipo = null ) {
 
-		switch ($tipo) {
+		switch ( $tipo ) {
 			case self::TIPO_MATERIAL:
 			case self::TIPO_MANO_OBRA:
 			case self::TIPO_SERVICIOS:
