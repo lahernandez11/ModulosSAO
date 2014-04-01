@@ -211,13 +211,15 @@ App.Presupuesto = {
 	    	onClick: function(option) {
 
 	      		if (option.checked)
-					that.$table.find('col.' + option.value).css('width', 'auto');
+					that.$table.find('col.' + option.value).removeAttr('style');
 				else
 					that.$table.find('col.' + option.value).css('width', '0px');	    	
 	    	}
 		});
 	
-		$('.elimina-agrupador-icon').on('click', that.eliminaAgrupador);
+		$('#dialog-propiedades-concepto').on('click', '.elimina-agrupador-icon', function() {
+			that.eliminaAgrupador(this);
+		});
 	},
 
 	ocultaColumnasOpcionales: function() {
@@ -230,13 +232,13 @@ App.Presupuesto = {
 	},
 
 	muestraColumnasMarcadas: function() {
-		// Oculta las columnas de agrupadores
+		// muestra las columnas de agrupadores
 		var that = this;
 		this.ocultaColumnasOpcionales();
 
 	    $('.col-switch option').each(function() {
 	    	if ( this.selected )
-	    		that.$table.find('col.' + this.value).css('width', 'auto');
+	    		that.$table.find('col.' + this.value).removeAttr('style');
 	    });
 	},
 
@@ -673,10 +675,18 @@ App.Presupuesto = {
 		});
 	},
 
-	eliminaAgrupador: function(uno, dos, tres) {
-		console.log(uno.target)
-		console.log(dos)
-		console.log(tres)
+	eliminaAgrupador: function(target) {
+		
+		var data = {
+			base_datos: this.getBaseDatos(),
+			id_obra: this.getIDObra(),
+			conceptos: this.getConceptosSeleccionados(),
+			input: target.previousElementSibling,
+			callback: DATA_LOADER.hide
+		};
+
+		target.previousElementSibling.value = '';
+		this.requestSetAgrupador(data);
 	}
 }
 

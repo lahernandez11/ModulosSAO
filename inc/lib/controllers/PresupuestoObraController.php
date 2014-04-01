@@ -74,8 +74,9 @@ try {
 			$obra = new Obra( $conn, $_POST['id_obra'] );
 			
 			$presupuesto = new PresupuestoObra( $obra );
-			$conceptos = isset( $_POST['conceptos'] ) ? $_POST['conceptos'] : array() ;
-			$id_agrupador = $_POST['id_agrupador'];
+			$conceptos = isset( $_POST['conceptos'] ) ? $_POST['conceptos'] : array();
+			$id_agrupador = isset($_POST['id_agrupador']) ? $_POST['id_agrupador'] : null;
+
 			$campo_agrupador = '';
 
 			switch ($_POST['action']) {

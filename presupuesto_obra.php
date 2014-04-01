@@ -44,6 +44,7 @@
 							<span class="icon flechita-abajo"></span>
 						</a>
 						<select class="col-switch" multiple="multiple">
+							<option value="clave">Clave</option>
 							<option value="contrato">Contrato</option>
 							<option value="etapa">Etapa</option>
 							<option value="costo">Costo</option>
@@ -205,7 +206,7 @@
 					<a href="" class="select icon-checkbox-unchecked"></a>
 				</td>
 
-				<td class="clave_concepto"><%- clave_concepto %></td>
+				<td class="clave"><%- clave_concepto %></td>
 				<td style="padding-left: <%- numero_nivel %>em" class="<%= concepto_medible > 0 ? ' importante' : '' %>">
 					<a href="" title="<%- descripcion %>" class="descripcion <%= concepto_medible === 3 ? 'concepto-medible' : '' %>">
 						<%- descripcion %>
