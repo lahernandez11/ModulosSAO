@@ -43,12 +43,15 @@ try {
 			$data['concepto'] = $presupuesto->getDatosConcepto( $id_concepto );
 			break;
 
+		case 'getAgrupadoresContrato':
+		case 'getAgrupadoresEtapa':
+		case 'getAgrupadoresCosto':
+		case 'getAgrupadoresEspecialidad':
 		case 'getAgrupadoresPartida':
 		case 'getAgrupadoresSubpartida':
-		case 'getAgrupadoresActividad':
-		case 'getAgrupadoresTramo':
-		case 'getAgrupadoresSubtramo':
-
+		case 'getAgrupadoresConcepto':
+		case 'getAgrupadoresFrente':
+		case 'getAgrupadoresContratista':
 			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
 			$obra = new Obra( $conn, $_GET['id_obra'] );
 			
@@ -58,20 +61,55 @@ try {
 
 			break;
 
+		case 'setAgrupadorContrato':
+		case 'setAgrupadorEtapa':
+		case 'setAgrupadorCosto':
+		case 'setAgrupadorEspecialidad':
 		case 'setAgrupadorPartida':
 		case 'setAgrupadorSubpartida':
-		case 'setAgrupadorActividad':
-		case 'setAgrupadorTramo':
-		case 'setAgrupadorSubtramo':
+		case 'setAgrupadorConcepto':
+		case 'setAgrupadorFrente':
+		case 'setAgrupadorContratista':
 			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
 			$obra = new Obra( $conn, $_POST['id_obra'] );
 			
 			$presupuesto = new PresupuestoObra( $obra );
 			$conceptos = isset( $_POST['conceptos'] ) ? $_POST['conceptos'] : array() ;
 			$id_agrupador = $_POST['id_agrupador'];
+			$campo_agrupador = '';
+
+			switch ($_POST['action']) {
+				case 'setAgrupadorContrato':
+					$campo_agrupador = PresupuestoObra::C_AGRUPADOR_CONTRATO;
+					break;
+				case 'setAgrupadorEtapa':
+					$campo_agrupador = PresupuestoObra::C_AGRUPADOR_ETAPA;
+					break;
+				case 'setAgrupadorCosto':
+					$campo_agrupador = PresupuestoObra::C_AGRUPADOR_COSTO;
+					break;
+				case 'setAgrupadorEspecialidad':
+					$campo_agrupador = PresupuestoObra::C_AGRUPADOR_ESPECIALIDAD;
+					break;
+				case 'setAgrupadorPartida':
+					$campo_agrupador = PresupuestoObra::C_AGRUPADOR_PARTIDA;
+					break;
+				case 'setAgrupadorSubpartida':
+					$campo_agrupador = PresupuestoObra::C_AGRUPADOR_SUBPARTIDA;
+					break;
+				case 'setAgrupadorConcepto':
+					$campo_agrupador = PresupuestoObra::C_AGRUPADOR_CONCEPTO;
+					break;
+				case 'setAgrupadorFrente':
+					$campo_agrupador = PresupuestoObra::C_AGRUPADOR_FRENTE;
+					break;
+				case 'setAgrupadorContratista':
+					$campo_agrupador = PresupuestoObra::C_AGRUPADOR_CONTRATISTA;
+					break;
+			}
 
 			foreach ( $conceptos as $concepto ) {
-				$presupuesto->setAgrupador( $concepto['id_concepto'], $id_agrupador, $_POST['action'] );
+				$presupuesto->setAgrupador( $concepto['id_concepto'], $id_agrupador, $campo_agrupador );
 			}
 
 			break;
@@ -86,18 +124,20 @@ try {
 			$presupuesto->setClaveConcepto( $id_concepto, $clave );
 			break;
 
+		case 'addAgrupadorContrato':
+		case 'addAgrupadorEtapa':
+		case 'addAgrupadorCosto':
+		case 'addAgrupadorEspecialidad':
 		case 'addAgrupadorPartida':
 		case 'addAgrupadorSubpartida':
-		case 'addAgrupadorActividad':
-		case 'addAgrupadorTramo':
-		case 'addAgrupadorSubtramo':
+		case 'addAgrupadorConcepto':
+		case 'addAgrupadorFrente':
+		case 'addAgrupadorContratista':
 			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
 			$obra = new Obra( $conn, $_POST['id_obra'] );
-			
-			$clave 		 = $_POST['clave'];
 			$descripcion = $_POST['descripcion'];
 
-			$data['id_agrupador'] = AgrupadorConceptoPresupuesto::$_POST['action']( $obra, $clave, $descripcion );
+			$data['id_agrupador'] = AgrupadorConceptoPresupuesto::$_POST['action']( $obra, $descripcion );
 			break;
 
 		default:
@@ -128,12 +168,26 @@ function formatDatosConcepto( $concepto ) {
 		'concepto_medible' 		  => $concepto->concepto_medible,
 		'estado' 				  => $concepto->estado,
 		'subnivel' 				  => $concepto->subnivel,
+		'acumulador' 			  => $concepto->acumulador,
+
+		'id_agrupador_contrato'   => $concepto->id_agrupador_contrato,
+		'agrupador_contrato' 	  => $concepto->agrupador_contrato,
+		'id_agrupador_etapa' 	  => $concepto->id_agrupador_etapa,
+		'agrupador_etapa' 	  	  => $concepto->agrupador_etapa,
+		'id_agrupador_costo' 	  => $concepto->id_agrupador_costo,
+		'agrupador_costo' 	  	  => $concepto->agrupador_costo,
+		'id_agrupador_especialidad' => $concepto->id_agrupador_especialidad,
+		'agrupador_especialidad'  => $concepto->agrupador_especialidad,
 		'id_agrupador_partida' 	  => $concepto->id_agrupador_partida,
 		'agrupador_partida' 	  => $concepto->agrupador_partida,
 		'id_agrupador_subpartida' => $concepto->id_agrupador_subpartida,
 		'agrupador_subpartida' 	  => $concepto->agrupador_subpartida,
-		'id_agrupador_actividad'  => $concepto->id_agrupador_actividad,
-		'agrupador_actividad' 	  => $concepto->agrupador_actividad
+		'id_agrupador_concepto'   => $concepto->id_agrupador_concepto,
+		'agrupador_concepto' 	  => $concepto->agrupador_concepto,
+		'id_agrupador_frente' 	  => $concepto->id_agrupador_frente,
+		'agrupador_frente' 	  	  => $concepto->agrupador_frente,
+		'id_agrupador_contratista' => $concepto->id_agrupador_contratista,
+		'agrupador_contratista'    => $concepto->agrupador_contratista,
 	);
 }
 ?>

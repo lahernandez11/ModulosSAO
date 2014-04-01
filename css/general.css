@@ -278,7 +278,6 @@ select
 	-webkit-border-radius: 5px 5px 5px 5px;
     border-radius: 5px 5px 5px 5px;
     padding-left: 3px;
-    /*width: 260px;*/
     font-family: inherit;
     font-size: inherit;
 }
@@ -411,7 +410,7 @@ table col.folio
 }
 table col.hidden
 {
-	width: 0
+	width: 0px;
 }
 table col.icon
 {
@@ -439,7 +438,7 @@ table col.unidad
 }
 table thead th
 {
-	padding: 0.2em;
+	padding: 0 0.2em;
 	border: 1px solid #666;
 	background-color: #202020;
 	color: white;
@@ -871,7 +870,6 @@ ul.dropdown-list li a.with-icon
 	line-height: 1;
 	speak: none;
 	text-transform: none;
-	vertical-align: middle;
 }
 .button .icon.deductivas:after
 {
@@ -927,6 +925,10 @@ ul.dropdown-list li a.with-icon
 {
 	vertical-align: middle;
 }
+.col-switch
+{
+	width: 200px;
+}
 .confirmation-message
 {
 	color: red;
@@ -958,6 +960,22 @@ ul.dropdown-list li a.with-icon
 {
 	width: 100%;
 	height: 25px;
+}
+.elimina-agrupador-icon
+{
+	color: red;
+	cursor: pointer;
+	font-size: 1.2em;
+	font-weight: bold;
+	left: 0.5em;
+	position: absolute;
+	top: 2.5em;
+}
+.form-concepto-properties input.field
+{
+	height: 2.5em;
+	padding: 0 1em 0 2em;
+	width: 300px;
 }
 .hz-menu li
 {
@@ -1177,6 +1195,10 @@ ul.dropdown-list li a.with-icon
 	min-width: 16px;
 	min-height: 16px;
 }
+.relativo
+{
+	position: relative;
+}
 .roField
 {
 	border: 1px solid #CCC;
@@ -1208,7 +1230,7 @@ ul.dropdown-list li a.with-icon
     border-top: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
     border-left: 1px solid #CCCCCC;
-    overflow: hidden;
+    /*overflow: hidden;*/
     padding: 0.5em 0 0.5em 16px;
 }
 .overlay

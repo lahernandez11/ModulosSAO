@@ -45,11 +45,6 @@ try {
 					$direccion = ' href="'.$direccion.'"';
 				else
 					$direccion = '';
-				
-				// if( strlen($nodo->NombreIcono) > 0 )
-				// 	$icono = '<img src="'.$icono.'" width="16" heigth="16" />';
-				// else
-				// 	$icono = '';
 					
 				$data['menu'] .= '<a'.$direccion.'>'.$nodo->Nombre.'</a>';
 				

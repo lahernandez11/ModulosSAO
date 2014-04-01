@@ -23,7 +23,7 @@
 		</header> <!-- app-header -->
 		
 		<nav>
-			<ul id="app-nav"></ul>
+			<?php include("inc/app-menu.php"); ?>
 		</nav> <!-- app-nav -->
 		
 		<div id="app-content">

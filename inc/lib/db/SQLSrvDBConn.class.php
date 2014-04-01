@@ -15,6 +15,7 @@ class SQLSrvDBConn {
 
 	protected $dbConn;
 	public $dbConf;
+	protected $stmt;
 
 	public static function getInstance( SQLSrvDBConf $conf ) {
 		
@@ -41,6 +42,10 @@ class SQLSrvDBConn {
 		return sqlsrv_prepare( $this->dbConn, $stmt, $values );
 	}
 
+	public function getLastStmt() {
+		return $this->stmt;
+	}
+
 	public function executeQuery( $tsql, $params = array() ) {
 
 		$stmt = sqlsrv_query( $this->dbConn, $tsql, $params );
@@ -49,12 +54,31 @@ class SQLSrvDBConn {
 			throw new DBServerStatementExecutionException( $this->getStatementExecutionError() );
 		}
 
+		$this->stmt = $stmt;
+
 		$rowsCollection = array();
 
 		while ( $obj = sqlsrv_fetch_object( $stmt ) )
 			$rowsCollection[] = $obj;
 
 		return $rowsCollection;
+	}
+
+	public function executeQueryGetId( $tsql, $params = array() ) {
+
+		$tsql .= "SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY];";
+
+		$stmt = sqlsrv_query( $this->dbConn, $tsql, $params );
+
+		if( ! $stmt ) {
+			throw new DBServerStatementExecutionException( $this->getStatementExecutionError() );
+		}
+
+		sqlsrv_next_result($stmt);
+        
+        sqlsrv_fetch($stmt);
+
+        return sqlsrv_get_field($stmt, 0);
 	}
 
 	public function executeSP( $tsql, $params = array() ) {

@@ -773,47 +773,4 @@ $(function() {
 	);
 
 	messageConsole.init();
-	
-	LIGHTBOX.title = 'Modulos SAO';
-	LIGHTBOX.content = '<div style="text-align:center;"><img src="img/loaders/rounded-blocks_50x50.gif" /><h5>Cargando Menu ... Espere por favor</h5></div>';
-	LIGHTBOX.closeButton = false;
-	LIGHTBOX.closeOverlay = false;
-	LIGHTBOX.show();
-	
-	// Carga el menu de la aplicacion
-	$.ajax({
-		type: 'GET',
-		url: 'inc/lib/controllers/MenuAplicacionController.php',
-		data: {
-			action: 'getMenu'
-		},
-		dataType: 'json'
-	})
-	.done( function(json) {
-		
-		try {
-			
-			if( ! json.success ) {
-				messageConsole.displayMessage(json.message, 'error');
-				return false;
-			}
-			
-			if( json.noRows ) {
-				messageConsole.displayMessage(json.message, 'info');
-				return false;
-			}
-			
-			$('#app-nav').empty().html(json.menu);
-		} catch(e) {
-			messageConsole.displayMessage('Error: ' + e.message, 'error');
-		}
-		
-	})
-	.fail( function(jqXHR, textStatus, errorMessage) {
-		if( textStatus != 'timeout' )
-			messageConsole.displayMessage('Error: ' + errorMessage, 'error');
-	})
-	.always( function() {
-		LIGHTBOX.hide();
-	});
 });
