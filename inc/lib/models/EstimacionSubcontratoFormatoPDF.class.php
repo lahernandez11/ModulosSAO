@@ -4,9 +4,16 @@ require_once 'models/Util.class.php';
 
 class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 
-	const TITULO = 'ESTIMACIÓN DE OBRA EJECUTADA';
 	const FORMATO_NOMBRE_ARCHIVO = 'EstimacionSubcontrato.pdf';
 	const PDF_PAGE_ORIENTATION = 'L';
+
+	protected $titulo = 'ESTIMACIÓN DE OBRA EJECUTADA';
+	protected $organizacion_label = 'Organización:';
+	protected $contratista_label = 'Contratista:';
+	protected $firma_contratista_titulo_label = 'por el contratista';
+	protected $firma_contratista_descripcion_label = 'factor o dependiente';
+	protected $firma_cliente_titulo_label = 'por el cliente';
+	protected $firma_cliente_descripcion_label = 'gerente de proyecto';
 
 	private $_estimacion;
 	private $_soloConceptosEstimados = 1;
@@ -20,7 +27,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 
 	private function writeDatosGeneralesEstimacion() {
 
-		$this->AddPage(self::PDF_PAGE_ORIENTATION);
+		$this->AddPage( self::PDF_PAGE_ORIENTATION );
 		$this->SetFont('Arial', '', 7);
 
 		$printBorder = 1;
@@ -31,7 +38,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->setFontStyle("B");
 		$this->setFillColorGHI();
 		// $this->SetX($this->GetX() + 20);
-		$this->Cell(200, 30, "ESTIMACIÓN DE OBRA EJECUTADA", 0, 0, "C");
+		$this->Cell(200, 30, $this->titulo, 0, 0, "C");
 		$this->resetFontSize();
 		$this->resetTextColor();
 		
@@ -85,11 +92,11 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->SetFontSize(10);
 
 		$this->setFontStyle("B");
-		$this->Cell(80, 5, "Organización:", $printBorder);
+		$this->Cell(80, 5, $this->organizacion_label, $printBorder);
 		$this->Cell(0, 5, $this->_estimacion->obra->getNombre(), $printBorder, 0, "C");
 		$this->Ln();
 
-		$this->Cell(80, 5, "Contratista:", $printBorder, 0, "L");
+		$this->Cell(80, 5, $this->contratista_label, $printBorder, 0, "L");
 		$this->Cell(0, 5, $this->_estimacion->getContratista(), $printBorder, 0, "C");
 		$this->Ln();
 
@@ -491,9 +498,9 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->resetFontStyle();
 		$this->SetFontSize(7);
 		$this->Cell(70, 3, "", 0, 0);
-		$this->Cell(50, 3, "por el contratista", 1, 0, "C", true);
+		$this->Cell(50, 3, $this->firma_contratista_titulo_label, 1, 0, "C", true);
 		$this->Cell(50, 3, "", 0, 0);
-		$this->Cell(50, 3, "por el cliente", 1, 0, "C", true);
+		$this->Cell(50, 3, $this->firma_contratista_descripcion_label, 1, 0, "C", true);
 		$this->Ln();
 		$this->Cell(70, 3, "", 0, 0);
 		$this->Cell(50, 8, "", 1, 0, "C");
@@ -501,9 +508,9 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->Cell(50, 8, "", 1, 0, "C");
 		$this->Ln();
 		$this->Cell(70, 3, "", 0, 0);
-		$this->Cell(50, 3, "factor o dependiente", 1, 0, "C", true);
+		$this->Cell(50, 3, $this->firma_cliente_titulo_label, 1, 0, "C", true);
 		$this->Cell(50, 3, "", 0, 0);
-		$this->Cell(50, 3, "gerente de proyecto", 1, 0, "C", true);
+		$this->Cell(50, 3, $this->firma_cliente_descripcion_label, 1, 0, "C", true);
 	}
 
 	public function Output( $nombre=null, $i='I' ) {

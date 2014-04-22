@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"controll",
+				"controller_url"
+			],
+			[
+				"C_TIPO_CON",
+				"C_TIPO_CONTRATO"
+			],
+			[
 				"C_TIPO_CONTR",
 				"C_TIPO_CONTRATISTA"
 			],
@@ -506,14 +514,6 @@
 			[
 				"op",
 				"opacity"
-			],
-			[
-				"w",
-				"width"
-			],
-			[
-				"modi",
-				"modificado"
 			]
 		]
 	},
@@ -523,7 +523,7 @@
 			"file": "presupuesto_obra.php",
 			"settings":
 			{
-				"buffer_size": 10351,
+				"buffer_size": 10591,
 				"line_ending": "Windows"
 			}
 		},
@@ -531,7 +531,7 @@
 			"file": "css/general.css",
 			"settings":
 			{
-				"buffer_size": 25712,
+				"buffer_size": 25714,
 				"line_ending": "Windows"
 			}
 		},
@@ -539,7 +539,7 @@
 			"file": "inc/js/presupuesto_obra.js",
 			"settings":
 			{
-				"buffer_size": 17188,
+				"buffer_size": 17595,
 				"line_ending": "Windows"
 			}
 		},
@@ -547,7 +547,7 @@
 			"file": "inc/lib/models/PresupuestoObra.class.php",
 			"settings":
 			{
-				"buffer_size": 4760,
+				"buffer_size": 4773,
 				"line_ending": "Windows"
 			}
 		},
@@ -555,7 +555,7 @@
 			"file": "inc/lib/controllers/PresupuestoObraController.php",
 			"settings":
 			{
-				"buffer_size": 6703,
+				"buffer_size": 6823,
 				"line_ending": "Windows"
 			}
 		},
@@ -563,7 +563,31 @@
 			"file": "inc/lib/models/AgrupadorConceptoPresupuesto.class.php",
 			"settings":
 			{
-				"buffer_size": 6142,
+				"buffer_size": 4988,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "inc/lib/db/SQLSrvDBConn.class.php",
+			"settings":
+			{
+				"buffer_size": 3095,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "inc/lib/models/Subcontrato.class.php",
+			"settings":
+			{
+				"buffer_size": 16532,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "inc/lib/models/App.class.php",
+			"settings":
+			{
+				"buffer_size": 1426,
 				"line_ending": "Windows"
 			}
 		}
@@ -571,16 +595,20 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 392.0,
+		"height": 81.0,
 		"selected_items":
 		[
 			[
-				"sql",
-				"Set Syntax: SQL"
+				"install",
+				"Package Control: Install Package"
 			],
 			[
 				"html",
 				"Set Syntax: HTML5"
+			],
+			[
+				"sql",
+				"Set Syntax: SQL"
 			],
 			[
 				"css",
@@ -597,10 +625,6 @@
 			[
 				"synta",
 				"Set Syntax: CSS"
-			],
-			[
-				"install",
-				"Package Control: Install Package"
 			],
 			[
 				"pac",
@@ -636,6 +660,8 @@
 	},
 	"file_history":
 	[
+		"/D/www/ModulosSAO/inc/lib/models/Obra.class.php",
+		"/D/www/ModulosSAO/inc/lib/db/SQLSrvDBConn.class.php",
 		"/D/www/ModulosSAO/inc/js/jquery.buttonlist.js",
 		"/D/www/ModulosSAO/css/bootstrap.min.css",
 		"/D/www/ModulosSAO/agrupacion.php",
@@ -676,10 +702,8 @@
 		"/D/www/ModulosSAO/inc/lib/db/ModulosSAOConn.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/CuentaContable.class.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/ListaObrasController.php",
-		"/D/www/ModulosSAO/inc/lib/db/SQLSrvDBConn.class.php",
 		"/D/www/ModulosSAO/inc/lib/db/SAODBConn.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/Usuario.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/Obra.class.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/PrecioVentaController.php",
 		"/D/www/ModulosSAO/inc/lib/models/AgrupadorInsumo.class.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/AgrupadorInsumoController.php",
@@ -771,9 +795,12 @@
 	},
 	"find_in_files":
 	{
-		"height": 102.0,
+		"height": 0.0,
 		"where_history":
 		[
+			"D:\\www\\ModulosSAO\\inc\\lib\\models",
+			"D:\\www\\ModulosSAO\\inc\\models",
+			"D:\\www\\ModulosSAO\\inc",
 			"D:\\www\\ModulosSAO\\inc\\js",
 			""
 		]
@@ -783,6 +810,20 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"eliminaAgrupador",
+			"updateAgrupadorColumna",
+			"txtAgrupadorEspecialidad",
+			"addAgrupador",
+			"guardar_agrupador",
+			"eliminaAgrupador",
+			"requestAgrupadoresList",
+			"class=\"field\"",
+			"input",
+			"template",
+			"formatDatosConcepto",
+			"<%= !show",
+			"setAgrupador",
+			" $clave,",
 			"LIKE",
 			")",
 			"\n\n	public static function getAgrupadoresConcepto( Obra $obra, $descripcion, $id_agrupador=null ) {\n		return self::getAgrupadores( $obra, self::C_TIPO_CONCEPTO);\n	}",
@@ -896,21 +937,7 @@
 			"json",
 			"cargaDatosGenerales",
 			"TreeView",
-			"empresas",
-			"[transacciones].",
-			");\n",
-			"concepto",
-			"showDescendants",
-			"toggleNode",
-			"json",
-			"S",
-			"s",
-			"S",
-			"cuenta",
-			"conceptoTemplate",
-			"render",
-			"esAfectable",
-			"esConce"
+			"empresas"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -988,7 +1015,6 @@
 	"groups":
 	[
 		{
-			"selected": 5,
 			"sheets":
 			[
 				{
@@ -996,15 +1022,15 @@
 					"file": "presupuesto_obra.php",
 					"settings":
 					{
-						"buffer_size": 10351,
+						"buffer_size": 10591,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1507,
-								1507
+								3916,
+								3889
 							]
 						],
 						"settings":
@@ -1013,7 +1039,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 543.0,
+						"translation.y": 2200.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1023,15 +1049,15 @@
 					"file": "css/general.css",
 					"settings":
 					{
-						"buffer_size": 25712,
+						"buffer_size": 25714,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								15306,
-								15276
+								7156,
+								7156
 							]
 						],
 						"settings":
@@ -1040,7 +1066,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 20057.0,
+						"translation.y": 8293.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1050,15 +1076,15 @@
 					"file": "inc/js/presupuesto_obra.js",
 					"settings":
 					{
-						"buffer_size": 17188,
+						"buffer_size": 17595,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3974,
-								3974
+								12348,
+								12348
 							]
 						],
 						"settings":
@@ -1067,7 +1093,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3190.0,
+						"translation.y": 10531.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1077,15 +1103,15 @@
 					"file": "inc/lib/models/PresupuestoObra.class.php",
 					"settings":
 					{
-						"buffer_size": 4760,
+						"buffer_size": 4773,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								448,
-								448
+								4112,
+								4112
 							]
 						],
 						"settings":
@@ -1094,7 +1120,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 3100.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1104,15 +1130,15 @@
 					"file": "inc/lib/controllers/PresupuestoObraController.php",
 					"settings":
 					{
-						"buffer_size": 6703,
+						"buffer_size": 6823,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1596,
-								1596
+								2434,
+								2434
 							]
 						],
 						"settings":
@@ -1121,7 +1147,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 748.0,
+						"translation.y": 1057.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1131,15 +1157,15 @@
 					"file": "inc/lib/models/AgrupadorConceptoPresupuesto.class.php",
 					"settings":
 					{
-						"buffer_size": 6142,
+						"buffer_size": 4988,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1147,
-								1147
+								3464,
+								3464
 							]
 						],
 						"settings":
@@ -1148,7 +1174,88 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1333.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "inc/lib/db/SQLSrvDBConn.class.php",
+					"settings":
+					{
+						"buffer_size": 3095,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1602,
+								1602
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 819.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "inc/lib/models/Subcontrato.class.php",
+					"settings":
+					{
+						"buffer_size": 16532,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								14942,
+								14943
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 6490.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "inc/lib/models/App.class.php",
+					"settings":
+					{
+						"buffer_size": 1426,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								292,
+								292
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 330.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1197,6 +1304,22 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"modsub",
+				"inc/lib/models/Subcontrato.class.php"
+			],
+			[
+				"sql",
+				"inc/lib/db/SQLSrvDBConn.class.php"
+			],
+			[
+				"obra",
+				"inc/lib/models/Obra.class.php"
+			],
+			[
+				"sqls",
+				"inc/lib/db/SQLSrvDBConn.class.php"
+			],
 			[
 				"buttonlist",
 				"inc/js/jquery.buttonlist.js"
@@ -1354,20 +1477,12 @@
 				"inc/lib/controllers/ListaObrasController.php"
 			],
 			[
-				"sqls",
-				"inc/lib/db/SQLSrvDBConn.class.php"
-			],
-			[
 				"saodbc",
 				"inc/lib/db/SAODBConn.class.php"
 			],
 			[
 				"usua",
 				"inc/lib/models/Usuario.class.php"
-			],
-			[
-				"obra",
-				"inc/lib/models/Obra.class.php"
 			],
 			[
 				"material",
@@ -1667,7 +1782,7 @@
 		[
 			[
 				"",
-				"/D/www/ControlRemesas/ControlRemesas.sublime-project"
+				"/D/www/ModulosSAO/ModulosSAO.sublime-project"
 			],
 			[
 				"reme",
@@ -1691,7 +1806,7 @@
 	"show_minimap": true,
 	"show_open_files": false,
 	"show_tabs": true,
-	"side_bar_visible": false,
+	"side_bar_visible": true,
 	"side_bar_width": 260.0,
 	"status_bar_visible": true
 }

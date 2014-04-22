@@ -6,6 +6,7 @@ require_once 'models/Obra.class.php';
 require_once 'models/Subcontrato.class.php';
 require_once 'models/EstimacionSubcontrato.class.php';
 require_once 'models/EstimacionSubcontratoFormatoPDF.class.php';
+require_once 'models/EstimacionSubcontratoFormatoPDF_SPM.class.php';
 require_once 'models/Util.class.php';
 
 $data['success'] = true;
@@ -537,7 +538,10 @@ try {
 
 			$transaccion = new EstimacionSubcontrato( $obra, $id_transaccion );
 
-			$formatoPDF = new EstimacionSubcontratoFormatoPDF( $transaccion, $soloEstimados );
+			if ( $transaccion->obra->getDBName() === 'SAO1814_SPM_MOBILIARIO' )
+				$formatoPDF = new EstimacionSubcontratoFormatoPDF_SPM( $transaccion, $soloEstimados );
+			else
+				$formatoPDF = new EstimacionSubcontratoFormatoPDF( $transaccion, $soloEstimados );
 
 			$formatoPDF->Output();
 			break;
