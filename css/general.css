@@ -40,6 +40,26 @@ div.checkboxgroup input
 		-webkit-transform: scale(1);
 	}
 }
+@-moz-keyframes rotate {
+	from
+	{
+		-moz-transform: scale(0.9);
+	}
+	to
+	{ 
+		-moz-transform: scale(1);
+	}
+}
+@keyframes rotate {
+	from
+	{
+		transform: scale(0.9);
+	}
+	to
+	{ 
+		transform: scale(1);
+	}
+}
 div.data-loader
 {
 
@@ -56,6 +76,16 @@ div.data-loader
 	-webkit-animation-iteration-count:  infinite;
 	-webkit-animation-timing-function: linear;
 	-webkit-animation-direction: alternate;
+	-moz-animation-name:             rotate; 
+	-moz-animation-duration:         0.5s; 
+	-moz-animation-iteration-count:  infinite;
+	-moz-animation-timing-function: linear;
+	-moz-animation-direction: alternate;
+	animation-name:             rotate; 
+	animation-duration:         0.5s; 
+	animation-iteration-count:  infinite;
+	animation-timing-function: linear;
+	animation-direction: alternate;
 }
 div.options
 {
@@ -434,7 +464,7 @@ table col.tipo
 }
 table col.unidad
 {
-	width: 60px;
+	width: 80px;
 }
 table thead th
 {

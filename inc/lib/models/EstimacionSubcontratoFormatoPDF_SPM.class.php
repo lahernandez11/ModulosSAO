@@ -10,6 +10,8 @@ class EstimacionSubcontratoFormatoPDF_SPM extends EstimacionSubcontratoFormatoPD
 
 	protected $titulo = 'ORDEN DE SUMINISTRO';
 	protected $contratista_label = 'Proveedor:';
+	protected $numero_de_estimacion_label = 'No. Suministro';
+	protected $semana_de_contrato_label = 'Semana de Suministro';
 	protected $firma_contratista_titulo_label = 'por el proveedor';
 	protected $firma_cliente_descripcion_label = 'gerente de producción';
 }
