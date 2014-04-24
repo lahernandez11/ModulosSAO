@@ -1,23 +1,24 @@
 <?php
 require_once 'models/TransaccionSAO.class.php';
+require_once 'models/Empresa.class.php';
+require_once 'models/Moneda.class.php';
 require_once 'models/Subcontrato.class.php';
+require_once 'models/EstimacionDeductiva.class.php';
 
 class EstimacionSubcontrato extends TransaccionSAO {
 	
 	const TIPO_TRANSACCION = 52;
 
-	private $_IDSubcontrato;
-	private $_fechaInicio;
-	private $_fechaTermino;
-	private $_numeroFolioConsecutivo;
-	private $_IDContratista;
-	private $_nombreContratista;
-	private $_objetoSubcontrato;
-	private $_tipoMoneda;
-	private $_pctAnticipo;
-	private $_pctFondoGarantia;
-	private $_pctIVA;
 	public $subcontrato;
+	public $empresa;
+	public $moneda;
+
+	private $fecha_inicio;
+	private $fecha_termino;
+	private $numero_folio_consecutivo;
+	private $pct_anticipo;
+	private $pct_fondo_garantia;
+	private $pct_iva;
 
 	public function __construct() {
 		
@@ -36,12 +37,12 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	}
 
 	private function instaceFromDefault( 
-		Obra $obra, $IDSubcontrato, $fecha, $fechaInicio, $fechaTermino, $observaciones,
+		Obra $obra, Subcontrato $subcontrato, $fecha, $fechaInicio, $fechaTermino, $observaciones,
 		Array $conceptos ) {
 		
 		parent::__construct( $obra, self::TIPO_TRANSACCION, $fecha, $observaciones );
 
-		$this->_IDSubcontrato = $IDSubcontrato;
+		$this->subcontrato = $subcontrato;
 		$this->setFechaInicio( $fechaInicio );
 		$this->setFechaTermino( $fechaTermino );
 		$this->setConceptos( $conceptos );
@@ -49,9 +50,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
 	private function instanceFromID( Obra $obra, $id_transaccion ) {
 		parent::__construct( $obra, $id_transaccion );
-		
 		$this->setDatosGenerales();
-		$this->subcontrato = new Subcontrato( $obra, $this->getIDSubcontrato() );
 	}
 
 	// @override
@@ -59,7 +58,34 @@ class EstimacionSubcontrato extends TransaccionSAO {
 		
 		parent::setDatosGenerales();
 
-		$tsql = "{call [SubcontratosEstimaciones].[uspDatosGenerales]( ? )}";
+		$tsql = "SELECT
+					  [transacciones].[id_transaccion]
+					, [transacciones].[id_empresa]
+					, [transacciones].[numero_folio]
+					, [Estimaciones].[NumeroFolioConsecutivo]
+					, [transacciones].[cumplimiento]
+					, [transacciones].[vencimiento]
+					, [transacciones].[observaciones]
+					, [transacciones].[id_antecedente]
+					, [transacciones].[id_moneda]
+					, [transacciones].[anticipo]
+					, [transacciones].[retencion]
+					, IIF([transacciones].[monto] - [transacciones].[impuesto] = 0, 0,
+					(
+						[transacciones].[impuesto]
+							/
+						([transacciones].[monto] - [transacciones].[impuesto])
+					) * 100) AS [porcentaje_iva]
+				FROM
+					[dbo].[transacciones]
+				LEFT OUTER JOIN
+					[SubcontratosEstimaciones].[Estimaciones]
+					ON
+						[transacciones].[id_transaccion] = [Estimaciones].[IDEstimacion]
+				WHERE
+					[transacciones].[tipo_transaccion] = 52
+						AND
+					[transacciones].[id_transaccion] = ?";
 
 		$params = array(
 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
@@ -67,17 +93,16 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
 	    $datos = $this->conn->executeSP( $tsql, $params );
 
-	    $this->_IDSubcontrato 		   = $datos[0]->IDSubcontrato;
-	    $this->_objetoSubcontrato 	   = $datos[0]->ObjetoSubcontrato;
-	    $this->_IDContratista 		   = $datos[0]->IDContratista;
-	    $this->_nombreContratista 	   = $datos[0]->NombreContratista;
-	    $this->_numeroFolioConsecutivo = $datos[0]->NumeroFolioConsecutivo;
-	    $this->_fechaInicio = $datos[0]->FechaInicio;
-	    $this->_fechaTermino = $datos[0]->FechaTermino;
-	    $this->_tipoMoneda 			   = $datos[0]->TipoMoneda;
-	    $this->_pctAnticipo 		   = $datos[0]->PctAnticipo;
-	    $this->_pctFondoGarantia 	   = $datos[0]->PctFondoGarantia;
-	    $this->_pctIVA 	   			   = $datos[0]->PctIVA;
+	    $this->subcontrato 			    = new Subcontrato( $this->obra, $datos[0]->id_antecedente );
+	    $this->empresa 		   		    = new Empresa( $this->obra, $datos[0]->id_empresa);
+	    $this->moneda 					= new Moneda( $this->obra, $datos[0]->id_moneda );
+
+	    $this->numero_folio_consecutivo = $datos[0]->NumeroFolioConsecutivo;
+	    $this->fecha_inicio 			= $datos[0]->cumplimiento;
+	    $this->fecha_termino 			= $datos[0]->vencimiento;
+	    $this->pct_anticipo 		    = $datos[0]->anticipo;
+	    $this->pct_fondo_garantia 	    = $datos[0]->retencion;
+	    $this->pct_iva 	   			    = $datos[0]->porcentaje_iva;
 	}
 
 	public function getConceptosEstimacion() {
@@ -85,7 +110,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 		$tsql = "{call [SubcontratosEstimaciones].[uspConceptosEstimacion]( ?, ?, ?, ? )}";
 
 	    $params = array(
-	        array( $this->getIDSubcontrato(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->subcontrato->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( 0, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT ),
 	        array( 0, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT )
@@ -117,8 +142,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 			$tsql = "{call [SubcontratosEstimaciones].[uspRegistraTransaccion]( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )}";
 
 		    $params = array(
-		        array( $this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-		        array( $this->getIDSubcontrato(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        array( $this->subcontrato->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 		        array( $this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
 		       	array( $this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
 		        array( $this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
@@ -126,7 +151,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 		        array( $usuario->getUsername(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
 		        array( &$this->id_transaccion, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT ),
 		        array( &$this->_numeroFolio, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT ),
-		        array( &$this->_numeroFolioConsecutivo, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT ),
+		        array( &$this->numero_folio_consecutivo, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT ),
 		    );
 
 		    $this->conn->executeSP( $tsql, $params );
@@ -184,7 +209,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 		$tsql = "{call [SubcontratosEstimaciones].[uspConceptosEstimacion]( ?, ?, ?, ? )}";
 
 	    $params = array(
-	        array( $this->getIDSubcontrato(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->subcontrato->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( 1, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT ),
 	        array( $soloConceptosEstimados, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT )
@@ -197,145 +222,139 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
 	public function getDeductivas() {
 
-		$tsql = "{call [SubcontratosEstimaciones].[uspDeductivas]( ? )}";
-
-	    $params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	    );
-
-	    return $this->conn->executeSP( $tsql, $params );
+		return EstimacionDeductiva::getObjects( $this->empresa );
 	}
 
-	public function agregaDeductivaMaterial( $IDMaterial, $importe, $observaciones ) {
+	// public function agregaDeductivaMaterial( $id_material, $importe, $observaciones ) {
 
-		if ( ! $this->esImporte( $importe ) ) {
-			throw new Exception("Importe Incorrecto");
-		} else {
-			$tsql = "{call [SubcontratosEstimaciones].[uspRegistraDeductivaMaterial]( ?, ?, ?, ?, ? )}";
+	// 	if ( ! $this->esImporte( $importe ) ) {
+	// 		throw new Exception("Importe Incorrecto");
+	// 	} else {
+	// 		$tsql = "{call [SubcontratosEstimaciones].[uspRegistraDeductivaMaterial]( ?, ?, ?, ?, ? )}";
 
-			$IDDeductiva = 0;
+	// 		$IDDeductiva = 0;
 
-		    $params = array(
-		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-		        array( $IDMaterial, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-		        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-		        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-		        array( $IDDeductiva, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
-		    );
+	// 	    $params = array(
+	// 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	// 	        array( $id_material, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	// 	        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
+	// 	        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
+	// 	        array( $IDDeductiva, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
+	// 	    );
 
-		    $this->conn->executeSP( $tsql, $params );
-		}
+	// 	    $this->conn->executeSP( $tsql, $params );
+	// 	}
 
-	    return $IDDeductiva;
-	}
+	//     return $IDDeductiva;
+	// }
 
-	public function agregaDeductivaMaquinaria( $IDAlmacen, $importe, $observaciones ) {
+	// public function agregaDeductivaMaquinaria( $IDAlmacen, $importe, $observaciones ) {
 
-		if ( ! $this->esImporte( $importe ) ) {
-			throw new Exception("Importe Incorrecto");
-		} else {
+	// 	if ( ! $this->esImporte( $importe ) ) {
+	// 		throw new Exception("Importe Incorrecto");
+	// 	} else {
 
-			$tsql = "{call [SubcontratosEstimaciones].[uspRegistraDeductivaMaquinaria]( ?, ?, ?, ?, ? )}";
+	// 		$tsql = "{call [SubcontratosEstimaciones].[uspRegistraDeductivaMaquinaria]( ?, ?, ?, ?, ? )}";
 
-			$IDDeductiva = 0;
+	// 		$IDDeductiva = 0;
 
-		    $params = array(
-		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-		        array( $IDAlmacen, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-		        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-		        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-		        array( $IDDeductiva, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
-		    );
+	// 	    $params = array(
+	// 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	// 	        array( $IDAlmacen, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	// 	        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
+	// 	        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
+	// 	        array( $IDDeductiva, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
+	// 	    );
 
-		    $this->conn->executeSP( $tsql, $params );
-		}
+	// 	    $this->conn->executeSP( $tsql, $params );
+	// 	}
 
-	    return $IDDeductiva;
-	}
+	//     return $IDDeductiva;
+	// }
 
-	public function agregaDeductivaManoObra( $IDCategoria, $importe, $observaciones ) {
+	// public function agregaDeductivaManoObra( $IDCategoria, $importe, $observaciones ) {
 
-		if ( ! $this->esImporte( $importe ) ) {
-			throw new Exception("Importe Incorrecto");
-		} else {
+	// 	if ( ! $this->esImporte( $importe ) ) {
+	// 		throw new Exception("Importe Incorrecto");
+	// 	} else {
 
-			$tsql = "{call [SubcontratosEstimaciones].[uspRegistraDeductivaManoObra]( ?, ?, ?, ?, ? )}";
+	// 		$tsql = "{call [SubcontratosEstimaciones].[uspRegistraDeductivaManoObra]( ?, ?, ?, ?, ? )}";
 
-			$IDDeductiva = 0;
+	// 		$IDDeductiva = 0;
 
-		    $params = array(
-		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-		        array( $IDCategoria, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-		        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-		        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-		        array( $IDDeductiva, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
-		    );
+	// 	    $params = array(
+	// 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	// 	        array( $IDCategoria, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	// 	        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
+	// 	        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
+	// 	        array( $IDDeductiva, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
+	// 	    );
 
-		    $this->conn->executeSP($tsql, $params);
-		}
+	// 	    $this->conn->executeSP($tsql, $params);
+	// 	}
 
-	    return $IDDeductiva;
-	}
+	//     return $IDDeductiva;
+	// }
 
-	public function agregaDeductivaSubcontratos( $concepto, $importe, $observaciones ) {
+	// public function agregaDeductivaSubcontratos( $concepto, $importe, $observaciones ) {
 
-		if ( ! $this->esImporte( $importe ) ) {
-			throw new Exception("Importe Incorrecto");
-		} else {
+	// 	if ( ! $this->esImporte( $importe ) ) {
+	// 		throw new Exception("Importe Incorrecto");
+	// 	} else {
 
-			$tsql = "{call [SubcontratosEstimaciones].[uspRegistraDeductivaSubcontratos]( ?, ?, ?, ?, ? )}";
+	// 		$tsql = "{call [SubcontratosEstimaciones].[uspRegistraDeductivaSubcontratos]( ?, ?, ?, ?, ? )}";
 
-			$IDDeductiva = 0;
+	// 		$IDDeductiva = 0;
 
-		    $params = array(
-		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-		        array( $concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-		        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-		        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-		        array( $IDDeductiva, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
-		    );
+	// 	    $params = array(
+	// 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	// 	        array( $concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
+	// 	        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
+	// 	        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
+	// 	        array( $IDDeductiva, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
+	// 	    );
 
-		    $this->conn->executeSP($tsql, $params);
-		}
+	// 	    $this->conn->executeSP($tsql, $params);
+	// 	}
 
-	    return $IDDeductiva;
-	}
+	//     return $IDDeductiva;
+	// }
 
-	public function agregaDeductivaOtros( $concepto, $importe, $observaciones ) {
+	// public function agregaDeductivaOtros( $concepto, $importe, $observaciones ) {
 
-		if ( ! $this->esImporte( $importe ) ) {
-			throw new Exception("Importe Incorrecto");
-		} else {
+	// 	if ( ! $this->esImporte( $importe ) ) {
+	// 		throw new Exception("Importe Incorrecto");
+	// 	} else {
 
-			$tsql = "{call [SubcontratosEstimaciones].[uspRegistraDeductivaOtros]( ?, ?, ?, ?, ? )}";
+	// 		$tsql = "{call [SubcontratosEstimaciones].[uspRegistraDeductivaOtros]( ?, ?, ?, ?, ? )}";
 
-			$IDDeductiva = 0;
+	// 		$IDDeductiva = 0;
 			
-		    $params = array(
-		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-		        array( $concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-		        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-		        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-		        array( $IDDeductiva, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
-		    );
+	// 	    $params = array(
+	// 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	// 	        array( $concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
+	// 	        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
+	// 	        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
+	// 	        array( $IDDeductiva, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
+	// 	    );
 
-		    $this->conn->executeSP( $tsql, $params );
-		}
+	// 	    $this->conn->executeSP( $tsql, $params );
+	// 	}
 
-	    return $IDDeductiva;
-	}
+	//     return $IDDeductiva;
+	// }
 
-	public function eliminaDeductiva( $IDDeductiva ) {
+	// public function eliminaDeductiva( $IDDeductiva ) {
 
-		$tsql = "{call [SubcontratosEstimaciones].[uspEliminaDeductiva]( ?, ? )}";
+	// 	$tsql = "{call [SubcontratosEstimaciones].[uspEliminaDeductiva]( ?, ? )}";
 
-	    $params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $IDDeductiva, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	    );
+	//     $params = array(
+	//         array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	//         array( $IDDeductiva, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	//     );
 
-	    $this->conn->executeSP( $tsql, $params );
-	}
+	//     $this->conn->executeSP( $tsql, $params );
+	// }
 
 	public function getRetenciones() {
 
@@ -454,25 +473,17 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	}
 
 	public function getPctIVA() {
-		return $this->_pctIVA;
+		return $this->pct_iva;
 	}
 
 	public function getPctAnticipo() {
-		return $this->_pctAnticipo;
+		return $this->pct_anticipo;
 	}
 
 	public function getPctFondoGarantia() {
-		return $this->_pctFondoGarantia;
-	}
-
-	public function getTipoMoneda() {
-		return $this->_tipoMoneda;
+		return $this->pct_fondo_garantia;
 	}
 	
-	public function getIDSubcontrato() {
-		return $this->_IDSubcontrato;
-	}
-
 	public function getTotalesTransaccion() {
 
 		$tsql = "{call [SubcontratosEstimaciones].[uspTotalesTransaccion]( ? )}";
@@ -486,38 +497,30 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    return $totales;
 	}
 
-	public function getContratista() {
-		return $this->_nombreContratista;
-	}
-
-	public function getObjetoSubcontrato() {
-		return $this->_objetoSubcontrato;
-	}
-
 	public function getNumeroFolioConsecutivo() {
-		return $this->_numeroFolioConsecutivo;
+		return $this->numero_folio_consecutivo;
 	}
 
 	public function getFechaInicio() {
-		return $this->_fechaInicio;
+		return $this->fecha_inicio;
 	}
 
 	public function setFechaInicio( $fecha ) {
 
 		if ( $this->fechaEsValida( $fecha ) )
-			$this->_fechaInicio = $fecha;
+			$this->fecha_inicio = $fecha;
 		else
 			throw new Exception("El formato de fecha inicial es incorrecto.");
 	}
 
 	public function getFechaTermino() {
-		return $this->_fechaTermino;
+		return $this->fecha_termino;
 	}
 
 	public function setFechaTermino( $fecha ) {
 		
 		if ( $this->fechaEsValida( $fecha ) )
-			$this->_fechaTermino = $fecha;
+			$this->fecha_termino = $fecha;
 		else
 			throw new Exception("El formato de fecha término es incorrecto.");
 		
@@ -597,18 +600,18 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    $this->conn->executeSP( $tsql, $params );
 	}
 
-	public static function getConceptosNuevaEstimacion( Obra $obra, $id_subcontrato ) {
+	public static function getConceptosNuevaEstimacion( Subcontrato $subcontrato ) {
 
 		$tsql = "{call [SubcontratosEstimaciones].[uspConceptosEstimacion]( ?, ?, ?, ? )}";
 
 	    $params = array(
-	        array( $id_subcontrato, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $subcontrato->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( null, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( 0, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( 0, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $conceptos = $obra->getConn()->executeSP( $tsql, $params );
+	    $conceptos = $subcontrato->obra->getConn()->executeSP( $tsql, $params );
 
 	    return $conceptos;
 	}

@@ -417,6 +417,10 @@ table caption
     padding: 5px 0 5px 5px;
     text-align: left;
 }
+table col.cantidad
+{
+	width: 80px;
+}
 table col.clave
 {
 	width: 120px;
@@ -452,11 +456,15 @@ table col.icon-header
 }
 table col.monto
 {
-	width: 130px;
+	width: 120px;
 }
 table col.pct
 {
 	width: 60px;
+}
+table col.precio
+{
+	width: 100px;
 }
 table col.tipo
 {
@@ -472,6 +480,7 @@ table thead th
 	border: 1px solid #666;
 	background-color: #202020;
 	color: white;
+	font-weight: normal;
 	overflow: hidden;
 }
 table tbody tr
@@ -538,8 +547,9 @@ table tbody .numerico
 }
 table tbody .numerico input
 {
-	text-align: right;
 	color: red;
+	font-weight: bold;
+	text-align: right;
 }
 table tr.separador,
 table tr.separador:hover
@@ -1501,7 +1511,7 @@ ul.dropdown-list li a.with-icon
 {
 	background-color: white;
 	border: 1px solid #DDDDDD;
-	overflow: hidden;
+	/*overflow: hidden;*/
     /*padding: 0 1em 1em 1em;*/
 }
 #app-name

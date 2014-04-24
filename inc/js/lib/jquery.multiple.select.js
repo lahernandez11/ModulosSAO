@@ -90,6 +90,9 @@
             this.$noResults = this.$drop.find('.ms-no-results');
             this.events();
             this.update();
+            // fix to work when the multiple select is used inside a jQuery UI dialog
+            // it enable to select the options by clicking the label tag of the checkbox option
+            this.$drop.find('label').on('click', function(){ event.stopPropagation(); });
         },
 
         optionToHtml: function(i, elm, group, groupDisabled) {

@@ -357,7 +357,7 @@ App.Presupuesto = {
 		else
 			$('#tabla-conceptos tbody').html( this.conceptosListTemplate(conceptos) );
 
-		this.muestraColumnasMarcadas()
+		this.muestraColumnasMarcadas();
 	},
 
 	conceptosListTemplate: function( conceptos ) {

@@ -431,6 +431,38 @@ var ESTIMACION = {
 		    	});
 			}
 		});
+
+		$('.col-switch.conceptos').multipleSelect({
+	    	selectAll: false,
+	    	onClick: function(option) {
+
+	      		if (option.checked)
+					$('#tabla-conceptos').find('.' + option.value).removeAttr('style');
+				else
+					$('#tabla-conceptos').find('.' + option.value).css('width', '0px');	    	
+	    	}
+		});
+
+		that.ocultaColumnasOpcionales();
+	},
+
+	ocultaColumnasOpcionales: function() {
+		var that = this;
+
+	    $('.col-switch option').each(function(){
+	    	$('#tabla-conceptos').find('.' + this.value).css('width', '0px');
+	    });
+	},
+
+	muestraColumnasMarcadas: function() {
+		// muestra las columnas de agrupadores
+		var that = this;
+		this.ocultaColumnasOpcionales();
+
+	    $('.col-switch option').each(function() {
+	    	if ( this.selected )
+	    		$('#tabla-conceptos').find('.' + this.value).removeAttr('style');
+	    });
 	},
 
 	nuevaTransaccion: function() {
@@ -710,6 +742,8 @@ var ESTIMACION = {
 		}
 
 		$('#tabla-conceptos tbody').html( html );
+
+		this.muestraColumnasMarcadas();
 	},
 
 	guardaTransaccion: function() {
@@ -951,23 +985,12 @@ var ESTIMACION = {
 
 var Deductivas = {
 
-	tiposMaterial: {
-		materiales: 1,
-		manoobra: 2,
-		servicios: 3,
-		herramienta: 4,
-		maquinaria: 8
-	},
-	tiposAlmacen: {
-		maquinaria: 2
-	},
 	urls: {
 		insumoController: 'inc/lib/controllers/InsumoController.php',
 		almacenController: 'inc/lib/controllers/AlmacenController.php'
 	},
-	id_material: 0,
-	selectedTipoDeductiva: 0,
 	template: null,
+	col_switch: null,
 
 	init: function() {
 
@@ -975,12 +998,15 @@ var Deductivas = {
 
 		this.template = _.template($('#template-deductiva').html());
 
-		$('#tipo_deductiva').buttonset();
-
 		$('#dialog-deductivas').dialog({
 			autoOpen: false,
 			modal: true,
-			width: 650
+			width: 750
+		});
+
+		$('#form_descuento').on('submit', function(event) {
+			event.preventDefault();
+			that.guardaDescuento();
 		});
 
 		$('#dialog-nueva-deduccion').dialog({
@@ -1007,40 +1033,38 @@ var Deductivas = {
 		    }
 		});
 
-		$('#tipo_deductiva').on('click', 'input', function(event) {
+		this.col_switch = $('.col-switch.descuentos');
+		this.col_switch.multipleSelect({
+	    	selectAll: false,
+	    	onClick: function(option) {
+	    		var $target = $('#registros_deductivas');
 
-			$("#txtConceptoDeductiva").autocomplete( "option", "disabled", false );
-			
-			that.selectedTipoDeductiva = parseInt($(this).val());
-
-			switch ( this.id ) {
-
-				case 'materiales':
-					$("#txtConceptoDeductiva").autocomplete('option', 'source',
-						that.configuraSourceAutocomplete(that.tiposMaterial.materiales));
-					that.showNuevaDeduccion();
-					break;
-
-				case 'mano_obra':
-					$("#txtConceptoDeductiva").autocomplete('option', 'source',
-						that.configuraSourceAutocomplete(that.tiposMaterial.manoobra));
-					that.showNuevaDeduccion();
-					break;
-
-				case 'maquinaria':
-					$("#txtConceptoDeductiva").autocomplete('option', 'source',
-						that.configuraSourceAutocomplete(that.tiposMaterial.maquinaria));
-					that.showNuevaDeduccion();
-					break;
-
-				default:
-					$("#txtConceptoDeductiva").autocomplete( "option", "disabled", true );
-					that.showNuevaDeduccion();
-					break;
-			}
+	      		if (option.checked)
+					$target.find('.' + option.value).removeAttr('style');
+				else
+					$target.find('.' + option.value).css('width', '0px');	    	
+	    	}
 		});
 
-		$('#registros_deductivas table').on('click', '.action.delete', that.eliminaDeductiva);
+		this.ocultaColumnas();
+		this.muestraColumnasMarcadas();
+
+		// $('#registros_deductivas table').on('click', '.action.delete', that.eliminaDeductiva);
+	},
+
+	ocultaColumnas: function() {
+	    this.col_switch.find('option').each(function(){
+	    	$('#registros_deductivas').find('.' + this.value).css('width', '0px');
+	    });
+	},
+
+	muestraColumnasMarcadas: function() {
+		this.ocultaColumnas();
+
+	    this.col_switch.find('option').each(function() {
+	    	if ( this.selected )
+	    		$('#registros_deductivas').find('.' + this.value).removeAttr('style');
+	    });
 	},
 
 	showNuevaDeduccion: function() {
@@ -1049,54 +1073,45 @@ var Deductivas = {
 		$('#dialog-nueva-deduccion').dialog('open');
 	},
 
-	configuraSourceAutocomplete: function( tipoMaterial ) {
+	guardaDescuento: function() {
 		var that = this;
 
-		return function( request, response ) {
-		        
-	        var src;
+		var descuentos = [];
 
-	        switch ( that.selectedTipoDeductiva ) {
-	        	case 3:
-	        		src = that.urls.almacenController;
-	        		request.base_datos = ESTIMACION.getBaseDatos();
-	        		request.id_obra    = ESTIMACION.getIdObra();
-	        		request.tipo_almacen = that.tiposAlmacen.maquinaria;
-	        		request.action = 'getListaAlmacenes';
-	        		$.getJSON( src, request, function( data, status, xhr ) {
-						var almacenes = [];
-			            
-			            for( i = 0; i < data.almacenes.length; i++ ){
-						   almacenes.push({
-						   		id: data.almacenes[i].IDAlmacen,
-						   		label: data.almacenes[i].Descripcion
-						   	});
-						}
-						
-						response( almacenes );
-					});
-	        		break;
+		$('#registros_deductivas tbody tr').each( function() {
+			// console.log(this)
+			var $row = $(this);
 
-	        	default:
-	        		src = that.urls.insumoController;
-	        		request.base_datos = ESTIMACION.getBaseDatos();
-	        		request.IDTipoInsumo = tipoMaterial;
-	        		request.action = 'listaInsumos';
-	        		$.getJSON( src, request, function( data, status, xhr ) {
-						var insumos = [];
-			            	
-			            for( i = 0; i < data.insumos.length; i++ ){
-						   insumos.push({
-						   		id: data.insumos[i].IDInsumo,
-						   		label: data.insumos[i].Descripcion
-						   	});
-						}
-						
-						response( insumos );
-					});
-	        		break;
-	        }
-		}
+			descuentos[descuentos.length] = {
+				id_item: $row.find('input[name="id_item"]').val(),
+				cantidad_descuento: $row.find('input[name="cantidad_descuento"]').val(),
+				precio_descuento: $row.find('input[name="precio_descuento"]').val()
+			}
+		});
+
+		DATA_LOADER.show();
+
+		$.ajax({
+			type: 'POST',
+			url: ESTIMACION.urls.tranController,
+			data: {
+				base_datos: ESTIMACION.getBaseDatos(),
+				id_obra: ESTIMACION.getIdObra(),
+				id_transaccion: ESTIMACION.getIDTransaccion(),
+				descuentos: descuentos,
+				action: 'guardaDescuento'
+			},
+			dataType: 'json'
+		}).done( function(data) {
+
+			if( ! data.success ) {
+				messageConsole.displayMessage( data.message, 'error' );
+				return;
+			}
+
+			$('#dialog-deductivas').dialog('close');
+			messageConsole.displayMessage( "Los descuentos se guardaron correctamente", 'success' );
+		}).always( DATA_LOADER.hide );
 	},
 
 	guardaDeductiva: function() {
@@ -1144,9 +1159,7 @@ var Deductivas = {
 	},
 
 	renderDeductiva: function( deductiva ) {
-		var html = this.template( deductiva );
-
-		$('#registros_deductivas table tbody').append(html);
+		$('#registros_deductivas table tbody').append(this.template( deductiva ));
 	},
 
 	cargaDeductivas: function() {
@@ -1181,11 +1194,20 @@ var Deductivas = {
 
 				$.each( data.deductivas, function() {
 					that.renderDeductiva({
-						id: this.IDDeductiva,
-						tipo: this.TipoDeductiva,
-						concepto: this.Concepto,
-						importe: this.Importe,
-						observaciones: this.Observaciones
+						id_descuento: this.id_descuento,
+						id_item: this.id_item,
+						descripcion: this.descripcion,
+						cantidad_total: this.cantidad_total,
+						unidad: this.unidad,
+						precio: this.precio,
+						importe_total: this.importe_total,
+						cantidad_descontada: this.cantidad_descontada,
+						importe_descontado: this.importe_descontado,
+						cantidad_por_descontar: this.cantidad_por_descontar,
+						importe_por_descontar: this.importe_por_descontar,
+						cantidad_descuento: this.cantidad_descuento,
+						precio_descuento: this.precio_descuento,
+						importe_descuento: this.importe_descuento,
 					});
 				});
 

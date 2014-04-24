@@ -1,24 +1,27 @@
 <?php
 require_once 'TransaccionSAO.class.php';
+require_once 'Empresa.class.php';
+require_once 'Moneda.class.php';
 
 class Subcontrato extends TransaccionSAO {
 
 	const TIPO_TRANSACCION = 51;
 
-	private $_id_empresa;
-	private $_nombreContratista;
-	private $_pctFondoGarantia;
-	private $_importeFondoGarantia;
-	private $_pctAnticipo;
-	private $_importeAnticipo;
-	private $_importeAcumuladoEstimado;
-	private $_importeAcumuladoAnticipo;
-	private $_importeAcumuladoFondoGarantia;
-	private $_importeAcumuladoRetenciones;
-	private $_importeAcumuladoDeductivas;
-	private $_subtotal;
-	private $_iva;
-	private $_total;
+	public $empresa;
+	public $moneda;
+
+	private $porcentaje_fondo_garantia;
+	private $importe_fondo_garantia;
+	private $porcentaje_anticipo;
+	private $importe_anticipo;
+	private $importe_acumulado_estimado;
+	private $importe_acumulado_anticipo;
+	private $importe_acumulado_fondo_garantia;
+	private $importe_acumulado_retencion;
+	private $importe_acumulado_deductiva;
+	private $subtotal;
+	private $iva;
+	private $total;
 
 	// datos adicionales
 	private $tipo_contrato;
@@ -76,7 +79,152 @@ class Subcontrato extends TransaccionSAO {
 		
 		parent::setDatosGenerales();
 
-		$tsql = "{call [Subcontratos].[uspDatosGenerales]( ? )}";
+		$tsql = "SELECT
+					[transacciones].[id_transaccion]
+					,
+					CASE [contrato].[opciones]
+						WHEN 2 THEN 'Precios Unitarios'
+						WHEN 1026 THEN 'Precios Unitarios'
+						WHEN 4 THEN 'Suministro y/o Colocación de Materiales'
+						WHEN 1028 THEN 'Suministro y/o Colocación'
+						WHEN 20 THEN 'Suministro y/o Colocación de Materiales % de Indirectos'
+						WHEN 1044 THEN 'Suministro y/o Colocación de Materiales % de Indirectos'
+						WHEN 516 THEN 'Suministro y/o Colocación de Materiales % de Desperdicio'
+						WHEN 1540 THEN 'Suministro y/o Colocación de Materiales % de Desperdicio'
+						WHEN 532 THEN 'Suministro y/o Colocación de Materiales % de Desperdicio y % de Indirectos'
+						WHEN 1556 THEN 'Suministro y/o Colocación de Materiales % de Desperdicio y % de Indirectos'
+						WHEN 65544 THEN 'Destajo de Mano de Obra'
+						WHEN 66568 THEN 'Destajo de Mano de Obra'
+						ELSE 'Sin Identificar'
+					END AS [tipo_contrato]
+					, [transacciones].[id_empresa]
+					, [transacciones].[id_moneda]
+					, [transacciones].[observaciones]
+					, [transacciones].[anticipo] AS [PctAnticipo]
+					, [transacciones].[anticipo_monto] AS [ImporteAnticipo]
+					, [transacciones].[retencion] AS [PctFondoGarantia]
+					, ([transacciones].[monto] - [transacciones].[impuesto]) AS [subtotal]
+					, [transacciones].[impuesto]
+					, [transacciones].[monto]
+					, ([transacciones].[monto] - [transacciones].[impuesto])
+						*
+					  ([transacciones].[retencion] / 100) AS [ImporteFondoGarantia]
+					, [Acumulado].[ImporteAcumuladoEstimado]
+					, [Acumulado].[ImporteAcumuladoAnticipo]
+					, [Acumulado].[ImporteAcumuladoFondoGarantia]
+					, [Acumulado].[ImporteAcumuladoRetenciones]
+					-- , [Acumulado].[ImporteAcumuladoDeductivas]
+					, [subcontrato].[descripcion]
+					, [subcontrato].[id_clasificador]
+					, [clasificador].[clasificador]
+					, [subcontrato].[monto_subcontrato]
+					, [subcontrato].[monto_anticipo]
+					, [subcontrato].[porcentaje_retencion_fg]
+					, [subcontrato].[fecha_inicio_cliente]
+					, [subcontrato].[fecha_termino_cliente]
+					, [subcontrato].[fecha_inicio_proyecto]
+					, [subcontrato].[fecha_termino_proyecto]
+					, [subcontrato].[fecha_inicio_contratista]
+					, [subcontrato].[fecha_termino_contratista]
+					, [subcontrato].[monto_venta_cliente]
+					, [subcontrato].[monto_venta_actual_cliente]
+					, [subcontrato].[monto_inicial_pio]
+					, [subcontrato].[monto_actual_pio]
+				FROM
+					[dbo].[transacciones]
+				INNER JOIN
+					[dbo].[transacciones] AS [contrato]
+					ON
+					[transacciones].[id_antecedente] = [contrato].[id_transaccion]
+						AND
+					[contrato].[tipo_transaccion] = 49
+				LEFT OUTER JOIN
+					[Subcontratos].[subcontrato]
+					ON
+						[transacciones].[id_transaccion] = [subcontrato].[id_transaccion]
+				LEFT OUTER JOIN
+					[Subcontratos].[clasificador]
+					ON
+						[subcontrato].[id_clasificador] = [clasificador].[id_clasificador]
+				LEFT OUTER JOIN
+				(
+					SELECT
+						[transacciones].[id_antecedente],
+						SUM([SumaItems].[SumaImportes]) AS [ImporteAcumuladoEstimado],
+						SUM
+						(
+							ISNULL
+							(
+								[SumaItems].[SumaImportes]
+									*
+								(1 - [transacciones].[retencion] / 100)
+								- [transacciones].[monto]
+								+ [transacciones].[impuesto]
+								, 0
+							)
+						) AS [ImporteAcumuladoAnticipo], 
+						SUM
+						(
+							ISNULL
+							(
+								[SumaItems].[SumaImportes]
+									*
+								[transacciones].[retencion] / 100, 0
+							)
+						) AS [ImporteAcumuladoFondoGarantia]
+						, SUM(ISNULL([SumaRetenciones].[ImporteAcumuladoRetenciones], 0)) AS [ImporteAcumuladoRetenciones]
+						-- , SUM(ISNULL([SumaDeductivas].[ImporteAcumuladoDeductivas], 0)) AS [ImporteAcumuladoDeductivas]
+					FROM
+						[dbo].[transacciones]
+					LEFT OUTER JOIN
+					(
+						SELECT
+							[id_transaccion],
+							SUM([importe]) AS [SumaImportes]
+						FROM
+							[dbo].[items]
+						GROUP BY
+							[id_transaccion]
+					) AS [SumaItems]
+						ON
+							[transacciones].[id_transaccion] = [SumaItems].[id_transaccion]
+					LEFT OUTER JOIN
+					(
+						SELECT
+							[IDEstimacion],
+							SUM([Importe]) AS [ImporteAcumuladoRetenciones]
+						FROM
+							[SubcontratosEstimaciones].[Retenciones]
+						GROUP BY
+							[IDEstimacion]
+					) AS [SumaRetenciones]
+						ON
+							[transacciones].[id_transaccion] = [SumaRetenciones].[IDEstimacion]
+					--LEFT OUTER JOIN
+					--(
+					--	SELECT
+					--		[IDEstimacion],
+					--		SUM([Importe]) AS [ImporteAcumuladoDeductivas]
+					--	FROM
+					--		[SubcontratosEstimaciones].[Deductivas]
+					--	GROUP BY
+					--		[IDEstimacion]
+					--) AS [SumaDeductivas]
+					--	ON
+					--		[transacciones].[id_transaccion] = [SumaDeductivas].[IDEstimacion]
+					--WHERE
+					--	[transacciones].[tipo_transaccion] = 52
+					--		AND
+					--	[transacciones].[estado] > 0
+					GROUP BY
+						[transacciones].[id_antecedente]
+				) AS [Acumulado]
+					ON
+						[transacciones].[id_transaccion] = [Acumulado].[id_antecedente]
+				WHERE
+					[transacciones].[tipo_transaccion] = 51
+						AND
+				    [transacciones].[id_transaccion] = ?;";
 
 		$params = array(
 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
@@ -84,21 +232,22 @@ class Subcontrato extends TransaccionSAO {
 
 	    $datos = $this->conn->executeSP( $tsql, $params );
 
-	    $this->_id_empresa 	 		 = $datos[0]->id_empresa;
-	    $this->_nombreContratista 	 = $datos[0]->NombreContratista;
-	    $this->_pctFondoGarantia 	 = $datos[0]->PctFondoGarantia;
-	    $this->_importeFondoGarantia = $datos[0]->ImporteFondoGarantia;
-	    $this->_pctAnticipo 		 = $datos[0]->PctAnticipo;
-	    $this->_importeAnticipo 	 = $datos[0]->ImporteAnticipo;
-	    $this->_subtotal 	 		 = $datos[0]->Subtotal;
-	    $this->_iva 	 			 = $datos[0]->IVA;
-	    $this->_total 	 			 = $datos[0]->Total;
+	    $this->empresa 				 = new Empresa( $this->obra, $datos[0]->id_empresa );
+	    $this->moneda 				 = new Moneda( $this->obra, $datos[0]->id_moneda );
 
-	    $this->_importeAcumuladoEstimado 	= $datos[0]->ImporteAcumuladoEstimado;
-	    $this->_importeAcumuladoAnticipo 	= $datos[0]->ImporteAcumuladoAnticipo;
-	    $this->_importeAcumuladoFondoGarantia = $datos[0]->ImporteAcumuladoFondoGarantia;
-	    $this->_importeAcumuladoRetenciones = $datos[0]->ImporteAcumuladoRetenciones;
-	    $this->_importeAcumuladoDeductivas 	= $datos[0]->ImporteAcumuladoDeductivas;
+	    $this->porcentaje_fondo_garantia 	= $datos[0]->PctFondoGarantia;
+	    $this->importe_fondo_garantia 		= $datos[0]->ImporteFondoGarantia;
+	    $this->porcentaje_anticipo 		 	= $datos[0]->PctAnticipo;
+	    $this->importe_anticipo 	 		= $datos[0]->ImporteAnticipo;
+	    $this->subtotal 	 		 		= $datos[0]->subtotal;
+	    $this->iva 	 			 			= $datos[0]->impuesto;
+	    $this->total 	 			 		= $datos[0]->monto;
+
+	    $this->importe_acumulado_estimado 	= $datos[0]->ImporteAcumuladoEstimado;
+	    $this->importe_acumulado_anticipo 	= $datos[0]->ImporteAcumuladoAnticipo;
+	    $this->importe_acumulado_fondo_garantia = $datos[0]->ImporteAcumuladoFondoGarantia;
+	    $this->importe_acumulado_retencion  = $datos[0]->ImporteAcumuladoRetenciones;
+	    // $this->importe_acumulado_deductiva 	= $datos[0]->ImporteAcumuladoDeductivas;
 
 		$this->tipo_contrato 			   	= $datos[0]->tipo_contrato;
 		$this->descripcion 			   		= $datos[0]->descripcion;
@@ -163,49 +312,45 @@ class Subcontrato extends TransaccionSAO {
 	public function getReferencia() {
 		return $this->referencia;
 	}
-
-	public function getNombreContratista() {
-		return $this->_nombreContratista;
-	}
-
+	
 	public function getImporteAnticipo() {
-		return $this->_importeAnticipo;
+		return $this->importe_anticipo;
 	}
 
 	public function getImporteEstimado() {
-		return $this->_importeAcumuladoEstimado;
+		return $this->importe_acumulado_estimado;
 	}
 
 	public function getImporteAcumuladoAnticipo() {
-		return $this->_importeAcumuladoAnticipo;
+		return $this->importe_acumulado_anticipo;
 	}
 
 	public function getImporteFondoGarantia() {
-		return $this->_importeFondoGarantia;
+		return $this->importe_fondo_garantia;
 	}
 
 	public function getImporteAcumuladoFondoGarantia() {
-		return $this->_importeAcumuladoFondoGarantia;
+		return $this->importe_acumulado_fondo_garantia;
 	}
 
 	public function getImporteAcumuladoRetenciones() {
-		return $this->_importeAcumuladoRetenciones;
+		return $this->importe_acumulado_retencion;
 	}
 
 	public function getImporteAcumuladoDeductivas() {
-		return $this->_importeAcumuladoDeductivas;
+		return $this->importe_acumulado_deductiva;
 	}
 
 	public function getSubtotal() {
-		return $this->_subtotal;
+		return $this->subtotal;
 	}
 
 	public function getIVA() {
-		return $this->_iva;
+		return $this->iva;
 	}
 
 	public function getTotal() {
-		return $this->_total;
+		return $this->total;
 	}
 
 	public function getTipoContrato() {
@@ -421,7 +566,7 @@ class Subcontrato extends TransaccionSAO {
 
 	    $params = array(
 	        array( $this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->_id_empresa, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->empresa->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_actividad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
@@ -448,7 +593,7 @@ class Subcontrato extends TransaccionSAO {
 
 	    $params = array(
 	        array( $this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->_id_empresa, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->empresa->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_actividad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
@@ -492,7 +637,7 @@ class Subcontrato extends TransaccionSAO {
 	    $params = array(
 	    	array( $agrupador->getIDAgrupador(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->_id_empresa, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->empresa->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $id_actividad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );

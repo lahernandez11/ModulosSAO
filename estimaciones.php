@@ -6,10 +6,12 @@
 	<title>Estimaciones de Subcontratos</title>
 
 	<link rel="stylesheet" href="css/normalize.css" />
+	<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
+	<link rel="stylesheet" href="css/multiple-select.css" />
+	<link rel="stylesheet" href="css/opentip.css" />
 	<link rel="stylesheet" href="css/general.css" />
 	<link rel="stylesheet" href="css/estimaciones.css" />
 	<link rel="stylesheet" href="css/jquery.notify.css" />
-	<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
 
 	<!--[if lt IE 9]><script src="inc/js/html5shiv.js"></script><![endif]-->
 </head>
@@ -28,10 +30,10 @@
 						<span class="button-text">Proyectos</span>
 						<span class="icon flechita-abajo"></span>
 					</a>
-					<a id="nuevo" class="button">
+					<a id="nuevo" class="button" data-ot="bla bla" data-ot-style="dark">
 						<span class="label">Nuevo</span>
 					</a>
-					<a id="guardar" class="button">
+					<a id="guardar" class="button" title="prueba tooltip">
 						<span class="label">Guardar</span>
 					</a>
 					<a id="eliminar" class="button">
@@ -132,7 +134,16 @@
 
 						<div style="clear:both"></div>
 						<section id="tran-content">
-							<div id="column-switchers" class="checkboxgroup">
+							
+							<select class="col-switch conceptos" multiple="multiple">
+								<option value="contratado">Contratado</option>
+								<option value="avance-volumen">Avance Volumen</option>
+								<option value="avance-importe">Avance Importe</option>
+								<option value="saldo">Saldo</option>
+								<option value="destino">Destino</option>
+							</select>
+
+							<!-- <div id="column-switchers" class="checkboxgroup">
 								<input type="checkbox" id="contratado" name="col-viz" />
 								<label for="contratado">Contratado</label>
 								<input type="checkbox" id="avance-volumen" name="col-viz" />
@@ -143,7 +154,7 @@
 								<label for="saldo">Saldo</label>
 								<input type="checkbox" id="destino" name="col-viz" />
 								<label for="destino">Destino</label>
-							</div>
+							</div> -->
 							<table id="tabla-conceptos">
 								<colgroup>
 									<col class="icon" />
@@ -165,21 +176,21 @@
 										<th rowspan="2"></th>
 										<th rowspan="2">Concepto</th>
 										<th rowspan="2">UM</th>
-										<th colspan="2" class="contratado">SUBCONTRATADO</th>
-										<th colspan="3" class="avance-volumen">AVANCE VOLUMEN</th>
-										<th colspan="2" class="avance-importe">AVANCE IMPORTE</th>
-										<th colspan="2" class="saldo">SALDO</th>
-										<th colspan="4">ESTIMACIÓN</th>
-										<th class="destino">DISTRIBUCIÓN</th>
+										<th colspan="2" class="contratado">Contratado</th>
+										<th colspan="3" class="avance-volumen">Avance Volumen</th>
+										<th colspan="2" class="avance-importe">Avance Importe</th>
+										<th colspan="2" class="saldo">Saldo</th>
+										<th colspan="4">Esta Estimación</th>
+										<th class="destino">Distribución</th>
 									</tr>
 									<tr>
 										<th class="contratado">Volumen</th>
 										<th class="contratado">P.U.</th>
 										<th class="avance-volumen">Anterior</th>
-										<th class="avance-volumen">Acum.</th>
-										<th class="avance-volumen">% Acum.</th>
+										<th class="avance-volumen">Acumulado</th>
+										<th class="avance-volumen">%</th>
 										<th class="avance-importe">Anterior</th>
-										<th class="avance-importe">Acum.</th>
+										<th class="avance-importe">Acumulado</th>
 										<th class="saldo">Volumen</th>
 										<th class="saldo">Importe</th>
 										
@@ -287,35 +298,57 @@
 			</tbody>
 		</table>
 	</div>
-	<div id="dialog-deductivas" class="dialog" title="Deductivas">
-		<div id="tipo_deductiva">
-			<input type="radio" name="tipo_deductiva" id="materiales" value="1"><label for="materiales">Materiales</label>
-			<input type="radio" name="tipo_deductiva" id="mano_obra"  value="2"><label for="mano_obra">Mano de Obra</label>
-			<input type="radio" name="tipo_deductiva" id="maquinaria"  value="3"><label for="maquinaria">Maquinaria</label>
-			<input type="radio" name="tipo_deductiva" id="subcontratos" value="4"><label for="subcontratos">Subcontratos</label>
-			<input type="radio" name="tipo_deductiva" id="otros" value="5"><label for="otros">Otros</label>
-			<input type="hidden" id="IDMaterial" value="0">
-		</div>
+	<div id="dialog-deductivas" class="" title="Deductivas">
 		<div id="registros_deductivas" class="registros">
-			<table>
-				<colgroup>
-					<col class="tipo"/>
-					<col>
-					<col class="monto"/>
-					<col>
-					<col class="icon"/>
-				</colgroup>
-				<thead>
-					<tr>
-						<th>Tipo</th>
-						<th>Concepto</th>
-						<th>Importe</th>
-						<th>Observaciones</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody></tbody>
-			</table>
+			<select class="col-switch descuentos" multiple="multiple">
+				<option value="descuento-total">Descuento Total</option>
+				<option value="descuento-acumulado">Descuento Acumulado</option>
+				<option value="descuento-saldo" selected>Por Descontar</option>
+			</select>
+			<form id="form_descuento" method="post">
+				<table class="stripped">
+					<colgroup>
+						<col />
+						<col class="cantidad descuento-total"/>
+						<col class="unidad descuento-total">
+						<col class="precio descuento-total">
+						<col class="monto descuento-total">
+						<col class="cantidad descuento-acumulado"/>
+						<col class="monto descuento-acumulado">
+						<col class="cantidad descuento-saldo"/>
+						<col class="monto descuento-saldo">
+						<col class="cantidad"/>
+						<col class="precio">
+						<col class="monto">
+					</colgroup>
+					<thead>
+						<tr>
+							<th rowspan="2">Concepto</th>
+							<th colspan="4">Descuento Total</th>
+							<th colspan="2">Descuento Acumulado</th>
+							<th colspan="2">Por Descontar</th>
+							<th colspan="3">Descuento Actual</th>
+						</tr>
+						<tr>
+							<th>Cantidad</th>
+							<th>Unidad</th>
+							<th>P.U.</th>
+							<th>Importe</th>
+							<th>Cantidad</th>
+							<th>Importe</th>
+							<th>Cantidad</th>
+							<th>Importe</th>
+							<th>Cantidad</th>
+							<th>P.U.</th>
+							<th>Importe</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+				<div style="margin-top: 0.5em; text-align: right;">
+					<input type="submit" class="button" value="Guardar" />
+				</div>
+			</form>
 		</div>
 	</div>
 	<div id="dialog-nueva-deduccion" class="dialog" title="Nueva Deductiva">
@@ -429,18 +462,28 @@
 			<td class="editable-cell numerico"><%- PctEstimado %></td>
 			<td class="numerico"><%- PrecioUnitario %></td>
 			<td class="editable-cell numerico"><%- ImporteEstimado %></td>
-			<td title="<%- RutaDestino %>" class="destino"><%- RutaDestino %></td>
+			<td class="destino" title="<%- RutaDestino %>"><%- RutaDestino %></td>
 		</tr>
 	</script>
 	<script type="text/template" id="template-deductiva">
-		<tr data-id="<%- id %>">
-			<td><%- tipo %></td>
-			<td title="<%- concepto %>"><%- concepto %></td>
-			<td class="numerico"><%= importe.numFormat() %></td>
-			<td title="<%- observaciones %>"><%- observaciones %></td>
-			<td class="icon-cell">
-				<a class="icon action delete"></a>
+		<tr data-id="<%- id_descuento %>" data-iditem="<%- id_item %>">
+			<td title="<%- descripcion %>"><%- descripcion %></td>
+			<td class="numerico"><%- cantidad_total %></td>
+			<td class="centrado"><%- unidad %></td>
+			<td class="numerico"><%= precio %></td>
+			<td class="numerico"><%= importe_total %></td>
+			<td class="numerico"><%- cantidad_descontada %></td>
+			<td class="numerico"><%= importe_descontado %></td>
+			<th class="numerico"><%- cantidad_por_descontar %></th>
+			<th class="numerico"><%= importe_por_descontar %></th>
+			<td class="numerico">
+				<input type="text" class="text" name="cantidad_descuento" value="<%- cantidad_descuento %>"/>
 			</td>
+			<td class="numerico">
+				<input type="hidden" name="id_item" value="<%- id_item %>">
+				<input type="text" class="text" name="precio_descuento" value="<%= precio_descuento %>"/>
+			</td>
+			<th class="numerico"><%- importe_descuento %></th>
 		</tr>;
 	</script>
 	<script type="text/template" id="template-retencion">
@@ -459,11 +502,17 @@
 	<script src="inc/js/jquery-1.7.1.min.js"></script>
 	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
 	<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
+	<script src="inc/js/lib/opentip-jquery.min.js"></script>
+	<script src="inc/js/lib/jquery.multiple.select.js"></script>
+
 	<script src="inc/js/general.js"></script>
 	<script src="inc/js/jquery.buttonlist.js"></script>
 	<script src="inc/js/jquery.listaTransacciones.js"></script>
 	<script src="inc/js/jquery.uxtable.js"></script>
 	<script src="inc/js/jquery.notify.js"></script>
 	<script src="inc/js/estimaciones.js"></script>
+	<script>
+        Opentip.defaultStyle = "dark";
+	</script>
 </body>
 </html>

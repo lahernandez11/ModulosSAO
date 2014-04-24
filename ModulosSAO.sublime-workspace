@@ -4,6 +4,30 @@
 		"selected_items":
 		[
 			[
+				"muestra",
+				"muestraColumnasMarcadas"
+			],
+			[
+				"ocul",
+				"ocultaColumnasOpcionales"
+			],
+			[
+				"col",
+				"col_switch"
+			],
+			[
+				"numero_de",
+				"numero_de_contrato_label"
+			],
+			[
+				"firma",
+				"firma_cliente_descripcion_label"
+			],
+			[
+				"fir",
+				"firma_cliente_titulo_label"
+			],
+			[
 				"controll",
 				"controller_url"
 			],
@@ -22,10 +46,6 @@
 			[
 				"C_TIPO_CO",
 				"C_TIPO_CONTRATO"
-			],
-			[
-				"col",
-				"col-switch"
 			],
 			[
 				"chec",
@@ -494,44 +514,16 @@
 			[
 				"habi",
 				"habilitaObservaciones"
-			],
-			[
-				"IDEstimacion",
-				"IDEstimacionObra"
-			],
-			[
-				"mesa",
-				"messageConsole"
-			],
-			[
-				"IDEstima",
-				"IDEstimacionObra"
-			],
-			[
-				"estimacion",
-				"estimacionObraItemTemplate"
-			],
-			[
-				"op",
-				"opacity"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "presupuesto_obra.php",
+			"file": "estimaciones.php",
 			"settings":
 			{
-				"buffer_size": 10591,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "css/general.css",
-			"settings":
-			{
-				"buffer_size": 25714,
+				"buffer_size": 17522,
 				"line_ending": "Windows"
 			}
 		},
@@ -539,55 +531,39 @@
 			"file": "inc/js/presupuesto_obra.js",
 			"settings":
 			{
-				"buffer_size": 17595,
+				"buffer_size": 17596,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "inc/lib/models/PresupuestoObra.class.php",
+			"file": "inc/js/estimaciones.js",
 			"settings":
 			{
-				"buffer_size": 4773,
+				"buffer_size": 41524,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "inc/lib/controllers/PresupuestoObraController.php",
+			"file": "css/general.css",
 			"settings":
 			{
-				"buffer_size": 6823,
+				"buffer_size": 26330,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "inc/lib/models/AgrupadorConceptoPresupuesto.class.php",
+			"file": "inc/lib/controllers/EstimacionSubcontratoController.php",
 			"settings":
 			{
-				"buffer_size": 4988,
+				"buffer_size": 20532,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "inc/lib/db/SQLSrvDBConn.class.php",
+			"file": "inc/lib/models/EstimacionSubcontrato.class.php",
 			"settings":
 			{
-				"buffer_size": 3095,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/models/Subcontrato.class.php",
-			"settings":
-			{
-				"buffer_size": 16532,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/models/App.class.php",
-			"settings":
-			{
-				"buffer_size": 1426,
+				"buffer_size": 21423,
 				"line_ending": "Windows"
 			}
 		}
@@ -595,9 +571,13 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 81.0,
+		"height": 58.0,
 		"selected_items":
 		[
+			[
+				"php",
+				"Set Syntax: PHP"
+			],
 			[
 				"install",
 				"Package Control: Install Package"
@@ -660,8 +640,24 @@
 	},
 	"file_history":
 	[
+		"/D/www/ModulosSAO/presupuesto_obra.php",
+		"/D/www/ModulosSAO/inc/lib/models/TransaccionSAO.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/Subcontrato.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/Empresa.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/Obra.class.php",
+		"/D/www/ModulosSAO/inc/js/lib/jquery.multiple.select.js",
+		"/D/www/ModulosSAO/inc/lib/controllers/EstimacionSubcontratoController.php",
+		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontrato.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontratoFormatoPDF_SPM.class.php",
+		"/D/www/ModulosSAO/css/general.css",
+		"/D/www/ModulosSAO/.git/config",
+		"/D/www/ModulosSAO/inc/lib/models/App.class.php",
 		"/D/www/ModulosSAO/inc/lib/db/SQLSrvDBConn.class.php",
+		"/D/www/ModulosSAO/inc/js/presupuesto_obra.js",
+		"/D/www/ModulosSAO/inc/lib/models/AgrupadorConceptoPresupuesto.class.php",
+		"/D/www/ModulosSAO/inc/lib/controllers/PresupuestoObraController.php",
+		"/D/www/ModulosSAO/inc/lib/models/PresupuestoObra.class.php",
 		"/D/www/ModulosSAO/inc/js/jquery.buttonlist.js",
 		"/D/www/ModulosSAO/css/bootstrap.min.css",
 		"/D/www/ModulosSAO/agrupacion.php",
@@ -677,23 +673,16 @@
 		"/D/www/ModulosSAO/subcontratos.php",
 		"/D/www/ModulosSAO/usuarios.php",
 		"/D/www/ModulosSAO/inc/lib/db/db_config.php",
-		"/D/www/ModulosSAO/presupuesto_obra.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/MenuAplicacionController.php",
-		"/D/www/ModulosSAO/inc/lib/models/App.class.php",
 		"/D/www/ModulosSAO/inc/js/general.js",
 		"/D/www/ModulosSAO/inc/lib/db/DBConf.class.php",
 		"/D/www/ModulosSAO/inc/app-menu.php",
 		"/D/www/ModulosSAO/inc/lib/models/AvanceObra.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/PresupuestoObra.class.php",
 		"/D/www/ModulosSAO/inc/js/avance_obra.js",
-		"/D/www/ModulosSAO/inc/lib/models/Subcontrato.class.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/AgrupacionSubcontratoController.php",
 		"/D/www/ModulosSAO/inc/js/estimaciones.js",
-		"/D/www/ModulosSAO/css/general.css",
 		"/D/www/ModulosSAO/inc/lib/models/Material.class.php",
 		"/D/www/ModulosSAO/inc/js/agrupacion.js",
-		"/D/www/ModulosSAO/inc/lib/controllers/EstimacionSubcontratoController.php",
-		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontrato.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/Cobranza.class.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/EstimacionObraController.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionObra.class.php",
@@ -708,15 +697,11 @@
 		"/D/www/ModulosSAO/inc/lib/models/AgrupadorInsumo.class.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/AgrupadorInsumoController.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/AgrupacionInsumoController.php",
-		"/D/www/ModulosSAO/inc/lib/models/AgrupadorConceptoPresupuesto.class.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/ListaProyectosController.php",
 		"/D/www/ModulosSAO/inc/lib/models/Addendum.class.php",
 		"/D/www/ModulosSAO/inc/js/subcontratos.js",
-		"/D/www/ModulosSAO/inc/js/presupuesto_obra.js",
 		"/D/www/ModulosSAO/inc/lib/models/ClasificadorSubcontrato.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/Util.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/TransaccionSAO.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
 		"/D/www/ModulosSAO/inc/js/estimacion_obra.js",
 		"/D/www/ModulosSAO/modulos/subcontratos/GetDatosSubcontrato.php",
 		"/D/www/ModulosSAO/css/subcontratos.css",
@@ -724,7 +709,6 @@
 		"/D/www/ModulosSAO/inc/lib/controllers/AvanceSubcontratoController.php",
 		"/D/www/ModulosSAO/inc/lib/models/AvanceSubcontrato.class.php",
 		"/D/www/ModulosSAO/inc/js/avance_subcontratos.js",
-		"/D/www/ModulosSAO/inc/lib/controllers/PresupuestoObraController.php",
 		"/D/www/ModulosSAO/inc/js/confirmacion_cobranza.js",
 		"/D/www/ModulosSAO/inc/js/agrupacion_contable.js",
 		"/D/www/ModulosSAO/inc/js/precios_venta.js",
@@ -753,7 +737,6 @@
 		"/D/www/ModulosSAO/inc/DBConn.php",
 		"/D/www/ModulosSAO/modulos/agrupacion/GetListaInsumos.php",
 		"/D/www/ModulosSAO/.gitignore",
-		"/D/www/ModulosSAO/inc/lib/models/Empresa.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/Proyecto.class.php",
 		"/D/www/ModulosSAO/inc/lib/db/ReportesSAO.class.php",
 		"/D/www/ModulosSAO/inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css",
@@ -784,10 +767,7 @@
 		"/D/www/ModulosSAO/setPath.php",
 		"/D/www/ModulosSAO/inc/lib/models/FormatoPDF.class.php",
 		"/D/Dropbox/www/ModulosSAO/inc/lib/models/FormatoPDF.class.php",
-		"/D/Dropbox/www/ModulosSAO/inc/lib/fpdf/NewFPDF.class.php",
-		"/D/Dropbox/www/ModulosSAO/inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css",
-		"/D/Dropbox/www/ModulosSAO/inc/lib/models/TransaccionSAO.class.php",
-		"/D/Dropbox/www/ModulosSAO/css/general.css"
+		"/D/Dropbox/www/ModulosSAO/inc/lib/fpdf/NewFPDF.class.php"
 	],
 	"find":
 	{
@@ -807,9 +787,50 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": false,
+		"case_sensitive": true,
 		"find_history":
 		[
+			"_soloConceptosEstimados",
+			"_estimacion",
+			"_pctIVA",
+			"_pctFondoGarantia",
+			"_pctAnticipo",
+			"_tipoMoneda",
+			"_fechaTermino",
+			"_fechaInicio",
+			"_id_empresa",
+			"getId",
+			"public function getId()",
+			"getId",
+			"getIDTransaccion",
+			"_objetoSubcontrato",
+			"_IDSubcontrato",
+			"_numeroFolioConsecutivo",
+			"IDMaterial",
+			"id_contratista",
+			"id_empresa",
+			"nombre_contratista",
+			"id_empresa",
+			"abreviatura",
+			"_nombreContratista",
+			"_IDContratista",
+			"onClick",
+			"Deductivas",
+			"Deductivas.init()",
+			"Deductivas",
+			"dialog",
+			"dialog-deductivas",
+			"descuentos",
+			"cantidad",
+			"-",
+			"moz-",
+			"webkit",
+			"80px",
+			"TITULO",
+			"formato",
+			"uspListaFolios",
+			"SubcontratosEstimaciones.uspListaFolios",
+			"getConceptosEstimacion",
 			"eliminaAgrupador",
 			"updateAgrupadorColumna",
 			"txtAgrupadorEspecialidad",
@@ -896,48 +917,7 @@
 			"get$",
 			"monto_anticipo",
 			"private $;",
-			"_GET",
-			"+ '",
-			"' + ",
-			"json",
-			"registraAddendum",
-			"adden",
-			"adde",
-			"cargaAddendums",
-			"_POST",
-			"json",
-			"asignaClasificacionSubcontrato",
-			"modificaFechaSubcontrato",
-			"$valor)",
-			"es",
-			"$this",
-			"set",
-			"get",
-			"val",
-			"_GET",
-			"getIDObra",
-			"asignaClasificacionSubcontrato",
-			"json",
-			"getClasificadores",
-			"dataRow",
-			"id_agrupador",
-			"_objetoSubcontrato",
-			";\n",
-			"txtNombreSubcontrato",
-			"<span>",
-			"textarea",
-			"data",
-			"};",
-			"transaccion->his",
-			"_objetoSubcontrato",
-			"IDTransaccion",
-			"private",
-			"[Subcontratos]",
-			"[SAO1814App].",
-			"json",
-			"cargaDatosGenerales",
-			"TreeView",
-			"empresas"
+			"_GET"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -945,6 +925,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"estimacion",
 			"that",
 			"IDProyecto",
 			"eliminaTransaccion",
@@ -1009,28 +990,29 @@
 		"reverse": false,
 		"show_context": true,
 		"use_buffer2": true,
-		"whole_word": false,
+		"whole_word": true,
 		"wrap": true
 	},
 	"groups":
 	[
 		{
+			"selected": 5,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "presupuesto_obra.php",
+					"file": "estimaciones.php",
 					"settings":
 					{
-						"buffer_size": 10591,
+						"buffer_size": 17522,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3916,
-								3889
+								11075,
+								11075
 							]
 						],
 						"settings":
@@ -1039,52 +1021,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2200.0,
+						"translation.y": 524.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "css/general.css",
-					"settings":
-					{
-						"buffer_size": 25714,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7156,
-								7156
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 8293.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
 					"file": "inc/js/presupuesto_obra.js",
 					"settings":
 					{
-						"buffer_size": 17595,
+						"buffer_size": 17596,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								12348,
-								12348
+								6263,
+								5977
 							]
 						],
 						"settings":
@@ -1093,52 +1048,79 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 10531.0,
+						"translation.y": 4400.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "inc/js/estimaciones.js",
+					"settings":
+					{
+						"buffer_size": 41524,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								31145,
+								31145
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 22918.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "inc/lib/models/PresupuestoObra.class.php",
+					"file": "css/general.css",
 					"settings":
 					{
-						"buffer_size": 4773,
+						"buffer_size": 26330,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4112,
-								4112
+								7874,
+								7874
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
+							"syntax": "Packages/CSS/CSS.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3100.0,
+						"translation.y": 9830.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "inc/lib/controllers/PresupuestoObraController.php",
+					"file": "inc/lib/controllers/EstimacionSubcontratoController.php",
 					"settings":
 					{
-						"buffer_size": 6823,
+						"buffer_size": 20532,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2434,
-								2434
+								1188,
+								1188
 							]
 						],
 						"settings":
@@ -1147,25 +1129,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1057.0,
+						"translation.y": 6710.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 5,
-					"file": "inc/lib/models/AgrupadorConceptoPresupuesto.class.php",
+					"file": "inc/lib/models/EstimacionSubcontrato.class.php",
 					"settings":
 					{
-						"buffer_size": 4988,
+						"buffer_size": 21423,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3464,
-								3464
+								738,
+								738
 							]
 						],
 						"settings":
@@ -1174,88 +1156,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1333.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "inc/lib/db/SQLSrvDBConn.class.php",
-					"settings":
-					{
-						"buffer_size": 3095,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1602,
-								1602
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 819.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "inc/lib/models/Subcontrato.class.php",
-					"settings":
-					{
-						"buffer_size": 16532,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								14942,
-								14943
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 6490.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "inc/lib/models/App.class.php",
-					"settings":
-					{
-						"buffer_size": 1426,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								292,
-								292
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 330.0,
+						"translation.y": 440.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1305,16 +1206,60 @@
 		"selected_items":
 		[
 			[
+				"ransa",
+				"inc/lib/models/TransaccionSAO.class.php"
+			],
+			[
+				"forma",
+				"inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php"
+			],
+			[
+				"subcontrato",
+				"inc/lib/models/Subcontrato.class.php"
+			],
+			[
+				"estimacions",
+				"inc/lib/controllers/EstimacionSubcontratoController.php"
+			],
+			[
+				"transa",
+				"inc/lib/models/TransaccionSAO.class.php"
+			],
+			[
+				"obra",
+				"inc/lib/models/Obra.class.php"
+			],
+			[
+				"estimacion",
+				"inc/lib/models/EstimacionSubcontrato.class.php"
+			],
+			[
+				"presu",
+				"presupuesto_obra.php"
+			],
+			[
+				"general",
+				"css/general.css"
+			],
+			[
+				"pres",
+				"presupuesto_obra.php"
+			],
+			[
+				"transacc",
+				"inc/lib/models/TransaccionSAO.class.php"
+			],
+			[
+				"estimacio",
+				"inc/lib/models/EstimacionSubcontrato.class.php"
+			],
+			[
 				"modsub",
 				"inc/lib/models/Subcontrato.class.php"
 			],
 			[
 				"sql",
 				"inc/lib/db/SQLSrvDBConn.class.php"
-			],
-			[
-				"obra",
-				"inc/lib/models/Obra.class.php"
 			],
 			[
 				"sqls",
@@ -1339,14 +1284,6 @@
 			[
 				"presup",
 				"inc/lib/controllers/PresupuestoObraController.php"
-			],
-			[
-				"presu",
-				"inc/lib/models/PresupuestoObra.class.php"
-			],
-			[
-				"pres",
-				"inc/js/presupuesto_obra.js"
 			],
 			[
 				"css",
@@ -1397,10 +1334,6 @@
 				"inc/lib/models/Cobranza.class.php"
 			],
 			[
-				"estimacions",
-				"inc/lib/controllers/EstimacionSubcontratoController.php"
-			],
-			[
 				"estimacionsubcon",
 				"inc/lib/models/EstimacionSubcontrato.class.php"
 			],
@@ -1413,24 +1346,12 @@
 				"inc/lib/models/Material.class.php"
 			],
 			[
-				"subcontrato",
-				"inc/lib/models/Subcontrato.class.php"
-			],
-			[
 				"agrupa",
 				"inc/lib/controllers/AgrupacionSubcontratoController.php"
 			],
 			[
-				"estimacio",
-				"inc/js/estimaciones.js"
-			],
-			[
 				"esti",
 				"estimaciones.php"
-			],
-			[
-				"general",
-				"css/general.css"
 			],
 			[
 				"subcontratoc",
@@ -1509,10 +1430,6 @@
 				"inc/lib/controllers/EstimacionObraController.php"
 			],
 			[
-				"estimacion",
-				"estimacion_obra.php"
-			],
-			[
 				"estimacion_",
 				"inc/js/estimacion_obra.js"
 			],
@@ -1523,10 +1440,6 @@
 			[
 				"format",
 				"inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php"
-			],
-			[
-				"transa",
-				"inc/lib/models/TransaccionSAO.class.php"
 			],
 			[
 				"util",
@@ -1599,10 +1512,6 @@
 			[
 				"avanceo",
 				"inc/lib/controllers/AvanceObraController.php"
-			],
-			[
-				"transacc",
-				"inc/lib/models/TransaccionSAO.class.php"
 			],
 			[
 				"estimacion_o",
@@ -1782,7 +1691,7 @@
 		[
 			[
 				"",
-				"/D/www/ModulosSAO/ModulosSAO.sublime-project"
+				"/D/www/ControlRemesas/ControlRemesas.sublime-project"
 			],
 			[
 				"reme",
@@ -1807,6 +1716,6 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 260.0,
+	"side_bar_width": 302.0,
 	"status_bar_visible": true
 }

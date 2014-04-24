@@ -88,12 +88,12 @@ try {
 
 			$data['datosSubcontrato'] = array(
 				'ObjetoSubcontrato' => $subcontrato->getReferencia(),
-				'NombreContratista' => $subcontrato->getNombreContratista()
+				'NombreContratista' => $subcontrato->empresa->getNombre()
 			);
 
 
 			$item = array();
-			foreach ( EstimacionSubcontrato::getConceptosNuevaEstimacion( $obra, $id_subcontrato ) as $concepto) {
+			foreach ( EstimacionSubcontrato::getConceptosNuevaEstimacion( $subcontrato ) as $concepto) {
 
 				$item['IDConceptoContrato'] = $concepto->IDConceptoContrato;
 				$item['EsActividad'] = $concepto->EsActividad;
@@ -150,20 +150,20 @@ try {
 			$data['datos']['FechaInicio']   	 = Util::formatoFecha( $transaccion->getFechaInicio() );
 			$data['datos']['FechaTermino']  	 = Util::formatoFecha( $transaccion->getFechaTermino() );
 			$data['datos']['Observaciones'] 	 = $transaccion->getObservaciones();
-			$data['datos']['NombreContratista']  = $transaccion->getContratista();
-			$data['datos']['ObjetoSubcontrato']  = $transaccion->getObjetoSubcontrato();
+			$data['datos']['NombreContratista']  = $transaccion->empresa->getNombre();
+			$data['datos']['ObjetoSubcontrato']  = $transaccion->subcontrato->getReferencia();
 
 			$conceptos = $transaccion->getConceptosEstimacion();
 			
 			$item = array();
 			foreach ( $conceptos as $concepto ) {
 
-				$item['IDConceptoContrato'] = $concepto->IDConceptoContrato;
-				$item['EsActividad'] 	    = $concepto->EsActividad;
-				$item['NumeroNivel'] 		= $concepto->NumeroNivel;
-				$item['Descripcion'] 		= $concepto->Descripcion;
+				$item['IDConceptoContrato']    = $concepto->IDConceptoContrato;
+				$item['EsActividad'] 	       = $concepto->EsActividad;
+				$item['NumeroNivel'] 		   = $concepto->NumeroNivel;
+				$item['Descripcion'] 		   = $concepto->Descripcion;
 				$item['CantidadSubcontratada'] = $concepto->EsActividad;
-				$item['Unidad'] 			= $concepto->Unidad;
+				$item['Unidad'] 			   = $concepto->Unidad;
 
 				if ( $concepto->EsActividad ) {
 						$item['CantidadSubcontratada'] = Util::formatoNumerico( $concepto->CantidadSubcontratada );
@@ -274,9 +274,10 @@ try {
 				
 				$data['errores'] = $transaccion->guardaTransaccion( Sesion::getUser() );
 			} else {
+				$subcontrato = new Subcontrato( $obra, $id_subcontrato );
 				
 				$transaccion = new EstimacionSubcontrato(
-					$obra, $id_subcontrato, $fecha, $fechaInicio, 
+					$obra, $subcontrato, $fecha, $fechaInicio, 
 					$fechaTermino, $observaciones, $conceptos
 				);
 				
@@ -357,14 +358,66 @@ try {
 			$deductivas = $transaccion->getDeductivas();
 
 			foreach ( $deductivas as $deductiva ) {
+				$descuento = $deductiva->getDescuento( $transaccion );
+
+				$cantidad_por_descontar = 
+					  $deductiva->getCantidadTotal()
+					- $descuento->getCantidadDescontada();
+
+				if ( $cantidad_por_descontar < 0 ) { $cantidad_por_descontar = 0; }
+
+				$importe_por_descontar = $deductiva->getImporteTotal()
+					- $descuento->getImporteDescontado();
+
+				if ( $importe_por_descontar < 0 ) {	$importe_por_descontar = 0; }
+
 				$data['deductivas'][] = array(
-					'IDDeductiva'   => $deductiva->IDDeductiva,
-					'TipoDeductiva' => $deductiva->TipoDeductiva,
-					'Concepto'      => $deductiva->Concepto,
-					'Importe'       => Util::formatoNumerico( $deductiva->Importe ),
-					'Observaciones' => $deductiva->Observaciones
+					'id_item'   	 		 => $deductiva->getId(),
+					'descripcion'    		 => $deductiva->material->getDescripcion(),
+					'cantidad_total' 		 => Util::formatoNumerico($deductiva->getCantidadTotal()),
+					'unidad' 				 => $deductiva->getUnidad(),
+					'precio' 				 => Util::formatoNumerico($deductiva->getPrecio()),
+					'importe_total' 		 => Util::formatoNumerico($deductiva->getImporteTotal()),
+					'cantidad_descontada' 	 => Util::formatoNumerico($descuento->getCantidadDescontada()),
+					'importe_descontado' 	 => Util::formatoNumerico($descuento->getImporteDescontado()),
+					'cantidad_por_descontar' => Util::formatoNumerico($cantidad_por_descontar),
+					'importe_por_descontar'  => Util::formatoNumerico($importe_por_descontar),
+					'id_descuento'			 => $descuento->getId(),
+					'cantidad_descuento'	 => $descuento->getCantidad(),
+					'precio_descuento'	 	 => $descuento->getPrecio() === 0 ? $deductiva->getPrecio() : $descuento->getPrecio(),
+					'importe_descuento'	 	 => Util::formatoNumerico($descuento->getImporte())
 				);
 			}
+			break;
+
+		case 'guardaDescuento':
+			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
+			$obra = new Obra( $conn, (int) $_POST['id_obra'] );
+			$id_transaccion = (int) $_POST['id_transaccion'];
+			$descuentos = $_POST['descuentos'];
+
+			$transaccion = new EstimacionSubcontrato( $obra, $id_transaccion );
+			$desc = array();
+			foreach ( $descuentos as $key => $item ) {
+				$descuento = new EstimacionDescuento( 
+					$transaccion, 
+					new EstimacionDeductiva( $transaccion->empresa, $item['id_item'] )
+				);
+
+				$descuento->setCantidad( $item['cantidad_descuento'] );
+				$descuento->setPrecio( $item['precio_descuento'] );
+				$descuento->save();
+				// echo $descuento;
+				
+				$desc[$item['id_item']] = array(
+					'id_descuento' => $descuento->getId(),
+					'cantidad_descuento' => $item['cantidad_descuento'],
+					'precio_descuento'   => $item['precio_descuento'],
+					'importe_descuento'  => $descuento->getImporte()
+				);
+			}
+
+			$data['descuentos'] = $desc;
 			break;
 
 		case 'guardaDeductiva':
