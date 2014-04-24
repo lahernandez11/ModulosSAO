@@ -8,7 +8,7 @@
 	<link rel="stylesheet" href="css/normalize.css" />
 	<link rel="stylesheet" href="css/general.css" />
 	<link rel="stylesheet" href="css/agrupacion.css"/>
-	<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
+	<link rel="stylesheet" href="inc/js/jquery-ui/css/grupo-hi/jquery-ui.min.css" />
 </head>
 
 <body>
@@ -323,7 +323,7 @@
 	</script>
 
 	<script src="inc/js/jquery-1.7.1.min.js"></script>
-	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
+	<script src="inc/js/jquery-ui/js/jquery-ui.min.js"></script>
 	<script src="inc/js/jquery.buttonlist.js"></script>
 	<script src="inc/js/lib/underscore-min.js"></script>
 

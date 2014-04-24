@@ -6,9 +6,8 @@
 	<title>Estimaciones de Subcontratos</title>
 
 	<link rel="stylesheet" href="css/normalize.css" />
-	<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
+	<link rel="stylesheet" href="inc/js/jquery-ui/css/grupo-hi/jquery-ui.min.css" />
 	<link rel="stylesheet" href="css/multiple-select.css" />
-	<link rel="stylesheet" href="css/opentip.css" />
 	<link rel="stylesheet" href="css/general.css" />
 	<link rel="stylesheet" href="css/estimaciones.css" />
 	<link rel="stylesheet" href="css/jquery.notify.css" />
@@ -30,10 +29,10 @@
 						<span class="button-text">Proyectos</span>
 						<span class="icon flechita-abajo"></span>
 					</a>
-					<a id="nuevo" class="button" data-ot="bla bla" data-ot-style="dark">
+					<a id="nuevo" class="button">
 						<span class="label">Nuevo</span>
 					</a>
-					<a id="guardar" class="button" title="prueba tooltip">
+					<a id="guardar" class="button">
 						<span class="label">Guardar</span>
 					</a>
 					<a id="eliminar" class="button">
@@ -219,7 +218,7 @@
 		<div class="ui-state-highlight ui-corner-all">
 			<p><span class="ui-icon ui-icon-info"></span><strong>De doble click para seleccionar un subcontrato</strong></p>
 		</div>
-		<table id="tabla-subcontratos">
+		<table id="tabla-subcontratos" class="stripped">
 			<colgroup>
 				<col/>
 				<col span="2" class="folio"></col>
@@ -500,9 +499,8 @@
 
 	<script src="inc/js/lib/underscore-min.js"></script>
 	<script src="inc/js/jquery-1.7.1.min.js"></script>
-	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
-	<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
-	<script src="inc/js/lib/opentip-jquery.min.js"></script>
+	<script src="inc/js/jquery-ui/js/jquery-ui.min.js"></script>
+	<script src="inc/js/jquery-ui/js/i18n/jquery.ui.datepicker-es.min.js"></script>
 	<script src="inc/js/lib/jquery.multiple.select.js"></script>
 
 	<script src="inc/js/general.js"></script>
@@ -511,8 +509,5 @@
 	<script src="inc/js/jquery.uxtable.js"></script>
 	<script src="inc/js/jquery.notify.js"></script>
 	<script src="inc/js/estimaciones.js"></script>
-	<script>
-        Opentip.defaultStyle = "dark";
-	</script>
 </body>
 </html>

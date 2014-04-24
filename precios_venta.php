@@ -6,7 +6,7 @@
 	<title>Precios de Venta</title>
 
 	<link rel="stylesheet" href="css/normalize.css" />
-	<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
+	<link rel="stylesheet" href="inc/js/jquery-ui/css/grupo-hi/jquery-ui.min.css" />
 	<link rel="stylesheet" href="css/general.css" />
 	<link rel="stylesheet" href="css/cobranza.css" />
 	<link rel="stylesheet" href="css/jquery.notify.css" />
@@ -95,8 +95,8 @@
 
 	<script src="inc/js/lib/underscore-min.js"></script>
 	<script src="inc/js/jquery-1.7.1.min.js"></script>
-	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
-	<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
+	<script src="inc/js/jquery-ui/js/jquery-ui.min.js"></script>
+	<script src="inc/js/jquery-ui/js/i18n/jquery.ui.datepicker-es.min.js"></script>
 	<script src="inc/js/general.js"></script>
 	<script src="inc/js/jquery.buttonlist.js"></script>
 	<script src="inc/js/jquery.listaTransacciones.js"></script>

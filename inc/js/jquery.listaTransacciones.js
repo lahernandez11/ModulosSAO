@@ -8,7 +8,8 @@
 
 	// nombres de clases css
 	var classes = {
-		itemsTable: 'lista-transacciones'
+		itemsTable: 'lista-transacciones',
+		stripRows: 'stripped',
 	},
 
 	methods = {
@@ -48,7 +49,7 @@
 				var $dialogcontainer = $('<div id="' + restoreData.call($that).listContainer + '"></div>');
 				
 				var dataContainer =
-					 '<table class="' + classes.itemsTable + '">'
+					 '<table class="' + classes.itemsTable + ' ' + classes.stripRows + '">'
 					+   '<colgroup>'
 					+     '<col span="2" class="fecha"/>'
 					+   '</colgroup>'

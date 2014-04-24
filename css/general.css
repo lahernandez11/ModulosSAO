@@ -381,7 +381,7 @@ table
 }
 table.stripped tbody tr:nth-child(even)
 {
-	background-color: #f6f6f6;
+	background-color: #EFEFEF;/*#f6f6f6;#EFEFEF*/
 }
 table.stripped tbody tr:nth-child(even):hover
 {
@@ -476,9 +476,9 @@ table col.unidad
 }
 table thead th
 {
-	padding: 0 0.2em;
+	padding: 0.2em;
 	border: 1px solid #666;
-	background-color: #202020;
+	background-color: #333;
 	color: white;
 	font-weight: normal;
 	overflow: hidden;
@@ -1271,7 +1271,7 @@ ul.dropdown-list li a.with-icon
     border-right: 1px solid #CCCCCC;
     border-left: 1px solid #CCCCCC;
     /*overflow: hidden;*/
-    padding: 0.5em 0 0.5em 16px;
+    padding: 5px 0 5px 10px;
 }
 .overlay
 {

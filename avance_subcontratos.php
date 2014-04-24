@@ -9,20 +9,9 @@
 	<link rel="stylesheet" href="css/general.css" />
 	<link rel="stylesheet" href="css/cobranza.css" />
 	<link rel="stylesheet" href="css/jquery.notify.css" />
-	<link rel="stylesheet" href="inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css" />
+	<link rel="stylesheet" href="inc/js/jquery-ui/css/grupo-hi/jquery-ui.min.css" />
 	
 	<!--[if lt IE 9]><script src="inc/js/html5shiv.js"></script><![endif]-->
-	<script src="inc/js/jquery-1.7.1.min.js"></script>
-	<script src="inc/js/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
-	<script src="inc/js/jquery-ui/development-bundle/ui/i18n/jquery.ui.datepicker-es.js"></script>
-	
-	<script src="inc/js/general.js"></script>
-	<script src="inc/js/jquery.buttonlist.js"></script>
-	<script src="inc/js/jquery.listaTransacciones.js"></script>
-	<script src="inc/js/jquery.uxtable.js"></script>
-	<script src="inc/js/jquery.presupuestoObra.js"></script>
-	<script src="inc/js/jquery.notify.js"></script>
-	<script src="inc/js/avance_subcontratos.js"></script>
 </head>
 
 <body>
@@ -173,5 +162,17 @@
 
 	<div id="message-console"><span id="console-message"></span><span id="console-toggler" class="open"></span></div>
 	<div id="cache"></div>
+
+	<script src="inc/js/jquery-1.7.1.min.js"></script>
+	<script src="inc/js/jquery-ui/js/jquery-ui.min.js"></script>
+	<script src="inc/js/jquery-ui/js/i18n/jquery.ui.datepicker-es.min.js"></script>
+	
+	<script src="inc/js/general.js"></script>
+	<script src="inc/js/jquery.buttonlist.js"></script>
+	<script src="inc/js/jquery.listaTransacciones.js"></script>
+	<script src="inc/js/jquery.uxtable.js"></script>
+	<script src="inc/js/jquery.presupuestoObra.js"></script>
+	<script src="inc/js/jquery.notify.js"></script>
+	<script src="inc/js/avance_subcontratos.js"></script>
 </body>
 </html>
