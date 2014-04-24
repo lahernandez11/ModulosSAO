@@ -3,6 +3,7 @@
 <html lang="es-mx">
 <head>
 	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, inital-scale=1, maximum-scale=1"/>
 	<title>Estimaciones de Subcontratos</title>
 
 	<link rel="stylesheet" href="css/normalize.css" />
@@ -142,18 +143,6 @@
 								<option value="destino">Destino</option>
 							</select>
 
-							<!-- <div id="column-switchers" class="checkboxgroup">
-								<input type="checkbox" id="contratado" name="col-viz" />
-								<label for="contratado">Contratado</label>
-								<input type="checkbox" id="avance-volumen" name="col-viz" />
-								<label for="avance-volumen">Avance Volumen</label>
-								<input type="checkbox" id="avance-importe" name="col-viz" />
-								<label for="avance-importe">Avance Importe</label>
-								<input type="checkbox" id="saldo" name="col-viz" />
-								<label for="saldo">Saldo</label>
-								<input type="checkbox" id="destino" name="col-viz" />
-								<label for="destino">Destino</label>
-							</div> -->
 							<table id="tabla-conceptos">
 								<colgroup>
 									<col class="icon" />
@@ -234,6 +223,7 @@
 			<tbody></tbody>
 		</table>
 	</div>
+	
 	<div id="dialog-resumen" class="dialog" title="Resumen de Estimación">
 		<table id="resumen-total" class="tabla-resumen">
 			<colgroup>
@@ -263,7 +253,7 @@
 				</tr>
 				<tr class="total">
 					<th>Total</th>
-					<td class="numerico" id="rsTotal"></td>
+					<th class="numerico" id="rsTotal"></th>
 				</tr>
 			</tbody>
 		</table>
@@ -294,9 +284,14 @@
 					<th>Anticipo A Liberar</th>
 					<td class="numerico editable" id="txtAnticipoLiberar"></td>
 				</tr>
+				<tr class="total">
+					<th>Monto a Pagar</th>
+					<th class="numerico" id="rsTotalPago"></th>
+				</tr>
 			</tbody>
 		</table>
 	</div>
+	
 	<div id="dialog-deductivas" class="" title="Deductivas">
 		<div id="registros_deductivas" class="registros">
 			<select class="col-switch descuentos" multiple="multiple">
@@ -350,6 +345,7 @@
 			</form>
 		</div>
 	</div>
+	
 	<div id="dialog-nueva-deduccion" class="dialog" title="Nueva Deductiva">
 		<label for="">Concepto</label>
 		<input type="text" id="txtConceptoDeductiva" />
@@ -358,6 +354,7 @@
 		<label for="">Observaciones</label>
 		<textarea id="txtObservacionesDeductiva"></textarea>
 	</div>
+	
 	<div id="dialog-retenciones" class="dialog" title="Retenciones">
 		<div id="registros_retenciones" class="registros">
 			<table>
@@ -422,6 +419,7 @@
 		<label for="txtObservacionesRetencion">Observaciones</label>
 		<textarea id="txtObservacionesRetencion"></textarea>
 	</div>
+	
 	<div id="dialog-nueva-liberacion" class="dialog" title="Nueva Liberación">
 		<label for="txtImporteLiberacion">Importe</label>
 		<input type="text" id="txtImporteLiberacion" class="amount" value="0" />
@@ -464,6 +462,7 @@
 			<td class="destino" title="<%- RutaDestino %>"><%- RutaDestino %></td>
 		</tr>
 	</script>
+	
 	<script type="text/template" id="template-deductiva">
 		<tr data-id="<%- id_descuento %>" data-iditem="<%- id_item %>">
 			<td title="<%- descripcion %>"><%- descripcion %></td>
@@ -485,6 +484,7 @@
 			<th class="numerico"><%- importe_descuento %></th>
 		</tr>;
 	</script>
+	
 	<script type="text/template" id="template-retencion">
 		<tr data-id="<%- IDRetencion %>">
 			<td><%- TipoRetencion %></td>

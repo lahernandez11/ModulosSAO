@@ -849,6 +849,10 @@ var ESTIMACION = {
 		}).always( DATA_LOADER.hide );
 	},
 
+	renderTotales: function() {
+
+	},
+
 	setTotalesTransaccion: function( totales ) {
 		// Establece los totales de transaccion
 		if( totales.length ) {
@@ -985,10 +989,6 @@ var ESTIMACION = {
 
 var Deductivas = {
 
-	urls: {
-		insumoController: 'inc/lib/controllers/InsumoController.php',
-		almacenController: 'inc/lib/controllers/AlmacenController.php'
-	},
 	template: null,
 	col_switch: null,
 
@@ -1009,30 +1009,6 @@ var Deductivas = {
 			that.guardaDescuento();
 		});
 
-		$('#dialog-nueva-deduccion').dialog({
-			autoOpen: false,
-			modal: true,
-			resizable: false,
-			buttons: {
-				Aceptar: function() {
-					that.guardaDeductiva();
-				}
-			},
-			close: function() {
-				$('#tipo_deductiva input').prop('checked', false);
-				$('#tipo_deductiva').buttonset('refresh');
-				that.id_material = 0;
-				that.selectedTipoDeductiva = 0;
-			}
-		});
-
-		$("#txtConceptoDeductiva").autocomplete({
-		    minLength: 3,
-		    select: function( event, ui ) {
-		    	that.id_material = ui.item.id
-		    }
-		});
-
 		this.col_switch = $('.col-switch.descuentos');
 		this.col_switch.multipleSelect({
 	    	selectAll: false,
@@ -1048,8 +1024,6 @@ var Deductivas = {
 
 		this.ocultaColumnas();
 		this.muestraColumnasMarcadas();
-
-		// $('#registros_deductivas table').on('click', '.action.delete', that.eliminaDeductiva);
 	},
 
 	ocultaColumnas: function() {
@@ -1065,12 +1039,6 @@ var Deductivas = {
 	    	if ( this.selected )
 	    		$('#registros_deductivas').find('.' + this.value).removeAttr('style');
 	    });
-	},
-
-	showNuevaDeduccion: function() {
-		$("#txtConceptoDeductiva, #txtObservacionesDeductiva").val('');
-		$("#txtImporteDeductiva").val(0);
-		$('#dialog-nueva-deduccion').dialog('open');
 	},
 
 	guardaDescuento: function() {
@@ -1112,54 +1080,6 @@ var Deductivas = {
 			$('#dialog-deductivas').dialog('close');
 			messageConsole.displayMessage( "Los descuentos se guardaron correctamente", 'success' );
 		}).always( DATA_LOADER.hide );
-	},
-
-	guardaDeductiva: function() {
-
-		var that = this;
-
-		DATA_LOADER.show();
-
-		$.ajax({
-			type: 'POST',
-			url: ESTIMACION.urls.tranController,
-			data: {
-				base_datos: ESTIMACION.getBaseDatos(),
-				id_obra: ESTIMACION.getIdObra(),
-				id_transaccion: ESTIMACION.getIDTransaccion(),
-				id_material: that.id_material,
-				IDTipoDeductiva: that.selectedTipoDeductiva,
-				concepto: $('#txtConceptoDeductiva').val(),
-				importe: $('#txtImporteDeductiva').val(),
-				observaciones: $('#txtObservacionesDeductiva').val(),
-				action: 'guardaDeductiva'
-			},
-			dataType: 'json'
-		}).done( function(data) {
-
-			if( ! data.success ) {
-				messageConsole.displayMessage( data.message, 'error' );
-				return;
-			}
-			
-			var deductiva = {
-				id: data.IDDeductiva,
-				tipo: that.selectedTipoDeductiva,
-				concepto: $('#txtConceptoDeductiva').val(),
-				importe: $('#txtImporteDeductiva').val(),
-				observaciones: $('#txtObservacionesDeductiva').val()
-			}
-			// Ingresar la deduccion a la lista
-			that.renderDeductiva( deductiva );
-
-			ESTIMACION.cargaTotales();
-			
-			$('#dialog-nueva-deduccion').dialog('close');
-		}).always( DATA_LOADER.hide );
-	},
-
-	renderDeductiva: function( deductiva ) {
-		$('#registros_deductivas table tbody').append(this.template( deductiva ));
 	},
 
 	cargaDeductivas: function() {
@@ -1222,47 +1142,9 @@ var Deductivas = {
 		.always( DATA_LOADER.hide );
 	},
 
-	eliminaDeductiva: function( event ) {
-
-		var that = this;
-		var IDDeductiva = parseInt($(that).parents('tr').attr('data-id'));
-
-		if ( ! confirm('La deductiva sera eliminada, continuar?') ) {
-			return;
-		}
-
-		DATA_LOADER.show();
-
-		$.ajax({
-			type: 'POST',
-			url: ESTIMACION.urls.tranController,
-			data: {
-				base_datos: ESTIMACION.getBaseDatos(),
-				id_obra: ESTIMACION.getIdObra(),
-				id_transaccion: ESTIMACION.getIDTransaccion(),
-				IDDeductiva: IDDeductiva,
-				action: 'eliminaDeductiva'
-			},
-			dataType: 'json'
-		}).done( function( json ) {
-			try {
-
-				if( ! json.success ) {
-					messageConsole.displayMessage(json.message, 'error');
-					return;
-				}
-
-				$(that).parents('tr').remove();
-				ESTIMACION.cargaTotales();
-			} catch( e ) {
-				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
-			}
-		})
-		.fail( function() {
-			$.notify({text: 'Ocurrió un error al cargar los datos.'});
-		})
-		.always( DATA_LOADER.hide );
-	}
+	renderDeductiva: function( deductiva ) {
+		$('#registros_deductivas table tbody').append(this.template( deductiva ));
+	},
 }
 
 var Retenciones = {
