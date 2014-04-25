@@ -497,6 +497,74 @@
 		</tr>
 	</script>
 
+	<script type="text/template" id="template-resumen">
+		<table id="resumen-total" class="tabla-resumen">
+			<colgroup>
+				<col/>
+				<col class="monto"/>
+			</colgroup>
+			<tbody>
+				<tr>
+					<th>Suma de Importes</th>
+					<td class="numerico"><%- suma_importes %></td>
+				</tr>
+				<tr>
+					<th>Amortización de Anticipo</th>
+					<td class="numerico editable" id="txtAmortAnticipo"><%- amortizacion_anticipo %></td>
+				</tr>
+				<tr>
+					<th>Fondo de Garantia</th>
+					<td class="numerico editable" id="txtFondoGarantia"><%- fondo_garantia %></td>
+				</tr>
+				<tr>
+					<th>Subtotal</th>
+					<td class="numerico"><%- subtotal %></td>
+				</tr>
+				<tr>
+					<th>I.V.A.</th>
+					<td class="numerico"><%- iva %></td>
+				</tr>
+				<tr class="total">
+					<th>Total</th>
+					<th class="numerico"><%- total_estimacion %></th>
+				</tr>
+			</tbody>
+		</table>
+		<table class="tabla-resumen">
+			<caption>Deductivas y Retenciones</caption>
+			<colgroup>
+				<col/>
+				<col class="monto"/>
+			</colgroup>
+			<tbody>
+				<tr>
+					<th>Deductivas</th>
+					<td class="numerico"><%- suma_descuento %></td>
+				</tr>
+				<tr>
+					<th>Retenciones</th>
+					<td class="numerico"><%- suma_retencion %></td>
+				</tr>
+				<tr>
+					<th>Retenciones Liberadas</th>
+					<td class="numerico"><%- suma_retencion_liberada %></td>
+				</tr>
+				<tr>
+					<th>Retención de I.V.A.</th>
+					<td class="numerico editable" id="txtRetencionIVA"><%- retencion_iva %></td>
+				</tr>
+				<tr>
+					<th>Anticipo A Liberar</th>
+					<td class="numerico editable" id="txtAnticipoLiberar"><%- anticipo_liberar %></td>
+				</tr>
+				<tr class="total">
+					<th>Monto a Pagar</th>
+					<th class="numerico"><%- total_pagar %></th>
+				</tr>
+			</tbody>
+		</table>
+	</script>
+
 	<script src="inc/js/lib/underscore-min.js"></script>
 	<script src="inc/js/jquery-1.7.1.min.js"></script>
 	<script src="inc/js/jquery-ui/js/jquery-ui.min.js"></script>

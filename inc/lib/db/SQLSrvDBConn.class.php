@@ -11,6 +11,9 @@ require_once 'DBExceptions.class.php';
 */
 class SQLSrvDBConn {
 
+	const FETCH_MODE_OBJECT = "object";
+	const FETCH_MODE_ARRAY = "array";
+
 	protected static $instance;
 
 	protected $dbConn;
@@ -46,7 +49,7 @@ class SQLSrvDBConn {
 		return $this->stmt;
 	}
 
-	public function executeQuery( $tsql, $params = array() ) {
+	public function executeQuery( $tsql, $params = array(), $mode=self::FETCH_MODE_OBJECT ) {
 
 		$stmt = sqlsrv_query( $this->dbConn, $tsql, $params );
 
@@ -58,7 +61,9 @@ class SQLSrvDBConn {
 
 		$rowsCollection = array();
 
-		while ( $obj = sqlsrv_fetch_object( $stmt ) )
+		$mode_func = "sqlsrv_fetch_{$mode}";
+
+		while ( $obj = $mode_func( $stmt ) )
 			$rowsCollection[] = $obj;
 
 		return $rowsCollection;
@@ -81,7 +86,7 @@ class SQLSrvDBConn {
         return sqlsrv_get_field($stmt, 0);
 	}
 
-	public function executeSP( $tsql, $params = array() ) {
+	public function executeSP( $tsql, $params = array(), $mode=self::FETCH_MODE_OBJECT ) {
 
 		$stmt = sqlsrv_query( $this->dbConn, $tsql, $params );
 
@@ -91,7 +96,9 @@ class SQLSrvDBConn {
 
 		$rowsCollection = array();
 
-		while( $obj = sqlsrv_fetch_object( $stmt ) )
+		$mode_func = "sqlsrv_fetch_{$mode}";
+
+		while ( $obj = $mode_func( $stmt ) )
 			$rowsCollection[] = $obj;
 
 		return $rowsCollection;

@@ -50,7 +50,57 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
 	private function instanceFromID( Obra $obra, $id_transaccion ) {
 		parent::__construct( $obra, $id_transaccion );
+
+		$this->registraTransaccionAdicional();
 		$this->setDatosGenerales();
+	}
+
+	/*
+	 * Crea el registro adicional de la estimacion en la tabla
+	 * Estimaciones para una transaccion que fue registrada
+	 * en el SAO
+	*/
+	private function registraTransaccionAdicional() {
+
+		if ( ! $this->existeRegistroEstimacion() ) {
+			$tsql = "INSERT INTO [SubcontratosEstimaciones].[Estimaciones]
+					(
+					      [IDEstimacion],
+					      [NumeroFolioConsecutivo]
+					)
+					VALUES ( ?, ? );";
+
+		    $params = array(
+		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        array( $this->getNumeroFolio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+		    );
+
+		   	$this->conn->executeQuery( $tsql, $params );
+		}
+	}
+
+	/*
+	 * Verifica si la transaccion tiene un registro asociado
+	 * en la tabla adicional Estimaciones
+	*/
+	private function existeRegistroEstimacion() {
+
+		$tsql = "SELECT 1
+				 FROM
+				 	[SubcontratosEstimaciones].[Estimaciones]
+				 WHERE
+				 	[IDEstimacion] = ?";
+
+	    $params = array(
+	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	    );
+
+	    $res = $this->conn->executeQuery( $tsql, $params );
+
+	    if (count($res) > 0)
+	    	return true;
+	    else
+	    	return false;
 	}
 
 	// @override
@@ -225,137 +275,6 @@ class EstimacionSubcontrato extends TransaccionSAO {
 		return EstimacionDeductiva::getObjects( $this->empresa );
 	}
 
-	// public function agregaDeductivaMaterial( $id_material, $importe, $observaciones ) {
-
-	// 	if ( ! $this->esImporte( $importe ) ) {
-	// 		throw new Exception("Importe Incorrecto");
-	// 	} else {
-	// 		$tsql = "{call [SubcontratosEstimaciones].[uspRegistraDeductivaMaterial]( ?, ?, ?, ?, ? )}";
-
-	// 		$IDDeductiva = 0;
-
-	// 	    $params = array(
-	// 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	// 	        array( $id_material, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	// 	        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-	// 	        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-	// 	        array( $IDDeductiva, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
-	// 	    );
-
-	// 	    $this->conn->executeSP( $tsql, $params );
-	// 	}
-
-	//     return $IDDeductiva;
-	// }
-
-	// public function agregaDeductivaMaquinaria( $IDAlmacen, $importe, $observaciones ) {
-
-	// 	if ( ! $this->esImporte( $importe ) ) {
-	// 		throw new Exception("Importe Incorrecto");
-	// 	} else {
-
-	// 		$tsql = "{call [SubcontratosEstimaciones].[uspRegistraDeductivaMaquinaria]( ?, ?, ?, ?, ? )}";
-
-	// 		$IDDeductiva = 0;
-
-	// 	    $params = array(
-	// 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	// 	        array( $IDAlmacen, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	// 	        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-	// 	        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-	// 	        array( $IDDeductiva, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
-	// 	    );
-
-	// 	    $this->conn->executeSP( $tsql, $params );
-	// 	}
-
-	//     return $IDDeductiva;
-	// }
-
-	// public function agregaDeductivaManoObra( $IDCategoria, $importe, $observaciones ) {
-
-	// 	if ( ! $this->esImporte( $importe ) ) {
-	// 		throw new Exception("Importe Incorrecto");
-	// 	} else {
-
-	// 		$tsql = "{call [SubcontratosEstimaciones].[uspRegistraDeductivaManoObra]( ?, ?, ?, ?, ? )}";
-
-	// 		$IDDeductiva = 0;
-
-	// 	    $params = array(
-	// 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	// 	        array( $IDCategoria, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	// 	        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-	// 	        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-	// 	        array( $IDDeductiva, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
-	// 	    );
-
-	// 	    $this->conn->executeSP($tsql, $params);
-	// 	}
-
-	//     return $IDDeductiva;
-	// }
-
-	// public function agregaDeductivaSubcontratos( $concepto, $importe, $observaciones ) {
-
-	// 	if ( ! $this->esImporte( $importe ) ) {
-	// 		throw new Exception("Importe Incorrecto");
-	// 	} else {
-
-	// 		$tsql = "{call [SubcontratosEstimaciones].[uspRegistraDeductivaSubcontratos]( ?, ?, ?, ?, ? )}";
-
-	// 		$IDDeductiva = 0;
-
-	// 	    $params = array(
-	// 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	// 	        array( $concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-	// 	        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-	// 	        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-	// 	        array( $IDDeductiva, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
-	// 	    );
-
-	// 	    $this->conn->executeSP($tsql, $params);
-	// 	}
-
-	//     return $IDDeductiva;
-	// }
-
-	// public function agregaDeductivaOtros( $concepto, $importe, $observaciones ) {
-
-	// 	if ( ! $this->esImporte( $importe ) ) {
-	// 		throw new Exception("Importe Incorrecto");
-	// 	} else {
-
-	// 		$tsql = "{call [SubcontratosEstimaciones].[uspRegistraDeductivaOtros]( ?, ?, ?, ?, ? )}";
-
-	// 		$IDDeductiva = 0;
-			
-	// 	    $params = array(
-	// 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	// 	        array( $concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-	// 	        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-	// 	        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-	// 	        array( $IDDeductiva, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
-	// 	    );
-
-	// 	    $this->conn->executeSP( $tsql, $params );
-	// 	}
-
-	//     return $IDDeductiva;
-	// }
-
-	// public function eliminaDeductiva( $IDDeductiva ) {
-
-	// 	$tsql = "{call [SubcontratosEstimaciones].[uspEliminaDeductiva]( ?, ? )}";
-
-	//     $params = array(
-	//         array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	//         array( $IDDeductiva, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	//     );
-
-	//     $this->conn->executeSP( $tsql, $params );
-	// }
-
 	public function getRetenciones() {
 
 		$tsql = "{call [SubcontratosEstimaciones].[uspRetenciones]( ? )}";
@@ -492,9 +411,34 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
-	    $totales = $this->conn->executeSP( $tsql, $params );
+	    $totales = $this->conn->executeSP( $tsql, $params, SQLSrvDBConn::FETCH_MODE_ARRAY );
+	    $data = array();
 
-	    return $totales;
+	    foreach ( $totales as $total ) {
+				
+				$data = array(
+					'suma_importes'  			  			=> $total['SumaImportes'],
+					'fondo_garantia'  	  					=> $total['ImporteFondoGarantia'],
+					'amortizacion_anticipo' 				=> $total['ImporteAmortizacionAnticipo'],
+					'anticipo_liberar'  	  				=> $total['ImporteAnticipoLiberar'],
+					'suma_descuento'  			  			=> $total['SumaDeductivas'],
+					'suma_retencion'  			  			=> $total['SumaRetenciones'],
+					'suma_retencion_liberada'    			=> $total['SumaRetencionesLiberadas'],
+					'subtotal' 					  			=> $total['Subtotal'],
+					'iva' 						  			=> $total['IVA'],
+					'retencion_iva'  		  				=> $total['ImporteRetencionIVA'],
+					'total_estimacion'     				  	=> $total['Total'],
+					'ImporteAcumuladoEstimacionAnterior' 	=> $total['ImporteAcumuladoEstimacionAnterior'],
+					'ImporteAcumuladoDeductivaAnterior' 	=> $total['ImporteAcumuladoDeductivaAnterior'],
+					'ImporteAcumuladoRetencionAnterior' 	=> $total['ImporteAcumuladoRetencionAnterior'],
+					'ImporteAcumuladoAnticipoAnterior' 		=> $total['ImporteAcumuladoAnticipoAnterior'],
+					'ImporteAcumuladoFondoGarantiaAnterior' => $total['ImporteAcumuladoFondoGarantiaAnterior'],
+					'IVAAcumuladoAnterior' 					=> $total['IVAAcumuladoAnterior'],
+					'total_pagar' => 0
+				);
+			}
+
+	    return $data;
 	}
 
 	public function getNumeroFolioConsecutivo() {
@@ -523,7 +467,6 @@ class EstimacionSubcontrato extends TransaccionSAO {
 			$this->fecha_termino = $fecha;
 		else
 			throw new Exception("El formato de fecha término es incorrecto.");
-		
 	}
 
 	public function setConceptos( Array $conceptos ) {

@@ -7,10 +7,8 @@ var pubsub = PubSub();
 
 var ESTIMACION = {
 
-	isModified: false,
 	estimando: false,
-	requestingData: false,
-	IDSubcontrato: null,
+	id_subcontrato: null,
 
 	classes: {
 		conceptoModificado: 'modificado'
@@ -26,6 +24,7 @@ var ESTIMACION = {
 		tranController: 'inc/lib/controllers/EstimacionSubcontratoController.php'
 	},
 	templateConcepto: null,
+	templateResumen: null,
 
 	init: function() {
 
@@ -37,6 +36,7 @@ var ESTIMACION = {
 		this.deshabilitaCamposTransaccion();
 		this.limpiaDatosTransaccion();
 		this.templateConcepto = _.template($('#template-concepto').html());
+		this.templateResumen  = _.template($('#template-resumen').html());
 
 		// Suscripcion al evento transaccion modificada
 		var modifiedTranSubscription = pubsub.subscribe('modified_tran', modifiedTran);
@@ -324,18 +324,6 @@ var ESTIMACION = {
 			}
 		});
 
-		// Botones para ocultar/mostrar las columnas de la tabla
-		$('#column-switchers')
-		//  .buttonset()
-		//  .buttonset({disabled: true})
-		 .on('click', 'input', function( event ) {
-		 	$('#tabla-conceptos').css('width', 0);
-		 	$('#tabla-conceptos .' + this.id).toggleClass('hidden');
-		 	$('#tabla-conceptos').css('width', '100%');
-		 });
-
-		that.setConceptosVisibility();
-
 		// Handler para la tabla de seleccion de un subcontrato a estimar
 		$('#tabla-subcontratos tbody').on({
 			click: function( event ) {
@@ -345,15 +333,13 @@ var ESTIMACION = {
 			},
 			dblclick: function( event ) {
 				$('#dialog-subcontratos').dialog('close');
-				that.IDSubcontrato = parseInt($(this).attr('data-id'));
+				that.id_subcontrato = parseInt($(this).attr('data-id'));
 				that.nuevaTransaccion();
 				event.preventDefault();
 			}
 		}, 'tr');
 
-		$('#txtAmortAnticipo, #txtFondoGarantia, #txtRetencionIVA, #txtAnticipoLiberar')
-		.on('click', function(event) {
-		    
+		$('#dialog-resumen').on('click', '.editable', function(event) {
 		    var $that = $(this),
 		    	tipoTotal = this.id;
 
@@ -495,7 +481,6 @@ var ESTIMACION = {
 				
 				that.renderConceptos(json.conceptos);
 				that.habilitaCamposTransaccion();
-				that.setConceptosVisibility();
 				pubsub.publish('modified_tran');
 				
 				that.setURLFormatoPDF();
@@ -522,7 +507,7 @@ var ESTIMACION = {
 	},
 
 	limpiaDatosTransaccion: function() {
-		this.IDSubcontrato = null;
+		this.id_subcontrato = null;
 		$('#IDSubcontratoCDC').val('');
 		$('#txtObjetoSubcontrato').text('');
 		$('#txtNombreContratista').text('');
@@ -546,7 +531,7 @@ var ESTIMACION = {
 	},
 
 	getIDSubcontrato: function() {
-		return this.IDSubcontrato;
+		return this.id_subcontrato;
 	},
 
 	getIDTransaccion: function() {
@@ -654,12 +639,11 @@ var ESTIMACION = {
 				that.renderConceptos( json.conceptos );
 
 				// Establece los totales de transaccion
-				that.setTotalesTransaccion(json.totales);
+				that.renderTotales( json.totales );
 
 				that.habilitaCamposTransaccion();
 				that.deshabilitaFechaTransaccion();
 				that.setURLFormatoPDF();
-				that.setConceptosVisibility()
 
 			} catch( e ) {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
@@ -670,12 +654,6 @@ var ESTIMACION = {
 		})
 		.always( function() {
 			DATA_LOADER.hide();
-		});
-	},
-
-	setConceptosVisibility: function() {
-		$('#column-switchers input').not(':checked').each(function() {
-		     $('#tabla-conceptos .' + this.id).addClass('hidden');
 		});
 	},
 
@@ -719,8 +697,9 @@ var ESTIMACION = {
 					$.notify({text: json.message});
 					return;
 				}
+
 				// Establece los totales de transaccion
-				that.setTotalesTransaccion(json.totales);
+				that.renderTotales(json.totales);
 
 			} catch( e ) {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
@@ -792,7 +771,7 @@ var ESTIMACION = {
 				that.setURLFormatoPDF();
 			}
 
-	 		that.setTotalesTransaccion(json.totales);
+	 		that.renderTotales(json.totales);
 
 	 		if ( json.errores.length > 0 ) {
 	 			that.marcaConceptoError(json.errores);
@@ -849,29 +828,13 @@ var ESTIMACION = {
 		}).always( DATA_LOADER.hide );
 	},
 
-	renderTotales: function() {
+	renderTotales: function( totales ) {
+		var that = this;
+		$('#dialog-resumen').html(that.templateResumen(totales));
 
-	},
-
-	setTotalesTransaccion: function( totales ) {
-		// Establece los totales de transaccion
-		if( totales.length ) {
-			$('#txtSumaImportes').text(totales[0].SumaImportes);
-			$('#txtAmortAnticipo').text(totales[0].ImporteAmortizacionAnticipo);
-			$('#txtAnticipoLiberar').text(totales[0].ImporteAnticipoLiberar);
-			$('#txtFondoGarantia').text(totales[0].ImporteFondoGarantia);
-			$('#txtSumaDeductivas').text(totales[0].SumaDeductivas);
-			$('#txtSumaRetenciones').text(totales[0].SumaRetenciones);
-			$('#txtRetencionIVA').text(totales[0].ImporteRetencionIVA);
-			$('#txtRetencionesLiberadas').text(totales[0].SumaRetencionesLiberadas);
-			$('#rsSubtotal').text(totales[0].Subtotal);
-
-			this.setSubtotal(totales[0].Subtotal);
-			this.setIVA(totales[0].IVA);
-			$('#rsIVA').text(totales[0].IVA);
-			this.setTotal(totales[0].Total);
-			$('#rsTotal').text(totales[0].Total);
-		}
+		this.setSubtotal(totales.subtotal);
+		this.setIVA(totales.iva);
+		this.setTotal(totales.total_estimacion);
 	},
 
 	setSubtotal: function( monto ) {
@@ -983,9 +946,8 @@ var ESTIMACION = {
 		
 		return $('#guardar').hasClass('alert');
 	},
-
-
 };
+
 
 var Deductivas = {
 
@@ -1076,6 +1038,8 @@ var Deductivas = {
 				messageConsole.displayMessage( data.message, 'error' );
 				return;
 			}
+
+			ESTIMACION.cargaTotales();
 
 			$('#dialog-deductivas').dialog('close');
 			messageConsole.displayMessage( "Los descuentos se guardaron correctamente", 'success' );

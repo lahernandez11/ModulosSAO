@@ -57,5 +57,16 @@ abstract class Util {
 			return false;
 		}
 	}
+
+	public static function formatoNumericoTotales( array $totales ) {
+
+		$totales_formato = array();
+
+		foreach ( $totales as $key => $total ) {
+			$totales_formato[$key] = self::formatoNumerico($total);
+		}
+
+		return $totales_formato;
+	}
 }
 ?>

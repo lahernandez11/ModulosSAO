@@ -196,23 +196,8 @@ try {
 			}
 
 			$totales = $transaccion->getTotalesTransaccion();
+			$data['totales'] = Util::formatoNumericoTotales( $totales );
 
-			foreach ( $totales as $total ) {
-				
-				$data['totales'][] = array(
-					'SumaImportes'  			=> Util::formatoNumerico( $total->SumaImportes ),
-					'ImporteFondoGarantia'  	=> Util::formatoNumerico( $total->ImporteFondoGarantia ),
-					'ImporteAmortizacionAnticipo' => Util::formatoNumerico( $total->ImporteAmortizacionAnticipo ),
-					'ImporteAnticipoLiberar'  	=> Util::formatoNumerico( $total->ImporteAnticipoLiberar ),
-					'SumaDeductivas'  			=> Util::formatoNumerico( $total->SumaDeductivas ),
-					'SumaRetenciones'  			=> Util::formatoNumerico( $total->SumaRetenciones ),
-					'SumaRetencionesLiberadas'  => Util::formatoNumerico( $total->SumaRetencionesLiberadas ),
-					'Subtotal' 					=> Util::formatoNumerico( $total->Subtotal ),
-					'IVA' 						=> Util::formatoNumerico( $total->IVA ),
-					'ImporteRetencionIVA'  		=> Util::formatoNumerico( $total->ImporteRetencionIVA ),
-					'Total'     				=> Util::formatoNumerico( $total->Total )
-				);
-			}
 			break;
 
 		case 'getTotalesTransaccion':
@@ -224,23 +209,8 @@ try {
 			$data['totales']   = array();
 
 			$totales = $transaccion->getTotalesTransaccion();
+			$data['totales'] = Util::formatoNumericoTotales( $totales );
 
-			foreach ( $totales as $total ) {
-				
-				$data['totales'][] = array(
-					'SumaImportes'  			=> Util::formatoNumerico( $total->SumaImportes ),
-					'ImporteFondoGarantia'  	=> Util::formatoNumerico( $total->ImporteFondoGarantia ),
-					'ImporteAmortizacionAnticipo' => Util::formatoNumerico( $total->ImporteAmortizacionAnticipo ),
-					'ImporteAnticipoLiberar'  	=> Util::formatoNumerico( $total->ImporteAnticipoLiberar ),
-					'SumaDeductivas'  			=> Util::formatoNumerico( $total->SumaDeductivas ),
-					'SumaRetenciones'  			=> Util::formatoNumerico( $total->SumaRetenciones ),
-					'SumaRetencionesLiberadas'  => Util::formatoNumerico( $total->SumaRetencionesLiberadas ),
-					'Subtotal' 					=> Util::formatoNumerico( $total->Subtotal ),
-					'IVA' 						=> Util::formatoNumerico( $total->IVA ),
-					'ImporteRetencionIVA'  		=> Util::formatoNumerico( $total->ImporteRetencionIVA ),
-					'Total'     				=> Util::formatoNumerico( $total->Total )
-				);
-			}
 			break;
 
 		case 'guardaTransaccion':
@@ -288,19 +258,8 @@ try {
 			}
 
 			$totales = $transaccion->getTotalesTransaccion();
-
-			foreach ( $totales as $total ) {
-				
-				$data['totales'][] = array(
-					'SumaImportes'  			=> Util::formatoNumerico( $total->SumaImportes ),
-					'ImporteFondoGarantia'  	=> Util::formatoNumerico( $total->ImporteFondoGarantia ),
-					'ImporteAmortizacionAnticipo' => Util::formatoNumerico( $total->ImporteAmortizacionAnticipo ),
-					'SumaDeductivas'  			=> Util::formatoNumerico( $total->SumaDeductivas ),
-					'Subtotal' 					=> Util::formatoNumerico( $total->Subtotal ),
-					'IVA' 						=> Util::formatoNumerico( $total->IVA ),
-					'Total'     				=> Util::formatoNumerico( $total->Total )
-				);
-			}
+			$data['totales'] = Util::formatoNumericoTotales( $totales );
+			
 			break;
 
 		case 'actualizaImporte':

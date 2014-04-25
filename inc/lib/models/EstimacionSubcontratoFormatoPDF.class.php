@@ -281,21 +281,59 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->resetFontStyle();
 		$this->setFontSize(5);
 		$this->setCellHeight(3);
-		$this->setAligns( array("L", "R") );
+		$this->setAligns( array("L", "C", "R") );
+		
 		$sumaDeductivas = 0;
+		$subtotalDescuento = 0;
+		$subtotalDescuentoAcumuladoAnterior = 0;
+		$subtotalDescuentoAcumuladoActual = 0;
+		$subtotalDescuentoSaldo = 0;
 
 		$deductivas = $this->estimacion->getDeductivas();
 
 		foreach ( $deductivas as $deductiva ) {
-			
-			$sumaDeductivas += $deductiva->Importe;
+			$descuento = $deductiva->getDescuento( $this->estimacion );
+
+			$cantidad_por_descontar = 
+				  $deductiva->getCantidadTotal()
+				- $descuento->getCantidadDescontada();
+
+			if ( $cantidad_por_descontar < 0 ) { $cantidad_por_descontar = 0; }
+
+			$importe_por_descontar = $deductiva->getImporteTotal()
+				- $descuento->getImporteDescontado();
+
+			if ( $importe_por_descontar < 0 ) {	$importe_por_descontar = 0; }
 
 			$this->Row(
 				array(
-					$deductiva->Concepto, "", "", "", "", "", "", "",
-					Util::formatoNumerico($deductiva->Importe), "", "", "", ""
+					$deductiva->material->getDescripcion(),
+					$deductiva->getUnidad(),
+					Util::formatoNumerico( $deductiva->getPrecio() ),
+					Util::formatoNumerico( $deductiva->getCantidadTotal() ),
+					Util::formatoNumerico( $deductiva->getImporteTotal() ),
+					Util::formatoNumerico( $descuento->getCantidadDescontada() ),
+					Util::formatoNumerico( $descuento->getImporteDescontado() ),
+					Util::formatoNumerico( $descuento->getCantidad() ),
+					Util::formatoNumerico( $descuento->getImporte() ),
+					Util::formatoNumerico(
+						  $descuento->getCantidadDescontada()
+						+ $descuento->getCantidad()
+					),
+					Util::formatoNumerico(
+						  $descuento->getImporteDescontado()
+						+ $descuento->getImporte()
+					),
+					Util::formatoNumerico( $cantidad_por_descontar ),
+					Util::formatoNumerico( $importe_por_descontar )
 				)
 			);
+
+			$sumaDeductivas += $deductiva->getImporteTotal();
+			$subtotalDescuentoAcumuladoAnterior += $descuento->getImporteDescontado();
+			$subtotalDescuento += $descuento->getImporte();
+			$subtotalDescuentoAcumuladoActual += $descuento->getImporteDescontado() + $descuento->getImporte();
+			$subtotalDescuentoSaldo += $importe_por_descontar;
 		}
 
 		$this->setAligns(array("R"));
@@ -303,13 +341,12 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->Row(
 			array(
 				"Sub-Totales Deductivas", "", "", "",
-				Util::formatoNumerico( $this->estimacion->subcontrato->getImporteAcumuladoDeductivas() ),
-				"", "", "",
-				Util::formatoNumerico( $sumaDeductivas ),	"",
-				Util::formatoNumerico(
-					$this->estimacion->subcontrato->getImporteAcumuladoDeductivas()
-					+ $sumaDeductivas
-				), "", ""
+				Util::formatoNumerico( $sumaDeductivas ),
+				"",
+				Util::formatoNumerico( $subtotalDescuentoAcumuladoAnterior ), "",
+				Util::formatoNumerico( $subtotalDescuento ),	"",
+				Util::formatoNumerico( $subtotalDescuentoAcumuladoActual ), "",
+				Util::formatoNumerico( $subtotalDescuentoSaldo )
 			)
 		);
 		$this->Ln();
@@ -358,29 +395,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		);
 		$this->Ln();
 
-		$totalesEstimacion = $this->estimacion->getTotalesTransaccion();
-		$totales = array();
-
-		foreach ( $totalesEstimacion as $total ) {
-			
-			$totales = array(
-				'SumaImportes'  			  			=> $total->SumaImportes,
-				'ImporteFondoGarantia'  	  			=> $total->ImporteFondoGarantia,
-				'ImporteAmortizacionAnticipo' 			=> $total->ImporteAmortizacionAnticipo,
-				'ImporteAnticipoLiberar'  	  			=> $total->ImporteAnticipoLiberar,
-				'SumaDeductivas'  			  			=> $total->SumaDeductivas,
-				'SumaRetenciones'  			  			=> $total->SumaRetenciones,
-				'SumaRetencionesLiberadas'    			=> $total->SumaRetencionesLiberadas,
-				'Subtotal' 					  			=> $total->Subtotal,
-				'IVA' 						  			=> $total->IVA,
-				'ImporteRetencionIVA'  		  			=> $total->ImporteRetencionIVA,
-				'Total'     				  			=> $total->Total,
-				'ImporteAcumuladoEstimacionAnterior' 	=> $total->ImporteAcumuladoEstimacionAnterior,
-				'ImporteAcumuladoAnticipoAnterior'   	=> $total->ImporteAcumuladoAnticipoAnterior,
-				'ImporteAcumuladoFondoGarantiaAnterior' => $total->ImporteAcumuladoFondoGarantiaAnterior,
-				'IVAAcumuladoAnterior'				 	=> $total->IVAAcumuladoAnterior,
-			);
-		}
+		$totales = $this->estimacion->getTotalesTransaccion();
 
 		$this->setFontSize(7);
 		$this->setFontStyle("B");
@@ -404,7 +419,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 			array(
 				"Anticipo", "%", Util::formatoNumerico( $this->estimacion->getPctAnticipo() ), "",
 				Util::formatoNumerico( $this->estimacion->subcontrato->getImporteAnticipo() ), "", "", "",
-				Util::formatoNumerico( $totales['ImporteAnticipoLiberar'] ), "",
+				Util::formatoNumerico( $totales['anticipo_liberar'] ), "",
 				0, "",
 				0
 			)
@@ -415,10 +430,10 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 				"Amortización Anticipo", "", "", "",
 				Util::formatoNumerico( $this->estimacion->subcontrato->getImporteAcumuladoAnticipo() ), "",
 				Util::formatoNumerico( $totales['ImporteAcumuladoAnticipoAnterior'] ), "",
-				Util::formatoNumerico( $totales['ImporteAmortizacionAnticipo'] ), "",
+				Util::formatoNumerico( $totales['amortizacion_anticipo'] ), "",
 				Util::formatoNumerico(
 					  $totales['ImporteAcumuladoAnticipoAnterior']
-					+ $totales['ImporteAmortizacionAnticipo']
+					+ $totales['amortizacion_anticipo']
 				), "",
 				0
 			)
@@ -429,10 +444,10 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 				"Fondo de Garantia", "%", Util::formatoNumerico($this->estimacion->getPctFondoGarantia() ), "",
 				Util::formatoNumerico( $this->estimacion->subcontrato->getImporteFondoGarantia() ), "",
 				Util::formatoNumerico( $totales['ImporteAcumuladoFondoGarantiaAnterior'] ), "",
-				Util::formatoNumerico( $totales['ImporteFondoGarantia']), "",
+				Util::formatoNumerico( $totales['fondo_garantia']), "",
 				Util::formatoNumerico(
 					  $totales['ImporteAcumuladoFondoGarantiaAnterior']
-					+ $totales['ImporteFondoGarantia']
+					+ $totales['fondo_garantia']
 				), "",
 				0
 			)
@@ -440,8 +455,8 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 
 		$subtotal = 0;
 		$subtotal = $sumaEstaEstimacion - $sumaDeductivas - $sumaRetenciones 
-			- $totales['ImporteAmortizacionAnticipo']
-			- $totales['ImporteFondoGarantia'];
+			- $totales['amortizacion_anticipo']
+			- $totales['fondo_garantia'];
 
 		$this->Row(
 			array(
@@ -453,7 +468,14 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 					- $totales['ImporteAcumuladoFondoGarantiaAnterior']
 				), "",
 				Util::formatoNumerico($subtotal), "",
-				0, "",
+				Util::formatoNumerico(
+					  $subtotal
+					+ (
+						  $acumuladoEstimacionAnterior
+						- $totales['ImporteAcumuladoAnticipoAnterior']
+						- $totales['ImporteAcumuladoFondoGarantiaAnterior']
+					  )
+				), "",
 				0
 			)
 		);
@@ -463,26 +485,31 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 				"IVA", "%", Util::formatoNumerico($this->estimacion->getPctIVA() ), "",
 				Util::formatoNumerico( $this->estimacion->subcontrato->getIVA() ), "",
 				Util::formatoNumerico( $totales['IVAAcumuladoAnterior'] ), "",
-				Util::formatoNumerico( $totales['IVA']), "",
-				0, "",
+				Util::formatoNumerico( $totales['iva'] ), "",
+				Util::formatoNumerico(
+					  $totales['IVAAcumuladoAnterior']
+					+ $totales['iva']
+				), "",
 				0
 			)
 		);
 
 		$total = 0;
-		$total += $subtotal + $totales['IVA'];
+		$total += $subtotal + $totales['iva'];
 
 		$this->Row(
 			array(
 				"Retención de IVA", "", "", "", "", "",
 				0, "",
-				Util::formatoNumerico( $totales['ImporteRetencionIVA'] ), "",
-				0, "",
+				Util::formatoNumerico( $totales['retencion_iva'] ), "",
+				Util::formatoNumerico(
+					$totales['retencion_iva']
+				), "",
 				0
 			)
 		);
 
-		$total -= $totales['ImporteRetencionIVA'];
+		$total -= $totales['retencion_iva'];
 
 		$this->Row(
 			array(
