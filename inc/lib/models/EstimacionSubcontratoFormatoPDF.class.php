@@ -21,6 +21,9 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 	private $estimacion;
 	private $soloConceptosEstimados = 1;
 
+	private $sumaDeductivas  = 0;
+	private $sumaRetenciones = 0;
+
 	public function __construct( EstimacionSubcontrato $estimacion, $soloConceptosEstimados = 1 ) {
 		parent::__construct();
 
@@ -222,11 +225,11 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 			)
 		);
 
-		$sumaContrato = 0;
+		$sumaContrato 				 = 0;
 		$acumuladoEstimacionAnterior = 0;
-		$sumaEstaEstimacion = 0;
-		$acumuladoEstaEstimacion = 0;
-		$sumaSaldoPendiente = 0;
+		$sumaEstaEstimacion 		 = 0;
+		$acumuladoEstaEstimacion 	 = 0;
+		$sumaSaldoPendiente 		 = 0;
 
 		foreach ( $conceptos as $concepto ) {
 			
@@ -270,86 +273,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 
 		$this->Ln();
 
-		// -------------------------------------------------------------------
-		// ------ Lista de deductivas
-		// -------------------------------------------------------------------
-		$this->setFontSize(7);
-		$this->setFontStyle("B");
-		$this->Cell(0, 5, "DEDUCTIVAS");
-		$this->Ln();
-
-		$this->resetFontStyle();
-		$this->setFontSize(5);
-		$this->setCellHeight(3);
-		$this->setAligns( array("L", "C", "R") );
-		
-		$sumaDeductivas = 0;
-		$subtotalDescuento = 0;
-		$subtotalDescuentoAcumuladoAnterior = 0;
-		$subtotalDescuentoAcumuladoActual = 0;
-		$subtotalDescuentoSaldo = 0;
-
-		$deductivas = $this->estimacion->getDeductivas();
-
-		foreach ( $deductivas as $deductiva ) {
-			$descuento = $deductiva->getDescuento( $this->estimacion );
-
-			$cantidad_por_descontar = 
-				  $deductiva->getCantidadTotal()
-				- $descuento->getCantidadDescontada();
-
-			if ( $cantidad_por_descontar < 0 ) { $cantidad_por_descontar = 0; }
-
-			$importe_por_descontar = $deductiva->getImporteTotal()
-				- $descuento->getImporteDescontado();
-
-			if ( $importe_por_descontar < 0 ) {	$importe_por_descontar = 0; }
-
-			$this->Row(
-				array(
-					$deductiva->material->getDescripcion(),
-					$deductiva->getUnidad(),
-					Util::formatoNumerico( $deductiva->getPrecio() ),
-					Util::formatoNumerico( $deductiva->getCantidadTotal() ),
-					Util::formatoNumerico( $deductiva->getImporteTotal() ),
-					Util::formatoNumerico( $descuento->getCantidadDescontada() ),
-					Util::formatoNumerico( $descuento->getImporteDescontado() ),
-					Util::formatoNumerico( $descuento->getCantidad() ),
-					Util::formatoNumerico( $descuento->getImporte() ),
-					Util::formatoNumerico(
-						  $descuento->getCantidadDescontada()
-						+ $descuento->getCantidad()
-					),
-					Util::formatoNumerico(
-						  $descuento->getImporteDescontado()
-						+ $descuento->getImporte()
-					),
-					Util::formatoNumerico( $cantidad_por_descontar ),
-					Util::formatoNumerico( $importe_por_descontar )
-				)
-			);
-
-			$sumaDeductivas += $deductiva->getImporteTotal();
-			$subtotalDescuentoAcumuladoAnterior += $descuento->getImporteDescontado();
-			$subtotalDescuento += $descuento->getImporte();
-			$subtotalDescuentoAcumuladoActual += $descuento->getImporteDescontado() + $descuento->getImporte();
-			$subtotalDescuentoSaldo += $importe_por_descontar;
-		}
-
-		$this->setAligns(array("R"));
-		$this->setFontStyle("B");
-		$this->Row(
-			array(
-				"Sub-Totales Deductivas", "", "", "",
-				Util::formatoNumerico( $sumaDeductivas ),
-				"",
-				Util::formatoNumerico( $subtotalDescuentoAcumuladoAnterior ), "",
-				Util::formatoNumerico( $subtotalDescuento ),	"",
-				Util::formatoNumerico( $subtotalDescuentoAcumuladoActual ), "",
-				Util::formatoNumerico( $subtotalDescuentoSaldo )
-			)
-		);
-		$this->Ln();
+		$this->writeDeductivas();
 
 		// -------------------------------------------------------------------
 		// ------ Lista de retenciones
@@ -409,7 +333,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 				"Importe asociado a trabajos ejecutados", "", "", "",
 				Util::formatoNumerico( $this->estimacion->subcontrato->getSubtotal() ), "",
 				Util::formatoNumerico( $acumuladoEstimacionAnterior ), "",
-				Util::formatoNumerico( $sumaEstaEstimacion - $sumaDeductivas - $sumaRetenciones ), "",
+				Util::formatoNumerico( $sumaEstaEstimacion - $this->sumaDeductivas - $sumaRetenciones ), "",
 				Util::formatoNumerico( $acumuladoEstaEstimacion ), "",
 				Util::formatoNumerico( $sumaSaldoPendiente )
 			)
@@ -454,7 +378,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		);
 
 		$subtotal = 0;
-		$subtotal = $sumaEstaEstimacion - $sumaDeductivas - $sumaRetenciones 
+		$subtotal = $sumaEstaEstimacion - $this->sumaDeductivas - $sumaRetenciones 
 			- $totales['amortizacion_anticipo']
 			- $totales['fondo_garantia'];
 
@@ -510,6 +434,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		);
 
 		$total -= $totales['retencion_iva'];
+		$total += $this->estimacion->getAnticipoLiberar();
 
 		$this->Row(
 			array(
@@ -521,6 +446,92 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 				0
 			)
 		);
+	}
+
+	private function writeDeductivas() {
+
+		// -------------------------------------------------------------------
+		// ------ Lista de deductivas
+		// -------------------------------------------------------------------
+		$this->setFontSize(7);
+		$this->setFontStyle("B");
+		$this->Cell(0, 5, "DEDUCTIVAS");
+		$this->Ln();
+
+		$this->resetFontStyle();
+		$this->setFontSize(5);
+		$this->setCellHeight(3);
+		$this->setAligns( array("L", "C", "R") );
+		
+		$subtotalDescuento = 0;
+		$subtotalDescuentoAcumuladoAnterior = 0;
+		$subtotalDescuentoAcumuladoActual = 0;
+		$subtotalDescuentoSaldo = 0;
+
+		$deductivas = $this->estimacion->getDeductivas();
+
+		foreach ( $deductivas as $deductiva ) {
+			$descuento = $deductiva->getDescuento( $this->estimacion );
+
+			$cantidad_por_descontar = 
+				  $deductiva->getCantidadTotal()
+				- $descuento->getCantidadDescontada()
+				- $descuento->getCantidad();
+
+			if ( $cantidad_por_descontar < 0 ) { $cantidad_por_descontar = 0; }
+
+			$importe_por_descontar = 
+				  $deductiva->getImporteTotal()
+				- $descuento->getImporteDescontado()
+				- $descuento->getImporte();
+
+			if ( $importe_por_descontar < 0 ) {	$importe_por_descontar = 0; }
+
+			$this->Row(
+				array(
+					$deductiva->material->getDescripcion(),
+					$deductiva->getUnidad(),
+					Util::formatoNumerico( $deductiva->getPrecio() ),
+					Util::formatoNumerico( $deductiva->getCantidadTotal() ),
+					Util::formatoNumerico( $deductiva->getImporteTotal() ),
+					Util::formatoNumerico( $descuento->getCantidadDescontada() ),
+					Util::formatoNumerico( $descuento->getImporteDescontado() ),
+					Util::formatoNumerico( $descuento->getCantidad() ),
+					Util::formatoNumerico( $descuento->getImporte() ),
+					Util::formatoNumerico(
+						  $descuento->getCantidadDescontada()
+						+ $descuento->getCantidad()
+					),
+					Util::formatoNumerico(
+						  $descuento->getImporteDescontado()
+						+ $descuento->getImporte()
+					),
+					Util::formatoNumerico( $cantidad_por_descontar ),
+					Util::formatoNumerico( $importe_por_descontar )
+				)
+			);
+
+			$this->sumaDeductivas 				+= $descuento->getImporte();
+			$subtotalDescuentoAcumuladoAnterior += $descuento->getImporteDescontado();
+			$subtotalDescuento 					+= $descuento->getImporte();
+			$subtotalDescuentoAcumuladoActual 	+= $descuento->getImporteDescontado() + $descuento->getImporte();
+			$subtotalDescuentoSaldo 			+= $importe_por_descontar;
+		}
+
+		$this->setAligns(array("R"));
+		$this->setFontStyle("B");
+		$this->Row(
+			array(
+				"Sub-Totales Deductivas", "", "", "",
+				Util::formatoNumerico( $this->sumaDeductivas ),
+				"",
+				Util::formatoNumerico( $subtotalDescuentoAcumuladoAnterior ), "",
+				Util::formatoNumerico( $subtotalDescuento ),	"",
+				Util::formatoNumerico( $subtotalDescuentoAcumuladoActual ), "",
+				Util::formatoNumerico( $subtotalDescuentoSaldo )
+			)
+		);
+		$this->Ln();
 	}
 
 	public function footer() {

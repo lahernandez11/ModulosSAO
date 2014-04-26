@@ -105,6 +105,10 @@ class EstimacionDeductiva {
 		return $this->importe_total;
 	}
 
+	/*
+	 * Obtiene el descuento hecho a la deductiva en la estimacion
+	 * solo se carga un descuento por deductiva en cada estimacion
+	*/
 	public function getDescuento( EstimacionSubcontrato $estimacion ) {
 		return EstimacionDescuento::getInstance( $estimacion, $this );
 	}

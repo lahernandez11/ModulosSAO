@@ -134,7 +134,7 @@ try {
 
 			break;
 
-		case 'getDatosTransaccion':
+		case 'getTransaccion':
 			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
 			$obra = new Obra( $conn, (int) $_GET['id_obra'] );
 			$id_transaccion = (int) $_GET['id_transaccion'];
@@ -144,7 +144,7 @@ try {
 			$data['totales']   = array();
 			
 			$transaccion = new EstimacionSubcontrato( $obra, $id_transaccion );
-
+// print $transaccion;
 			$data['datos']['NumeroFolioConsecutivo'] = Util::formatoNumeroFolio( $transaccion->getNumeroFolioConsecutivo() );
 			$data['datos']['Fecha'] 			 = Util::formatoFecha( $transaccion->getFecha() );
 			$data['datos']['FechaInicio']   	 = Util::formatoFecha( $transaccion->getFechaInicio() );
@@ -241,8 +241,13 @@ try {
 				$transaccion->setFechaTermino( $fechaTermino );
 				$transaccion->setObservaciones( $observaciones );
 				$transaccion->setConceptos( $conceptos );
+				$transaccion->setImporteAmortizacionAnticipo( $_POST['amortizacion_anticipo'] );
+				$transaccion->setImporteFondoGarantia( $_POST['fondo_garantia'] );
+				$transaccion->setImporteRetencionIVA( $_POST['retencion_iva'] );
+				$transaccion->setImporteAnticipoLiberar( $_POST['anticipo_liberar'] );
 				
 				$data['errores'] = $transaccion->guardaTransaccion( Sesion::getUser() );
+
 			} else {
 				$subcontrato = new Subcontrato( $obra, $id_subcontrato );
 				
@@ -262,38 +267,22 @@ try {
 			
 			break;
 
-		case 'actualizaImporte':
+		case 'apruebaTransaccion':
 			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
 			$obra = new Obra( $conn, (int) $_POST['id_obra'] );
 
 			$id_transaccion = (int) $_POST['id_transaccion'];
-			$tipoTotal = $_POST['tipoTotal'];
-			$importe = Util::limpiaImporte( $_POST['importe'] );
-			
 			$transaccion = new EstimacionSubcontrato( $obra, $id_transaccion );
+			$transaccion->setAprobada( Sesion::getUser() );
+			break;
 
-			switch ( $tipoTotal ) {
+		case 'revierteAprobacion':
+			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
+			$obra = new Obra( $conn, (int) $_POST['id_obra'] );
 
-				case 'txtAmortAnticipo':
-					$transaccion->setImporteAmortizacionAnticipo( $importe );
-					break;
-
-				case 'txtFondoGarantia':
-					$transaccion->setImporteFondoGarantia( $importe );
-					break;
-
-				case 'txtRetencionIVA':
-					$transaccion->setImporteRetencionIVA( $importe );
-					break;
-
-				case 'txtAnticipoLiberar':
-					$transaccion->setImporteAnticipoLiberar( $importe );
-					break;
-
-				default:
-					throw new Exception("Total no válido");
-			}
-
+			$id_transaccion = (int) $_POST['id_transaccion'];
+			$transaccion = new EstimacionSubcontrato( $obra, $id_transaccion );
+			$transaccion->revierteAprobacion();
 			break;
 
 		case 'eliminaTransaccion':
@@ -353,81 +342,27 @@ try {
 			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
 			$obra = new Obra( $conn, (int) $_POST['id_obra'] );
 			$id_transaccion = (int) $_POST['id_transaccion'];
-			$descuentos = $_POST['descuentos'];
+			$deductivas 	= $_POST['descuentos'];
 
 			$transaccion = new EstimacionSubcontrato( $obra, $id_transaccion );
 			$desc = array();
-			foreach ( $descuentos as $key => $item ) {
-				$descuento = new EstimacionDescuento( 
-					$transaccion, 
-					new EstimacionDeductiva( $transaccion->empresa, $item['id_item'] )
-				);
 
-				$descuento->setCantidad( $item['cantidad_descuento'] );
-				$descuento->setPrecio( $item['precio_descuento'] );
-				$descuento->save();
-				// echo $descuento;
+			foreach ( $deductivas as $key => $item ) {
+				$deductiva = new EstimacionDeductiva( $transaccion->empresa, $item['id_item'] );
+
+				$descuento = $transaccion->addDescuento(
+					$deductiva, $item['cantidad_descuento'], $item['precio_descuento']
+				);
 				
 				$desc[$item['id_item']] = array(
-					'id_descuento' => $descuento->getId(),
+					'id_descuento' 		 => $descuento->getId(),
 					'cantidad_descuento' => $item['cantidad_descuento'],
 					'precio_descuento'   => $item['precio_descuento'],
 					'importe_descuento'  => $descuento->getImporte()
 				);
 			}
 
-			$data['descuentos'] = $desc;
-			break;
-
-		case 'guardaDeductiva':
-			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
-			$obra = new Obra( $conn, (int) $_POST['id_obra'] );
-			$id_transaccion = (int) $_POST['id_transaccion'];
-			$id_material    = (int) $_POST['id_material'];
-
-			$data['IDDeductiva'] = null;
-
-			$IDTipoDeductiva = (int) $_POST['IDTipoDeductiva'];
-
-			$importe       = Util::limpiaImporte($_POST['importe']);
-			$concepto      = $_POST['concepto'];
-			$observaciones = $_POST['observaciones'];
-
-			$transaccion = new EstimacionSubcontrato( $obra, $id_transaccion );
-
-			switch( $IDTipoDeductiva ) {
-
-				case 1:
-					$data['IDDeductiva'] = 
-						$transaccion->agregaDeductivaMaterial( $id_material, $importe, $observaciones );
-					break;
-				case 2:
-					$data['IDDeductiva'] =
-						$transaccion->agregaDeductivaManoObra( $id_material, $importe, $observaciones );
-					break;
-				case 3:
-					$data['IDDeductiva'] =
-						$transaccion->agregaDeductivaMaquinaria( $id_material, $importe, $observaciones );
-					break;
-				case 4:
-					$data['IDDeductiva'] =
-						$transaccion->agregaDeductivaSubcontratos( $concepto, $importe, $observaciones );
-					break;
-				case 5:
-					$data['IDDeductiva'] =
-						$transaccion->agregaDeductivaOtros( $concepto, $importe, $observaciones );
-					break;
-			}
-			break;
-
-		case 'eliminaDeductiva':
-			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
-			$obra = new Obra( $conn, (int) $_POST['id_obra'] );
-			$id_transaccion = (int) $_POST['id_transaccion'];
-			$IDDeductiva 	= (int) $_POST['IDDeductiva'];
-
-			$transaccion = new EstimacionSubcontrato( $obra, $id_transaccion );
-			$transaccion->eliminaDeductiva( $IDDeductiva );
+			$data['deductivas'] = $desc;
 			break;
 
 		case 'getRetenciones':

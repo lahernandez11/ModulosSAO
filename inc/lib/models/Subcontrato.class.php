@@ -10,37 +10,38 @@ class Subcontrato extends TransaccionSAO {
 	public $empresa;
 	public $moneda;
 
-	private $porcentaje_fondo_garantia;
-	private $importe_fondo_garantia;
-	private $porcentaje_anticipo;
-	private $importe_anticipo;
-	private $importe_acumulado_estimado;
-	private $importe_acumulado_anticipo;
-	private $importe_acumulado_fondo_garantia;
-	private $importe_acumulado_retencion;
-	private $importe_acumulado_deductiva;
-	private $subtotal;
-	private $iva;
-	private $total;
+	private $porcentaje_fondo_garantia = 0;
+	private $importe_fondo_garantia = 0;
+	private $porcentaje_anticipo = 0;
+	private $importe_anticipo = 0;
+	private $importe_acumulado_estimado = 0;
+	private $importe_acumulado_anticipo = 0;
+	private $importe_acumulado_fondo_garantia = 0;
+	private $importe_acumulado_retencion = 0;
+	private $importe_acumulado_deductiva = 0;
+	private $subtotal = 0;
+	private $iva = 0;
+	private $porcentaje_iva = 0;
+	private $total = 0;
 
 	// datos adicionales
 	private $tipo_contrato;
 	private $descripcion;
 	private $id_clasificador;
 	private $clasificador;
-	private $monto_subcontrato;
-	private $monto_anticipo;
-	private $porcentaje_retencion_fg;
+	private $monto_subcontrato = 0;
+	private $monto_anticipo = 0;
+	private $porcentaje_retencion_fg = 0;
 	private $fecha_inicio_cliente;
 	private $fecha_termino_cliente;
 	private $fecha_inicio_proyecto;
 	private $fecha_termino_proyecto;
 	private $fecha_inicio_contratista;
 	private $fecha_termino_contratista;
-	private $monto_venta_cliente;
-	private $monto_venta_actual_cliente;
-	private $monto_inicial_pio;
-	private $monto_actual_pio;
+	private $monto_venta_cliente = 0;
+	private $monto_venta_actual_cliente = 0;
+	private $monto_inicial_pio = 0;
+	private $monto_actual_pio = 0;
 
 	public function __construct() {
 		
@@ -105,6 +106,7 @@ class Subcontrato extends TransaccionSAO {
 					, [transacciones].[retencion] AS [PctFondoGarantia]
 					, ([transacciones].[monto] - [transacciones].[impuesto]) AS [subtotal]
 					, [transacciones].[impuesto]
+					, ([transacciones].[impuesto] / ([transacciones].[monto] - [transacciones].[impuesto])) as [porcentaje_iva]
 					, [transacciones].[monto]
 					, ([transacciones].[monto] - [transacciones].[impuesto])
 						*
@@ -241,6 +243,7 @@ class Subcontrato extends TransaccionSAO {
 	    $this->importe_anticipo 	 		= $datos[0]->ImporteAnticipo;
 	    $this->subtotal 	 		 		= $datos[0]->subtotal;
 	    $this->iva 	 			 			= $datos[0]->impuesto;
+	    $this->porcentaje_iva 	 			= $datos[0]->porcentaje_iva;
 	    $this->total 	 			 		= $datos[0]->monto;
 
 	    $this->importe_acumulado_estimado 	= $datos[0]->ImporteAcumuladoEstimado;
@@ -347,6 +350,10 @@ class Subcontrato extends TransaccionSAO {
 
 	public function getIVA() {
 		return $this->iva;
+	}
+
+	public function getPorcentajeIVA() {
+		return $this->porcentaje_iva;
 	}
 
 	public function getTotal() {

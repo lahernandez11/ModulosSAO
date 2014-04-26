@@ -2,10 +2,10 @@
 abstract class TransaccionSAO {
 	const TIPO_TRANSACCION = 0;
 
-	public $obra;
+	public    $obra;
 	protected $id_transaccion;
 	protected $tipo_transaccion;
-	protected $_estado = 0;
+	protected $estado = 0;
 	protected $_numeroFolio = 0;
 	protected $_fecha = null;
 	protected $referencia;
@@ -83,7 +83,7 @@ abstract class TransaccionSAO {
 
 				$this->tipo_transaccion = $datosTran->tipo_transaccion;
 				$this->referencia = $datosTran->referencia;
-				$this->_estado 		    = $datosTran->estado;
+				$this->estado 		    = $datosTran->estado;
 				$this->_numeroFolio     = $datosTran->numero_folio;
 				$this->setFecha( $datosTran->fecha );
 				$this->_observaciones   = $datosTran->observaciones;
@@ -204,15 +204,23 @@ abstract class TransaccionSAO {
 		return $listaTran;
 	}
 
+	public static function generaComentario( Usuario $usuario, $operacion ) {
+
+		$fecha = date("d/m/Y H:i");
+		$comentario = "{$operacion};{$fecha};{$usuario->getUsername()}|";
+
+		return $comentario;
+	}
+
 	public function __toString() {
 
-		$data =  "IDTransaccion: {$this->id_transaccion}, ";
-		$data .= "TipoTransaccion: {$this->tipo_transaccion}, ";
-		$data .= "IDObra: {$this->obra->getId()}, ";
-		$data .= "Estado: {$this->_estado}, ";
-		$data .= "Fecha: {$this->_fecha}, ";
-		$data .= "NumeroFolio: {$this->_numeroFolio}, ";
-		$data .= "Observaciones: {$this->_observaciones}";
+		$data =  "id_ransaccion: {$this->id_transaccion}, ";
+		$data .= "tipo_transaccion: {$this->tipo_transaccion}, ";
+		$data .= "id_obra: {$this->obra->getId()}, ";
+		$data .= "estado: {$this->estado}, ";
+		$data .= "fecha: {$this->_fecha}, ";
+		$data .= "numero_folio: {$this->_numeroFolio}, ";
+		$data .= "observaciones: {$this->_observaciones}, ";
 
 		return $data;
 	}

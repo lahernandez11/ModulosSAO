@@ -6,13 +6,13 @@ class EstimacionDescuento {
 	
 	private $id;
 	public  $obra;
-	private $estimacion;
-	private $deductiva;
-	private $cantidad = 0;
-	private $precio   = 0;
-	private $importe  = 0;
-	private $cantidad_descontada_anterior = 0;
-	private $importe_descontado_anterior = 0;
+	private $estimacion;    // estimacion donde se aplica el descuento
+	private $deductiva;     // deductiva donde se aplica el descuento
+	private $cantidad = 0;  // cantidad descontada
+	private $precio   = 0;  // precio del descuento
+	private $importe  = 0;  // importe del descuento
+	private $cantidad_descontada_anterior = 0;  // suma de cantidad descontado en otras estimaciones
+	private $importe_descontado_anterior  = 0;  // suma de importe descontado en otras estimaciones
 	private $creado;
 
 	private $conn;
@@ -73,16 +73,16 @@ class EstimacionDescuento {
 					ON
 						[descuento].[id_transaccion] = [transacciones].[id_transaccion]
 				WHERE
-					--[descuento].[id_transaccion] != ?
-						--AND
+					[descuento].[id_transaccion] != ?
+						AND
 					[descuento].[id_item] = ?
 					--	AND
 					--DATEDIFF(DAY, ?, [transacciones].[fecha]) <= 0;";
 
 		$params = array(
-	        // array( $this->estimacion->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->deductiva->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->estimacion->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_SMALLDATETIME ),
+	        array( $this->estimacion->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->deductiva->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        // array( $this->estimacion->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_SMALLDATETIME ),
 	    );
 
 	    $row = $this->conn->executeQuery( $tsql, $params );
@@ -147,14 +147,6 @@ class EstimacionDescuento {
 
 	public function getId() {
 		return $this->id;
-	}
-
-	public function setEstimacion( EstimacionSubcontrato $estimacion ) {
-		$this->estimacion = $estimacion;
-	}
-
-	public function setDeductiva( EstimacionDeductiva $deductiva ) {
-		$this->deductiva = $deductiva;
 	}
 
 	public function setCantidad( $cantidad ) {

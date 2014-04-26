@@ -131,6 +131,18 @@ class SQLSrvDBConn {
 		return $this->dbConf->__toString();
 	}
 
+	public function beginTransaction() {
+		sqlsrv_begin_transaction( $this->dbConn );
+	}
+
+	public function commitTransaction() {
+		sqlsrv_commit( $this->dbConn );
+	}
+
+	public function rollbackTransaction() {
+		sqlsrv_rollback( $this->dbConn );
+	}
+
 	public function __destruct() {
 		
 		if( is_resource( $this->dbConn ) )

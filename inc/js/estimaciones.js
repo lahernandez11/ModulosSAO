@@ -13,13 +13,6 @@ var ESTIMACION = {
 	classes: {
 		conceptoModificado: 'modificado'
 	},
-	colClasses: {
-		contratado: 'contratado',
-		avance_volumen: 'avance-volumen',
-		avance_importe: 'avance-importe',
-		saldo: 'saldo',
-		destino: 'destino'
-	},
 	urls: {
 		tranController: 'inc/lib/controllers/EstimacionSubcontratoController.php'
 	},
@@ -316,12 +309,7 @@ var ESTIMACION = {
 		$('#dialog-resumen').dialog({
 			autoOpen: false,
 			modal: true,
-			width: 400,
-			buttons: {
-				Cerrar: function() {
-					$(this).dialog('close');
-				}
-			}
+			width: 400
 		});
 
 		// Handler para la tabla de seleccion de un subcontrato a estimar
@@ -381,40 +369,27 @@ var ESTIMACION = {
 			}
 
 			function setValue() {
-				$that.text(inputText.val().numFormat());
+				$that.text(inputText.val());
 			}
 
 			function updateValue() {
+    			setValue();
+    			that.guardaTransaccion();
+			}
+		});
 
-				DATA_LOADER.show();
+		$('#dialog-resumen').on('click', '.button', function(event) {
+			
+			if ( this.id === 'btn-aprobar' ) {
+				if ( confirm("La estimación sera aprobada. Desea continuar?...") ) {
+					that.apruebaTransaccion();
+				}
+			}
 
-		    	$.ajax({
-		    		type: 'POST',
-		    		url: that.urls.tranController,
-		    		data: {
-		    			base_datos: that.getBaseDatos(),
-		    			id_obra: that.getIdObra(),
-		    			id_transaccion: that.getIDTransaccion(),
-		    			tipoTotal: tipoTotal,
-		    			importe: inputText.val(),
-		    			action: 'actualizaImporte'
-		    		},
-		    		dataType: 'json'
-		    	})
-		    	.done( function( json ) {
-
-		    		if ( ! json.success ) {
-		    			messageConsole.displayMessage(json.message, 'error');
-		    			restorePrevValue();
-		    		} else {
-		    			setValue();
-		    			that.cargaTotales();
-		    		}
-		    	})
-		    	.always( function() {
-		    		removeInput();
-		    		DATA_LOADER.hide();
-		    	});
+			if ( this.id === 'btn-revertir-aprobar' ) {
+				if ( confirm("La aprobacion de esta transaccion sera revertida. Desea continuar?...") ) {
+					that.revierteAprobacion();
+				}
 			}
 		});
 
@@ -610,7 +585,7 @@ var ESTIMACION = {
 				id_obra: that.getIdObra(),
 				base_datos: that.getBaseDatos(),
 				id_transaccion: that.getIDTransaccion(),
-				action: 'getDatosTransaccion'
+				action: 'getTransaccion'
 			},
 			dataType: 'json'
 		}).done( function( json ) {
@@ -748,6 +723,10 @@ var ESTIMACION = {
 					'Observaciones': $('#txtObservaciones').val()
 				},
 				conceptos: that.getConceptosEstimados(),
+				amortizacion_anticipo: $('#txtAmortAnticipo').text(),
+				fondo_garantia: $('#txtFondoGarantia').text(),
+				retencion_iva: $('#txtRetencionIVA').text(),
+				anticipo_liberar: $('#txtAnticipoLiberar').text(),
 				action: 'guardaTransaccion'
 			},
 			dataType: 'json'
@@ -782,6 +761,56 @@ var ESTIMACION = {
 	 			messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success');
 	 		}
 	 		
+		}).always( DATA_LOADER.hide );
+	},
+
+	apruebaTransaccion: function() {
+		var that = this;
+
+		DATA_LOADER.show();
+
+		$.ajax({
+			type: 'POST',
+			url: that.urls.tranController,
+			data: {
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIdObra(),
+				id_transaccion: that.getIDTransaccion(),
+				action: 'apruebaTransaccion'
+			},
+			dataType: 'json'
+		}).done( function(json) {
+
+			if( ! json.success ) {
+				messageConsole.displayMessage( json.message, 'error' );
+				return;
+			}
+	 		messageConsole.displayMessage( 'La transacción se aprobó correctamente.', 'success');
+		}).always( DATA_LOADER.hide );
+	},
+
+	revierteAprobacion: function() {
+		var that = this;
+
+		DATA_LOADER.show();
+
+		$.ajax({
+			type: 'POST',
+			url: that.urls.tranController,
+			data: {
+				base_datos: that.getBaseDatos(),
+				id_obra: that.getIdObra(),
+				id_transaccion: that.getIDTransaccion(),
+				action: 'revierteAprobacion'
+			},
+			dataType: 'json'
+		}).done( function(json) {
+
+			if( ! json.success ) {
+				messageConsole.displayMessage( json.message, 'error' );
+				return;
+			}
+	 		messageConsole.displayMessage( 'La aprobacion se revirtió correctamente.', 'success');
 		}).always( DATA_LOADER.hide );
 	},
 

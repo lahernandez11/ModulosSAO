@@ -224,73 +224,7 @@
 		</table>
 	</div>
 	
-	<div id="dialog-resumen" class="dialog" title="Resumen de Estimación">
-		<table id="resumen-total" class="tabla-resumen">
-			<colgroup>
-				<col/>
-				<col class="monto"/>
-			</colgroup>
-			<tbody>
-				<tr>
-					<th>Suma de Importes</th>
-					<td class="numerico" id="txtSumaImportes"></td>
-				</tr>
-				<tr>
-					<th>Amortización de Anticipo</th>
-					<td class="numerico editable" id="txtAmortAnticipo"></td>
-				</tr>
-				<tr>
-					<th>Fondo de Garantia</th>
-					<td class="numerico editable" id="txtFondoGarantia"></td>
-				</tr>
-				<tr>
-					<th>Subtotal</th>
-					<td class="numerico" id="rsSubtotal"></td>
-				</tr>
-				<tr>
-					<th>I.V.A.</th>
-					<td class="numerico" id="rsIVA"></td>
-				</tr>
-				<tr class="total">
-					<th>Total</th>
-					<th class="numerico" id="rsTotal"></th>
-				</tr>
-			</tbody>
-		</table>
-		<table class="tabla-resumen">
-			<caption>Deductivas y Retenciones</caption>
-			<colgroup>
-				<col/>
-				<col class="monto"/>
-			</colgroup>
-			<tbody>
-				<tr>
-					<th>Deductivas</th>
-					<td class="numerico" id="txtSumaDeductivas"></td>
-				</tr>
-				<tr>
-					<th>Retenciones</th>
-					<td class="numerico" id="txtSumaRetenciones"></td>
-				</tr>
-				<tr>
-					<th>Retenciones Liberadas</th>
-					<td class="numerico" id="txtRetencionesLiberadas"></td>
-				</tr>
-				<tr>
-					<th>Retención de I.V.A.</th>
-					<td class="numerico editable" id="txtRetencionIVA"></td>
-				</tr>
-				<tr>
-					<th>Anticipo A Liberar</th>
-					<td class="numerico editable" id="txtAnticipoLiberar"></td>
-				</tr>
-				<tr class="total">
-					<th>Monto a Pagar</th>
-					<th class="numerico" id="rsTotalPago"></th>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+	<div id="dialog-resumen" class="dialog" title="Resumen de Estimación"></div>
 	
 	<div id="dialog-deductivas" class="" title="Deductivas">
 		<div id="registros_deductivas" class="registros">
@@ -339,8 +273,8 @@
 					</thead>
 					<tbody></tbody>
 				</table>
-				<div style="margin-top: 0.5em; text-align: right;">
-					<input type="submit" class="button" value="Guardar" />
+				<div style="margin-top: 1em; text-align: right;border-top: 1px solid #222;padding: 0.5em 0;">
+					<input type="submit" class="button dd-list" value="Guardar" />
 				</div>
 			</form>
 		</div>
@@ -563,6 +497,11 @@
 				</tr>
 			</tbody>
 		</table>
+		<div style="margin-top: 1em; text-align: right;border-top: 1px solid #222;padding: 0.5em 0;">
+			<input type="button" class="button alert" id="btn-revertir-aprobar" value="Revertir Aprobación" />
+			<input type="button" class="button dd-list" id="btn-aprobar" value="Aprobar" autofocus />
+			<!--<input type="button" class="button" value="Cerrar" autofocus />-->
+		</div>
 	</script>
 
 	<script src="inc/js/lib/underscore-min.js"></script>
