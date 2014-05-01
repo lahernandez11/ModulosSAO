@@ -259,7 +259,7 @@ var ESTIMACION = {
 			if( ! that.getIDTransaccion() ) {
 				$.notify({text: 'Debe cargar una estimación.'});
 			} else
-				Retenciones.cargaRetenciones();
+				Retenciones.load();
 		});
 
 		$('#btnFormatoPDF').on('click', function(event) {
@@ -864,6 +864,7 @@ var ESTIMACION = {
 		this.setSubtotal(totales.subtotal);
 		this.setIVA(totales.iva);
 		this.setTotal(totales.total_estimacion);
+		$('#txtImportePorLiberar').text(totales.acumulado_por_liberar);
 	},
 
 	setSubtotal: function( monto ) {
@@ -1141,7 +1142,9 @@ var Deductivas = {
 }
 
 var Retenciones = {
-	template: _.template($('#template-retencion').html()),
+	template_retencion: _.template($('#template-retencion').html()),
+	template_liberacion: _.template($('#template-liberacion').html()),
+	template_tipo_retencion: _.template($('#template-tipo-retencion').html()),
 	
 	init: function() {
 
@@ -1161,23 +1164,24 @@ var Retenciones = {
 		$('#dialog-nueva-retencion').dialog({
 			autoOpen: false,
 			modal: true,
-			resizable: false,
-			buttons: {
-				Aceptar: function() {
-					that.guardaRetencion();
-				}
-			}
+			width: 350,
+			resizable: false
 		});
 
 		$('#dialog-nueva-liberacion').dialog({
 			autoOpen: false,
 			modal: true,
-			resizable: false,
-			buttons: {
-				Aceptar: function() {
-					that.guardaLiberacion();
-				}
-			}
+			width: 480
+		});
+
+		$('#form-nueva-retencion').on('submit', function(event) {
+			event.preventDefault();
+			that.guardaRetencion();
+		});
+
+		$('#form-nueva-liberacion').on('submit', function(event) {
+			event.preventDefault();
+			that.guardaLiberacion();
 		});
 
 		$('#tipos-retencion').buttonlist({
@@ -1189,8 +1193,8 @@ var Retenciones = {
 			},
 			onCreateListItem: function() {
 				return {
-					id: this.IDTipoRetencion,
-					value: this.TipoRetencion
+					id: this.id,
+					value: this.descripcion
 				}
 			}
 		});
@@ -1207,18 +1211,23 @@ var Retenciones = {
 	},
 
 	showNuevaRetencion: function() {
-		$("#txtConceptoRetencion, #txtObservacionesRetencion").val('');
-		$('#txtImporteRetencion').val(0);
-		$('#tipos-retencion').buttonlist('refresh');
-		$('#dialog-nueva-retencion').dialog('open');
-
-		$('#tipos-retencion').buttonlist('option', 'data', {base_datos: ESTIMACION.getBaseDatos(), action: 'getTiposRetencion'});
-
+		$("#txtConceptoRetencion").val('');
+		$('#txtImporteRetencion').val('');
+		this.getTiposRetencion();
 	},
 
-	showNuevaLiberacion: function() {
-		$("#txtObservacionesLiberacion").val('');
-		$('#txtImporteLiberacion').val(0);
+	renderTiposRetencion: function( tipos ) {
+		var html = '';
+
+		for ( tipo in tipos ) {
+			html += this.template_tipo_retencion( tipos[tipo] );
+		}
+
+		$('#tipo_retencion').html( html );
+	},
+
+	getTiposRetencion: function() {
+		var that  = this;
 
 		DATA_LOADER.show();
 
@@ -1228,20 +1237,48 @@ var Retenciones = {
 				base_datos: ESTIMACION.getBaseDatos(),
 				id_obra: ESTIMACION.getIdObra(),
 				id_transaccion: ESTIMACION.getIDTransaccion(),
-				action: 'getImportePorLiberar'
+				action: 'getTiposRetencion'
 			},
 			dataType: 'json'
 		}).done( function(json) {
-
-			$('#txtImportePorLiberar').text(json.importePorLiberar);
-			$('#dialog-nueva-liberacion').dialog('open');
+			that.renderTiposRetencion( json.tipos_retencion );
+			$('#dialog-nueva-retencion').dialog('open');
 		}).always( DATA_LOADER.hide );
 	},
 
-	renderRetencion: function( retencion ) {
-		var html = this.template(retencion);
+	showNuevaLiberacion: function() {
+		$("#txtObservacionesLiberacion").val('');
+		$('#txtImporteLiberacion').val('');
 
-		$('#registros_retenciones tbody').append(html);
+		$('#dialog-nueva-liberacion').dialog('open');
+	},
+
+	renderRetencion: function( retencion ) {
+		$('#registros_retenciones tbody').append( this.template_retencion( retencion ) );
+	},
+
+	renderRetencionList: function( retenciones ) {
+		var html = '';
+
+		for ( retencion in retenciones ) {
+			html += this.template_retencion( retenciones[retencion] );
+		}
+
+		$('#registros_retenciones tbody').html(html);
+	},
+
+	renderLiberacion: function( liberacion ) {
+		$('#registros_liberaciones tbody').append( this.template_liberacion( liberacion ) );
+	},
+
+	renderLiberacionList: function( liberaciones ) {
+		var html = '';
+
+		for ( liberacion in liberaciones ) {
+			html += this.template_liberacion( liberaciones[liberacion] );
+		}
+
+		$('#registros_liberaciones tbody').html(html);
 	},
 
 	agregaLiberacion: function( libObj ) {
@@ -1268,10 +1305,9 @@ var Retenciones = {
 				base_datos: ESTIMACION.getBaseDatos(),
 				id_obra: ESTIMACION.getIdObra(),
 				id_transaccion: ESTIMACION.getIDTransaccion(),
-				IDTipoRetencion: parseInt($('#tipos-retencion').buttonlist('option', 'selectedItem').value),
+				id_tipo_retencion: $('#tipo_retencion option:selected').val(),
 				importe: $('#txtImporteRetencion').val(),
 				concepto: $('#txtConceptoRetencion').val(),
-				observaciones: $('#txtObservacionesRetencion').val(),
 				action: 'guardaRetencion'
 			},
 			dataType: 'json'
@@ -1279,16 +1315,8 @@ var Retenciones = {
 			try {
 				
 				if( ! json.success ) { messageConsole.displayMessage(json.message, 'error'); return false; }
-				
-				var retObj = {
-					'IDRetencion': json.IDRetencion,
-					'TipoRetencion': $('#tipos-retencion').buttonlist('option', 'selectedItem').label,
-					'importe': $('#txtImporteRetencion').val().numFormat(),
-					'concepto': $('#txtConceptoRetencion').val(),
-					'observaciones': $('#txtObservacionesRetencion').val()
-				};
 
-				that.renderRetencion( retObj );
+				that.renderRetencion( json.retencion );
 				
 				$('#dialog-nueva-retencion').dialog('close');
 
@@ -1320,14 +1348,8 @@ var Retenciones = {
 			try {
 				
 				if( ! json.success ) { messageConsole.displayMessage(json.message, 'error'); return false; }
-				
-				var libObj = {
-					'IDLiberacion': json.IDLiberacion,
-					'importe': $('#txtImporteLiberacion').val().numFormat(),
-					'observaciones': $('#txtObservacionesLiberacion').val()
-				};
 
-				that.agregaLiberacion( libObj );
+				that.renderLiberacion( json.liberacion );
 				
 				$('#dialog-nueva-liberacion').dialog('close');
 
@@ -1343,7 +1365,6 @@ var Retenciones = {
 
 		var that = this;
 
-		var IDRetencion = parseInt($(that).parents('tr').attr('data-id'));
 
 		if ( ! confirm('La retención sera eliminada, continuar?') ) {
 			return;
@@ -1358,7 +1379,7 @@ var Retenciones = {
 				base_datos: ESTIMACION.getBaseDatos(),
 				id_obra: ESTIMACION.getIdObra(),
 				id_transaccion: ESTIMACION.getIDTransaccion(),
-				IDRetencion: IDRetencion,
+				id_retencion: $(that).parents('tr').attr('data-id'),
 				action: 'eliminaRetencion'
 			},
 			dataType: 'json'
@@ -1385,8 +1406,6 @@ var Retenciones = {
 
 		var that = this;
 
-		var IDLiberacion = parseInt($(that).parents('tr').attr('data-id'));
-
 		if ( ! confirm('La liberación sera eliminada, continuar?') ) {
 			return;
 		}
@@ -1400,7 +1419,7 @@ var Retenciones = {
 				base_datos: ESTIMACION.getBaseDatos(),
 				id_transaccion: ESTIMACION.getIDTransaccion(),
 				id_obra: ESTIMACION.getIdObra(),
-				IDLiberacion: IDLiberacion,
+				id_liberacion: $(that).parents('tr').attr('data-id'),
 				action: 'eliminaLiberacion'
 			},
 			dataType: 'json'
@@ -1425,7 +1444,7 @@ var Retenciones = {
 		});
 	},
 
-	cargaRetenciones: function() {
+	load: function() {
 
 		var that = this;
 
@@ -1451,14 +1470,8 @@ var Retenciones = {
 					return;
 				}
 				
-				$.each( json.retenciones, function() {
-					that.renderRetencion( this );
-				});
-
-				$.each( json.liberaciones, function() {
-					that.agregaLiberacion( this );
-				});
-
+				that.renderRetencionList( json.retenciones );
+				that.renderLiberacionList( json.liberaciones );
 				$('#dialog-retenciones').dialog('open');
 			} catch( e ) {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );

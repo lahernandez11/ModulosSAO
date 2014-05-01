@@ -17,7 +17,6 @@ class EstimacionDescuento {
 
 	private $conn;
 
-
 	public function __construct( EstimacionSubcontrato $estimacion, EstimacionDeductiva $deductiva ) {
 		$this->estimacion = $estimacion;
 		$this->deductiva  = $deductiva;
@@ -26,9 +25,35 @@ class EstimacionDescuento {
 		$this->init();
 	}
 
-	public static function getInstance( EstimacionSubcontrato $estimacion, EstimacionDeductiva $deductiva ) {
+	public static function getInstance( EstimacionSubcontrato $estimacion, EstimacionDeductiva $deductiva=null ) {
 
-		return new self( $estimacion, $deductiva );
+		$tsql = "SELECT
+					  [id_item]
+				FROM
+					[SubcontratosEstimaciones].[descuento]
+				WHERE
+					[id_transaccion] = ?
+						AND
+					[id_item] = ISNULL(?, [id_item])";
+
+		$params = array(
+			array( $estimacion->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+			array( $deductiva instanceof EstimacionDeductiva ? $deductiva->getId() : null, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+		);
+
+		$data = $estimacion->obra->getConn()->executeQuery( $tsql, $params );
+    	
+    	$descuentos = array();
+
+    	if ( $deductiva instanceof EstimacionDeductiva ) {
+			$descuentos = new self( $estimacion, $deductiva );			
+    	} else {
+    		foreach ( $data as $deductiva ) {
+    			$descuentos[] = new self( $estimacion, new EstimacionDeductiva( $estimacion->empresa, $deductiva->id_item ) );
+    		}
+    	}
+
+		return $descuentos;
 	}
 
 	private function init() {
@@ -75,14 +100,11 @@ class EstimacionDescuento {
 				WHERE
 					[descuento].[id_transaccion] != ?
 						AND
-					[descuento].[id_item] = ?
-					--	AND
-					--DATEDIFF(DAY, ?, [transacciones].[fecha]) <= 0;";
+					[descuento].[id_item] = ?;";
 
 		$params = array(
 	        array( $this->estimacion->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $this->deductiva->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	        // array( $this->estimacion->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_SMALLDATETIME ),
 	    );
 
 	    $row = $this->conn->executeQuery( $tsql, $params );
@@ -102,47 +124,74 @@ class EstimacionDescuento {
 
 		if ( isset( $this->id ) ) {
 			// actualiza registro
-			$tsql = "UPDATE
-						[SubcontratosEstimaciones].[descuento]
-					SET
-						[cantidad] = ?,
-						[precio]   = ?
-					WHERE
-						[descuento].[id_descuento] = ?";
+			if ( $this->cantidad == 0 ) {
+				$this->delete();
+			} else {
+				$tsql = "UPDATE
+							[SubcontratosEstimaciones].[descuento]
+						SET
+							[cantidad] = ?,
+							[precio]   = ?
+						WHERE
+							[descuento].[id_descuento] = ?";
 
-			$params = array(
-		        array( $this->cantidad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-		        array( $this->precio, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-		        array( $this->id, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-		    );
+				$params = array(
+			        array( $this->cantidad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
+			        array( $this->precio, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
+			        array( $this->id, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+			    );
 
-			$this->conn->executeQuery( $tsql, $params );
-
+				$this->conn->executeQuery( $tsql, $params );
+			}
 		} else {
 			// ingresa registro
-			$tsql = "INSERT INTO [SubcontratosEstimaciones].[descuento]
-			        (
-				          [id_transaccion]
-				        , [id_item]
-				        , [cantidad]
-				        , [precio]
-			        )
-					VALUES
-			        ( ?, ?, ?, ? );";
+			if ( $this->cantidad > 0 ) {
 
-			$params = array(
-		        array( $this->estimacion->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-		        array( $this->deductiva->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-		        array( $this->cantidad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-		        array( $this->precio, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) )
-		    );
+				$tsql = "INSERT INTO [SubcontratosEstimaciones].[descuento]
+				        (
+					          [id_transaccion]
+					        , [id_item]
+					        , [cantidad]
+					        , [precio]
+				        )
+						VALUES
+				        ( ?, ?, ?, ? );";
 
-		    $id_descuento = null;
-	    	$id_descuento = $this->conn->executeQueryGetId( $tsql, $params );
+				$params = array(
+			        array( $this->estimacion->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+			        array( $this->deductiva->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+			        array( $this->cantidad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
+			        array( $this->precio, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) )
+			    );
 
-	    	$this->id = $id_descuento;
-	    	$this->importe = $this->cantidad * $this->precio;
+			    $id_descuento = null;
+		    	$id_descuento = $this->conn->executeQueryGetId( $tsql, $params );
+
+		    	$this->id = $id_descuento;
+		    	$this->importe = $this->cantidad * $this->precio;
+		    }
 		}
+	}
+
+	public function delete() {
+
+		if ( $this->estimacion->estaAprobada() ) {
+			throw new Exception("La estimacion se encuentra aprobada.", 1);
+		}
+
+		$tsql = "DELETE
+					[SubcontratosEstimaciones].[descuento]
+				WHERE
+					[id_transaccion] = ?
+						AND
+				    [id_descuento] = ?";
+
+		$params = array(
+	        array( $this->estimacion->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->id, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	    );
+
+    	$this->conn->executeQuery( $tsql, $params );
 	}
 
 	public function getId() {
@@ -179,8 +228,6 @@ class EstimacionDescuento {
 
 	public function __toString() {
 		$data =  "id: {$this->id}, ";
-		$data .= "estimacion:{ {$this->estimacion} }, ";
-		$data .= "deductiva:{ {$this->deductiva} }, ";
 		$data .= "cantidad: {$this->cantidad}, ";
 		$data .= "precio: {$this->precio}, ";
 		$data .= "importe: {$this->importe}, ";
@@ -188,6 +235,5 @@ class EstimacionDescuento {
 
 		return $data;
 	}
-
 }
 ?>

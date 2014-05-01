@@ -112,10 +112,10 @@ var AGRUPACION = {
 			}
 		});
 		
-		that.resetToolbar();
-		
 		// Handler para los botones del toolbar
 		$('#radios-visibilidad, #radios-expansion').buttonset()
+		
+		that.resetToolbar();
 		 
 		$('#radios-expansion input').click( function(event) {
 		 	

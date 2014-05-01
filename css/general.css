@@ -989,7 +989,7 @@ ul.dropdown-list li a.with-icon
 {
 	display: block;
 	font-weight: bold;
-	padding: 1em 0 0.2em 0;
+	/*padding: 1em 0 0.2em 0;*/
 	width: auto;
 }
 .dialog-form textarea.field
@@ -1001,6 +1001,26 @@ ul.dropdown-list li a.with-icon
 	width: 100%;
 	height: 25px;
 }
+
+
+.dialog-form .input
+{
+	/*font-size: 1.2em;*/
+	margin-bottom: 1em;
+	padding: 0.2em;
+	width: 200px;
+}
+.dialog-form textarea.input
+{
+	height: 4em;
+}
+.dialog-form label {
+	/*font-size: 1.2em;*/
+	padding: 0 0 0.2em 0;
+}
+
+
+
 .elimina-agrupador-icon
 {
 	color: red;

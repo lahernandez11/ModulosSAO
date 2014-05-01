@@ -296,7 +296,7 @@
 				<colgroup>
 					<col class="tipo"/>
 					<col class="monto"/>
-					<col span="2">
+					<col>
 					<col class="icon"/>
 				</colgroup>
 				<thead>
@@ -304,7 +304,6 @@
 						<th>Tipo</th>
 						<th>Importe</th>
 						<th>Concepto</th>
-						<th>Observaciones</th>
 						<th class="icon-cell">
 							<a id="btnNuevaRetencion" class="button op new" title="Aplicar nueva retención">
 								<span class="icon"></span>
@@ -340,35 +339,71 @@
 	</div>
 
 	<div id="dialog-nueva-retencion" class="dialog" title="Nueva Retención">
-		<div>
-			<a class="button dd-list" id="tipos-retencion">
-				<span class="button-text">Tipo Retención</span>
-				<span class="icon flechita-abajo"></span>
-			</a>
-		</div>
-		<label for="txtConceptoRetencion">Concepto</label>
-		<input type="text" id="txtConceptoRetencion" />
-		<label for="txtImporteRetencion">Importe</label>
-		<input type="text" id="txtImporteRetencion" class="amount" value="0" />
-		<label for="txtObservacionesRetencion">Observaciones</label>
-		<textarea id="txtObservacionesRetencion"></textarea>
+		<form id="form-nueva-retencion" action="" method="get" accept-charset="utf-8">
+			<div>
+				<label for="tipo_retencion">Tipo Retención</label>
+				<select id="tipo_retencion"></select>
+			</div>
+			<p>
+				<label for="txtConceptoRetencion">Concepto</label>
+				<textarea id="txtConceptoRetencion" name="txtConceptoRetencion"></textarea>
+			</p>
+			<label for="txtImporteRetencion">Importe</label>
+			<input type="text" id="txtImporteRetencion" class="amount" value="0" />
+			<div style="margin-top: 1em; text-align: right;border-top: 1px solid #222;padding: 0.5em 0 0 0;">
+				<input type="submit" class="button" value="Guardar" />
+				<!--<input type="button" class="button" value="Cerrar" autofocus />-->
+			</div>
+		</form>
 	</div>
 	
 	<div id="dialog-nueva-liberacion" class="dialog" title="Nueva Liberación">
-		<label for="txtImporteLiberacion">Importe</label>
-		<input type="text" id="txtImporteLiberacion" class="amount" value="0" />
-		<label for="txtObservacionesLiberacion">Observaciones</label>
-		<textarea id="txtObservacionesLiberacion"></textarea>
-		<label><strong>Importe por liberar del contratista: <span id="txtImportePorLiberar"></span></strong></label>
+		<form id="form-nueva-liberacion" method="post" class="dialog-form" style="
+    white-space: nowrap;
+">
+			<div style="
+    display: inline-block;
+    margin: 1em;
+    vertical-align: top;
+">
+				<div>
+					<label for="txtImporteLiberacion">Importe</label>
+					<input type="text" id="txtImporteLiberacion" class="input amount" placeholder="0.00" />
+				</div>
+				<div>
+					<label for="txtObservacionesLiberacion">Concepto</label>
+					<textarea id="txtObservacionesLiberacion" class="input" placeholder="Capture aqui el concepto de liberacion"></textarea>
+				</div>
+			</div>
+			<div style="
+    display: inline-block;
+    margin: 1em;
+    vertical-align: top;
+">
+				<section class="importe-grande" style="padding: 1em; background-color: #333; color: white;box-shadow: 0 0 5px #333; width: 160px;">
+					<div class="title" style="text-align: right;">POR LIBERAR</div>
+					<div id="txtImportePorLiberar" class="content" style="margin: 0.5em 0.2em 0.5em 0.2em; font-size: 2em;text-align: center;">
+					</div>
+				</section>
+			</div>
+			<div style="margin-top: 1em; text-align: right;border-top: 1px solid #222;padding: 0.5em 0 0 0;">
+				<input type="submit" class="button dd-list" value="Guardar" />
+			</div>
+		</form>
 	</div>
+
 	<div id="message-console">
 		<span id="console-message"></span>
 		<span id="console-toggler" class="open"></span>
 	</div>
 	<div id="cache"></div>
 
+	<script type="text/template" id="template-tipo-retencion">
+		<option value="<%- id %>"><%- descripcion %></option>
+	</script>
+
 	<script type="text/template" id="template-concepto">
-		<tr data-id="<%- IDConceptoContrato %>" <%= EsActividad ? 'data-iddestino="' + IDConceptoDestino + '"' : '' %>>
+		<tr data-id="<%- IDConceptoContrato %>" <%= EsActividad ? 'data-iddestino="' + IDConceptoDestino + '"' : '' %> <%= estimado ? 'class="estimado"' : '' %>>
 			<td class="icon-cell">
 				<a class="icon fixed"></a>
 			</td>
@@ -420,11 +455,20 @@
 	</script>
 	
 	<script type="text/template" id="template-retencion">
-		<tr data-id="<%- IDRetencion %>">
-			<td><%- TipoRetencion %></td>
+		<tr data-id="<%- id %>">
+			<td><%- tipo_retencion %></td>
 			<td class="numerico"><%= importe.numFormat() %></td>
 			<td title="<%- concepto %>"><%- concepto %></td>
-			<td title="<%- observaciones %>"><%- observaciones %></td>
+			<td class="icon-cell">
+				<span class="icon action delete"></span>
+			</td>
+		</tr>
+	</script>
+
+	<script type="text/template" id="template-liberacion">
+		<tr data-id="<%- id %>">
+			<td class="numerico"><%= importe.numFormat() %></td>
+			<td title="<%- concepto %>"><%- concepto %></td>
 			<td class="icon-cell">
 				<span class="icon action delete"></span>
 			</td>
@@ -435,31 +479,34 @@
 		<table id="resumen-total" class="tabla-resumen">
 			<colgroup>
 				<col/>
+				<col class="pct"/>
 				<col class="monto"/>
 			</colgroup>
 			<tbody>
 				<tr>
-					<th>Suma de Importes</th>
+					<th colspan="2">Suma de Importes</th>
 					<td class="numerico"><%- suma_importes %></td>
 				</tr>
 				<tr>
 					<th>Amortización de Anticipo</th>
+					<td class="porcentaje"><%- porcentaje_anticipo %></td>
 					<td class="numerico editable" id="txtAmortAnticipo"><%- amortizacion_anticipo %></td>
 				</tr>
 				<tr>
 					<th>Fondo de Garantia</th>
+					<td class="porcentaje"><%- porcentaje_fondo_garantia %></td>
 					<td class="numerico editable" id="txtFondoGarantia"><%- fondo_garantia %></td>
 				</tr>
 				<tr>
-					<th>Subtotal</th>
+					<th colspan="2">Subtotal</th>
 					<td class="numerico"><%- subtotal %></td>
 				</tr>
 				<tr>
-					<th>I.V.A.</th>
+					<th colspan="2">I.V.A.</th>
 					<td class="numerico"><%- iva %></td>
 				</tr>
 				<tr class="total">
-					<th>Total</th>
+					<th colspan="2">Total</th>
 					<th class="numerico"><%- total_estimacion %></th>
 				</tr>
 			</tbody>
@@ -473,23 +520,23 @@
 			<tbody>
 				<tr>
 					<th>Deductivas</th>
-					<td class="numerico"><%- suma_descuento %></td>
+					<td class="numerico"><%- descuentos %></td>
 				</tr>
 				<tr>
 					<th>Retenciones</th>
-					<td class="numerico"><%- suma_retencion %></td>
-				</tr>
-				<tr>
-					<th>Retenciones Liberadas</th>
-					<td class="numerico"><%- suma_retencion_liberada %></td>
+					<td class="numerico"><%- retenciones %></td>
 				</tr>
 				<tr>
 					<th>Retención de I.V.A.</th>
 					<td class="numerico editable" id="txtRetencionIVA"><%- retencion_iva %></td>
 				</tr>
 				<tr>
+					<th>Retenciones Liberadas</th>
+					<td class="numerico"><%- retencion_liberada %></td>
+				</tr>
+				<tr>
 					<th>Anticipo A Liberar</th>
-					<td class="numerico editable" id="txtAnticipoLiberar"><%- anticipo_liberar %></td>
+					<td class="numerico editable" id="txtAnticipoLiberar"><%- anticipo_a_liberar %></td>
 				</tr>
 				<tr class="total">
 					<th>Monto a Pagar</th>
@@ -500,7 +547,6 @@
 		<div style="margin-top: 1em; text-align: right;border-top: 1px solid #222;padding: 0.5em 0;">
 			<input type="button" class="button alert" id="btn-revertir-aprobar" value="Revertir Aprobación" />
 			<input type="button" class="button dd-list" id="btn-aprobar" value="Aprobar" autofocus />
-			<!--<input type="button" class="button" value="Cerrar" autofocus />-->
 		</div>
 	</script>
 

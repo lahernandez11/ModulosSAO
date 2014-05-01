@@ -48,6 +48,10 @@ abstract class Util {
 		return round(($numero * 100), 2);
 	}
 
+	public static function formatoPorcentaje( $numero ) {
+		return round( ($numero * 100), 2 );
+	}
+
 	public static function esFecha( $fecha ) {
 		
 		if ( preg_match( "/^(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/", $fecha ) === 1) {

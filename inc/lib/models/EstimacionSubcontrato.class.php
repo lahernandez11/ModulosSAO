@@ -4,6 +4,8 @@ require_once 'models/Empresa.class.php';
 require_once 'models/Moneda.class.php';
 require_once 'models/Subcontrato.class.php';
 require_once 'models/EstimacionDeductiva.class.php';
+require_once 'models/EstimacionRetencion.class.php';
+require_once 'models/EstimacionRetencionLiberacion.class.php';
 
 class EstimacionSubcontrato extends TransaccionSAO {
 	
@@ -20,23 +22,24 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	private $fecha_inicio;
 	private $fecha_termino;
 	private $numero_folio_consecutivo;
-	private $pct_anticipo;
-	private $pct_fondo_garantia;
-	private $pct_iva;
+	private $pct_anticipo = 0;
+	private $pct_fondo_garantia = 0;
+	private $pct_iva = 0;
 
 	private $conceptos = array();
 
 	private $suma_importes 		 	 = 0;
-	private $fondo_garantia 		 = 0;
 	private $amortizacion_anticipo 	 = 0;
-	private $anticipo_liberar 		 = 0;
-	private $suma_descuento 		 = 0;
-	private $suma_retencion 		 = 0;
-	private $suma_retencion_liberada = 0;
+	private $fondo_garantia 		 = 0;
 	private $subtotal 		 		 = 0;
 	private $iva 		 			 = 0;
-	private $retencion_iva 		 	 = 0;
 	private $total_estimacion 		 = 0;
+	public  $descuentos 		 	 = array();
+	public  $retenciones 		 	 = array();
+	public  $liberaciones 		 	 = array();
+	private $retencion_iva 		 	 = 0;
+	private $anticipo_liberar 		 = 0;
+	private $retencion_liberada 	 = 0;
 	private $total_pagar 		 	 = 0;
 
 	public function __construct() {
@@ -138,12 +141,15 @@ class EstimacionSubcontrato extends TransaccionSAO {
 					, [transacciones].[id_moneda]
 					, [transacciones].[anticipo] / 100 AS [anticipo]
 					, [transacciones].[retencion] / 100 AS [retencion]
-					, IIF([transacciones].[monto] - [transacciones].[impuesto] = 0, 0,
-					(
-						[transacciones].[impuesto]
-							/
-						([transacciones].[monto] - [transacciones].[impuesto])
-					) * 100) AS [porcentaje_iva]
+					, 
+					IIF(
+						[transacciones].[monto] - [transacciones].[impuesto] = 0, 0,
+						(
+							[transacciones].[impuesto]
+								/
+							([transacciones].[monto] - [transacciones].[impuesto])
+						)
+					) AS [porcentaje_iva]
 				FROM
 					[dbo].[transacciones]
 				LEFT OUTER JOIN
@@ -172,6 +178,10 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    $this->pct_fondo_garantia 	    = $datos[0]->retencion;
 	    $this->pct_iva 	   			    = $datos[0]->porcentaje_iva;
 
+	    $this->descuentos = EstimacionDescuento::getInstance( $this );
+	    $this->retenciones = EstimacionRetencion::getInstance( $this );
+	    $this->liberaciones = EstimacionRetencionLiberacion::getInstance( $this );
+
 	    $this->getTotalesTransaccion();
 	}
 
@@ -193,7 +203,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
 	public function guardaTransaccion( Usuario $usuario ) {
 
-		if ( $this->estado > self::ESTADO_CAPTURADA ) {
+		if ( $this->estaAprobada() ) {
 			throw new Exception("No es posible modificar la estimacion. Ya esta aprobada.", 1);
 		} else {
 			
@@ -214,6 +224,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 				    );
 
 				    $this->conn->executeSP( $tsql, $params );
+
 				} else {
 
 					$tsql = "{call [SubcontratosEstimaciones].[uspRegistraTransaccion]( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )}";
@@ -232,13 +243,14 @@ class EstimacionSubcontrato extends TransaccionSAO {
 				    );
 
 				    $this->conn->executeSP( $tsql, $params );
+
+				    $this->pct_anticipo 	  = $this->subcontrato->getPorcentajeAnticipo();
+					$this->pct_fondo_garantia = $this->subcontrato->getPorcentajeRetencion();
 				}
 
 				$errores = $this->guardaConceptos();
 
 				$this->calculaImportes();
-
-				$this->getTotalesTransaccion();
 
 				$this->conn->commitTransaction();
 
@@ -294,14 +306,12 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
 	private function calculaImportes() {
 
+		$this->amortizacion_anticipo = $this->pct_anticipo * $this->suma_importes;
+		$this->fondo_garantia 		 = $this->pct_fondo_garantia * $this->suma_importes;
+
 		$this->subtotal  = $this->suma_importes;
 		$this->subtotal -= $this->amortizacion_anticipo;
 		$this->subtotal -= $this->fondo_garantia;
-
-		if ( $this->suma_importes != 0 ) {
-			$this->pct_anticipo 	  = ($this->amortizacion_anticipo / $this->suma_importes) * 100;
-			$this->pct_fondo_garantia = ($this->fondo_garantia / $this->suma_importes) * 100;
-		}
 	
 		$this->iva 	 = $this->subtotal * $this->subcontrato->getPorcentajeIVA();
 		$this->total = $this->subtotal + $this->iva;
@@ -319,8 +329,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    $params = array(
 	        array( $this->iva, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
 	        array( $this->total, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-	        array( $this->pct_fondo_garantia, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-	        array( $this->pct_anticipo, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
+	        array( $this->pct_fondo_garantia * 100, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(15, 5) ),
+	        array( $this->pct_anticipo * 100, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(15, 5) ),
 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
 
@@ -404,7 +414,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
 	public function revierteAprobacion() {
 
-		if ( $this->estado === self::ESTADO_CAPTURADA ) {
+		if ( ! $this->estaAprobada() ) {
 			throw new Exception("La estimacion no esta aprobada.", 1);
 		} else {
 
@@ -435,7 +445,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
 	public function eliminaTransaccion() {
 
-		if ( $this->estado > self::ESTADO_CAPTURADA ) {
+		if ( $this->estaAprobada() ) {
 			throw new Exception("La estimacion se encuentra aprobada.", 1);
 		}
 
@@ -448,7 +458,14 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    $this->conn->executeSP( $tsql, $params );
 	}
 
-	public function getConceptosEstimados( $soloConceptosEstimados = 1 ) {
+	public function estaAprobada() {
+		if ( $this->estado > self::ESTADO_CAPTURADA )
+			return true;
+		else
+			return false;
+	}
+
+	public function getConceptosEstimados( $soloConceptosEstimados=1 ) {
 
 		$tsql = "{call [SubcontratosEstimaciones].[uspConceptosEstimacion]( ?, ?, ?, ? )}";
 
@@ -464,96 +481,39 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    return $conceptos;
 	}
 
-	public function getDeductivas() {
-
-		return EstimacionDeductiva::getObjects( $this->empresa );
-	}
-
 	public function addDescuento( EstimacionDeductiva $deductiva, $cantidad, $precio ) {
+
+		if ( $this->estaAprobada() ) {
+			throw new Exception("La estimacion se encuentra aprobada.", 1);
+		}
 
 		$descuento = new EstimacionDescuento( $this, $deductiva );
 		$descuento->setCantidad( $cantidad );
 		$descuento->setPrecio( $precio );
 		$descuento->save();
+		$this->descuentos[] = $descuento;
 
 		return $descuento;
 	}
 
-	public function getRetenciones() {
+	public function addRetencion( RetencionTipo $tipo_retencion, $importe, $concepto ) {
 
-		$tsql = "{call [SubcontratosEstimaciones].[uspRetenciones]( ? )}";
-
-	    $params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	    );
-
-	    return $this->conn->executeSP( $tsql, $params );
+		$retencion = new EstimacionRetencion( $this, $tipo_retencion, $importe, $concepto );
+		$retencion->save();
+		$this->retenciones[] = $retencion;
+	    return $retencion;
 	}
 
-	public function agregaRetencion( $IDTipoRetencion, $importe, $concepto, $observaciones ) {
-
-		if ( ! is_int( $IDTipoRetencion ) || ! $IDTipoRetencion > 0 ) {
-			throw new Exception("El tipo de retención no es válido");
-			return;
-		}
+	public function addLiberacion( $importe, $concepto, Usuario $usuario ) {
 
 		if ( ! $this->esImporte( $importe ) ) {
 			throw new Exception("Importe Incorrecto");
-		} else {
-
-			$tsql = "{call [SubcontratosEstimaciones].[uspRegistraRetencion]( ?, ?, ?, ?, ?, ? )}";
-
-			$IDRetencion = 0;
-			
-		    $params = array(
-		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-		        array( $IDTipoRetencion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-		        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-		        array( $concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-		        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-		        array( &$IDRetencion, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
-		    );
-
-		    $this->conn->executeSP( $tsql, $params );
 		}
 
-	    return $IDRetencion;
-	}
-
-	public function eliminaRetencion( $IDRetencion ) {
-
-		$tsql = "{call [SubcontratosEstimaciones].[uspEliminaRetencion]( ?, ? )}";
-
-	    $params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $IDRetencion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	    );
-
-	    $this->conn->executeSP( $tsql, $params );
-	}
-
-	public function agregaLiberacion( $importe, $observaciones, Usuario $usuario ) {
-
-		if ( ! $this->esImporte( $importe ) ) {
-			throw new Exception("Importe Incorrecto");
-		} else {
-
-			$tsql = "{call [SubcontratosEstimaciones].[uspRegistraLiberacionRetencion]( ?, ?, ?, ?, ? )}";
-
-			$IDLiberacion = null;
-
-		    $params = array(
-		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-		        array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
-		        array( $observaciones, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX') ),
-		        array( $usuario->getUsername(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('20') ),
-		        array( $IDLiberacion, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT ),
-		    );
-
-		    $this->conn->executeSP( $tsql, $params );
-		}
-
-	    return $IDLiberacion;
+		$liberacion = new EstimacionRetencionLiberacion( $this, $importe, $concepto );
+		$liberacion->save( $usuario );
+		$this->liberaciones[] = $liberacion;
+		return $liberacion;
 	}
 
 	public function eliminaLiberacion( $IDLiberacion ) {
@@ -568,17 +528,6 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    $this->conn->executeSP( $tsql, $params );
 	}
 
-	public function getLiberaciones() {
-
-		$tsql = "{call [SubcontratosEstimaciones].[uspRetencionesLiberadas]( ? )}";
-
-	    $params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	    );
-
-	    return $this->conn->executeSP( $tsql, $params );
-	}
-
 	public function getImporteRetenidoPorLiberar() {
 
 		$tsql = "{call [SubcontratosEstimaciones].[uspImporteRetenidoPorLiberar]( ?, ? )}";
@@ -586,7 +535,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 		$importePorLiberar = null;
 
 	    $params = array(
-	        array( $this->getIDSubcontrato(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( &$importePorLiberar, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) )
 	    );
 
@@ -619,38 +568,51 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    $data = array();
 
 		$data = array(
-			'suma_importes'  			  			=> $totales[0]['SumaImportes'],
-			'fondo_garantia'  	  					=> $totales[0]['ImporteFondoGarantia'],
-			'amortizacion_anticipo' 				=> $totales[0]['ImporteAmortizacionAnticipo'],
-			'anticipo_liberar'  	  				=> $totales[0]['ImporteAnticipoLiberar'],
-			'suma_descuento'  			  			=> $totales[0]['SumaDeductivas'],
-			'suma_retencion'  			  			=> $totales[0]['SumaRetenciones'],
-			'suma_retencion_liberada'    			=> $totales[0]['SumaRetencionesLiberadas'],
-			'subtotal' 					  			=> $totales[0]['Subtotal'],
-			'iva' 						  			=> $totales[0]['IVA'],
-			'retencion_iva'  		  				=> $totales[0]['ImporteRetencionIVA'],
-			'total_estimacion'     				  	=> $totales[0]['Total'],
+			'suma_importes'  			  			=> $totales[0]['suma_importes'],
+			'amortizacion_anticipo' 				=> $totales[0]['amortizacion_anticipo'],
+			'fondo_garantia'  	  					=> $totales[0]['fondo_garantia'],
+			'descuentos'  			  				=> 0,
+			'retenciones'  			  				=> 0,
+			'subtotal' 					  			=> $totales[0]['subtotal'],
+			'iva' 						  			=> $totales[0]['iva'],
+			'total_estimacion'     				  	=> $totales[0]['total'],
+			'retencion_iva'  		  				=> $totales[0]['retencion_iva'],
+			'anticipo_a_liberar'  	  				=> $totales[0]['anticipo_a_liberar'],
+			'retencion_liberada'    				=> $totales[0]['retencion_liberada'],
+			'total_pagar' 							=> $totales[0]['monto_a_pagar'],
+
 			'ImporteAcumuladoEstimacionAnterior' 	=> $totales[0]['ImporteAcumuladoEstimacionAnterior'],
 			'ImporteAcumuladoDeductivaAnterior' 	=> $totales[0]['ImporteAcumuladoDeductivaAnterior'],
 			'ImporteAcumuladoRetencionAnterior' 	=> $totales[0]['ImporteAcumuladoRetencionAnterior'],
 			'ImporteAcumuladoAnticipoAnterior' 		=> $totales[0]['ImporteAcumuladoAnticipoAnterior'],
 			'ImporteAcumuladoFondoGarantiaAnterior' => $totales[0]['ImporteAcumuladoFondoGarantiaAnterior'],
 			'IVAAcumuladoAnterior' 					=> $totales[0]['IVAAcumuladoAnterior'],
-			'total_pagar' 							=> $totales[0]['monto_a_pagar']
+			
+			'porcentaje_anticipo'					=> $this->pct_anticipo * 100,
+			'porcentaje_fondo_garantia'				=> $this->pct_fondo_garantia * 100,
+			'acumulado_retenido' 					=> $this->empresa->getImporteTotalRetenido(),
+			'acumulado_liberado' 					=> $this->empresa->getImporteTotalRetencionLiberado(),
+			'acumulado_por_liberar'					=> $this->empresa->getImportePorLiberar()
 		);
 
-		$this->suma_importes 		 	= $totales[0]['SumaImportes'];
-		$this->fondo_garantia 		 	= $totales[0]['ImporteFondoGarantia'];
-		$this->amortizacion_anticipo 	= $totales[0]['ImporteAmortizacionAnticipo'];
-		$this->anticipo_liberar 		= $totales[0]['ImporteAnticipoLiberar'];
-		$this->suma_descuento 		 	= $totales[0]['SumaDeductivas'];
-		$this->suma_retencion 		 	= $totales[0]['SumaRetenciones'];
-		$this->suma_retencion_liberada  = $totales[0]['SumaRetencionesLiberadas'];
-		$this->subtotal 		 		= $totales[0]['Subtotal'];
-		$this->iva 		 			 	= $totales[0]['IVA'];
-		$this->retencion_iva 		 	= $totales[0]['ImporteRetencionIVA'];
-		$this->total_estimacion 		= $totales[0]['Total'];
+		$this->suma_importes 		 	= $totales[0]['suma_importes'];
+		$this->amortizacion_anticipo 	= $totales[0]['amortizacion_anticipo'];
+		$this->fondo_garantia 		 	= $totales[0]['fondo_garantia'];
+		$this->anticipo_liberar 		= $totales[0]['anticipo_a_liberar'];
+		$this->subtotal 		 		= $totales[0]['subtotal'];
+		$this->iva 		 			 	= $totales[0]['iva'];
+		$this->total_estimacion 		= $totales[0]['total'];
+		$this->retencion_iva 		 	= $totales[0]['retencion_iva'];
+		$this->retencion_liberada  		= $totales[0]['retencion_liberada'];
 		$this->total_pagar 		 	 	= $totales[0]['monto_a_pagar'];
+
+		foreach ( $this->descuentos as $descuento ) {
+			$data['descuentos'] += $descuento->getImporte();
+		}
+
+		foreach ( $this->retenciones as $retencion ) {
+			$data['retenciones'] += $retencion->getImporte();
+		}
 
 	    return $data;
 	}
@@ -683,6 +645,10 @@ class EstimacionSubcontrato extends TransaccionSAO {
 			throw new Exception("El formato de fecha término es incorrecto.");
 	}
 
+	public function getSumaImportes() {
+		return $this->suma_importes;
+	}
+
 	public function getAnticipoLiberar() {
 		return $this->anticipo_liberar;
 	}
@@ -697,7 +663,10 @@ class EstimacionSubcontrato extends TransaccionSAO {
 			$importe = 0;
 		}
 
-		$this->amortizacion_anticipo = $importe;
+		// $this->amortizacion_anticipo = $importe;
+		if ( $this->suma_importes != 0) {
+			$this->pct_anticipo = ($importe / $this->suma_importes);
+		}
 	}
 
 	public function setImporteFondoGarantia( $importe ) {
@@ -706,7 +675,10 @@ class EstimacionSubcontrato extends TransaccionSAO {
 			$importe = 0;
 		}
 
-		$this->fondo_garantia = $importe;
+		// $this->fondo_garantia = $importe;
+		if ( $this->suma_importes != 0) {
+			$this->pct_fondo_garantia = ($importe / $this->suma_importes);
+		}
 	}
 
 	public function setImporteRetencionIVA( $importe ) {
@@ -784,11 +756,11 @@ class EstimacionSubcontrato extends TransaccionSAO {
 		$data .= "subtotal: {$this->subtotal}, ";
 		$data .= "iva: {$this->iva}, ";
 		$data .= "total_estimacion: {$this->total_estimacion}, ";
-		$data .= "suma_descuento: {$this->suma_descuento}, ";
-		$data .= "suma_retencion: {$this->suma_retencion}, ";
+		// $data .= "descuentos: {$this->descuentos}, ";
+		// $data .= "retencion: {$this->retenciones}, ";
 		$data .= "retencion_iva: {$this->retencion_iva}, ";
 		$data .= "anticipo_liberar: {$this->anticipo_liberar}, ";
-		$data .= "suma_retencion_liberada: {$this->suma_retencion_liberada}, ";
+		$data .= "retencion_liberada: {$this->retencion_liberada}, ";
 		$data .= "total_pagar: {$this->total_pagar}, ";
 
 		return $data;

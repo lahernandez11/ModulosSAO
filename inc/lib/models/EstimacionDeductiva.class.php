@@ -61,7 +61,7 @@ class EstimacionDeductiva {
 					  [items].[id_material]
 					, [items].[cantidad] AS [cantidad_total]
 					, [items].[unidad]
-					, [items].[precio_unitario]
+					, [items].[importe] / [items].[cantidad] AS [precio_unitario]
 					, [items].[importe] AS [importe_total]
 				FROM
 					[Compras].[ItemsXContratista]

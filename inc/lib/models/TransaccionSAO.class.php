@@ -214,7 +214,7 @@ abstract class TransaccionSAO {
 
 	public function __toString() {
 
-		$data =  "id_ransaccion: {$this->id_transaccion}, ";
+		$data =  "id_transaccion: {$this->id_transaccion}, ";
 		$data .= "tipo_transaccion: {$this->tipo_transaccion}, ";
 		$data .= "id_obra: {$this->obra->getId()}, ";
 		$data .= "estado: {$this->estado}, ";
