@@ -240,6 +240,10 @@ class Material {
 	    return $conn->executeSP($tsql, $params);
 	}
 
+	public function getId() {
+		return $this->id;
+	}
+	
 	public function getDescripcion() {
 		return $this->descripcion;
 	}

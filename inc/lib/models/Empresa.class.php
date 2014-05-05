@@ -1,5 +1,5 @@
 <?php
-require_once 'EstimacionDeductiva.class.php';
+require_once 'CargoMaterial.class.php';
 
 class Empresa {
 	
@@ -9,7 +9,7 @@ class Empresa {
 	const DESTAJISTA = 4;
 
 	public  $obra;
-	public  $deductivas = array();
+	public  $cargos_material = array();
 	private $id;
 	private $tipo;
 	private $nombre;
@@ -86,7 +86,7 @@ class Empresa {
 		$this->porcentaje 				= $data[0]->porcentaje;
 		$this->no_proveedor_virtual 	= $data[0]->no_proveedor_virtual;
 		$this->importe_acumulado_cargos = $data[0]->importe_cargado;
-		$this->deductivas 				= EstimacionDeductiva::getObjects( $this );
+		$this->cargos_material 			= CargoMaterial::getObjects( $this );
 	}
 
 	public function getId() {

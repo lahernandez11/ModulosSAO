@@ -18,6 +18,7 @@ var ESTIMACION = {
 	},
 	templateConcepto: null,
 	templateResumen: null,
+	aprobada: false,
 
 	init: function() {
 
@@ -482,7 +483,9 @@ var ESTIMACION = {
 	},
 
 	limpiaDatosTransaccion: function() {
+		
 		this.id_subcontrato = null;
+		this.aprobada = false;
 		$('#IDSubcontratoCDC').val('');
 		$('#txtObjetoSubcontrato').text('');
 		$('#txtNombreContratista').text('');
@@ -602,6 +605,7 @@ var ESTIMACION = {
 				}
 
 				// Establece los datos generales
+				that.aprobada = json.datos.aprobada;
 				$('#txtFolioConsecutivo').text(json.datos.NumeroFolioConsecutivo);
 				$('#txtFecha').datepicker( 'setDate', json.datos.Fecha );
 				$('#txtObjetoSubcontrato').text( json.datos.ObjetoSubcontrato );
@@ -785,6 +789,10 @@ var ESTIMACION = {
 				messageConsole.displayMessage( json.message, 'error' );
 				return;
 			}
+
+			that.aprobada = true;
+			that.cargaTotales();
+
 	 		messageConsole.displayMessage( 'La transacción se aprobó correctamente.', 'success');
 		}).always( DATA_LOADER.hide );
 	},
@@ -810,6 +818,10 @@ var ESTIMACION = {
 				messageConsole.displayMessage( json.message, 'error' );
 				return;
 			}
+
+			that.aprobada = false;
+			that.cargaTotales();
+
 	 		messageConsole.displayMessage( 'La aprobacion se revirtió correctamente.', 'success');
 		}).always( DATA_LOADER.hide );
 	},
@@ -858,8 +870,13 @@ var ESTIMACION = {
 	},
 
 	renderTotales: function( totales ) {
-		var that = this;
-		$('#dialog-resumen').html(that.templateResumen(totales));
+		var that = this,
+			estimacion = {
+			aprobada: this.aprobada,
+			totales: totales
+		}
+
+		$('#dialog-resumen').html(that.templateResumen(estimacion));
 
 		this.setSubtotal(totales.subtotal);
 		this.setIVA(totales.iva);
@@ -981,14 +998,14 @@ var ESTIMACION = {
 
 var Deductivas = {
 
-	template: null,
+	template_cargo: null,
 	col_switch: null,
 
 	init: function() {
 
 		var that = this;
 
-		this.template = _.template($('#template-deductiva').html());
+		this.template_cargo = _.template($('#template-deductiva').html());
 
 		$('#dialog-deductivas').dialog({
 			autoOpen: false,
@@ -1039,13 +1056,14 @@ var Deductivas = {
 		var descuentos = [];
 
 		$('#registros_deductivas tbody tr').each( function() {
-			// console.log(this)
 			var $row = $(this);
-
-			descuentos[descuentos.length] = {
-				id_item: $row.find('input[name="id_item"]').val(),
-				cantidad_descuento: $row.find('input[name="cantidad_descuento"]').val(),
-				precio_descuento: $row.find('input[name="precio_descuento"]').val()
+			
+			if ( $row.find('input[name="cantidad_descuento"]').val() != "" ) {
+				descuentos[descuentos.length] = {
+					id_material: $row.attr('data-idmaterial'),
+					cantidad: $row.find('input[name="cantidad_descuento"]').val(),
+					precio: $row.find('input[name="precio_descuento"]').val()
+				}
 			}
 		});
 
@@ -1106,24 +1124,7 @@ var Deductivas = {
 					return;
 				}
 
-				$.each( data.deductivas, function() {
-					that.renderDeductiva({
-						id_descuento: this.id_descuento,
-						id_item: this.id_item,
-						descripcion: this.descripcion,
-						cantidad_total: this.cantidad_total,
-						unidad: this.unidad,
-						precio: this.precio,
-						importe_total: this.importe_total,
-						cantidad_descontada: this.cantidad_descontada,
-						importe_descontado: this.importe_descontado,
-						cantidad_por_descontar: this.cantidad_por_descontar,
-						importe_por_descontar: this.importe_por_descontar,
-						cantidad_descuento: this.cantidad_descuento,
-						precio_descuento: this.precio_descuento,
-						importe_descuento: this.importe_descuento,
-					});
-				});
+				that.renderCargosList( data.cargos_material );
 
 				$('#dialog-deductivas').dialog('open');
 			} catch( e ) {
@@ -1136,9 +1137,15 @@ var Deductivas = {
 		.always( DATA_LOADER.hide );
 	},
 
-	renderDeductiva: function( deductiva ) {
-		$('#registros_deductivas table tbody').append(this.template( deductiva ));
-	},
+	renderCargosList: function( cargos ) {
+		var html = "";
+
+		for ( cargo in cargos ) {
+			html += this.template_cargo( cargos[cargo] );
+		}
+
+		$('#registros_deductivas table tbody').html( html );
+	}
 }
 
 var Retenciones = {

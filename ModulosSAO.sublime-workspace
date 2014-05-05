@@ -4,6 +4,30 @@
 		"selected_items":
 		[
 			[
+				"cantidad",
+				"cantidad_descontada_anterior"
+			],
+			[
+				"mar",
+				"margin-bottom"
+			],
+			[
+				"liberacio",
+				"liberacion"
+			],
+			[
+				"descuen",
+				"descuento"
+			],
+			[
+				"descuent",
+				"descuentos"
+			],
+			[
+				"pctAntici",
+				"pct_anticipo"
+			],
+			[
 				"render",
 				"renderTiposRetencion"
 			],
@@ -126,10 +150,6 @@
 			[
 				"Subcontr",
 				"SubcontratoController"
-			],
-			[
-				"mar",
-				"margin-top"
 			],
 			[
 				"subcon",
@@ -494,26 +514,6 @@
 			[
 				"icon-",
 				"icon-plus"
-			],
-			[
-				"dis",
-				"display"
-			],
-			[
-				"folio",
-				"folio_factura"
-			],
-			[
-				"SQLSR",
-				"SQLSRV_SQLTYPE_INT"
-			],
-			[
-				"des",
-				"destino"
-			],
-			[
-				"ava",
-				"avance_importe"
 			]
 		]
 	},
@@ -523,7 +523,7 @@
 			"file": "estimaciones.php",
 			"settings":
 			{
-				"buffer_size": 18005,
+				"buffer_size": 19407,
 				"line_ending": "Windows"
 			}
 		},
@@ -531,7 +531,7 @@
 			"file": "inc/js/estimaciones.js",
 			"settings":
 			{
-				"buffer_size": 37022,
+				"buffer_size": 36532,
 				"line_ending": "Windows"
 			}
 		},
@@ -539,7 +539,7 @@
 			"file": "inc/lib/controllers/EstimacionSubcontratoController.php",
 			"settings":
 			{
-				"buffer_size": 19289,
+				"buffer_size": 20651,
 				"line_ending": "Windows"
 			}
 		},
@@ -547,56 +547,40 @@
 			"file": "inc/lib/models/EstimacionSubcontrato.class.php",
 			"settings":
 			{
-				"buffer_size": 24302,
+				"buffer_size": 24180,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"contents": "IDTransaccion: 1885216,\nTipoTransaccion: 52,\nIDObra: 41,\nEstado: 1,\nFecha: 2014-04-24,\nNumeroFolio: 1443,\nObservaciones: ,\nfecha_inicio: 2014-04-24 00:00:00.000,\nfecha_termino: 2014-04-24 00:00:00.000,\nnumero_folio_consecutivo: 4,\npct_anticipo: 11.507936477661,\npct_fondo_garantia: 0.049603175371885,\npct_iva: 16,\nsuma_importes: 2016,\nfondo_garantia: 1.000000057742,\namortizacion_anticipo: 232.00000119209,\nanticipo_liberar: 1.0000,\nsuma_descuento: .0000000,\nsuma_retencion: .0000,\nsuma_retencion_liberada: .0000,\nsubtotal: 1782.9999987502,\niva: 285.28,\nretencion_iva: 1.0000,\ntotal_estimacion: 2068.28,\ntotal_pagar: 0,\n\n\nid_ransaccion: 1885216\ntipo_transaccion: 52\nid_obra: 41\nestado: 0\nfecha: 2014-04-24\nnumero_folio: 1443\nobservaciones: \nfecha_inicio: 2014-04-24\nfecha_termino: 2014-04-24\nnumero_folio_consecutivo: 4\npct_anticipo: 11.507936507937\npct_fondo_garantia: 0.049603174603175\npct_iva: 16\nsuma_importes: 2016\nfondo_garantia: 0.99993598647416\namortizacion_anticipo: 231.99926519394\nsubtotal: 1783.0007988196\niva: 285.28\ntotal_estimacion: 2068.28\nsuma_descuento: .0000000\nsuma_retencion: .0000\nretencion_iva: 1.0000\nanticipo_liberar: 1.0000\nsuma_retencion_liberada: .0000\ntotal_pagar: 2068.28",
+			"file": "inc/lib/models/EstimacionRetencionLiberacion.class.php",
 			"settings":
 			{
-				"buffer_size": 1201,
+				"buffer_size": 3250,
 				"line_ending": "Windows",
-				"name": "IDTransaccion: 1885216,"
+				"name": "<?php"
 			}
 		},
 		{
 			"file": "inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
 			"settings":
 			{
-				"buffer_size": 21196,
+				"buffer_size": 24277,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "inc/lib/models/Util.class.php",
+			"file": "inc/lib/models/CargoMaterial.class.php",
 			"settings":
 			{
-				"buffer_size": 1607,
+				"buffer_size": 3236,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "inc/lib/models/Subcontrato.class.php",
+			"file": "inc/lib/models/EstimacionDescuentoMaterial.class.php",
 			"settings":
 			{
-				"buffer_size": 22096,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/models/EstimacionDeductiva.class.php",
-			"settings":
-			{
-				"buffer_size": 3469,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/models/EstimacionDescuento.class.php",
-			"settings":
-			{
-				"buffer_size": 5536,
+				"buffer_size": 10830,
 				"line_ending": "Windows"
 			}
 		},
@@ -604,7 +588,7 @@
 			"file": "inc/lib/models/Empresa.class.php",
 			"settings":
 			{
-				"buffer_size": 3662,
+				"buffer_size": 5034,
 				"line_ending": "Windows"
 			}
 		}
@@ -685,15 +669,21 @@
 	},
 	"file_history":
 	[
+		"/D/www/ModulosSAO/inc/lib/models/Obra.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/TransaccionSAO.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/Subcontrato.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionRetencion.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/Empresa.class.php",
+		"/D/www/ModulosSAO/css/general.css",
+		"/D/www/ModulosSAO/inc/lib/models/Material.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/CargoMaterial.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/Util.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/RetencionTipo.class.php",
+		"/D/www/ModulosSAO/inc/js/agrupacion.js",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionDeductiva.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionDescuento.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/Subcontrato.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/TransaccionSAO.class.php",
 		"/D/www/ModulosSAO/inc/lib/db/SQLSrvDBConn.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/Util.class.php",
 		"/D/www/ModulosSAO/estimaciones.php",
 		"/D/www/ModulosSAO/presupuesto_obra.php",
 		"/D/www/ModulosSAO/agrupacion.php",
@@ -706,16 +696,12 @@
 		"/D/www/ModulosSAO/precios_venta.php",
 		"/D/www/ModulosSAO/subcontratos.php",
 		"/D/www/ModulosSAO/inc/js/jquery.listaTransacciones.js",
-		"/D/www/ModulosSAO/css/general.css",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontrato.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/PresupuestoObra.class.php",
 		"/D/www/ModulosSAO/inc/js/jquery-ui/css/south-street/jquery-ui-1.8.18.custom.css",
 		"/D/www/ModulosSAO/inc/js/jquery-ui/css/grupo-hi/jquery-ui-1.10.4.custom.css",
 		"/D/www/ModulosSAO/css/opentip.css",
 		"/D/www/ModulosSAO/inc/js/lib/opentip-jquery.min.js",
-		"/D/www/ModulosSAO/inc/lib/models/Material.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/Empresa.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/Obra.class.php",
 		"/D/www/ModulosSAO/inc/js/presupuesto_obra.js",
 		"/D/www/ModulosSAO/inc/lib/models/Moneda.class.php",
 		"/D/www/ModulosSAO/inc/js/lib/jquery.multiple.select.js",
@@ -738,7 +724,6 @@
 		"/D/www/ModulosSAO/inc/js/avance_obra.js",
 		"/D/www/ModulosSAO/inc/lib/controllers/AgrupacionSubcontratoController.php",
 		"/D/www/ModulosSAO/inc/js/estimaciones.js",
-		"/D/www/ModulosSAO/inc/js/agrupacion.js",
 		"/D/www/ModulosSAO/inc/lib/models/Cobranza.class.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/EstimacionObraController.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionObra.class.php",
@@ -811,8 +796,7 @@
 		"/D/www/ModulosSAO/modulos/cobranza/RegistraCobranza.php",
 		"/D/www/ModulosSAO/modulos/cobranza/GetConceptosCobranza.php",
 		"/D/www/ModulosSAO/inc/lib/models/Cobranza.php",
-		"/D/www/icomoon79764/style.css",
-		"/D/www/icomoon34677/style.css"
+		"/D/www/icomoon79764/style.css"
 	],
 	"find":
 	{
@@ -835,134 +819,134 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"amortizacion_anticipo",
-			"pct_anticipo",
-			"getTotalesTransaccion",
-			"importe_acumulado_deductiva",
-			"getImporteAcumuladoRetenciones",
-			"ImporteAcumuladoRetenciones",
-			"importe_acumulado_deductiva",
-			"ImporteAcumuladoDeductivas",
-			"importe_acumulado_deductiva",
-			"[transacciones]",
-			"importe_acumulado_deductiva",
-			"[transacciones]",
-			"ImporteAcumuladoRetenciones",
-			"importe_acumulado_retencion",
-			"Importe asociado a trabajos ejecutados",
-			"ImporteAnticipo",
-			"importe_anticipo",
-			"ImporteAcumuladoAnticipo",
-			"importe_acumulado_anticipo",
-			"getImporteAcumuladoAnticipo",
-			"getTotalesTransaccion",
-			"sumaImporteContrato",
-			"writeDatosGeneralesEstimacion",
-			"subtotalDescuentoSaldo",
-			"subtotalDescuento",
-			"subtotalDescuentoAcumuladoAnterior",
-			"Sub-Totales Deductivas ",
-			"sumaImporteDeductiva",
-			"Descuentos",
-			"sumaImporteDescuentoEstaEstimacion",
-			"sumaDeductivas",
-			"sumaImporteDescuentoEstaEstimacion",
-			"importe_acumulado_retencion",
-			"getImporteRetencionesLiberadas",
-			"sumaSaldoPendiente",
-			"sumaAcumuladoEstaEstimacion",
-			"acumuladoEstaEstimacion",
-			"sumaEstaEstimacion",
-			"sumaAcumuladoEstimacionAnterior",
-			"acumuladoEstimacionAnterior",
-			"AcumuladoEstimacionAnterior",
-			"acumuladoEstimacionAnterior",
-			"AcumuladoEstimacionAnterior",
-			"acumuladoEstimacionAnterior",
-			"sumaContrato",
-			"suma_importes",
-			"pct_iva",
-			"getImportePorLiberar",
-			"uspTiposRetencion",
-			"guardaRetencion",
-			"retenciones",
-			"retencion",
-			"[retencion].",
-			"descripcion",
-			"data",
-			"retencion",
-			"data[0]",
-			"retenciones",
-			"row",
-			"[retencion].",
-			"getRetenciones",
-			"sumaRetenciones",
-			"$sumaRetenciones",
-			"sumaRetenciones",
-			"getAnticipoLiberar",
-			"anticipo_liberar",
-			"_conceptos",
-			"Conceptos",
-			"conceptos",
-			"Conceptos",
-			"conceptos",
-			"Conceptos",
-			"conceptos",
-			"_conceptos",
-			"dialog-resum",
-			"==",
-			"===",
-			"guardaConceptos",
-			"actualizaImporte",
-			"descuentos",
-			", ",
-			"amortizacion_anticipo",
-			", ",
-			"uspActualizaTotales",
-			"porcentaje_iva",
-			"pct_anticipo",
-			"dialog-resumen",
-			"txtAnticipoLiberar",
-			"guardaTransaccion",
-			"totales",
-			", ",
-			"apruebaTransaccion",
-			"aprueba",
-			"apruebaTransaccion",
-			"aprue",
-			"contratado",
-			"colClasses",
-			"getDatosTransaccion",
-			"dialog-res",
-			"resumen",
-			"total",
-			"_estado",
-			"sumaDeductivas",
-			"getImporteTotal",
-			"sumaDeductivas",
-			"sumaSaldoPendiente",
-			"importe_descontado_anterior",
-			"totalesEstimacion",
-			"ImporteRetencionIVA",
-			"IVA",
-			"ImporteFondoGarantia",
-			"ImporteAmortizacionAnticipo",
+			"ImporteAcumuladoRetencionAnterior",
+			"ImporteAcumuladoDeductivaAnterior",
+			"ImporteAcumuladoAnticipoAnterior",
+			"ImporteAcumuladoFondoGarantiaAnterior",
+			"IVAAcumuladoAnterior",
 			"getTotales",
-			"Estimaciones",
-			"IDSubcontrato",
-			"isModified",
-			"requestingData",
-			"setConceptosVisibility",
-			"setTotalesTransaccion",
+			"suma_retenciones",
+			"sumaRetenciones",
+			"sumaImporteCargoMaterial",
+			"sumaImporteMaterial",
+			"sumaSaldoPorDescontar",
+			"sumaSaldoDeductiva",
+			"sumaImporteMaterial",
+			"sumaImporteDeductiva",
+			"deductiva",
+			"getConn",
+			"this->",
+			"descuentos",
+			"getDescuentosPorEmpresa",
+			"descuentos",
+			"cargos_material",
+			"echo",
+			"tipo_transaccion",
+			"TIPO_TRANSACCION",
+			"registraTransaccionAdicional",
+			"deductivas",
+			"descuento_cargo",
+			"template",
+			"EstimacionDescuento",
+			"EstimacionDeductiva",
+			"cargos_material",
+			"cantidad",
+			"getNumero",
+			"id_item",
+			"EstimacionDescuento",
+			"CargoMaterial",
+			"deductiva",
+			"deductivas",
+			"EstimacionDeductiva",
+			"deductiva",
+			"deductivas",
+			"deductiva",
+			"deductivas",
+			"descuentos",
+			"empresa",
+			"deductiva",
+			"deductivas",
+			"importe_total",
+			"cantidad_total",
+			"deductiva",
+			"descuento",
+			"deductivas",
+			"deductiva",
+			"deductivas",
+			"ItemsXContratista",
+			"moneda",
+			"Moneda",
+			"moneda",
+			"guardaTransaccion",
+			"empresa",
+			"app-module",
+			"app-wrapp",
+			"min-wi",
+			"min-we",
+			"sumaRetenciones",
+			"getIdObra",
+			"renderTOtales",
+			"renderTotales",
+			"padding",
+			"form",
+			"dialog",
+			"load",
+			"renderTotales",
 			"cargaTotales",
-			"setTotalesTransaccion",
-			"[0]",
-			"total",
+			"retencion",
+			"observaciones",
+			"liberaciones",
+			"retencion",
+			"cargaRetenciones",
+			"retencion",
+			"template",
+			"registros_retenciones",
+			"retencion",
+			"retenciones",
+			"[retencion_liberacion].",
+			"retenciones",
+			"descuento",
+			"descuentos",
+			"retencion",
+			"retenciones",
+			"retencion",
+			"retenciones",
+			"descuentos",
+			"this->retencion",
+			"$this->retencion",
+			"retencion",
+			"retenciones",
+			"retencion",
+			"suma_retencion",
+			"suma_descuento",
+			"anticipo_liberar",
+			"RetencionesLiberadas",
+			"renderTotales",
+			"render",
+			"suma_retencion",
 			"Total",
-			"total",
-			"\";\n",
-			"resumen",
-			"AlmacenController"
+			"$data['totales']",
+			"6",
+			"guarda",
+			"porcen",
+			"porcenta",
+			"[0]",
+			"pct_anticipo",
+			"echo $this->pct_anticipo;",
+			"getTotalesTransaccion",
+			"guardaTransaccion",
+			"PctAnticipo",
+			"porcentaje_anticipo",
+			"getPorcentajeAnticipo",
+			"amortizacion_anticipo",
+			"resetToolbar",
+			"porcentaje_fondo_garantia",
+			"porcentaje_retencion_fg",
+			"porcentaje_anticipo",
+			"renderCOnceptos",
+			"getConceptosEstimacion",
+			"getConceptos",
+			"amortizacion_anticipo"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -970,6 +954,9 @@
 		"regex": false,
 		"replace_history":
 		[
+			"amortizacion_anticipo_acumulado_anterior",
+			"fondo_garantia_acumulado_anterior",
+			"iva_acumulado_anterior",
 			"id_subcontrato",
 			"estimacion",
 			"that",
@@ -1042,7 +1029,7 @@
 	"groups":
 	[
 		{
-			"selected": 8,
+			"selected": 5,
 			"sheets":
 			[
 				{
@@ -1050,15 +1037,15 @@
 					"file": "estimaciones.php",
 					"settings":
 					{
-						"buffer_size": 18005,
+						"buffer_size": 19407,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								16535,
-								16535
+								11860,
+								11860
 							]
 						],
 						"settings":
@@ -1067,7 +1054,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 10320.0,
+						"translation.y": 6230.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1077,15 +1064,15 @@
 					"file": "inc/js/estimaciones.js",
 					"settings":
 					{
-						"buffer_size": 37022,
+						"buffer_size": 36532,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								34337,
-								34337
+								26125,
+								26125
 							]
 						],
 						"settings":
@@ -1094,7 +1081,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 28420.0,
+						"translation.y": 22489.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1104,15 +1091,15 @@
 					"file": "inc/lib/controllers/EstimacionSubcontratoController.php",
 					"settings":
 					{
-						"buffer_size": 19289,
+						"buffer_size": 20651,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								9960,
-								9977
+								13357,
+								12143
 							]
 						],
 						"settings":
@@ -1121,7 +1108,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 4990.0,
+						"translation.y": 6756.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1131,15 +1118,15 @@
 					"file": "inc/lib/models/EstimacionSubcontrato.class.php",
 					"settings":
 					{
-						"buffer_size": 24302,
+						"buffer_size": 24180,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								566,
-								572
+								18434,
+								18462
 							]
 						],
 						"settings":
@@ -1148,33 +1135,34 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 8560.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 4,
+					"file": "inc/lib/models/EstimacionRetencionLiberacion.class.php",
 					"settings":
 					{
-						"buffer_size": 1201,
+						"buffer_size": 3250,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								834,
-								849
+								1300,
+								1300
 							]
 						],
 						"settings":
 						{
-							"auto_name": "IDTransaccion: 1885216,",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
+							"auto_name": "<?php",
+							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 113.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1184,15 +1172,15 @@
 					"file": "inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
 					"settings":
 					{
-						"buffer_size": 21196,
+						"buffer_size": 24277,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								19744,
-								19744
+								21904,
+								21904
 							]
 						],
 						"settings":
@@ -1201,106 +1189,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 8815.0,
+						"translation.y": 7372.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 6,
-					"file": "inc/lib/models/Util.class.php",
+					"file": "inc/lib/models/CargoMaterial.class.php",
 					"settings":
 					{
-						"buffer_size": 1607,
+						"buffer_size": 3236,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1164,
-								1164
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 550.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "inc/lib/models/Subcontrato.class.php",
-					"settings":
-					{
-						"buffer_size": 22096,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1313,
-								1313
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 430.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "inc/lib/models/EstimacionDeductiva.class.php",
-					"settings":
-					{
-						"buffer_size": 3469,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1600,
-								1600
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 990.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "inc/lib/models/EstimacionDescuento.class.php",
-					"settings":
-					{
-						"buffer_size": 5536,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								99,
-								54
+								432,
+								432
 							]
 						],
 						"settings":
@@ -1315,19 +1222,46 @@
 					"type": "text"
 				},
 				{
-					"buffer": 10,
-					"file": "inc/lib/models/Empresa.class.php",
+					"buffer": 7,
+					"file": "inc/lib/models/EstimacionDescuentoMaterial.class.php",
 					"settings":
 					{
-						"buffer_size": 3662,
+						"buffer_size": 10830,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1290,
-								1290
+								6424,
+								6429
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1822.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "inc/lib/models/Empresa.class.php",
+					"settings":
+					{
+						"buffer_size": 5034,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								433,
+								433
 							]
 						],
 						"settings":
@@ -1386,12 +1320,48 @@
 		"selected_items":
 		[
 			[
-				"deduct",
-				"inc/lib/models/EstimacionDeductiva.class.php"
+				"transacc",
+				"inc/lib/models/TransaccionSAO.class.php"
+			],
+			[
+				"subcontrato",
+				"inc/lib/models/Subcontrato.class.php"
+			],
+			[
+				"retencion",
+				"inc/lib/models/EstimacionRetencion.class.php"
 			],
 			[
 				"empresa",
 				"inc/lib/models/Empresa.class.php"
+			],
+			[
+				"material",
+				"inc/lib/models/Material.class.php"
+			],
+			[
+				"general",
+				"css/general.css"
+			],
+			[
+				"retenciontipo",
+				"inc/lib/models/RetencionTipo.class.php"
+			],
+			[
+				"subcontr",
+				"inc/lib/models/Subcontrato.class.php"
+			],
+			[
+				"estret",
+				"inc/lib/models/EstimacionRetencion.class.php"
+			],
+			[
+				"agrupacion",
+				"inc/js/agrupacion.js"
+			],
+			[
+				"deduct",
+				"inc/lib/models/EstimacionDeductiva.class.php"
 			],
 			[
 				"estimaciondescue",
@@ -1402,20 +1372,12 @@
 				"inc/lib/models/EstimacionDeductiva.class.php"
 			],
 			[
-				"subcontrato",
-				"inc/lib/models/Subcontrato.class.php"
-			],
-			[
 				"util",
 				"inc/lib/models/Util.class.php"
 			],
 			[
 				"format",
 				"inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php"
-			],
-			[
-				"transacc",
-				"inc/lib/models/TransaccionSAO.class.php"
 			],
 			[
 				"estimaciondesc",
@@ -1470,10 +1432,6 @@
 				"inc/lib/models/Obra.class.php"
 			],
 			[
-				"material",
-				"inc/lib/models/Material.class.php"
-			],
-			[
 				"mater",
 				"inc/lib/models/Material.class.php"
 			],
@@ -1496,10 +1454,6 @@
 			[
 				"estimacion",
 				"inc/lib/models/EstimacionSubcontrato.class.php"
-			],
-			[
-				"general",
-				"css/general.css"
 			],
 			[
 				"pres",
@@ -1586,10 +1540,6 @@
 				"inc/lib/models/EstimacionSubcontrato.class.php"
 			],
 			[
-				"agrupacion",
-				"inc/js/agrupacion.js"
-			],
-			[
 				"mate",
 				"inc/lib/models/Material.class.php"
 			],
@@ -1604,10 +1554,6 @@
 			[
 				"subcontratoc",
 				"inc/lib/controllers/SubcontratoController.php"
-			],
-			[
-				"subcontr",
-				"inc/lib/models/Subcontrato.class.php"
 			],
 			[
 				"cuenta",
@@ -1883,18 +1829,6 @@
 			],
 			[
 				"modulos",
-				"inc/lib/db/ModulosSAOConn.class.php"
-			],
-			[
-				"menuaplo",
-				"inc/lib/controllers/MenuAplicacionController.php"
-			],
-			[
-				"dbconf",
-				"inc/lib/db/DBConf.class.php"
-			],
-			[
-				"modulossao",
 				"inc/lib/db/ModulosSAOConn.class.php"
 			]
 		],

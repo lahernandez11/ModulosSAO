@@ -349,10 +349,9 @@
 				<textarea id="txtConceptoRetencion" name="txtConceptoRetencion"></textarea>
 			</p>
 			<label for="txtImporteRetencion">Importe</label>
-			<input type="text" id="txtImporteRetencion" class="amount" value="0" />
+			<input type="text" id="txtImporteRetencion" class="amount" placeholder="0.00" />
 			<div style="margin-top: 1em; text-align: right;border-top: 1px solid #222;padding: 0.5em 0 0 0;">
 				<input type="submit" class="button" value="Guardar" />
-				<!--<input type="button" class="button" value="Cerrar" autofocus />-->
 			</div>
 		</form>
 	</div>
@@ -433,21 +432,21 @@
 	</script>
 	
 	<script type="text/template" id="template-deductiva">
-		<tr data-id="<%- id_descuento %>" data-iditem="<%- id_item %>">
+		<tr data-id="<%- id_descuento %>" data-idmaterial="<%- id_material %>">
 			<td title="<%- descripcion %>"><%- descripcion %></td>
-			<td class="numerico"><%- cantidad_total %></td>
+			<td class="numerico"><%- cantidad %></td>
 			<td class="centrado"><%- unidad %></td>
 			<td class="numerico"><%= precio %></td>
-			<td class="numerico"><%= importe_total %></td>
-			<td class="numerico"><%- cantidad_descontada %></td>
-			<td class="numerico"><%= importe_descontado %></td>
+			<td class="numerico"><%= importe %></td>
+			<td class="numerico"><%- cantidad_descontada_anterior %></td>
+			<td class="numerico"><%= importe_descontado_anterior %></td>
 			<th class="numerico"><%- cantidad_por_descontar %></th>
 			<th class="numerico"><%= importe_por_descontar %></th>
 			<td class="numerico">
-				<input type="text" class="text" name="cantidad_descuento" value="<%- cantidad_descuento %>"/>
+				<input type="text" class="text" name="cantidad_descuento" placeholder="0.00" value="<%= cantidad_descuento == 0 ? "" : cantidad_descuento %>" />
 			</td>
 			<td class="numerico">
-				<input type="hidden" name="id_item" value="<%- id_item %>">
+				<input type="hidden" name="id_material" value="<%- id_material %>">
 				<input type="text" class="text" name="precio_descuento" value="<%= precio_descuento %>"/>
 			</td>
 			<th class="numerico"><%- importe_descuento %></th>
@@ -485,29 +484,29 @@
 			<tbody>
 				<tr>
 					<th colspan="2">Suma de Importes</th>
-					<td class="numerico"><%- suma_importes %></td>
+					<td class="numerico"><%- totales.suma_importes %></td>
 				</tr>
 				<tr>
 					<th>Amortización de Anticipo</th>
-					<td class="porcentaje"><%- porcentaje_anticipo %></td>
-					<td class="numerico editable" id="txtAmortAnticipo"><%- amortizacion_anticipo %></td>
+					<td class="porcentaje"><%- totales.porcentaje_anticipo %></td>
+					<td class="numerico editable" id="txtAmortAnticipo"><%- totales.amortizacion_anticipo %></td>
 				</tr>
 				<tr>
 					<th>Fondo de Garantia</th>
-					<td class="porcentaje"><%- porcentaje_fondo_garantia %></td>
-					<td class="numerico editable" id="txtFondoGarantia"><%- fondo_garantia %></td>
+					<td class="porcentaje"><%- totales.porcentaje_fondo_garantia %></td>
+					<td class="numerico editable" id="txtFondoGarantia"><%- totales.fondo_garantia %></td>
 				</tr>
 				<tr>
 					<th colspan="2">Subtotal</th>
-					<td class="numerico"><%- subtotal %></td>
+					<td class="numerico"><%- totales.subtotal %></td>
 				</tr>
 				<tr>
 					<th colspan="2">I.V.A.</th>
-					<td class="numerico"><%- iva %></td>
+					<td class="numerico"><%- totales.iva %></td>
 				</tr>
 				<tr class="total">
 					<th colspan="2">Total</th>
-					<th class="numerico"><%- total_estimacion %></th>
+					<th class="numerico"><%- totales.total_estimacion %></th>
 				</tr>
 			</tbody>
 		</table>
@@ -520,33 +519,33 @@
 			<tbody>
 				<tr>
 					<th>Deductivas</th>
-					<td class="numerico"><%- descuentos %></td>
+					<td class="numerico"><%- totales.descuentos %></td>
 				</tr>
 				<tr>
 					<th>Retenciones</th>
-					<td class="numerico"><%- retenciones %></td>
+					<td class="numerico"><%- totales.retenciones %></td>
 				</tr>
 				<tr>
 					<th>Retención de I.V.A.</th>
-					<td class="numerico editable" id="txtRetencionIVA"><%- retencion_iva %></td>
+					<td class="numerico editable" id="txtRetencionIVA"><%- totales.retencion_iva %></td>
 				</tr>
 				<tr>
 					<th>Retenciones Liberadas</th>
-					<td class="numerico"><%- retencion_liberada %></td>
+					<td class="numerico"><%- totales.retencion_liberada %></td>
 				</tr>
 				<tr>
 					<th>Anticipo A Liberar</th>
-					<td class="numerico editable" id="txtAnticipoLiberar"><%- anticipo_a_liberar %></td>
+					<td class="numerico editable" id="txtAnticipoLiberar"><%- totales.anticipo_a_liberar %></td>
 				</tr>
 				<tr class="total">
 					<th>Monto a Pagar</th>
-					<th class="numerico"><%- total_pagar %></th>
+					<th class="numerico"><%- totales.total_pagar %></th>
 				</tr>
 			</tbody>
 		</table>
 		<div style="margin-top: 1em; text-align: right;border-top: 1px solid #222;padding: 0.5em 0;">
-			<input type="button" class="button alert" id="btn-revertir-aprobar" value="Revertir Aprobación" />
-			<input type="button" class="button dd-list" id="btn-aprobar" value="Aprobar" autofocus />
+			<%= aprobada ? '<input type="button" class="button alert" id="btn-revertir-aprobar" value="Revertir Aprobación" />' :
+			'<input type="button" class="button dd-list" id="btn-aprobar" value="Aprobar" autofocus />' %>
 		</div>
 	</script>
 

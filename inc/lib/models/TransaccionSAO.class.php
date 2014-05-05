@@ -3,14 +3,16 @@ abstract class TransaccionSAO {
 	const TIPO_TRANSACCION = 0;
 
 	public    $obra;
+
 	protected $id_transaccion;
 	protected $tipo_transaccion;
-	protected $estado = 0;
+	protected $estado 		= 0;
 	protected $_numeroFolio = 0;
-	protected $_fecha = null;
+	protected $_fecha 		= null;
 	protected $referencia;
 	protected $_observaciones = "";
-	protected $conn = null;
+
+	protected $conn 		= null;
 
 	public function __construct() {
 
@@ -52,7 +54,6 @@ abstract class TransaccionSAO {
 
 		$tsql = "SELECT
 					  [transacciones].[id_transaccion]
-					, [obras].[nombre] AS [NombreObra]
 					, [transacciones].[tipo_transaccion]
 					, [transacciones].[estado]
 					, [transacciones].[numero_folio]
@@ -61,15 +62,11 @@ abstract class TransaccionSAO {
 					, [transacciones].[observaciones]
 				FROM
 					[dbo].[transacciones]
-				INNER JOIN
-					[dbo].[obras]
-					ON
-						[transacciones].[id_obra] = [obras].[id_obra]
 				WHERE
 					[transacciones].[id_obra] = ?
 						AND
 					[transacciones].[id_transaccion] = ?";
-		
+
 	    $params = array(
 	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
 	        array( $this->id_transaccion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
@@ -82,7 +79,7 @@ abstract class TransaccionSAO {
 			foreach ( $rsDatosTran as $datosTran ) {
 
 				$this->tipo_transaccion = $datosTran->tipo_transaccion;
-				$this->referencia = $datosTran->referencia;
+				$this->referencia 		= $datosTran->referencia;
 				$this->estado 		    = $datosTran->estado;
 				$this->_numeroFolio     = $datosTran->numero_folio;
 				$this->setFecha( $datosTran->fecha );

@@ -154,6 +154,7 @@ try {
 			$data['datos']['Observaciones'] 	 	 = $transaccion->getObservaciones();
 			$data['datos']['NombreContratista']  	 = $transaccion->empresa->getNombre();
 			$data['datos']['ObjetoSubcontrato']  	 = $transaccion->subcontrato->getReferencia();
+			$data['datos']['aprobada']				 = $transaccion->estaAprobada();
 
 			$conceptos = $transaccion->getConceptosEstimacion();
 			
@@ -203,8 +204,9 @@ try {
 				$data['conceptos'][] = $item;
 			}
 
-			$totales = $transaccion->getTotalesTransaccion();
-			$data['totales'] = Util::formatoNumericoTotales( $totales );
+			$totales 				   = $transaccion->getTotalesTransaccion();
+			$data['totales'] 		   = Util::formatoNumericoTotales( $totales );
+			$data['datos']['aprobada'] = $transaccion->estaAprobada();
 
 			break;
 
@@ -309,37 +311,56 @@ try {
 			$id_transaccion = (int) $_GET['id_transaccion'];
 
 			$transaccion = new EstimacionSubcontrato( $obra, $id_transaccion );
-			$data['deductivas'] = array();
+			$data['cargos_material'] = array();
 
-			foreach ( $transaccion->empresa->deductivas as $deductiva ) {
-				$descuento = $deductiva->getDescuento( $transaccion );
+			// $last_material = null;
+			foreach ( $transaccion->empresa->cargos_material as $cargo_material ) {
+				$descuento_aplicado = null;
+				$cantidad_descontada_anterior = EstimacionDescuentoMaterial::getCantidadDescontadaAnterior( $transaccion, $cargo_material->material );
+				$importe_descontado_anterior  = EstimacionDescuentoMaterial::getImporteDescontadoAnterior( $transaccion, $cargo_material->material );
+				$cantidad_por_descontar		  = 0;
+				$importe_por_descontar		  = 0;
 
-				$cantidad_por_descontar = 
-					  $deductiva->getCantidadTotal()
-					- $descuento->getCantidadDescontada();
+				foreach ( $transaccion->descuentos as $descuento ) {
 
-				if ( $cantidad_por_descontar < 0 ) { $cantidad_por_descontar = 0; }
+					if ( $descuento->material->getId() == $cargo_material->material->getId() ) {
+						$descuento_aplicado = $descuento;
+						break;
+					}
+				}
 
-				$importe_por_descontar = $deductiva->getImporteTotal()
-					- $descuento->getImporteDescontado();
+				if ( $cantidad_descontada_anterior <= $cargo_material->getCantidad() ) {
+					$cantidad_por_descontar = $cargo_material->getCantidad() - $cantidad_descontada_anterior;
+					$importe_por_descontar	= $cargo_material->getImporte() - $importe_descontado_anterior;
+				}
 
-				if ( $importe_por_descontar < 0 ) {	$importe_por_descontar = 0; }
+				$id       = 0;
+				$cantidad = 0;
+				$precio   = $cargo_material->getPrecio();
+				$importe  = 0;
+				
+				if ( ! is_null( $descuento_aplicado ) ) {
+					$id 	  = $descuento_aplicado->getId();
+					$cantidad = $descuento_aplicado->getCantidad();
+					$precio   = $descuento_aplicado->getPrecio();
+					$importe  = $descuento_aplicado->getImporte();
+				}
 
-				$data['deductivas'][] = array(
-					'id_item'   	 		 => $deductiva->getId(),
-					'descripcion'    		 => $deductiva->material->getDescripcion(),
-					'cantidad_total' 		 => Util::formatoNumerico($deductiva->getCantidadTotal()),
-					'unidad' 				 => $deductiva->getUnidad(),
-					'precio' 				 => Util::formatoNumerico($deductiva->getPrecio()),
-					'importe_total' 		 => Util::formatoNumerico($deductiva->getImporteTotal()),
-					'cantidad_descontada' 	 => Util::formatoNumerico($descuento->getCantidadDescontada()),
-					'importe_descontado' 	 => Util::formatoNumerico($descuento->getImporteDescontado()),
-					'cantidad_por_descontar' => Util::formatoNumerico($cantidad_por_descontar),
-					'importe_por_descontar'  => Util::formatoNumerico($importe_por_descontar),
-					'id_descuento'			 => $descuento->getId(),
-					'cantidad_descuento'	 => $descuento->getCantidad(),
-					'precio_descuento'	 	 => Util::formatoNumerico( $descuento->getPrecio() === 0 ? $deductiva->getPrecio() : $descuento->getPrecio() ),
-					'importe_descuento'	 	 => Util::formatoNumerico($descuento->getImporte())
+				$data['cargos_material'][] = array(
+					'id_material'   	 	 => $cargo_material->material->getId(),
+					'descripcion'    		 => $cargo_material->material->getDescripcion(),
+					'cantidad' 		 		 => Util::formatoNumerico( $cargo_material->getCantidad() ),
+					'unidad' 				 => $cargo_material->material->getUnidad(),
+					'precio' 				 => Util::formatoNumerico( $cargo_material->getPrecio() ),
+					'importe' 		 		 => Util::formatoNumerico( $cargo_material->getImporte() ),
+					'cantidad_descontada_anterior' 	 => Util::formatoNumerico( $cantidad_descontada_anterior ),
+					'importe_descontado_anterior' 	 => Util::formatoNumerico( $importe_descontado_anterior ),
+					'cantidad_por_descontar' => Util::formatoNumerico( $cantidad_por_descontar ),
+					'importe_por_descontar'  => Util::formatoNumerico( $importe_por_descontar ),
+					'id_descuento'			 => $id,
+					'cantidad_descuento'	 => Util::formatoNumerico( $cantidad ),
+					'precio_descuento'	 	 => Util::formatoNumerico( $precio ),
+					'importe_descuento'	 	 => Util::formatoNumerico( $importe )
 				);
 			}
 			break;
@@ -348,27 +369,29 @@ try {
 			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
 			$obra = new Obra( $conn, (int) $_POST['id_obra'] );
 			$id_transaccion = (int) $_POST['id_transaccion'];
-			$deductivas 	= $_POST['descuentos'];
+			$descuentos 	= $_POST['descuentos'];
 
 			$transaccion = new EstimacionSubcontrato( $obra, $id_transaccion );
 			$desc = array();
 
-			foreach ( $deductivas as $key => $item ) {
-				$deductiva = new EstimacionDeductiva( $transaccion->empresa, $item['id_item'] );
+			foreach ( $descuentos as $item ) {
+				$material = new Material( $obra, (int) $item['id_material'] );
 
 				$descuento = $transaccion->addDescuento(
-					$deductiva, Util::limpiaImporte( $item['cantidad_descuento'] ), Util::limpiaImporte( $item['precio_descuento'] )
+					$material, 
+					Util::limpiaImporte( $item['cantidad'] ),
+					Util::limpiaImporte( $item['precio'] )
 				);
 				
-				$desc[$item['id_item']] = array(
+				$desc[$item['id_material']] = array(
 					'id_descuento' 		 => $descuento->getId(),
-					'cantidad_descuento' => $item['cantidad_descuento'],
-					'precio_descuento'   => $item['precio_descuento'],
-					'importe_descuento'  => $descuento->getImporte()
+					'cantidad' => $item['cantidad'],
+					'precio'   => $item['precio'],
+					'importe'  => $descuento->getImporte()
 				);
 			}
 
-			$data['deductivas'] = $desc;
+			$data['descuentos'] = $desc;
 			break;
 
 		case 'getRetenciones':

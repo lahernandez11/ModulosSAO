@@ -3,8 +3,9 @@ require_once 'models/TransaccionSAO.class.php';
 require_once 'models/Empresa.class.php';
 require_once 'models/Moneda.class.php';
 require_once 'models/Subcontrato.class.php';
-require_once 'models/EstimacionDeductiva.class.php';
+require_once 'models/CargoMaterial.class.php';
 require_once 'models/EstimacionRetencion.class.php';
+require_once 'models/EstimacionDescuentoMaterial.class.php';
 require_once 'models/EstimacionRetencionLiberacion.class.php';
 
 class EstimacionSubcontrato extends TransaccionSAO {
@@ -119,7 +120,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
 	    $res = $this->conn->executeQuery( $tsql, $params );
 
-	    if (count($res) > 0)
+	    if ( count( $res ) > 0 )
 	    	return true;
 	    else
 	    	return false;
@@ -168,7 +169,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    $datos = $this->conn->executeSP( $tsql, $params );
 
 	    $this->subcontrato 			    = new Subcontrato( $this->obra, $datos[0]->id_antecedente );
-	    $this->empresa 		   		    = new Empresa( $this->obra, $datos[0]->id_empresa);
+	    $this->empresa 		   		    = $this->subcontrato->empresa;
 	    $this->moneda 					= new Moneda( $this->obra, $datos[0]->id_moneda );
 
 	    $this->numero_folio_consecutivo = $datos[0]->NumeroFolioConsecutivo;
@@ -178,8 +179,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    $this->pct_fondo_garantia 	    = $datos[0]->retencion;
 	    $this->pct_iva 	   			    = $datos[0]->porcentaje_iva;
 
-	    $this->descuentos = EstimacionDescuento::getInstance( $this );
-	    $this->retenciones = EstimacionRetencion::getInstance( $this );
+	    $this->descuentos   = EstimacionDescuentoMaterial::getInstance( $this );
+	    $this->retenciones  = EstimacionRetencion::getInstance( $this );
 	    $this->liberaciones = EstimacionRetencionLiberacion::getInstance( $this );
 
 	    $this->getTotalesTransaccion();
@@ -246,6 +247,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
 				    $this->pct_anticipo 	  = $this->subcontrato->getPorcentajeAnticipo();
 					$this->pct_fondo_garantia = $this->subcontrato->getPorcentajeRetencion();
+					$this->empresa 			  = $this->subcontrato->empresa;
 				}
 
 				$errores = $this->guardaConceptos();
@@ -319,10 +321,11 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    $tsql = "UPDATE
 					[dbo].[transacciones]
 				SET
-					[impuesto]  = ?,
-					[monto]     = ?,
-					[retencion] = ?,
-					[anticipo]  = ?
+					[impuesto]    = ?,
+					[monto]       = ?,
+					[retencion]   = ?,
+					[IVARetenido] = ?,
+					[anticipo]    = ?
 				WHERE
 					[id_transaccion] = ?;";
 
@@ -330,6 +333,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	        array( $this->iva, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
 	        array( $this->total, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
 	        array( $this->pct_fondo_garantia * 100, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(15, 5) ),
+	        array( $this->retencion_iva, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
 	        array( $this->pct_anticipo * 100, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(15, 5) ),
 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
@@ -339,13 +343,11 @@ class EstimacionSubcontrato extends TransaccionSAO {
 		$tsql = "UPDATE
 					[SubcontratosEstimaciones].[Estimaciones]
 				SET
-					[ImporteRetencionIVA]    = ?,
 					[ImporteAnticipoLiberar] = ?
 				WHERE
 					[IDEstimacion] = ?;";
 
 	    $params = array(
-	        array( $this->retencion_iva, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
 	        array( $this->anticipo_liberar, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) ),
 	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
 	    );
@@ -481,13 +483,13 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    return $conceptos;
 	}
 
-	public function addDescuento( EstimacionDeductiva $deductiva, $cantidad, $precio ) {
+	public function addDescuento( Material $material, $cantidad, $precio ) {
 
 		if ( $this->estaAprobada() ) {
 			throw new Exception("La estimacion se encuentra aprobada.", 1);
 		}
 
-		$descuento = new EstimacionDescuento( $this, $deductiva );
+		$descuento = new EstimacionDescuentoMaterial( $this, $material );
 		$descuento->setCantidad( $cantidad );
 		$descuento->setPrecio( $precio );
 		$descuento->save();
@@ -582,11 +584,12 @@ class EstimacionSubcontrato extends TransaccionSAO {
 			'total_pagar' 							=> $totales[0]['monto_a_pagar'],
 
 			'ImporteAcumuladoEstimacionAnterior' 	=> $totales[0]['ImporteAcumuladoEstimacionAnterior'],
-			'ImporteAcumuladoDeductivaAnterior' 	=> $totales[0]['ImporteAcumuladoDeductivaAnterior'],
-			'ImporteAcumuladoRetencionAnterior' 	=> $totales[0]['ImporteAcumuladoRetencionAnterior'],
-			'ImporteAcumuladoAnticipoAnterior' 		=> $totales[0]['ImporteAcumuladoAnticipoAnterior'],
-			'ImporteAcumuladoFondoGarantiaAnterior' => $totales[0]['ImporteAcumuladoFondoGarantiaAnterior'],
-			'IVAAcumuladoAnterior' 					=> $totales[0]['IVAAcumuladoAnterior'],
+			'descuento_acumulado_anterior' 			=> $totales[0]['descuento_acumulado_anterior'],
+			'retencion_acumulada_anterior' 			=> $totales[0]['retencion_acumulada_anterior'],
+			'amortizacion_anticipo_acumulado_anterior' => $totales[0]['amortizacion_anticipo_acumulado_anterior'],
+			'fondo_garantia_acumulado_anterior' 	=> $totales[0]['fondo_garantia_acumulado_anterior'],
+			'iva_acumulado_anterior' 				=> $totales[0]['iva_acumulado_anterior'],
+			'iva_retenido_acumulado_anterior' 		=> $totales[0]['iva_retenido_acumulado_anterior'],
 			
 			'porcentaje_anticipo'					=> $this->pct_anticipo * 100,
 			'porcentaje_fondo_garantia'				=> $this->pct_fondo_garantia * 100,
