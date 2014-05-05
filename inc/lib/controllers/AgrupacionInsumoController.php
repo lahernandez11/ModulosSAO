@@ -75,13 +75,13 @@ try {
 			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
 			$obra = new Obra( $conn, (int) $_POST['id_obra'] );
 
-			$id_agrupador = $_POST['id_agrupador'];
-			$id_material = $_POST['id'];
+			$id_agrupador = (int) $_POST['id_agrupador'];
+			$id_material  = (int) $_POST['id'];
 
-			$material = new Material( $conn, $id_material );
+			$material  = new Material( $obra, $id_material );
 			$agrupador = new AgrupadorInsumo( $conn, $id_agrupador );
 			
-			$material->setAgrupador( $obra, $agrupador );
+			$material->setAgrupador( $agrupador );
 
 			break;
 
