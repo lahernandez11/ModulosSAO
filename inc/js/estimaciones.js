@@ -23,7 +23,7 @@ var ESTIMACION = {
 	init: function() {
 
 		var that = this;
-
+		$( document ).tooltip();
 		Retenciones.init();
 		Deductivas.init();
 

@@ -271,9 +271,11 @@ try {
 				$data['NumeroFolio']    		= Util::formatoNumeroFolio( $transaccion->getNumeroFolio() );
 				$data['NumeroFolioConsecutivo'] = Util::formatoNumeroFolio( $transaccion->getNumeroFolioConsecutivo() );
 			}
-
-			$totales = $transaccion->getTotalesTransaccion();
-			$data['totales'] = Util::formatoNumericoTotales( $totales );
+			
+			if ( count( $data['errores'] ) == 0 ) {
+				$totales = $transaccion->getTotalesTransaccion();
+				$data['totales'] = Util::formatoNumericoTotales( $totales );
+			}
 			
 			break;
 
