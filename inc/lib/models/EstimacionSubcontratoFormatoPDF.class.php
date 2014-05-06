@@ -7,16 +7,16 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 	const FORMATO_NOMBRE_ARCHIVO = 'EstimacionSubcontrato.pdf';
 	const PDF_PAGE_ORIENTATION = 'L';
 
-	protected $titulo = 'ESTIMACIÓN DE OBRA EJECUTADA';
-	protected $organizacion_label = 'Organización:';
-	protected $contratista_label = 'Contratista:';
-	protected $numero_de_estimacion_label = 'No. Estimación';
-	protected $semana_de_contrato_label = 'Semana de Contrato';
-	protected $numero_de_contrato_label = 'No. de Contrato:';
-	protected $firma_contratista_titulo_label = 'por el contratista';
+	protected $titulo 							= 'ESTIMACIÓN DE OBRA EJECUTADA';
+	protected $organizacion_label 				= 'Organización:';
+	protected $contratista_label 				= 'Contratista:';
+	protected $numero_de_estimacion_label 		= 'No. Estimación';
+	protected $semana_de_contrato_label 		= 'Semana de Contrato';
+	protected $numero_de_contrato_label 		= 'No. de Contrato:';
+	protected $firma_contratista_titulo_label 	= 'por el contratista';
 	protected $firma_contratista_descripcion_label = 'factor o dependiente';
-	protected $firma_cliente_titulo_label = 'por el cliente';
-	protected $firma_cliente_descripcion_label = 'gerente de proyecto';
+	protected $firma_cliente_titulo_label 		= 'por el cliente';
+	protected $firma_cliente_descripcion_label 	= 'gerente de proyecto';
 
 	private $estimacion;
 	private $soloConceptosEstimados = 1;
@@ -33,9 +33,12 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 	private $sumaAcumuladoDescuentoEstaEstimacion = 0;	// suma acumulada de importe de descuentos aplicados a esta estimacion
 	private $sumaSaldoPorDescontar 				  = 0;	// suma del saldo total por descontar al contratista
 
-
-	private $suma_retenciones   = 0;	// suma total de retenciones aplicadas en esta estimacion
-	private $suma_liberaciones  = 0;	// suma total de liberaciones aplicadas en esta estimacion
+	private $suma_retenciones_anterior 	= 0;
+	private $suma_retenciones 			= 0;	// suma total de retenciones aplicadas en esta estimacion
+	private $suma_retenciones_actual 	= 0;
+	private $suma_liberaciones_anterior = 0;	// suma total de liberaciones aplicadas en esta estimacion
+	private $suma_liberaciones  		= 0;	// suma total de liberaciones aplicadas en esta estimacion
+	private $suma_liberaciones_actual  	= 0;	// suma total de liberaciones aplicadas en esta estimacion
 
 	public function __construct( EstimacionSubcontrato $estimacion, $soloConceptosEstimados = 1 ) {
 		parent::__construct();
@@ -438,14 +441,20 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 
 		$this->setAligns( array("L", "C", "R") );
 
+		$ejecutado_contrato = $this->estimacion->subcontrato->getSubtotal();
+		$ejecutado_anterior = $this->sumaAcumuladoEstimacionAnterior;
+		$ejecutado 			= $this->sumaImporteEstaEstimacion;
+		$ejecutado_actual	= $this->sumaAcumuladoEstaEstimacion;
+		$ejecutado_saldo	= $this->sumaSaldoPendiente;
+
 		$this->Row(
 			array(
 				"Importe asociado a trabajos ejecutados", "", "", "",
-				Util::formatoNumerico( $this->estimacion->subcontrato->getSubtotal() ), "",
-				Util::formatoNumerico( $this->sumaAcumuladoEstimacionAnterior ), "",
-				Util::formatoNumerico( $this->sumaImporteEstaEstimacion ), "",
-				Util::formatoNumerico( $this->sumaAcumuladoEstaEstimacion ), "",
-				Util::formatoNumerico( $this->sumaSaldoPendiente )
+				Util::formatoNumerico( $ejecutado_contrato ), "",
+				Util::formatoNumerico( $ejecutado_anterior ), "",
+				Util::formatoNumerico( $ejecutado ), "",
+				Util::formatoNumerico( $ejecutado_actual ), "",
+				Util::formatoNumerico( $ejecutado_saldo )
 			)
 		);
 
@@ -456,187 +465,157 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 			)
 		);
 
+		$anticipo_contrato = $this->estimacion->subcontrato->getImporteAnticipo();
+		$anticipo_anterior = $totales['amortizacion_anticipo_acumulado_anterior'];
+		$anticipo 		   = $totales['amortizacion_anticipo'];
+		$anticipo_actual   = $anticipo_anterior + $anticipo;
+		$anticipo_saldo	   = $anticipo_contrato - $anticipo_actual;
+
 		$this->Row(
 			array(
 				"Amortización Anticipo", "", "", "",
-				Util::formatoNumerico( $this->estimacion->subcontrato->getImporteAnticipo() ), "",
-				Util::formatoNumerico( $totales['amortizacion_anticipo_acumulado_anterior'] ), "",
-				Util::formatoNumerico( $totales['amortizacion_anticipo'] ), "",
-				Util::formatoNumerico(
-					  $totales['amortizacion_anticipo_acumulado_anterior']
-					+ $totales['amortizacion_anticipo']
-				), "",
-				Util::formatoNumerico(
-					  $this->estimacion->subcontrato->getImporteAnticipo()
-					- $totales['amortizacion_anticipo_acumulado_anterior']
-					- $totales['amortizacion_anticipo']
-				)
+				Util::formatoNumerico( $anticipo_contrato ), "",
+				Util::formatoNumerico( $anticipo_anterior ), "",
+				Util::formatoNumerico( $anticipo  ), "",
+				Util::formatoNumerico( $anticipo_actual ), "",
+				Util::formatoNumerico( $anticipo_saldo )
 			)
 		);
+
+		$fondo_garantia_contrato = $this->estimacion->subcontrato->getImporteFondoGarantia();
+		$fondo_garantia_anterior = $totales['fondo_garantia_acumulado_anterior'];
+		$fondo_garantia 		 = $totales['fondo_garantia'];
+		$fondo_garantia_actual	 = $fondo_garantia_anterior + $fondo_garantia;
+		$fondo_garantia_saldo 	 = $fondo_garantia_contrato - $fondo_garantia_actual;
 
 		$this->Row(
 			array(
 				"Fondo de Garantia", "%", Util::formatoPorcentaje( $this->estimacion->getPctFondoGarantia() ), "",
-				Util::formatoNumerico( $this->estimacion->subcontrato->getImporteFondoGarantia() ), "",
-				Util::formatoNumerico( $totales['fondo_garantia_acumulado_anterior'] ), "",
-				Util::formatoNumerico( $totales['fondo_garantia'] ), "",
-				Util::formatoNumerico(
-					  $totales['fondo_garantia_acumulado_anterior']
-					+ $totales['fondo_garantia']
-				), "",
-				Util::formatoNumerico(
-					  $this->estimacion->subcontrato->getImporteFondoGarantia()
-					- $totales['fondo_garantia_acumulado_anterior']
-					- $totales['fondo_garantia']
-				)
+				Util::formatoNumerico( $fondo_garantia_contrato ), "",
+				Util::formatoNumerico( $fondo_garantia_anterior ), "",
+				Util::formatoNumerico( $fondo_garantia ), "",
+				Util::formatoNumerico( $fondo_garantia_actual ), "",
+				Util::formatoNumerico( $fondo_garantia_saldo )
 			)
 		);
 
-		$subtotal = 0;
+		$subtotal_contrato =
+			  $ejecutado_contrato
+			- $anticipo_contrato
+			- $fondo_garantia_contrato;
+
+		$subtotal_anterior =
+			  $ejecutado_anterior
+			- $anticipo_anterior
+			- $fondo_garantia_anterior;
+
 		$subtotal = 
 			  $this->sumaImporteEstaEstimacion
-			- $totales['amortizacion_anticipo']
-			- $totales['fondo_garantia'];
+			- $anticipo
+			- $fondo_garantia;
+
+		$subtotal_actual =
+			  $subtotal_anterior
+			+ $subtotal;
+
+		$subtotal_saldo =
+			  $subtotal_contrato
+			- $subtotal_actual;
 
 		$this->Row(
 			array(
 				"Sub-total valor de los trabajos", "", "", "",
-				Util::formatoNumerico(
-					  $this->estimacion->subcontrato->getSubtotal()
-					- $this->estimacion->subcontrato->getImporteAnticipo()
-					- $this->estimacion->subcontrato->getImporteFondoGarantia()
-				), "",
-				Util::formatoNumerico(
-					  $this->sumaAcumuladoEstimacionAnterior
-					- $totales['amortizacion_anticipo_acumulado_anterior']
-					- $totales['fondo_garantia_acumulado_anterior']
-				), "",
+				Util::formatoNumerico( $subtotal_contrato ), "",
+				Util::formatoNumerico( $subtotal_anterior ), "",
 				Util::formatoNumerico( $subtotal ), "",
-				Util::formatoNumerico(
-					  $subtotal
-					+ (
-						  $this->sumaAcumuladoEstimacionAnterior
-						- $totales['amortizacion_anticipo_acumulado_anterior']
-						- $totales['fondo_garantia_acumulado_anterior']
-					  )
-				), "",
-				0
+				Util::formatoNumerico( $subtotal_actual ), "",
+				Util::formatoNumerico( $subtotal_saldo )
 			)
 		);
+
+		$iva_contrato = $this->estimacion->subcontrato->getIVA();
+		$iva_anterior = $totales['iva_acumulado_anterior'];
+		$iva 		  = $totales['iva'];
+		$iva_actual	  = $iva_anterior + $iva;
+		$iva_saldo	  = $iva_contrato - $iva_actual;
 
 		$this->Row(
 			array(
 				"IVA", "%", Util::formatoPorcentaje( $this->estimacion->getPctIVA() ), "",
-				Util::formatoNumerico( $this->estimacion->subcontrato->getIVA() ), "",
-				Util::formatoNumerico( $totales['iva_acumulado_anterior'] ), "",
-				Util::formatoNumerico( $totales['iva'] ), "",
-				Util::formatoNumerico(
-					  $totales['iva_acumulado_anterior']
-					+ $totales['iva']
-				), "",
-				Util::formatoNumerico(
-					  $this->estimacion->subcontrato->getIVA()
-					- $totales['iva_acumulado_anterior']
-					- $totales['iva']
-				)
+				Util::formatoNumerico( $iva_contrato ), "",
+				Util::formatoNumerico( $iva_anterior ), "",
+				Util::formatoNumerico( $iva ), "",
+				Util::formatoNumerico( $iva_actual ), "",
+				Util::formatoNumerico( $iva_saldo )
 			)
 		);
+
+		$total_contrato = $subtotal_contrato * ( 1 + $this->estimacion->getPctIVA() );
+		$total_anterior =  $subtotal_anterior + $iva_anterior;
+		$total 			= $subtotal + $iva;
+		$total_actual 	= $total_anterior + $total;
+		$total_saldo 	= $total_contrato - $total_actual;
 
 		$this->Row(
 			array(
 				"Total", $this->estimacion->moneda->getNombre(),
 				"", "",
-				Util::formatoNumerico(
-					(
-					  	  $this->estimacion->subcontrato->getSubtotal()
-						- $this->estimacion->subcontrato->getImporteAnticipo()
-						- $this->estimacion->subcontrato->getImporteFondoGarantia()
-					) * ( 1 + $this->estimacion->getPctIVA() )
-				), "",
-				Util::formatoNumerico(
-					  $this->sumaAcumuladoEstimacionAnterior
-					- $totales['amortizacion_anticipo_acumulado_anterior']
-					- $totales['fondo_garantia_acumulado_anterior']
-					+ $totales['iva_acumulado_anterior']
-
-				), "",
-				Util::formatoNumerico(
-					  $this->sumaImporteEstaEstimacion
-					- $totales['amortizacion_anticipo']
-					- $totales['fondo_garantia']
-					+ $totales['iva']
-				), "",
-				Util::formatoNumerico(
-					  $totales['iva_acumulado_anterior']
-					+ $totales['iva']
-				), "",
-				Util::formatoNumerico(
-					  $this->estimacion->subcontrato->getImporteAnticipo()
-					- $totales['iva_acumulado_anterior']
-					- $totales['iva']
-				)
+				Util::formatoNumerico( $total_contrato ), "",
+				Util::formatoNumerico( $total_anterior ), "",
+				Util::formatoNumerico( $total ), "",
+				Util::formatoNumerico( $total_actual ), "",
+				Util::formatoNumerico( $total_saldo )
 			)
 		);
 
-		$total = 0;
-		$total += $subtotal + $totales['iva'];
+		$retencion_iva_anterior = $totales['iva_retenido_acumulado_anterior'];
+		$retencion_iva 			= $totales['retencion_iva'];
+		$retencion_iva_actual	= $retencion_iva_anterior + $retencion_iva;
+		$retencion_iva_saldo	= 0;
 
 		$this->Row(
 			array(
 				"Retención de IVA", "", "", "", "", "",
-				Util::formatoNumerico( $totales['iva_retenido_acumulado_anterior'] ), "",
-				Util::formatoNumerico( $totales['retencion_iva'] ), "",
-				Util::formatoNumerico(
-					  $totales['iva_retenido_acumulado_anterior']
-					+ $totales['retencion_iva']
-				), "",
-				0
+				Util::formatoNumerico( $retencion_iva_anterior ), "",
+				Util::formatoNumerico( $retencion_iva ), "",
+				Util::formatoNumerico( $retencion_iva_actual ), "",
+				Util::formatoNumerico( $retencion_iva_saldo )
 			)
 		);
 
-		$total -= $totales['retencion_iva'];
+		$descuento_contrato = $this->estimacion->empresa->getImporteAcumuladoCargos();
+		$descuento_anterior = $totales['descuento_acumulado_anterior'];
+		$descuento 			= $this->sumaImporteDescuentoEstaEstimacion;
+		$descuento_actual	= $descuento_anterior + $descuento;
+		$descuento_saldo	= $descuento_contrato - $descuento_actual;
 
 		$this->Row(
 			array(
 				"Descuentos", "", "", "",
-				Util::formatoNumerico( $this->estimacion->empresa->getImporteAcumuladoCargos() ),
-				"",
-				Util::formatoNumerico( $totales['descuento_acumulado_anterior'] ), "",
-				Util::formatoNumerico( $this->sumaImporteDescuentoEstaEstimacion ), "",
-				Util::formatoNumerico(
-					  $totales['descuento_acumulado_anterior']
-					+ $this->sumaImporteDescuentoEstaEstimacion
-				), "",
-				Util::formatoNumerico(
-					  $this->estimacion->empresa->getImporteAcumuladoCargos()
-					- $totales['descuento_acumulado_anterior']
-					- $this->sumaImporteDescuentoEstaEstimacion
-				)
+				Util::formatoNumerico( $descuento_contrato ), "",
+				Util::formatoNumerico( $descuento_anterior ), "",
+				Util::formatoNumerico( $descuento ), "",
+				Util::formatoNumerico( $descuento_actual ), "",
+				Util::formatoNumerico( $descuento_saldo )
 			)
 		);
 
-		$total -= $this->sumaImporteDescuentoEstaEstimacion;
+		$retencion_contrato = $this->estimacion->subcontrato->getImporteAcumuladoRetenciones();
+		$retencion_anterior = $totales['retencion_acumulada_anterior'];
+		$retencion 			= $this->suma_retenciones;
+		$retencion_actual	= $retencion_anterior + $retencion;
+		$retencion_saldo	= 0;
 
 		$this->Row(
 			array(
 				"Retenciones", "", "", "",
-				Util::formatoNumerico( $this->estimacion->subcontrato->getImporteAcumuladoRetenciones() ),
-				"",
-				Util::formatoNumerico( $totales['retencion_acumulada_anterior'] ), "",
-				Util::formatoNumerico( $this->suma_retenciones ), "",
-				Util::formatoNumerico(
-					  $totales['retencion_acumulada_anterior']
-					+ $this->suma_retenciones
-				), "",
-				Util::formatoNumerico(
-					  $this->estimacion->subcontrato->getImporteAcumuladoRetenciones()
-					-  $totales['retencion_acumulada_anterior']
-					- $this->suma_retenciones
-				)
+				Util::formatoNumerico( $retencion_contrato ), "",
+				Util::formatoNumerico( $retencion_anterior ), "",
+				Util::formatoNumerico( $retencion ), "",
+				Util::formatoNumerico( $retencion_actual ), "",
+				Util::formatoNumerico( $retencion_saldo )
 			)
 		);
-
-		$total -= $this->suma_retenciones;
 
 		$this->Row(
 			array(
@@ -644,15 +623,10 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 				"", "",
 				0, "",
 				Util::formatoNumerico( $this->estimacion->getAnticipoLiberar() ), "",
-				Util::formatoNumerico(
-					$this->estimacion->getAnticipoLiberar()
-				), "",
+				Util::formatoNumerico( $this->estimacion->getAnticipoLiberar() ), "",
 				0
 			)
 		);
-
-		$total += $this->estimacion->getAnticipoLiberar();
-
 
 		foreach ( $this->estimacion->liberaciones as $liberacion ) {
 			$this->suma_liberaciones += $liberacion->getImporte();
@@ -672,23 +646,39 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 
 		$total += $this->suma_liberaciones;
 
+		$pagar_contrato =
+			  $total_contrato
+			- $descuento_contrato
+			- $retencion_contrato;
+
+		$pagar_anterior =
+			  $total_anterior
+			- $descuento_anterior
+			- $retencion_anterior;
+
+		$pagar =
+			  $total
+			+ $this->estimacion->getAnticipoLiberar()
+			- $retencion_iva
+			- $descuento
+			- $retencion;
+
+		$pagar_actual =
+			  $pagar_anterior
+			+ $pagar;
+
+		$pagar_saldo =
+			  $pagar_contrato
+			- $pagar_actual;
+
 		$this->Row(
 			array(
-				"Total pagado y/o a pagar", $this->estimacion->moneda->getNombre(),
-				"", "",
-				Util::formatoNumerico(
-					(
-					  	  $this->estimacion->subcontrato->getSubtotal()
-						- $this->estimacion->subcontrato->getImporteAnticipo()
-						- $this->estimacion->subcontrato->getImporteFondoGarantia()
-					) * ( 1 + $this->estimacion->getPctIVA() )
-					- $this->estimacion->subcontrato->getImporteAcumuladoRetenciones()
-					- $this->estimacion->empresa->getImporteAcumuladoCargos()
-				), "",
-				0, "",
-				Util::formatoNumerico( $total ), "",
-				0, "",
-				0
+				"Total pagado y/o a pagar", $this->estimacion->moneda->getNombre(),"", "",
+				Util::formatoNumerico( $pagar_contrato ), "",
+				Util::formatoNumerico( $pagar_anterior ), "",
+				Util::formatoNumerico( $pagar ), "",
+				Util::formatoNumerico( $pagar_actual ), "",
+				Util::formatoNumerico( $pagar_saldo )
 			)
 		);
 	}
