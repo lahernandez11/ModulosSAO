@@ -19,12 +19,12 @@ $db_name['SAO1814'] = 'SAO1814';
 $db_type['SAO1814'] = 'OBRA';
 $db_source_id['SAO1814'] = 1;
 
-// $db_host['SAO1814_CIRCUITO'] = '(local)\SQL2012';
-// $db_user['SAO1814_CIRCUITO'] = 'App_ModulosSAO';
-// $db_pwd['SAO1814_CIRCUITO']  = '@msApp85%';
-// $db_name['SAO1814_CIRCUITO'] = 'SAO1814_CIRCUITO';
-// $db_type['SAO1814_CIRCUITO'] = 'OBRA';
-// $db_source_id['SAO1814_CIRCUITO'] = 2;
+$db_host['SAO1814_CIRCUITO'] = '(local)\SQL2012';
+$db_user['SAO1814_CIRCUITO'] = 'App_ModulosSAO';
+$db_pwd['SAO1814_CIRCUITO']  = '@msApp85%';
+$db_name['SAO1814_CIRCUITO'] = 'SAO1814_CIRCUITO';
+$db_type['SAO1814_CIRCUITO'] = 'OBRA';
+$db_source_id['SAO1814_CIRCUITO'] = 2;
 
 // $db_host['SAO_CORP'] = '172.20.74.3';
 // $db_user['SAO_CORP'] = 'App_ModulosSAO';

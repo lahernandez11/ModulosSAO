@@ -523,7 +523,7 @@
 			"file": "inc/lib/models/EstimacionSubcontrato.class.php",
 			"settings":
 			{
-				"buffer_size": 24180,
+				"buffer_size": 26130,
 				"line_ending": "Windows"
 			}
 		},
@@ -542,24 +542,44 @@
 				"buffer_size": 36822,
 				"line_ending": "Windows"
 			}
+		},
+		{
+			"file": "inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
+			"settings":
+			{
+				"buffer_size": 25879,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "estimaciones.php",
+			"settings":
+			{
+				"buffer_size": 19543,
+				"line_ending": "Windows"
+			}
 		}
 	],
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 392.0,
+		"height": 127.0,
 		"selected_items":
 		[
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
 			[
 				"php",
 				"Set Syntax: PHP"
 			],
 			[
 				"inst",
-				"Package Control: Install Package"
-			],
-			[
-				"install",
 				"Package Control: Install Package"
 			],
 			[
@@ -620,6 +640,10 @@
 	},
 	"file_history":
 	[
+		"/D/www/ModulosSAO/inc/lib/models/Empresa.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/EstimacionRetencion.class.php",
+		"/D/www/ModulosSAO/inc/lib/models/RetencionTipo.class.php",
+		"/C/Users/Uziel/AppData/Roaming/Sublime Text 2/Packages/GitGutter/GitGutter.sublime-settings",
 		"/D/www/ModulosSAO/inc/lib/models/Material.class.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/AgrupacionInsumoController.php",
 		"/D/www/ModulosSAO/inc/lib/models/AgrupadorInsumo.class.php",
@@ -632,14 +656,11 @@
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/CargoMaterial.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionDescuentoMaterial.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/Empresa.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/Obra.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/TransaccionSAO.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/Subcontrato.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/EstimacionRetencion.class.php",
 		"/D/www/ModulosSAO/css/general.css",
 		"/D/www/ModulosSAO/inc/lib/models/Util.class.php",
-		"/D/www/ModulosSAO/inc/lib/models/RetencionTipo.class.php",
 		"/D/www/ModulosSAO/inc/js/agrupacion.js",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionDeductiva.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionDescuento.class.php",
@@ -746,8 +767,7 @@
 		"/D/www/ModulosSAO/modulos/agrupacion/GetNaturalezas.php",
 		"/D/www/ModulosSAO/modulos/proyectos/GetDatosGeneralesProyecto.php",
 		"/D/www/ModulosSAO/css/cobranza.css",
-		"/D/www/ModulosSAO/modulos/cobranza/RegistraCobranza.php",
-		"/D/www/ModulosSAO/modulos/cobranza/GetConceptosCobranza.php"
+		"/D/www/ModulosSAO/modulos/cobranza/RegistraCobranza.php"
 	],
 	"find":
 	{
@@ -770,6 +790,41 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"sumaSaldoPorDescontar",
+			"suma_liberaciones_actual",
+			"suma_liberaciones_anterior",
+			"suma_retenciones_actual",
+			"suma_retenciones",
+			"suma_retenciones_anterior",
+			"fondo_garantia",
+			"amortizacion_anticipo",
+			"getIVA",
+			"getIVAAnterior",
+			"retencion_iva_anterior",
+			"getTotalesTransaccion",
+			"anticipo_liberar_anterior",
+			"acumulado_por_liberar",
+			"acumulado_liberado",
+			"acumulado_retenido",
+			"ImporteAcumuladoEstimacionAnterior",
+			"suma_liberaciones",
+			"suma_liberaciones_actual",
+			"suma_liberaciones_anterior",
+			"suma_retenciones",
+			"suma_liberaciones",
+			"suma_retenciones",
+			"retencion",
+			"total_contrato_saldo",
+			"total_contrato_actual",
+			"total_contrato_esta",
+			"total_contrato_anterior",
+			"IVA",
+			"iva",
+			"iva_anterior",
+			"iva_contrato_anterior",
+			"sumaAcumuladoEstimacionAnterior",
+			"ImporteAcumuladoEstimacionAnterior",
+			"Totales",
 			"setAgrupador",
 			"cargaTran",
 			"<%-",
@@ -862,42 +917,7 @@
 			"[retencion_liberacion].",
 			"retenciones",
 			"descuento",
-			"descuentos",
-			"retencion",
-			"retenciones",
-			"retencion",
-			"retenciones",
-			"descuentos",
-			"this->retencion",
-			"$this->retencion",
-			"retencion",
-			"retenciones",
-			"retencion",
-			"suma_retencion",
-			"suma_descuento",
-			"anticipo_liberar",
-			"RetencionesLiberadas",
-			"renderTotales",
-			"render",
-			"suma_retencion",
-			"Total",
-			"$data['totales']",
-			"6",
-			"guarda",
-			"porcen",
-			"porcenta",
-			"[0]",
-			"pct_anticipo",
-			"echo $this->pct_anticipo;",
-			"getTotalesTransaccion",
-			"guardaTransaccion",
-			"PctAnticipo",
-			"porcentaje_anticipo",
-			"getPorcentajeAnticipo",
-			"amortizacion_anticipo",
-			"resetToolbar",
-			"porcentaje_fondo_garantia",
-			"porcentaje_retencion_fg"
+			"descuentos"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -980,7 +1000,7 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -988,15 +1008,15 @@
 					"file": "inc/lib/models/EstimacionSubcontrato.class.php",
 					"settings":
 					{
-						"buffer_size": 24180,
+						"buffer_size": 26130,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8522,
-								8537
+								10739,
+								10755
 							]
 						],
 						"settings":
@@ -1005,7 +1025,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 7240.0,
+						"translation.y": 3490.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1022,8 +1042,8 @@
 						"selection":
 						[
 							[
-								10335,
-								10335
+								2160,
+								2160
 							]
 						],
 						"settings":
@@ -1032,7 +1052,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 5412.0,
+						"translation.y": 1210.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1049,13 +1069,67 @@
 						"selection":
 						[
 							[
-								294,
-								294
+								337,
+								337
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
+					"settings":
+					{
+						"buffer_size": 25879,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1450,
+								1450
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 260.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "estimaciones.php",
+					"settings":
+					{
+						"buffer_size": 19543,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
@@ -1109,8 +1183,24 @@
 		"selected_items":
 		[
 			[
+				"rete",
+				"inc/lib/models/RetencionTipo.class.php"
+			],
+			[
+				"estimacionrete",
+				"inc/lib/models/EstimacionRetencion.class.php"
+			],
+			[
 				"estimaciones",
-				"inc/js/estimaciones.js"
+				"estimaciones.php"
+			],
+			[
+				"empresa",
+				"inc/lib/models/Empresa.class.php"
+			],
+			[
+				"format",
+				"inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php"
 			],
 			[
 				"estimacion",
@@ -1149,10 +1239,6 @@
 				"inc/lib/models/EstimacionRetencion.class.php"
 			],
 			[
-				"empresa",
-				"inc/lib/models/Empresa.class.php"
-			],
-			[
 				"general",
 				"css/general.css"
 			],
@@ -1187,10 +1273,6 @@
 			[
 				"util",
 				"inc/lib/models/Util.class.php"
-			],
-			[
-				"format",
-				"inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php"
 			],
 			[
 				"estimaciondesc",
@@ -1611,14 +1693,6 @@
 			[
 				"dbcon",
 				"inc/lib/db/DBConf.class.php"
-			],
-			[
-				"agrupacioni",
-				"inc/lib/controllers/AgrupacionInsumoController.php"
-			],
-			[
-				"saodbco",
-				"inc/lib/db/SAODBConnFactory.class.php"
 			]
 		],
 		"width": 0.0

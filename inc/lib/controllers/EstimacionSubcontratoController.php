@@ -528,7 +528,7 @@ try {
 				$formatoPDF = new EstimacionSubcontratoFormatoPDF_SPM( $transaccion, $soloEstimados );
 			else
 				$formatoPDF = new EstimacionSubcontratoFormatoPDF( $transaccion, $soloEstimados );
-
+			
 			$formatoPDF->Output();
 			break;
 

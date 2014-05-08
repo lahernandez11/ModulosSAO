@@ -20,8 +20,8 @@ abstract class FormatoPDF extends NewFPDF {
 	const PDF_MARGIN_LEFT	   = 5;
 	const PDF_MARGIN_RIGHT	   = 5;
 
-	private $_fillColorGray = array(200, 200, 200);#95C601
-	private $_fillColorGHI = array(149, 198, 1);
+	private $fill_color_gray   = array(200, 200, 200);#95C601
+	private $fill_color_GHI    = array(149, 198, 1);
 
 	public function __construct() {
 		parent::__construct(
@@ -34,12 +34,18 @@ abstract class FormatoPDF extends NewFPDF {
 		);
 	}
 
+	/*
+	 * Establece en verde el color de fondo
+	*/
 	protected function setFillColorGHI() {
-		$this->SetFillColor($this->_fillColorGHI[0], $this->_fillColorGHI[1], $this->_fillColorGHI[2]);
+		$this->SetFillColor($this->fill_color_GHI[0], $this->fill_color_GHI[1], $this->fill_color_GHI[2]);
 	}
 
+	/*
+	 * Establece en gris el color de fondo
+	*/
 	protected function setFillColorDefault() {
-		$this->SetFillColor($this->_fillColorGray[0], $this->_fillColorGray[1], $this->_fillColorGray[2]);
+		$this->SetFillColor($this->fill_color_gray[0], $this->fill_color_gray[1], $this->fill_color_gray[2]);
 	}
 
 	public function resetTextColor() {

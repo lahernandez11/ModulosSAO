@@ -17,6 +17,8 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 	protected $firma_contratista_descripcion_label = 'factor o dependiente';
 	protected $firma_cliente_titulo_label 		= 'por el cliente';
 	protected $firma_cliente_descripcion_label 	= 'gerente de proyecto';
+	protected $table_body_widths				= array();
+
 
 	private $estimacion;
 	private $soloConceptosEstimados = 1;
@@ -33,12 +35,8 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 	private $sumaAcumuladoDescuentoEstaEstimacion = 0;	// suma acumulada de importe de descuentos aplicados a esta estimacion
 	private $sumaSaldoPorDescontar 				  = 0;	// suma del saldo total por descontar al contratista
 
-	private $suma_retenciones_anterior 	= 0;
 	private $suma_retenciones 			= 0;	// suma total de retenciones aplicadas en esta estimacion
-	private $suma_retenciones_actual 	= 0;
-	private $suma_liberaciones_anterior = 0;	// suma total de liberaciones aplicadas en esta estimacion
 	private $suma_liberaciones  		= 0;	// suma total de liberaciones aplicadas en esta estimacion
-	private $suma_liberaciones_actual  	= 0;	// suma total de liberaciones aplicadas en esta estimacion
 
 	public function __construct( EstimacionSubcontrato $estimacion, $soloConceptosEstimados = 1 ) {
 		parent::__construct();
@@ -58,12 +56,10 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		// $this->Ln();
 		$this->SetFontSize(18);
 		$this->setFontStyle("B");
-		$this->setFillColorGHI();
 		// $this->SetX($this->GetX() + 20);
 		$this->Cell(200, 30, $this->titulo, 0, 0, "C");
 		$this->resetFontSize();
 		$this->resetTextColor();
-		
 		
 		$labelCellWidth = 40;
 		$dataCellWidth = 40;
@@ -184,6 +180,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 				$this->SetXY($this->GetX(), $lastYPosition);
 			}
 		}
+		
 		$this->resetFontStyle();
 		$this->Ln(10);
 
@@ -201,7 +198,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->Cell(
 			$headerCols[2]['cellWidth'],
 			$cellHeight,
-			$this->estimacion->moneda->getAbreviatura(),
+			$this->estimacion->moneda->getNombre(),
 			0, 0, $textCenterAlign
 		);
 
@@ -216,7 +213,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 			$this->Cell(
 				( ($pctImporteWidth * $headerCols[$i]['cellWidth']) / 100 ),
 				$cellHeight,
-				$this->estimacion->moneda->getAbreviatura(),
+				$this->estimacion->moneda->getNombre(),
 				0, 0, $textCenterAlign
 			);
 		}
@@ -226,19 +223,17 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		// ------ Lista de conceptos estimados
 		// -------------------------------------------------------------------
 		$this->setCellHeight(3);
-		$this->setAligns(
-			array("L", "C", "R")
-		);
-
-		$this->SetWidths(
-			array( $headerCols[0]['cellWidth'], $headerCols[1]['cellWidth'], $headerCols[2]['cellWidth'],
+		$this->setAligns( array("L", "C", "R") );
+		$this->table_body_widths = array(
+				$headerCols[0]['cellWidth'], $headerCols[1]['cellWidth'], $headerCols[2]['cellWidth'],
 				( ($pctCantidadWidth * $headerCols[3]['cellWidth']) / 100 ), ( ($pctImporteWidth * $headerCols[3]['cellWidth']) / 100 ),
 				( ($pctCantidadWidth * $headerCols[4]['cellWidth']) / 100 ), ( ($pctImporteWidth * $headerCols[4]['cellWidth']) / 100 ),
 				( ($pctCantidadWidth * $headerCols[5]['cellWidth']) / 100 ), ( ($pctImporteWidth * $headerCols[5]['cellWidth']) / 100 ),
 				( ($pctCantidadWidth * $headerCols[6]['cellWidth']) / 100 ), ( ($pctImporteWidth * $headerCols[6]['cellWidth']) / 100 ),
 				( ($pctCantidadWidth * $headerCols[7]['cellWidth']) / 100 ), ( ($pctImporteWidth * $headerCols[7]['cellWidth']) / 100 )
-			)
 		);
+
+		$this->SetWidths( $this->table_body_widths );
 
 		$conceptos = $this->estimacion->getConceptosEstimados( $this->soloConceptosEstimados );
 
@@ -271,6 +266,9 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 
 		$this->setAligns( array("R") );
 		$this->setFontStyle( "B" );
+		$this->setFills(array(true));
+		$this->setBorders(array(true));
+
 		$this->Row(
 			array(
 				"Sub-Totales Obra Ejecutada", "", "", "",
@@ -282,6 +280,8 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 			)
 		);
 
+		$this->resetFills();
+		$this->resetBorders();
 		$this->Ln();
 	}
 
@@ -292,7 +292,12 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		// -------------------------------------------------------------------
 		$this->setFontSize(7);
 		$this->setFontStyle("B");
-		$this->Cell(0, 5, "DEDUCTIVAS");
+		$this->setCellHeight(5);
+
+		$this->Cell( $this->table_body_widths[0], 5, "DEDUCTIVAS Y DESCUENTOS" );
+		$this->Cell( 67, 5, "DEDUCTIVAS", 1, 0, self::TEXT_ALIGN_CENTER, 1 );
+		$this->Cell( 140, 5, "DESCUENTOS", 1, 0, self::TEXT_ALIGN_CENTER, 1 );
+
 		$this->Ln();
 
 		$this->resetFontStyle();
@@ -363,11 +368,13 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 
 		$this->setAligns(array("R"));
 		$this->setFontStyle("B");
+		$this->setFills(array(true));
+		$this->setBorders(array(true));
+
 		$this->Row(
 			array(
 				"Sub-Totales Deductivas", "", "", "",
-				Util::formatoNumerico( $this->sumaImporteCargoMaterial ),
-				"",
+				Util::formatoNumerico( $this->sumaImporteCargoMaterial ),"",
 				Util::formatoNumerico( $this->sumaAcumuladoDescuentoAnterior ), "",
 				Util::formatoNumerico( $this->sumaImporteDescuentoEstaEstimacion ),	"",
 				Util::formatoNumerico( $this->sumaAcumuladoDescuentoEstaEstimacion ), "",
@@ -377,6 +384,9 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 				)
 			)
 		);
+
+		$this->resetFills();
+		$this->resetBorders();
 		$this->Ln();
 	}
 
@@ -400,7 +410,8 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 
 			$this->Row(
 				array(
-					$retencion->getConcepto(), "", "", "", "", "", "", "",
+					$retencion->getConcepto(),
+					$retencion->tipo_retencion->getDescripcion(), "", "", "", "", "", "",
 					Util::formatoNumerico( $retencion->getImporte() ), "", "", "", ""
 				)
 			);
@@ -408,23 +419,97 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 
 		$this->setAligns( array("R") );
 		$this->setFontStyle( "B" );
+		$this->setFills(array(true));
+		$this->setBorders(array(true));
+
 		$this->Row(
 			array(
-				"Sub-Totales Retenciones", "", "", "",
-				Util::formatoNumerico( $this->estimacion->subcontrato->getImporteAcumuladoRetenciones() ),
-				"",
-				Util::formatoNumerico(
-					  $this->estimacion->empresa->getImporteTotalRetenido()
-				),
-				"",
+				"Sub-Totales Retenciones", "", "", "", "", "",
+				Util::formatoNumerico( $this->estimacion->getRetencionAnterior() ), "",
 				Util::formatoNumerico( $this->suma_retenciones ), "",
 				Util::formatoNumerico(
-					  $this->estimacion->empresa->getImporteTotalRetenido()
+					  $this->estimacion->getRetencionAnterior()
 					+ $this->suma_retenciones
-				),
-				"", ""
+				), "", ""
 			)
 		);
+
+		$this->resetFills();
+		$this->resetBorders();
+		$this->Ln();
+	}
+
+	private function writeLiberaciones() {
+
+		// -------------------------------------------------------------------
+		// ------ Lista de liberacion de retenciones
+		// -------------------------------------------------------------------
+		$this->setFontSize(7);
+		$this->setFontStyle( "B" );
+		$this->Cell( 0, 5, "LIBERACIONES" );
+		$this->Ln();
+
+		$this->resetFontStyle();
+		$this->setFontSize(5);
+		$this->setCellHeight(3);
+		$this->setAligns( array("L", "R") );
+		
+		foreach ( $this->estimacion->liberaciones as $liberacion ) {
+			
+			$this->suma_liberaciones += $liberacion->getImporte();
+
+			$this->Row(
+				array(
+					$liberacion->getConcepto(), "", "", "", "", "", "", "",
+					Util::formatoNumerico( $liberacion->getImporte() ), "", "", "", ""
+				)
+			);
+		}
+
+		$this->setAligns( array("R") );
+		$this->setFontStyle( "B" );
+		$this->setFills(array(true));
+		$this->setBorders(array(true));
+
+		$this->Row(
+			array(
+				"Sub-Totales Liberaciones", "", "", "", "", "",
+				Util::formatoNumerico( $this->estimacion->getLiberadoAnterior() ), "",
+				Util::formatoNumerico( $this->suma_liberaciones ), "",
+				Util::formatoNumerico(
+					  $this->estimacion->getLiberadoAnterior()
+					+ $this->suma_liberaciones
+				), "", ""
+			)
+		);
+
+		$this->Row(
+			array(
+				"Por Liberar", "", "", "", "", "",
+				Util::formatoNumerico(
+					  $this->estimacion->getRetencionAnterior()
+					- $this->estimacion->getLiberadoAnterior()
+				), "",
+				Util::formatoNumerico(
+					  $this->suma_retenciones
+					- $this->suma_liberaciones
+				), "",
+				Util::formatoNumerico(
+					(
+						  $this->estimacion->getRetencionAnterior()
+						+ $this->suma_retenciones
+					)
+					-
+					(
+						  $this->estimacion->getLiberadoAnterior()
+						+ $this->suma_liberaciones
+					)
+				), "", ""
+			)
+		);
+
+		$this->resetFills();
+		$this->resetBorders();
 		$this->Ln();
 	}
 
@@ -458,23 +543,26 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 			)
 		);
 
-		$this->Row(
-			array(
-				"Anticipo", "%", Util::formatoPorcentaje( $this->estimacion->getPctAnticipo() ), "",
-				"", "", "", "",	"", "", "", "", ""
-			)
-		);
-
 		$anticipo_contrato = $this->estimacion->subcontrato->getImporteAnticipo();
-		$anticipo_anterior = $totales['amortizacion_anticipo_acumulado_anterior'];
-		$anticipo 		   = $totales['amortizacion_anticipo'];
+		$anticipo_anterior = $this->estimacion->getAnticipoAnterior();
+		$anticipo 		   = $this->estimacion->getAmortizacionAnticipo();
 		$anticipo_actual   = $anticipo_anterior + $anticipo;
 		$anticipo_saldo	   = $anticipo_contrato - $anticipo_actual;
 
 		$this->Row(
 			array(
-				"Amortización Anticipo", "", "", "",
-				Util::formatoNumerico( $anticipo_contrato ), "",
+				"Anticipo Solicitado", "%", Util::formatoPorcentaje( $this->estimacion->subcontrato->getPorcentajeAnticipo() ),
+				"",
+				Util::formatoNumerico( $anticipo_contrato ),
+				"", "", "",	"", "", "", "", ""
+			)
+		);
+
+		$this->Row(
+			array(
+				"Amortización Anticipo", "%",
+				Util::formatoPorcentaje( $this->estimacion->getPctAnticipo() ), "",
+				"", "",
 				Util::formatoNumerico( $anticipo_anterior ), "",
 				Util::formatoNumerico( $anticipo  ), "",
 				Util::formatoNumerico( $anticipo_actual ), "",
@@ -483,8 +571,8 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		);
 
 		$fondo_garantia_contrato = $this->estimacion->subcontrato->getImporteFondoGarantia();
-		$fondo_garantia_anterior = $totales['fondo_garantia_acumulado_anterior'];
-		$fondo_garantia 		 = $totales['fondo_garantia'];
+		$fondo_garantia_anterior = $this->estimacion->getFondoGarantiaAnterior();
+		$fondo_garantia 		 = $this->estimacion->getFondoGarantia();
 		$fondo_garantia_actual	 = $fondo_garantia_anterior + $fondo_garantia;
 		$fondo_garantia_saldo 	 = $fondo_garantia_contrato - $fondo_garantia_actual;
 
@@ -522,9 +610,13 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 			  $subtotal_contrato
 			- $subtotal_actual;
 
+		$this->setFills(array(true));
+		$this->setBorders(array(true));
+
 		$this->Row(
 			array(
-				"Sub-total valor de los trabajos", "", "", "",
+				"Sub-total valor de los trabajos",
+				$this->estimacion->moneda->getNombre(), "", "",
 				Util::formatoNumerico( $subtotal_contrato ), "",
 				Util::formatoNumerico( $subtotal_anterior ), "",
 				Util::formatoNumerico( $subtotal ), "",
@@ -533,15 +625,19 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 			)
 		);
 
+		$this->resetFills(array(true));
+		$this->resetBorders(array(true));
+
 		$iva_contrato = $this->estimacion->subcontrato->getIVA();
-		$iva_anterior = $totales['iva_acumulado_anterior'];
-		$iva 		  = $totales['iva'];
+		$iva_anterior = $this->estimacion->getIVAAnterior();
+		$iva 		  = $this->estimacion->getIVA();
 		$iva_actual	  = $iva_anterior + $iva;
 		$iva_saldo	  = $iva_contrato - $iva_actual;
 
 		$this->Row(
 			array(
-				"IVA", "%", Util::formatoPorcentaje( $this->estimacion->getPctIVA() ), "",
+				"IVA", "%", 
+				Util::formatoPorcentaje( $this->estimacion->getPctIVA() ), "",
 				Util::formatoNumerico( $iva_contrato ), "",
 				Util::formatoNumerico( $iva_anterior ), "",
 				Util::formatoNumerico( $iva ), "",
@@ -556,6 +652,9 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$total_actual 	= $total_anterior + $total;
 		$total_saldo 	= $total_contrato - $total_actual;
 
+		$this->setFills(array(true));
+		$this->setBorders(array(true));
+
 		$this->Row(
 			array(
 				"Total", $this->estimacion->moneda->getNombre(),
@@ -568,10 +667,13 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 			)
 		);
 
-		$retencion_iva_anterior = $totales['iva_retenido_acumulado_anterior'];
-		$retencion_iva 			= $totales['retencion_iva'];
+		$this->resetFills(array(true));
+		$this->resetBorders(array(true));
+
+		$retencion_iva_anterior = $this->estimacion->getRetencionIVAAnterior();
+		$retencion_iva 			= $this->estimacion->getRetencionIVA();
 		$retencion_iva_actual	= $retencion_iva_anterior + $retencion_iva;
-		$retencion_iva_saldo	= 0;
+		$retencion_iva_saldo	= "";
 
 		$this->Row(
 			array(
@@ -584,7 +686,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		);
 
 		$descuento_contrato = $this->estimacion->empresa->getImporteAcumuladoCargos();
-		$descuento_anterior = $totales['descuento_acumulado_anterior'];
+		$descuento_anterior = $this->estimacion->getDescuentoAnterior();
 		$descuento 			= $this->sumaImporteDescuentoEstaEstimacion;
 		$descuento_actual	= $descuento_anterior + $descuento;
 		$descuento_saldo	= $descuento_contrato - $descuento_actual;
@@ -601,10 +703,10 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		);
 
 		$retencion_contrato = $this->estimacion->subcontrato->getImporteAcumuladoRetenciones();
-		$retencion_anterior = $totales['retencion_acumulada_anterior'];
+		$retencion_anterior = $this->estimacion->getRetencionAnterior();
 		$retencion 			= $this->suma_retenciones;
 		$retencion_actual	= $retencion_anterior + $retencion;
-		$retencion_saldo	= 0;
+		$retencion_saldo	= "";
 
 		$this->Row(
 			array(
@@ -621,30 +723,25 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 			array(
 				"Anticipo a Liberar", "", "", "",
 				"", "",
-				0, "",
+				Util::formatoNumerico( $this->estimacion->getAnticipoLiberarAnterior() ), "",
 				Util::formatoNumerico( $this->estimacion->getAnticipoLiberar() ), "",
 				Util::formatoNumerico( $this->estimacion->getAnticipoLiberar() ), "",
-				0
+				""
 			)
 		);
-
-		foreach ( $this->estimacion->liberaciones as $liberacion ) {
-			$this->suma_liberaciones += $liberacion->getImporte();
-		}
 
 		$this->Row(
 			array(
 				"Retenciones Liberadas", "", "", "",
 				"", "",
-				0, "",
-				Util::formatoNumerico( $this->suma_liberaciones ),
-				"",
-				0, "",
-				0
+				Util::formatoNumerico( $this->estimacion->getLiberadoAnterior() ), "",
+				Util::formatoNumerico( $this->suma_liberaciones ), "",
+				Util::formatoNumerico(
+					  $this->estimacion->getLiberadoAnterior()
+					+ $this->suma_liberaciones
+				), "", ""
 			)
 		);
-
-		$total += $this->suma_liberaciones;
 
 		$pagar_contrato =
 			  $total_contrato
@@ -659,6 +756,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$pagar =
 			  $total
 			+ $this->estimacion->getAnticipoLiberar()
+			+ $this->suma_liberaciones
 			- $retencion_iva
 			- $descuento
 			- $retencion;
@@ -671,6 +769,9 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 			  $pagar_contrato
 			- $pagar_actual;
 
+		$this->setFills(array(true));
+		$this->setBorders(array(true));
+
 		$this->Row(
 			array(
 				"Total pagado y/o a pagar", $this->estimacion->moneda->getNombre(),"", "",
@@ -681,9 +782,12 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 				Util::formatoNumerico( $pagar_saldo )
 			)
 		);
+
+		$this->resetFills();
+		$this->resetBorders();
 	}
 
-	public function footer() {
+	public function Footer() {
 		$this->Ln(5);
 		$this->resetFontStyle();
 		$this->SetFontSize(7);
@@ -701,6 +805,11 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->Cell(50, 3, $this->firma_contratista_descripcion_label, 1, 0, "C", true);
 		$this->Cell(50, 3, "", 0, 0);
 		$this->Cell(50, 3, $this->firma_cliente_descripcion_label, 1, 0, "C", true);
+		
+		$this->Ln();
+		$this->SetY(-8);
+		$this->AliasNbPages();
+		$this->Cell(0, 3, "Página " . $this->getCurrentPage() . '/{nb}', 0, 0, self::TEXT_ALIGN_RIGHT);
 	}
 
 	public function Output( $nombre=null, $i='I' ) {
@@ -709,6 +818,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->writeConceptosEstimados();
 		$this->writeDeductivas();
 		$this->writeRetenciones();
+		$this->writeLiberaciones();
 		$this->writeTotales();
 
 		parent::Output( self::FORMATO_NOMBRE_ARCHIVO, 'I' );

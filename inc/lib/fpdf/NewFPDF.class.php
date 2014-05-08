@@ -4,18 +4,65 @@ include_once 'fpdf.php';
 
 class NewFPDF extends FPDF {
 
-	protected $widths;
-	protected $aligns;
-	protected $_currentAlign = "L";
+	const TEXT_ALIGN_LEFT   = 'L';
+	const TEXT_ALIGN_RIGHT  = 'R';
+	const TEXT_ALIGN_CENTER = 'C';
 
-	public function SetWidths( $w ) {
+	protected $widths  = array(5);
+	protected $aligns  = array();
+	protected $fills   = array();
+	protected $borders = array();
+
+	// protected $_currentAlign = "L";
+
+	public function __construct() {
+		parent::FPDF();
+		$this->aligns = array(self::TEXT_ALIGN_LEFT);
+	}
+
+	public function SetWidths( array $w ) {
 	    //Set the array of column widths
 	    $this->widths=$w;
 	}
 
-	public function setAligns( $a ) {
+	/*
+	 * Establece la alineacion del texto de las columnas escritas en una fila
+	 * con el metodo Row()
+	*/
+	public function setAligns( array $a ) {
 	    //Set the array of column alignments
 	    $this->aligns=$a;
+	}
+
+	/*
+	 * Establece el color de relleno de las columnas escritas en una fila
+	 * con el metodo Row()
+	*/
+	public function setFills( array $f ) {
+
+		// foreach ( $f as $fill_array ) {
+		// 	if ( count( $fill_array ) !== 2 ) {
+		// 		throw new Exception("Fill params must be 2 {boolean}, {color}", 1);
+		// 	}
+		// }
+
+		$this->fills = $f;
+	}
+
+	public function getCurrentPage() {
+		return $this->page;
+	}
+
+	public function setBorders( array $b ) {
+		$this->borders = $b;
+	}
+
+	public function resetFills() {
+		$this->setFills( array(false) );
+	}
+
+	public function resetBorders() {
+		$this->setBorders( array(false) );
 	}
 
 	public function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='') {
@@ -26,34 +73,49 @@ class NewFPDF extends FPDF {
 	public function Row( $data ) {
 	    //Calculate the height of the row
 	    $nb = 0;
-	    for ( $i=0; $i < count($data); $i++ ) {
-	        $nb=max($nb,$this->NbLines($this->widths[$i],$data[$i]));
+	    $lw = 0;
+	    for ( $i = 0; $i < count( $data ); $i++ ) {
+
+	    	$lw = isset($this->widths[$i]) ? $this->widths[$i] : $lw;
+
+	        $nb = max( $nb, $this->NbLines( isset($this->widths[$i]) ? $this->widths[$i] : $lw, $data[$i] ) );
 	    }
 	    
 	    $h = $this->lasth * $nb;
 	    //Issue a page break first if needed
-	    $this->CheckPageBreak($h);
+	    $this->CheckPageBreak( $h );
 	    //Draw the cells of the row
+
+	    $current_align  = self::TEXT_ALIGN_LEFT;
+	    $current_fill   = false;
+	    $current_border = false;
+	    $w = 0;
+	    // $current_fill_color = $this->FillColor;
+
 	    for ( $i=0; $i < count($data); $i++ ) {
 
-	        $w = $this->widths[$i];
+	        $w = isset($this->widths[$i]) ? $this->widths[$i] : $w;
 
-	        // $a = isset($this->aligns[$i]) ? $this->aligns[$i] : 'L';
-	        $this->_currentAlign = isset($this->aligns[$i]) ? $this->aligns[$i] : $this->_currentAlign;
-	        $a = isset($this->aligns[$i]) ? $this->aligns[$i] : $this->_currentAlign;
+	        $current_align = isset( $this->aligns[$i] ) ? $this->aligns[$i] : $current_align;
+
+	        $a = isset( $this->aligns[$i] ) ? $this->aligns[$i] : $current_align;
 	        
+	        $current_fill = isset( $this->fills[$i] ) ? $this->fills[$i] : $current_fill;
+	        $current_border = isset( $this->borders[$i] ) ? $this->borders[$i] : $current_border;
+	        // $current_fill_color = isset( $this->fills[$i] ) ? $this->fills[$i][1] : $current_fill_color;
+
 	        //Save the current position
 	        $x = $this->GetX();
 	        $y = $this->GetY();
 	        //Draw the border
-	        $this->Rect($x,$y,$w,$h);
+	        $this->Rect( $x, $y, $w, $h );
 	        //Print the text
-	        $this->MultiCell($w,$this->lasth,$data[$i],0,$a);
+	        $this->MultiCell( $w, $this->lasth, $data[$i], $current_border, $a, $current_fill );
 	        //Put the position to the right of the cell
-	        $this->SetXY($x+$w,$y);
+	        $this->SetXY( $x + $w, $y );
 	    }
 	    //Go to the next line
-	    $this->Ln($h);
+	    $this->Ln( $h );
 	}
 
 	protected function CheckPageBreak($h) {
@@ -126,8 +188,7 @@ class NewFPDF extends FPDF {
 	}
 
 	// Round Rectangles Methods
-	public function RoundedRect($x, $y, $w, $h, $r, $style = '')
-    {
+	public function RoundedRect($x, $y, $w, $h, $r, $style = '') {
         $k = $this->k;
         $hp = $this->h;
         if($style=='F')

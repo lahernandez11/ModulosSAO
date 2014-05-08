@@ -43,6 +43,16 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	private $retencion_liberada 	 = 0;
 	private $total_pagar 		 	 = 0;
 
+	private $estimado_anterior       = 0;
+	private $anticipo_anterior 		 = 0;
+	private $fondo_garantia_anterior = 0;
+	private $iva_anterior 			 = 0;
+	private $retencion_iva_anterior  = 0;
+	private $descuento_anterior      = 0;
+	private $retencion_anterior 	 = 0;
+	private $liberado_anterior		 = 0;
+	private $anticipo_liberar_anterior = 0;
+
 	public function __construct() {
 		
 		$params = func_get_args();
@@ -545,18 +555,6 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
 	    return $importePorLiberar;
 	}
-
-	public function getPctIVA() {
-		return $this->pct_iva;
-	}
-
-	public function getPctAnticipo() {
-		return $this->pct_anticipo;
-	}
-
-	public function getPctFondoGarantia() {
-		return $this->pct_fondo_garantia;
-	}
 	
 	public function getTotalesTransaccion() {
 
@@ -569,45 +567,58 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    $totales = $this->conn->executeSP( $tsql, $params, SQLSrvDBConn::FETCH_MODE_ARRAY );
 	    $data = array();
 
+	    if ( count( $totales ) > 0 ) {
+
+		    $this->suma_importes 		 	= $totales[0]['suma_importes'];
+			$this->amortizacion_anticipo 	= $totales[0]['amortizacion_anticipo'];
+			$this->fondo_garantia 		 	= $totales[0]['fondo_garantia'];
+			$this->subtotal 		 		= $totales[0]['subtotal'];
+			$this->iva 		 			 	= $totales[0]['iva'];
+			$this->total_estimacion 		= $totales[0]['total'];
+			$this->retencion_iva 		 	= $totales[0]['retencion_iva'];
+			$this->anticipo_liberar 		= $totales[0]['anticipo_a_liberar'];
+			$this->retencion_liberada  		= $totales[0]['retencion_liberada'];
+			$this->total_pagar 		 	 	= $totales[0]['monto_a_pagar'];
+
+			$this->estimado_anterior 		= $totales[0]['estimado_acumulado_anterior'];
+			$this->anticipo_anterior 		= $totales[0]['amortizacion_anticipo_acumulado_anterior'];
+			$this->fondo_garantia_anterior 	= $totales[0]['fondo_garantia_acumulado_anterior'];
+			$this->iva_anterior 			= $totales[0]['iva_acumulado_anterior'];
+			$this->retencion_iva_anterior   = $totales[0]['iva_retenido_acumulado_anterior'];
+			$this->descuento_anterior 		= $totales[0]['descuento_acumulado_anterior'];
+			$this->retencion_anterior 		= $totales[0]['retencion_acumulada_anterior'];
+			$this->anticipo_liberar_anterior = $totales[0]['anticipo_liberar_anterior'];
+			$this->liberado_anterior 		= $totales[0]['liberacion_acumulada_anterior'];
+	    }
+
 		$data = array(
-			'suma_importes'  			  			=> $totales[0]['suma_importes'],
-			'amortizacion_anticipo' 				=> $totales[0]['amortizacion_anticipo'],
-			'fondo_garantia'  	  					=> $totales[0]['fondo_garantia'],
+			'suma_importes'  			  			=> $this->suma_importes,
+			'porcentaje_anticipo'					=> $this->pct_anticipo * 100,
+			'amortizacion_anticipo' 				=> $this->amortizacion_anticipo,
+			'porcentaje_fondo_garantia'				=> $this->pct_fondo_garantia * 100,
+			'fondo_garantia'  	  					=> $this->fondo_garantia,
 			'descuentos'  			  				=> 0,
 			'retenciones'  			  				=> 0,
-			'subtotal' 					  			=> $totales[0]['subtotal'],
-			'iva' 						  			=> $totales[0]['iva'],
-			'total_estimacion'     				  	=> $totales[0]['total'],
-			'retencion_iva'  		  				=> $totales[0]['retencion_iva'],
-			'anticipo_a_liberar'  	  				=> $totales[0]['anticipo_a_liberar'],
-			'retencion_liberada'    				=> $totales[0]['retencion_liberada'],
-			'total_pagar' 							=> $totales[0]['monto_a_pagar'],
+			'subtotal' 					  			=> $this->subtotal,
+			'iva' 						  			=> $this->iva ,
+			'total_estimacion'     				  	=> $this->total_estimacion,
+			'retencion_iva'  		  				=> $this->retencion_iva,
+			'anticipo_a_liberar'  	  				=> $this->anticipo_liberar,
+			'retencion_liberada'    				=> $this->retencion_liberada,
+			'total_pagar' 							=> $this->total_pagar,
 
-			'ImporteAcumuladoEstimacionAnterior' 	=> $totales[0]['ImporteAcumuladoEstimacionAnterior'],
-			'descuento_acumulado_anterior' 			=> $totales[0]['descuento_acumulado_anterior'],
-			'retencion_acumulada_anterior' 			=> $totales[0]['retencion_acumulada_anterior'],
-			'amortizacion_anticipo_acumulado_anterior' => $totales[0]['amortizacion_anticipo_acumulado_anterior'],
-			'fondo_garantia_acumulado_anterior' 	=> $totales[0]['fondo_garantia_acumulado_anterior'],
-			'iva_acumulado_anterior' 				=> $totales[0]['iva_acumulado_anterior'],
-			'iva_retenido_acumulado_anterior' 		=> $totales[0]['iva_retenido_acumulado_anterior'],
-			
-			'porcentaje_anticipo'					=> $this->pct_anticipo * 100,
-			'porcentaje_fondo_garantia'				=> $this->pct_fondo_garantia * 100,
-			'acumulado_retenido' 					=> $this->empresa->getImporteTotalRetenido(),
-			'acumulado_liberado' 					=> $this->empresa->getImporteTotalRetencionLiberado(),
-			'acumulado_por_liberar'					=> $this->empresa->getImportePorLiberar()
+			'estimado_acumulado_anterior' 			=> $this->estimado_anterior,
+			'amortizacion_anticipo_acumulado_anterior' => $this->anticipo_anterior,
+			'fondo_garantia_acumulado_anterior' 	=> $this->fondo_garantia_anterior,
+			'iva_acumulado_anterior' 				=> $this->iva_anterior,
+			'iva_retenido_acumulado_anterior' 		=> $this->retencion_iva_anterior,
+			'descuento_acumulado_anterior' 			=> $this->descuento_anterior,
+			'retencion_acumulada_anterior' 			=> $this->retencion_anterior,
+			'liberado_anterior'						=> $this->liberado_anterior,			
+			// 'acumulado_retenido' 					=> $this->empresa->getImporteTotalRetenido(),
+			// 'acumulado_liberado' 					=> $this->empresa->getImporteTotalRetencionLiberado(),
+			// 'acumulado_por_liberar'					=> $this->empresa->getImportePorLiberar()
 		);
-
-		$this->suma_importes 		 	= $totales[0]['suma_importes'];
-		$this->amortizacion_anticipo 	= $totales[0]['amortizacion_anticipo'];
-		$this->fondo_garantia 		 	= $totales[0]['fondo_garantia'];
-		$this->anticipo_liberar 		= $totales[0]['anticipo_a_liberar'];
-		$this->subtotal 		 		= $totales[0]['subtotal'];
-		$this->iva 		 			 	= $totales[0]['iva'];
-		$this->total_estimacion 		= $totales[0]['total'];
-		$this->retencion_iva 		 	= $totales[0]['retencion_iva'];
-		$this->retencion_liberada  		= $totales[0]['retencion_liberada'];
-		$this->total_pagar 		 	 	= $totales[0]['monto_a_pagar'];
 
 		foreach ( $this->descuentos as $descuento ) {
 			$data['descuentos'] += $descuento->getImporte();
@@ -652,8 +663,72 @@ class EstimacionSubcontrato extends TransaccionSAO {
 		return $this->suma_importes;
 	}
 
+	public function getPctIVA() {
+		return $this->pct_iva;
+	}
+
+	public function getPctAnticipo() {
+		return $this->pct_anticipo;
+	}
+
+	public function getPctFondoGarantia() {
+		return $this->pct_fondo_garantia;
+	}
+
+	public function getIVA() {
+		return $this->iva;
+	}
+
+	public function getAmortizacionAnticipo() {
+		return $this->amortizacion_anticipo;
+	}
+
+	public function getFondoGarantia() {
+		return $this->fondo_garantia;
+	}
+
 	public function getAnticipoLiberar() {
 		return $this->anticipo_liberar;
+	}
+
+	public function getRetencionIVA() {
+		return $this->retencion_iva;
+	}
+
+	public function getDescuentoAnterior() {
+		return $this->descuento_anterior;
+	}
+
+	public function getRetencionAnterior() {
+		return $this->retencion_anterior;
+	}
+
+	public function getLiberadoAnterior() {
+		return $this->liberado_anterior;
+	}
+
+	public function getEstimadoAnterior() {
+		return $this->estimado_anterior;
+	}
+
+	public function getAnticipoAnterior() {
+		return $this->anticipo_anterior;
+	}
+
+	public function getFondoGarantiaAnterior() {
+		return $this->fondo_garantia_anterior;
+	}
+
+	public function getIVAAnterior() {
+		return $this->iva_anterior;
+	}
+
+	public function getAnticipoLiberarAnterior() {
+		return $this->anticipo_liberar_anterior;
+	}
+
+	public function getRetencionIVAAnterior() {
+		return $this->retencion_iva_anterior;
 	}
 
 	public function setConceptos( Array $conceptos ) {

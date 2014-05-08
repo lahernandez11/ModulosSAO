@@ -20,6 +20,14 @@ abstract class Util {
 
 	public static function formatoNumerico( $numero ) {
 		
+		if ( empty( $numero ) ) {
+			if ( is_string( $numero ) ) {
+				return "";
+			} else {
+				$numero = 0;
+			}
+		}
+
 		return number_format($numero, 2);
 	}
 
