@@ -11,7 +11,7 @@ require_once 'models/EstimacionRetencionLiberacion.class.php';
 class EstimacionSubcontrato extends TransaccionSAO {
 	
 	const TIPO_TRANSACCION = 52;
-	const CARACTER_OPERACION_REGISTRO = 'I';
+	const CARACTER_OPERACION_REGISTRO   = 'I';
 	const CARACTER_OPERACION_APROBACION = 'A';
 	const ESTADO_CAPTURADA = 0;
 	const ESTADO_APROBADA  = 1;

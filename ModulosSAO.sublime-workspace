@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"is_s",
+				"is_string"
+			],
+			[
+				"em",
+				"empty"
+			],
+			[
 				"cantidad",
 				"cantidad_descontada_anterior"
 			],
@@ -506,14 +514,6 @@
 			[
 				"icon",
 				"icon-minus"
-			],
-			[
-				"id",
-				"id_concepto"
-			],
-			[
-				"icon-",
-				"icon-plus"
 			]
 		]
 	},
@@ -523,7 +523,7 @@
 			"file": "inc/lib/models/EstimacionSubcontrato.class.php",
 			"settings":
 			{
-				"buffer_size": 26130,
+				"buffer_size": 26174,
 				"line_ending": "Windows"
 			}
 		},
@@ -531,7 +531,7 @@
 			"file": "inc/lib/controllers/EstimacionSubcontratoController.php",
 			"settings":
 			{
-				"buffer_size": 20844,
+				"buffer_size": 20847,
 				"line_ending": "Windows"
 			}
 		},
@@ -547,7 +547,7 @@
 			"file": "inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
 			"settings":
 			{
-				"buffer_size": 25879,
+				"buffer_size": 27310,
 				"line_ending": "Windows"
 			}
 		},
@@ -558,21 +558,37 @@
 				"buffer_size": 19543,
 				"line_ending": "Windows"
 			}
+		},
+		{
+			"file": "inc/lib/models/Util.class.php",
+			"settings":
+			{
+				"buffer_size": 1722,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "inc/lib/models/Subcontrato.class.php",
+			"settings":
+			{
+				"buffer_size": 22283,
+				"line_ending": "Windows"
+			}
 		}
 	],
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 127.0,
+		"height": 311.0,
 		"selected_items":
 		[
 			[
-				"remo",
-				"Package Control: Remove Package"
-			],
-			[
 				"install",
 				"Package Control: Install Package"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
 			],
 			[
 				"php",
@@ -640,6 +656,11 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Uziel/AppData/Roaming/Sublime Text 2/Packages/SideBarEnhancements/messages/11.13.2012.1305.0.txt",
+		"/D/www/ModulosSAO/inc/lib/db/db_config.php",
+		"/D/www/ModulosSAO/inc/lib/models/FormatoPDF.class.php",
+		"/D/www/ModulosSAO/inc/lib/fpdf/NewFPDF.class.php",
+		"/D/www/ModulosSAO/inc/lib/fpdf/fpdf.php",
 		"/D/www/ModulosSAO/inc/lib/models/Empresa.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/EstimacionRetencion.class.php",
 		"/D/www/ModulosSAO/inc/lib/models/RetencionTipo.class.php",
@@ -693,7 +714,6 @@
 		"/D/www/ModulosSAO/css/bootstrap.min.css",
 		"/D/www/ModulosSAO/index.php",
 		"/D/www/ModulosSAO/usuarios.php",
-		"/D/www/ModulosSAO/inc/lib/db/db_config.php",
 		"/D/www/ModulosSAO/inc/lib/controllers/MenuAplicacionController.php",
 		"/D/www/ModulosSAO/inc/js/general.js",
 		"/D/www/ModulosSAO/inc/lib/db/DBConf.class.php",
@@ -763,11 +783,7 @@
 		"/D/www/ModulosSAO/modulos/agrupacion/GetInsumosGenericos.php",
 		"/D/www/ModulosSAO/modulos/agrupacion/GetFamilias.php",
 		"/D/www/ModulosSAO/modulos/agrupacion/GetListaFacturasVarios.php",
-		"/D/www/ModulosSAO/modulos/agrupacion/GetListaSubcontratos.php",
-		"/D/www/ModulosSAO/modulos/agrupacion/GetNaturalezas.php",
-		"/D/www/ModulosSAO/modulos/proyectos/GetDatosGeneralesProyecto.php",
-		"/D/www/ModulosSAO/css/cobranza.css",
-		"/D/www/ModulosSAO/modulos/cobranza/RegistraCobranza.php"
+		"/D/www/ModulosSAO/modulos/agrupacion/GetListaSubcontratos.php"
 	],
 	"find":
 	{
@@ -790,6 +806,35 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"ADD",
+			"Footer",
+			"$page",
+			"$Page",
+			"$page",
+			"page",
+			"ALIGN_RIGHT",
+			"ALIGN_LEFT",
+			"lasth",
+			"_out",
+			"Rect",
+			"setWid",
+			"();\n",
+			"fills",
+			"_currentAlign",
+			"setHeights",
+			"Cell",
+			"setWidths",
+			"_fillColorGHI",
+			"_fillColorGray",
+			"MultiCell",
+			"FillColor",
+			"setFillColorDefault",
+			"aligns",
+			"FPDF",
+			"_currentAlign",
+			"porcentaje_anticipo",
+			"iva_anterior",
+			"sumaAcumuladoDescuentoEstaEstimacion",
 			"sumaSaldoPorDescontar",
 			"suma_liberaciones_actual",
 			"suma_liberaciones_anterior",
@@ -888,36 +933,7 @@
 			"moneda",
 			"Moneda",
 			"moneda",
-			"guardaTransaccion",
-			"empresa",
-			"app-module",
-			"app-wrapp",
-			"min-wi",
-			"min-we",
-			"sumaRetenciones",
-			"getIdObra",
-			"renderTOtales",
-			"renderTotales",
-			"padding",
-			"form",
-			"dialog",
-			"load",
-			"renderTotales",
-			"cargaTotales",
-			"retencion",
-			"observaciones",
-			"liberaciones",
-			"retencion",
-			"cargaRetenciones",
-			"retencion",
-			"template",
-			"registros_retenciones",
-			"retencion",
-			"retenciones",
-			"[retencion_liberacion].",
-			"retenciones",
-			"descuento",
-			"descuentos"
+			"guardaTransaccion"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -994,7 +1010,7 @@
 		"reverse": false,
 		"show_context": true,
 		"use_buffer2": true,
-		"whole_word": false,
+		"whole_word": true,
 		"wrap": true
 	},
 	"groups":
@@ -1008,15 +1024,15 @@
 					"file": "inc/lib/models/EstimacionSubcontrato.class.php",
 					"settings":
 					{
-						"buffer_size": 26130,
+						"buffer_size": 26174,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								10739,
-								10755
+								1242,
+								1242
 							]
 						],
 						"settings":
@@ -1025,7 +1041,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3490.0,
+						"translation.y": 990.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1035,15 +1051,15 @@
 					"file": "inc/lib/controllers/EstimacionSubcontratoController.php",
 					"settings":
 					{
-						"buffer_size": 20844,
+						"buffer_size": 20847,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2160,
-								2160
+								20617,
+								20617
 							]
 						],
 						"settings":
@@ -1052,7 +1068,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1210.0,
+						"translation.y": 11051.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1089,15 +1105,15 @@
 					"file": "inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
 					"settings":
 					{
-						"buffer_size": 25879,
+						"buffer_size": 27310,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1450,
-								1450
+								21584,
+								21584
 							]
 						],
 						"settings":
@@ -1106,7 +1122,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 260.0,
+						"translation.y": 7025.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1134,6 +1150,60 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "inc/lib/models/Util.class.php",
+					"settings":
+					{
+						"buffer_size": 1722,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								588,
+								588
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "inc/lib/models/Subcontrato.class.php",
+					"settings":
+					{
+						"buffer_size": 22283,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								767,
+								767
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 330.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1183,6 +1253,34 @@
 		"selected_items":
 		[
 			[
+				"db_c",
+				"inc/lib/db/db_config.php"
+			],
+			[
+				"fpdf",
+				"inc/lib/fpdf/fpdf.php"
+			],
+			[
+				"new",
+				"inc/lib/fpdf/NewFPDF.class.php"
+			],
+			[
+				"formatop",
+				"inc/lib/models/FormatoPDF.class.php"
+			],
+			[
+				"subcontrato",
+				"inc/lib/models/Subcontrato.class.php"
+			],
+			[
+				"util",
+				"inc/lib/models/Util.class.php"
+			],
+			[
+				"db_con",
+				"inc/lib/db/db_config.php"
+			],
+			[
 				"rete",
 				"inc/lib/models/RetencionTipo.class.php"
 			],
@@ -1231,10 +1329,6 @@
 				"inc/lib/models/TransaccionSAO.class.php"
 			],
 			[
-				"subcontrato",
-				"inc/lib/models/Subcontrato.class.php"
-			],
-			[
 				"retencion",
 				"inc/lib/models/EstimacionRetencion.class.php"
 			],
@@ -1269,10 +1363,6 @@
 			[
 				"estimacionded",
 				"inc/lib/models/EstimacionDeductiva.class.php"
-			],
-			[
-				"util",
-				"inc/lib/models/Util.class.php"
 			],
 			[
 				"estimaciondesc",
@@ -1399,10 +1489,6 @@
 				"inc/lib/controllers/MenuAplicacionController.php"
 			],
 			[
-				"db_con",
-				"inc/lib/db/db_config.php"
-			],
-			[
 				"avance",
 				"inc/lib/models/AvanceObra.class.php"
 			],
@@ -1453,10 +1539,6 @@
 			[
 				"agru",
 				"inc/lib/controllers/AgrupacionSubcontratoController.php"
-			],
-			[
-				"db_c",
-				"inc/lib/db/db_config.php"
 			],
 			[
 				"sqlsrvdbconn",
@@ -1681,18 +1763,6 @@
 			[
 				"agrupaciong",
 				"inc/lib/controllers/AgrupacionGastosVariosController.php"
-			],
-			[
-				"transaccion",
-				"inc/lib/models/TransaccionSAO.class.php"
-			],
-			[
-				"listaobrasc",
-				"inc/lib/controllers/ListaObrasController.php"
-			],
-			[
-				"dbcon",
-				"inc/lib/db/DBConf.class.php"
 			]
 		],
 		"width": 0.0
@@ -1728,7 +1798,7 @@
 	"show_minimap": true,
 	"show_open_files": false,
 	"show_tabs": true,
-	"side_bar_visible": false,
+	"side_bar_visible": true,
 	"side_bar_width": 302.0,
 	"status_bar_visible": true
 }

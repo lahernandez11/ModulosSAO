@@ -68,7 +68,7 @@ App.Presupuesto = {
 			that.toggleMarcaConcepto($(this).parents('.concepto'));
 		});
 
-		this.$table.on('dblclick', '.clave_concepto', function(event) {
+		this.$table.on('dblclick', '.clave', function(event) {
 			event.stopPropagation();
 
 			var initial_value = $(this).text();
