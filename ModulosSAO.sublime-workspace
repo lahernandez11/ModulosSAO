@@ -519,62 +519,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "inc/lib/models/EstimacionSubcontrato.class.php",
-			"settings":
-			{
-				"buffer_size": 26174,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/controllers/EstimacionSubcontratoController.php",
-			"settings":
-			{
-				"buffer_size": 20847,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/js/estimaciones.js",
-			"settings":
-			{
-				"buffer_size": 36822,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
-			"settings":
-			{
-				"buffer_size": 27310,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "estimaciones.php",
-			"settings":
-			{
-				"buffer_size": 19543,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/models/Util.class.php",
-			"settings":
-			{
-				"buffer_size": 1722,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "inc/lib/models/Subcontrato.class.php",
-			"settings":
-			{
-				"buffer_size": 22283,
-				"line_ending": "Windows"
-			}
-		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -643,7 +587,11 @@
 	},
 	"console":
 	{
-		"height": 146.0
+		"height": 146.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
 	},
 	"distraction_free":
 	{
@@ -656,6 +604,15 @@
 	},
 	"file_history":
 	[
+		"/D/projects/ModulosSAO/inc/js/presupuesto_obra.js",
+		"/D/projects/ModulosSAO/inc/lib/models/EstimacionSubcontrato.class.php",
+		"/D/projects/ModulosSAO/inc/js/estimaciones.js",
+		"/D/projects/ModulosSAO/presupuesto_obra.php",
+		"/D/projects/ModulosSAO/inc/lib/models/Subcontrato.class.php",
+		"/D/projects/ModulosSAO/inc/lib/models/Util.class.php",
+		"/D/projects/ModulosSAO/estimaciones.php",
+		"/D/projects/ModulosSAO/inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
+		"/D/projects/ModulosSAO/inc/lib/controllers/EstimacionSubcontratoController.php",
 		"/C/Users/Uziel/AppData/Roaming/Sublime Text 2/Packages/SideBarEnhancements/messages/11.13.2012.1305.0.txt",
 		"/D/www/ModulosSAO/inc/lib/db/db_config.php",
 		"/D/www/ModulosSAO/inc/lib/models/FormatoPDF.class.php",
@@ -774,16 +731,7 @@
 		"/D/www/ModulosSAO/inc/lib/db/ReportesSAO.class.php",
 		"/D/www/ModulosSAO/css/login.css",
 		"/D/www/ModulosSAO/css/responsive.css",
-		"/D/www/icomoon/demo-files/demo.css",
-		"/D/www/ModulosSAO/presupuesto_obra.html",
-		"/D/www/ModulosSAO/modulos/subcontratos/GetAddendums.php",
-		"/D/www/ModulosSAO/modulos/subcontratos/GetClasificadores.php",
-		"/D/www/ModulosSAO/modulos/subcontratos/GetListaSubcontratos.php",
-		"/D/www/ModulosSAO/modulos/agrupacion/GetListaCuentasContables.php",
-		"/D/www/ModulosSAO/modulos/agrupacion/GetInsumosGenericos.php",
-		"/D/www/ModulosSAO/modulos/agrupacion/GetFamilias.php",
-		"/D/www/ModulosSAO/modulos/agrupacion/GetListaFacturasVarios.php",
-		"/D/www/ModulosSAO/modulos/agrupacion/GetListaSubcontratos.php"
+		"/D/www/icomoon/demo-files/demo.css"
 	],
 	"find":
 	{
@@ -1016,198 +964,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "inc/lib/models/EstimacionSubcontrato.class.php",
-					"settings":
-					{
-						"buffer_size": 26174,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1242,
-								1242
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 990.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "inc/lib/controllers/EstimacionSubcontratoController.php",
-					"settings":
-					{
-						"buffer_size": 20847,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								20617,
-								20617
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 11051.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "inc/js/estimaciones.js",
-					"settings":
-					{
-						"buffer_size": 36822,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								337,
-								337
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "inc/lib/models/EstimacionSubcontratoFormatoPDF.class.php",
-					"settings":
-					{
-						"buffer_size": 27310,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								21584,
-								21584
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 7025.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "estimaciones.php",
-					"settings":
-					{
-						"buffer_size": 19543,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "inc/lib/models/Util.class.php",
-					"settings":
-					{
-						"buffer_size": 1722,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								588,
-								588
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "inc/lib/models/Subcontrato.class.php",
-					"settings":
-					{
-						"buffer_size": 22283,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								767,
-								767
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML5/Syntaxes/HTML 5.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 330.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -1242,6 +1000,11 @@
 		]
 	},
 	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"project": "ModulosSAO.sublime-project",
 	"replace":
 	{
 		"height": 62.0
@@ -1252,6 +1015,10 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"pres",
+				"inc/js/presupuesto_obra.js"
+			],
 			[
 				"db_c",
 				"inc/lib/db/db_config.php"
@@ -1431,10 +1198,6 @@
 			[
 				"ransa",
 				"inc/lib/models/TransaccionSAO.class.php"
-			],
-			[
-				"pres",
-				"presupuesto_obra.php"
 			],
 			[
 				"estimacio",
@@ -1773,11 +1536,11 @@
 		"selected_items":
 		[
 			[
-				"",
+				"reme",
 				"/D/www/ControlRemesas/ControlRemesas.sublime-project"
 			],
 			[
-				"reme",
+				"",
 				"/D/www/ControlRemesas/ControlRemesas.sublime-project"
 			],
 			[
@@ -1795,10 +1558,24 @@
 		],
 		"width": 380.0
 	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"settings":
+	{
+	},
 	"show_minimap": true,
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
 	"side_bar_width": 302.0,
-	"status_bar_visible": true
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
 }

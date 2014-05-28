@@ -2,7 +2,8 @@
 	"folders":
 	[
 		{
-			"path": "/D/www/ModulosSAO"
+			"follow_symlinks": true,
+			"path": "."
 		}
 	]
 }
