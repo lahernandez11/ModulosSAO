@@ -41,5 +41,6 @@
 		</div>
 		<script src="inc/js/jquery-1.7.1.min.js"></script>
 		<script src="inc/js/general.js"></script>
+		<script src="inc/js/analisis.js"></script>
 	</body>
 </html>

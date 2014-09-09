@@ -68,7 +68,7 @@
 									<fieldset>
 										<div class="multi-field">
 											<label>Referencia</label>
-											<input type="text" id="txtReferencia" class="roField" />
+											<input type="text" id="txtReferencia" class="roField" maxlength="64" required />
 										</div>
 										<div>
 											<label for="txtObservaciones">Observaciones</label>
