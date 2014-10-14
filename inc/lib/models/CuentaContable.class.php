@@ -8,7 +8,7 @@ class CuentaContable {
 	private $id_cuenta = null;
 
 	public function __construct( Obra $obra, $id_cuenta ) {
-		
+
 		$this->conn = $obra->getConn();
 		$this->obra = $obra;
 		$this->id_cuenta = $id_cuenta;
@@ -75,6 +75,7 @@ class CuentaContable {
 					, [CTE_CUENTAS].[nombre]
 					, [CTE_CUENTAS].[nivel]
 					, [empresas].[razon_social] AS [empresa]
+					, [fondos].[descripcion] AS [empresa2]
 					, CONCAT([naturaleza].[codigo], ' ', [naturaleza].[agrupador]) AS [agrupador_naturaleza]
 				FROM
 					[CTE_CUENTAS]
@@ -92,9 +93,15 @@ class CuentaContable {
 					[dbo].[empresas]
 					ON
 						[agrupacion_cuenta_contable].[id_agrupador_empresa_sao] = [empresas].[id_empresa]
+				LEFT OUTER JOIN
+					[dbo].[fondos]
+					ON
+						[CTE_CUENTAS].[id_obra] = [fondos].[id_obra]
+							AND
+						[fondos].[id_fondo] = [agrupacion_cuenta_contable].[id_agrupador_empresa_sao2]
 				WHERE
 					[CTE_CUENTAS].[id_cuenta_superior]";
-		
+
 		$params = array();
 
 		if ( $id_cuenta === 0 ) {
@@ -152,13 +159,15 @@ class CuentaContable {
 	}
 
 	public function getDatosCuenta() {
-		
+
 		$tsql = "SELECT
 					  [cuenta_contable].[nombre]
 					, [agrupacion_cuenta_contable].[id_agrupador_naturaleza]
 					, [naturaleza].[agrupador] AS [agrupador_naturaleza]
 					, [agrupacion_cuenta_contable].[id_agrupador_empresa_sao]
 					, [empresas].[razon_social] AS [empresa]
+					, [agrupacion_cuenta_contable].[id_agrupador_empresa_sao2]
+					, [fondos].[descripcion] as [empresa2]
 				FROM
 					[Contabilidad].[cuenta_contable]
 				LEFT OUTER JOIN
@@ -174,7 +183,13 @@ class CuentaContable {
 				LEFT OUTER JOIN
 					[dbo].[empresas]
 					ON
-						[Agrupacion].[agrupacion_cuenta_contable].[id_agrupador_empresa_sao] = [empresas].[id_empresa]
+						[agrupacion_cuenta_contable].[id_agrupador_empresa_sao] = [empresas].[id_empresa]
+				LEFT OUTER JOIN
+					[dbo].[fondos]
+					ON
+						[cuenta_contable].[id_obra] = [fondos].[id_obra]
+							AND
+						[agrupacion_cuenta_contable].[id_agrupador_empresa_sao2] = [fondos].[id_fondo]
 				WHERE
 					[cuenta_contable].[id_obra] = ?
 						AND
@@ -328,6 +343,11 @@ class CuentaContable {
 		}
 	}
 
+	/**
+	 * @param $id_cuenta
+	 * @param $id_agrupador
+	 * @throws DBServerStatementExecutionException
+     */
 	private function setAgrupadorEmpresa( $id_cuenta, $id_agrupador ) {
 
 		if (!$this->existeRegistroAgrupacion($id_cuenta))
@@ -350,6 +370,40 @@ class CuentaContable {
 	    $this->conn->executeQuery( $tsql, $params );
 	}
 
+	/**
+	 * @param $id_cuenta
+	 * @param $id_agrupador
+	 * @throws DBServerStatementExecutionException
+     */
+	private function setAgrupadorEmpresa2($id_cuenta, $id_agrupador)
+	{
+		if (!$this->existeRegistroAgrupacion($id_cuenta))
+		{
+			$this->creaRegistroAgrupacion($id_cuenta);
+		}
+
+		$tsql = "UPDATE [Agrupacion].[agrupacion_cuenta_contable]
+				 SET
+				 	[id_agrupador_empresa_sao2] = ?
+				 WHERE
+				 	[id_obra] = ?
+				 		AND
+				 	[id_cuenta] = ?";
+
+		$params = array(
+			array( $id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+			array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+			array( $id_cuenta, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+		);
+
+		$this->conn->executeQuery( $tsql, $params );
+	}
+
+	/**
+	 * @param $id_cuenta
+	 * @param $id_agrupador
+	 * @throws DBServerStatementExecutionException
+     */
 	private function setAgrupadorNaturaleza( $id_cuenta, $id_agrupador ) {
 
 		if ( ! $this->existeRegistroAgrupacion( $id_cuenta ) )

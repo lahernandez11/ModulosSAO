@@ -17,6 +17,7 @@
 <body>
 	<div id="app-wrapper">
 		<?php include("inc/app-header.php"); ?>
+
 		<nav>
 			<?php include("inc/app-menu.php"); ?>
 		</nav>

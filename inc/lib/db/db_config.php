@@ -17,9 +17,3 @@ $db_user['SAO1814_CIRCUITO'] = 'App_ModulosSAO';
 $db_pwd['SAO1814_CIRCUITO']  = '@msApp85%';
 $db_name['SAO1814_CIRCUITO'] = 'SAO1814_CIRCUITO';
 $db_type['SAO1814_CIRCUITO'] = 'OBRA';
-
-// $dbServer['SAO1814_SUB'] 	 = '172.20.74.3';
-// $dbUser['SAO1814_SUB']   	 = 'App_ModulosSAO';
-// $userPassword['SAO1814_SUB'] = '@msApp85%';
-// $dbName['SAO1814_SUB'] 		 = 'SAO1814_SUB';
-?>

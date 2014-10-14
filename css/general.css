@@ -1485,6 +1485,10 @@ ul.dropdown-list li a.with-icon
 	overflow-y: auto;
 	overflow-x: hidden;
 }
+.ui-dialog
+{
+	overflow: visible;
+}
 .ux-table.active .active-cell
 {
 	border: 1px solid black;

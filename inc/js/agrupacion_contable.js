@@ -99,7 +99,7 @@ App.AgrupacionContable = {
             if ( ! data.success ) {
             	messageConsole.displayMessage(data.message, 'error');
             } else {
-	            for( i = 0; i < data.options.length; i++ ) {
+	            for( var i = 0; i < data.options.length; i++ ) {
 				   agrupadores.push({
 				   		id: data.options[i].id,
 				   		label: data.options[i].label
@@ -196,6 +196,7 @@ App.AgrupacionContable = {
 
 		for (cuenta in cuentas) {
 			cuentas[cuenta].showEmpresa = $('#empresa').prop('checked');
+			cuentas[cuenta].showEmpresa2 = $('#empresa2').prop('checked');
 			cuentas[cuenta].showNaturaleza = $('#naturaleza').prop('checked');
 			
 			html += this.cuentaTemplate(cuentas[cuenta]);
@@ -383,6 +384,17 @@ App.AgrupacionContable = {
 		    }
 		});
 
+		$("#txtAgrupadorEmpresa2").autocomplete({
+			minLength: 1,
+			source: function(request, response) {
+				request.action = 'getAgrupadoresEmpresa2';
+				that.requestAgrupadoresList(request, response, that.controller_url);
+			},
+			select: function( event, ui ) {
+				that.setAgrupador(ui.item, 'setAgrupadorEmpresa2', this);
+			}
+		});
+
 		$("#txtAgrupadorNaturaleza").autocomplete({
 		    minLength: 1,
 		    source: function(request, response) {
@@ -492,11 +504,15 @@ App.AgrupacionContable = {
 		switch ($input[0].id) {
 
 			case 'txtAgrupadorEmpresa':
-				this.getSelected().filter(this.esAfectable).find('td:eq(5)').text($input.val());
+			this.getSelected().filter(this.esAfectable).find('td:eq(5)').text($input.val());
 			break;
 
-			case 'txtAgrupadorNaturaleza':
+			case 'txtAgrupadorEmpresa2':
 				this.getSelected().filter(this.esAfectable).find('td:eq(6)').text($input.val());
+				break;
+
+			case 'txtAgrupadorNaturaleza':
+				this.getSelected().filter(this.esAfectable).find('td:eq(7)').text($input.val());
 			break;
 		}
 	},
@@ -550,7 +566,7 @@ App.AgrupacionContable = {
 				that.requestSetCuenta(request);
 			}
 		});
-	},
-}
+	}
+};
 
 App.AgrupacionContable.init();
