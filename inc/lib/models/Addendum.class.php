@@ -10,6 +10,13 @@ class Addendum {
 	private $monto_anticipo;
 	private $porcentaje_retencion_fg;
 
+	/**
+	 * @param $fecha
+	 * @param $monto
+	 * @param $monto_anticipo
+	 * @param $porcentaje_retencion_fg
+	 * @throws Exception
+     */
 	public function __construct( $fecha, $monto, $monto_anticipo, $porcentaje_retencion_fg ) {
 
 		$this->monto 		  = Util::limpiaImporte( $monto );
@@ -35,6 +42,12 @@ class Addendum {
 		}
 	}
 
+	/**
+	 * @param Subcontrato $subcontrato
+	 * @param $id
+	 * @return Addendum
+	 * @throws Exception
+     */
 	public static function getInstance( Subcontrato $subcontrato, $id ) {
 
 		$tsql = "SELECT
@@ -69,6 +82,9 @@ class Addendum {
 			throw new Exception("Addendum no encontrado", 1);
 	}
 
+	/**
+	 * @param Subcontrato $subcontrato
+     */
 	public function save( Subcontrato $subcontrato ) {
 		
 		$this->subcontrato = $subcontrato;
@@ -94,6 +110,9 @@ class Addendum {
 		$this->subcontrato->getConn()->executeQuery( $tsql, $params );
 	}
 
+	/**
+	 *
+     */
 	public function delete() {
 
 		$tsql = "DELETE [Subcontratos].[addendum]
@@ -110,28 +129,45 @@ class Addendum {
 		$this->subcontrato->getConn()->executeQuery( $tsql, $params );
 	}
 
+	/**
+	 * @return mixed
+     */
 	public function getId() {
 		return $this->id;
 	}
 
+	/**
+	 * @return mixed
+     */
 	public function getFecha() {
 		return $this->fecha;
 	}
 
+	/**
+	 * @return mixed
+     */
 	public function getMonto() {
 		return $this->monto;
 	}
 
+	/**
+	 * @return mixed
+     */
 	public function getMontoAnticipo() {
 		return $this->monto_anticipo;
 	}
 
+	/**
+	 * @return mixed
+     */
 	public function getPorcentajeRetencionFG() {
 		return $this->porcentaje_retencion_fg;
 	}
 
+	/**
+	 * @param $id
+     */
 	public function setId( $id ) {
 		$this->id = $id;
 	}
 }
-?>
