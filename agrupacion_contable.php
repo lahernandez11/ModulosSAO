@@ -26,9 +26,11 @@
 							<span class="icon flechita-abajo"></span>
 						</a>
 						<span class="col-switch">
-							<input type="checkbox" name="col-switch" id="empresa" value="5">
-							<label for="empresa">Empresa SAO</label>
-							<input type="checkbox" name="col-switch" id="naturaleza" value="6">
+							<input type="checkbox" name="col-switch" id="empresa">
+							<label for="empresa">Empresa 1</label>
+							<input type="checkbox" name="col-switch" id="empresa2">
+							<label for="empresa2">Empresa 2</label>
+							<input type="checkbox" name="col-switch" id="naturaleza">
 							<label for="naturaleza">Naturaleza</label>
 						</span>
 						<h2>Agrupación Contable</h2>
@@ -51,7 +53,8 @@
 											<th></th>
 											<th>Clave</th>
 											<th>Descripción</th>
-											<th class="empresa">Agrupador Proveedor SAO</th>
+											<th class="empresa">Agrupador Empresa 1</th>
+											<th class="empresa2">Agrupador Empresa 2</th>
 											<th class="naturaleza">Agrupador Naturaleza</th>
 										</tr>
 									</thead>
@@ -112,6 +115,10 @@
 				<%= !showEmpresa ? ' hidden' : '' %>" title="<%- empresa %>">
 					<%- empresa %>
 				</td>
+				<td class="empresa2<%= afectable ? ' importante' : '' %>
+				<%= !showEmpresa2 ? ' hidden' : '' %>" title="<%- empresa2 %>">
+					<%- empresa2 %>
+				</td>
 				<td class="naturaleza<%= afectable ? ' importante' : '' %>
 				<%= !showNaturaleza ? ' hidden' : '' %>" title="<%- agrupador_naturaleza %>">
 					<%- agrupador_naturaleza %>
@@ -123,8 +130,11 @@
 			<div id="dialog-propiedades-cuenta" class="dialog" title="Propiedades de: <%- nombre %>">
 				<form method="get" class="dialog-form form-cuenta-properties">
 					
-					<label for="txtAgrupadorEmpresa">Agrupador Empresa SAO</label>
+					<label for="txtAgrupadorEmpresa">Agrupador Empresa 1</label>
 					<input type="text" id="txtAgrupadorEmpresa" class="field" value="<%- empresa %>" />
+
+					<label for="txtAgrupadorEmpresa2">Agrupador Empresa 2</label>
+					<input type="text" id="txtAgrupadorEmpresa2" class="field" value="<%- empresa2 %>" />
 
 					<label for="txtAgrupadorNaturaleza">Agrupador Naturaleza</label>
 					<input type="text" id="txtAgrupadorNaturaleza" class="field" value="<%- agrupador_naturaleza %>" />

@@ -45,6 +45,9 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->soloConceptosEstimados = $soloConceptosEstimados;
 	}
 
+	/**
+	 *
+     */
 	private function writeDatosGeneralesEstimacion() {
 
 		$this->AddPage( self::PDF_PAGE_ORIENTATION );
@@ -123,6 +126,9 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->Ln(10);
 	}
 
+	/**
+	 *
+     */
 	private function writeConceptosEstimados() {
 
 		// -------------------------------------------------------------------
@@ -285,6 +291,9 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->Ln();
 	}
 
+	/**
+	 *
+     */
 	private function writeDeductivas() {
 
 		// -------------------------------------------------------------------
@@ -320,19 +329,19 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 				}
 			}
 
-			if ( $cantidad_descontada_anterior <= $cargo_material->getCantidad() ) {
-				$cantidad_por_descontar = $cargo_material->getCantidad() - $cantidad_descontada_anterior;
-				$importe_por_descontar	= $cargo_material->getImporte() - $importe_descontado_anterior;
-			}
-
 			$cantidad = 0;
 			$precio   = $cargo_material->getPrecio();
 			$importe  = 0;
-			
+
 			if ( ! is_null( $descuento_aplicado ) ) {
 				$cantidad = $descuento_aplicado->getCantidad();
 				$precio   = $descuento_aplicado->getPrecio();
 				$importe  = $descuento_aplicado->getImporte();
+			}
+
+			if ( $cantidad_descontada_anterior <= $cargo_material->getCantidad() ) {
+				$cantidad_por_descontar = $cargo_material->getCantidad() - $cantidad_descontada_anterior - $cantidad;
+				$importe_por_descontar	= $cargo_material->getImporte() - $importe_descontado_anterior -$importe;
 			}
 
 			$this->Row(
@@ -390,6 +399,9 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->Ln();
 	}
 
+	/**
+	 *
+     */
 	private function writeRetenciones() {
 		// -------------------------------------------------------------------
 		// ------ Lista de retenciones
@@ -439,6 +451,9 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->Ln();
 	}
 
+	/**
+	 *
+     */
 	private function writeLiberaciones() {
 
 		// -------------------------------------------------------------------
@@ -513,6 +528,9 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF {
 		$this->Ln();
 	}
 
+	/**
+	 *
+     */
 	private function writeTotales() {
 
 		$totales = $this->estimacion->getTotalesTransaccion();

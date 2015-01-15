@@ -4,6 +4,7 @@
 *.sulime-project
 *.sublime-workspace
 
+/.idea
 #################
 ## Eclipse
 #################
