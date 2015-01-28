@@ -69,13 +69,14 @@ class SQLSrvDBConn {
 		return $rowsCollection;
 	}
 
-	public function executeQueryGetId( $tsql, $params = array() ) {
-
+	public function executeQueryGetId( $tsql, $params = array() )
+	{
 		$tsql .= "SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY];";
 
-		$stmt = sqlsrv_query( $this->dbConn, $tsql, $params );
+		$stmt = sqlsrv_query($this->dbConn, $tsql, $params);
 
-		if( ! $stmt ) {
+		if ( ! $stmt)
+		{
 			throw new DBServerStatementExecutionException( $this->getStatementExecutionError() );
 		}
 

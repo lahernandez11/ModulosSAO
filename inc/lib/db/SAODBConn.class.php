@@ -23,4 +23,3 @@ class SAODBConn extends SQLSrvDBConn {
 		return parent::__toString();
 	}
 }
-?>
