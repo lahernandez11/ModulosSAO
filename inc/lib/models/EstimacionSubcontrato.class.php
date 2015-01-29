@@ -793,7 +793,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    return $conceptos;
 	}
 
-	public static function getFoliosTransaccion( Obra $obra ) {
+	public static function getFoliosTransaccion(Obra $obra) {
 
 		$tsql = '{call [SubcontratosEstimaciones].[uspListaFolios]( ? )}';
 
