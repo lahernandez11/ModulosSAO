@@ -793,12 +793,12 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    return $conceptos;
 	}
 
-	public static function getFoliosTransaccion( Obra $obra ) {
+	public static function getFoliosTransaccion(Obra $obra) {
 
 		$tsql = '{call [SubcontratosEstimaciones].[uspListaFolios]( ? )}';
 
 		$params = array(
-	        array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array($obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
 	    $foliosTran = $obra->getConn()->executeSP( $tsql, $params );

@@ -655,6 +655,10 @@ table.item-list tbody th
 {
 	white-space: normal;
 }
+table#tabla-conceptos td.editable
+{
+	background-color: #D3D3D3;
+}
 table.tabla-resumen
 {
 	border: 1px solid #CCCCCC;
@@ -1213,8 +1217,9 @@ ul.dropdown-list li a.with-icon
 	float: right;
 	margin: 0;
 	padding: 0.2em 1em 0 0;
+	position: absolute;
 	right: 0;
-	top: 0;
+	top: 0.5em;
 }
 .module-toolbar .toolbar-button
 {
@@ -1290,8 +1295,8 @@ ul.dropdown-list li a.with-icon
     border-top: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
     border-left: 1px solid #CCCCCC;
-    /*overflow: hidden;*/
     padding: 5px 0 5px 10px;
+	position: relative;
 }
 .overlay
 {

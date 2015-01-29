@@ -3,21 +3,24 @@ require_once 'models/TransaccionSAO.class.php';
 
 class AvanceSubcontrato extends TransaccionSAO {
 
-	const TIPO_TRANSACCION = 98;
+	const TIPO_TRANSACCION = 105;
 
-	private $_IDConceptoRaiz = 0;
-	private $_conceptoRaiz = null;
-	private $_fechaInicio = null;
-	private $_fechaTermino = null;
-	private $_conceptos;
+	private $fecha;
+	private $fechaInicio;
+	private $fechaTermino;
+	private $fechaEjecucion;
+	private $fechaContable;
+	public $subcontrato;
+	private $conceptos;
+	private $observaciones;
 
-	public function __construct() {
-		
+	public function __construct()
+	{
 		$params = func_get_args();
 
-		switch ( func_num_args() ) {
-
-			case 8:
+		switch ( func_num_args())
+		{
+			case 9:
 				call_user_func_array(array($this, "instaceFromDefault"), $params);
 				break;
 
@@ -27,251 +30,560 @@ class AvanceSubcontrato extends TransaccionSAO {
 		}
 	}
 
-	private function instaceFromDefault( $IDObra, $fecha, $fechaInicio, $fechaTermino, $observaciones, $IDConceptoRaiz, Array $conceptos, SAODBConn $conn ) {
-		parent::__construct($IDObra, self::TIPO_TRANSACCION, $fecha, $observaciones, $conn);
+	/**
+	 * @param Obra $obra
+	 * @param Subcontrato $subcontrato
+	 * @param $fecha
+	 * @param $fechaInicio
+	 * @param $fechaTermino
+	 * @param $fechaEjecucion
+	 * @param $fechaContable
+	 * @param $observaciones
+	 * @param array $conceptos
+     * @throws Exception
+     */
+	private function instaceFromDefault(
+		Obra $obra, Subcontrato $subcontrato, $fecha, $fechaInicio, $fechaTermino,
+		$fechaEjecucion, $fechaContable, $observaciones, Array $conceptos)
+	{
+		parent::__construct($obra, self::TIPO_TRANSACCION, $fecha, $observaciones);
 
-		$this->setIDConceptoRaiz( $IDConceptoRaiz );
+		$this->subcontrato = $subcontrato;
 		$this->setFechaInicio($fechaInicio);
 		$this->setFechaTermino($fechaTermino);
-		$this->setConceptos( $conceptos );
+		$this->setFechaEjecucion($fechaEjecucion);
+		$this->setFechaContable($fechaContable);
+		$this->setConceptos($conceptos);
 	}
 
-	private function instanceFromID( $IDTransaccion, SAODBConn $conn ) {
-		parent::__construct( $IDTransaccion, $conn );
+	/**
+	 * @param Obra $obra
+	 * @param $id_transaccion
+	 */
+	private function instanceFromID(Obra $obra, $id_transaccion)
+	{
+		parent::__construct($obra, $id_transaccion);
 		
 		$this->setDatosGenerales();
 	}
 
-	// @override
-	protected function setDatosGenerales() {
-		
+	/**
+	 * @throws Exception
+     */
+	protected function setDatosGenerales()
+	{
 		parent::setDatosGenerales();
 
-		$tsql = "{call [AvanceObra].[uspDatosGenerales]( ? )}";
+		$tsql = "SELECT
+					  [id_antecedente]
+					, [tipo_transaccion]
+					, [fecha]
+					, [id_obra]
+					, [id_empresa]
+					, [id_moneda]
+					, [cumplimiento]
+					, [vencimiento]
+					, [fecha_ejecucion]
+					, [fecha_contable]
+					, [monto]
+					, [impuesto]
+					, [referencia]
+					, [comentario]
+					, [observaciones]
+				FROM
+					[dbo].[transacciones]
+				WHERE
+					[id_obra] = ?
+						AND
+					[id_transaccion] = ?";
 
-		$params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+		$params = array
+		(
+			array($this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+			array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 	    );
 
-	    $datos = $this->_SAOConn->executeSP($tsql, $params);
+	    $datos = $this->conn->executeQuery($tsql, $params);
 
-	    $this->setIDConceptoRaiz( $datos[0]->IDConceptoRaiz );
-	    $this->_conceptoRaiz   = $datos[0]->ConceptoRaiz;
-	    $this->_fechaInicio = $datos[0]->FechaInicio;
-	    $this->_fechaTermino = $datos[0]->FechaTermino;
+	    $this->fechaInicio = $datos[0]->cumplimiento;
+	    $this->fechaTermino = $datos[0]->vencimiento;
+	    $this->fechaEjecucion = $datos[0]->fecha_ejecucion;
+	    $this->fechaContable = $datos[0]->fecha_contable;
+	    $this->subcontrato = new Subcontrato($this->obra, $datos[0]->id_antecedente);
 	}
 
-	private function guardaConceptosAvance() {
+	/**
+	 * @param Usuario $usuario
+	 * @return array
+	 * @throws Exception
+     */
+	public function guardaTransaccion( Usuario $usuario )
+	{
+		try
+		{
+			$this->conn->beginTransaction();
 
-		$conceptosError = array();
-
-		$tsql = "{call [AvanceObra].[uspGuardaAvanceConcepto]( ?, ?, ?, ? )}";
-
-		foreach ( $this->_conceptos as $concepto ) {
-			
-			try {
-				// Lipia y valida la cantidad estimada
-				$concepto['cantidad'] = str_replace(',', '', $concepto['cantidad']);
-
-				$isValid = preg_match('/^-?\d+(\.\d+)?$/', $concepto['cantidad']);
-
-				// Si la cantidad no es valida agrega el concepto con error
-				if( ! $isValid ) {
-					throw new Exception("La cantidad ingresada no es correcta");
-				}
+			if ( ! empty($this->id_transaccion))
+			{
+				$tsql = "UPDATE [dbo].[transacciones]
+						 SET
+						 	  [fecha] = ?
+							, [cumplimiento] = ?
+							, [vencimiento] = ?
+							, [fecha_ejecucion] = ?
+							, [fecha_contable] = ?
+							, [referencia] = ?
+							, [comentario] = [comentario] + ?
+							, [observaciones] = ?
+						 WHERE
+						 	[id_transaccion] = ?";
 
 				$params = array(
-					array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-					array( $concepto['IDConcepto'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-					array( $concepto['cantidad'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT ),
-					array( $concepto['cumplido'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT )
+					array($this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
+					array($this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
+					array($this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
+					array($this->getFechaEjecucion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
+					array($this->getFechaContable(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
+					array($this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(64)),
+					array($this->generaComentario($usuario, 'M'), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(1024)),
+					array($this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096)),
+					array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 				);
 
-			
-				$this->_SAOConn->executeSP($tsql, $params);
-			} catch( Exception $e ) {
+				$this->conn->executeQuery($tsql, $params);
+			}
+			else
+			{
+				$tsql = "INSERT INTO [dbo].[transacciones]
+						(
+							  [id_antecedente]
+							, [tipo_transaccion]
+							, [fecha]
+							, [id_obra]
+							, [id_empresa]
+							, [id_moneda]
+							, [cumplimiento]
+							, [vencimiento]
+							, [fecha_ejecucion]
+							, [fecha_contable]
+							, [monto]
+							, [impuesto]
+							, [referencia]
+							, [comentario]
+							, [observaciones]
+						)
+						VALUES
+						(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-				$conceptosError[] = array(
-					'IDConcepto' => $concepto['IDConcepto'],
+				$params = array
+				(
+					array($this->subcontrato->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+					array(self::TIPO_TRANSACCION, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+					array($this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
+					array($this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+					array($this->subcontrato->empresa->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+					array($this->subcontrato->moneda->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+					array($this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
+					array($this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
+					array($this->getFechaEjecucion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
+					array($this->getFechaContable(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
+					array(0.0, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT),
+					array(0.0, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT),
+					array($this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(64)),
+					array($this->generaComentario($usuario, 'I'), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(1024)),
+					array($this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096)),
+				);
+
+				$id_transaccion = $this->conn->executeQueryGetId($tsql, $params);
+
+				$this->setIDTransaccion($id_transaccion);
+			}
+
+			$errores = $this->guardaConceptos();
+
+			$this->conn->commitTransaction();
+
+			return $errores;
+		}
+		catch (Exception $e)
+		{
+			$this->conn->rollbackTransaction();
+			throw $e;
+		}
+
+	}
+
+	/**
+	 * @return array
+     */
+	private function guardaConceptos()
+	{
+		$errores = array();
+
+		$tsql = "{call [AvanceSubcontratos].[uspAvanceConcepto]( ?, ?, ?, ? )}";
+
+		$suma_importes = 0;
+
+		foreach ($this->conceptos as $concepto)
+		{
+			try
+			{
+				// Limpia y valida el importe estimado
+				$concepto['cantidad'] = str_replace(',', '', $concepto['cantidad']);
+
+				// Si el importe no es valido agrega el concepto con error
+				if ( ! $this->esImporte($concepto['cantidad']))
+				{
+					throw new Exception("El numero ingresado no es correcto");
+				}
+
+				$params = array
+				(
+					array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+					array($this->subcontrato->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+					array($concepto['id_concepto'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+					array($concepto['cantidad'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT),
+				);
+
+				$this->conn->executeQuery($tsql, $params);
+
+				$suma_importes += $concepto['cantidad'];
+			}
+			catch (Exception $e)
+			{
+				$errores[] = array
+				(
+					'id_concepto' => $concepto['id_concepto'],
 					'cantidad' => $concepto['cantidad'],
-					'message' => $e->getMessage()
+					'message' => $e->getMessage(),
 				);
 			}
 		}
 
-		return $conceptosError;
+		return $errores;
 	}
 
-	private function guardaDatosGenerales() {
-
-		$tsql = "{call [AvanceObra].[uspGuardaDatosGenerales]( ?, ?, ?, ?, ?, ? )}";
-
-	    $params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
-	        array( $this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
-	        array( $this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
-	        array( $this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096) ),
-	        array( Sesion::getCuentaUsuarioSesion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
-	    );
-
-	    $rsConceptos = $this->_SAOConn->executeSP($tsql, $params);
+	/**
+	 * @param array $conceptos
+     */
+	public function setConceptos(Array $conceptos)
+	{
+		$this->conceptos = $conceptos;
 	}
 
-	private function getIDConceptoRaiz() {
-		return $this->_IDConceptoRaiz;
+	/**
+	 * @return null
+     */
+	public function getFechaInicio()
+	{
+		return $this->fechaInicio;
 	}
 
-	private function setIDConceptoRaiz( $IDConceptoRaiz ) {
-		$this->_IDConceptoRaiz = $IDConceptoRaiz;
-	}
-
-	public function registraTransaccion() {
-
-		$tsql = "{call [AvanceObra].[uspRegistraTransaccion]( ?, ?, ?, ?, ?, ?, ?, ?, ? )}";
-
-	    $params = array(
-	        array( $this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
-	       	array( $this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
-	        array( $this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE ),
-	        array( $this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096) ),
-	        array( $this->getIDConceptoRaiz(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( Sesion::getCuentaUsuarioSesion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16) ),
-	        array( &$this->_IDTransaccion, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT ),
-	        array( &$this->_numeroFolio, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT )
-	    );
-
-	    $this->_SAOConn->executeSP($tsql, $params);
-	    $feedback = $this->guardaConceptosAvance();
-
-	    return $feedback;
-	}
-
-	public function guardaTransaccion() {
-
-		$this->guardaDatosGenerales();
-
-		$this->guardaConceptosAvance();
-	}
-
-	public function apruebaTransaccion() {
-
-		$tsql = "{call [AvanceObra].[uspApruebaTransaccion]( ? )}";
-
-		$params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	    );
-
-	    $this->_SAOConn->executeSP($tsql, $params);
-	}
-
-	public function revierteAprobacion() {
-
-		$tsql = "{call [AvanceObra].[uspRevierteAprobacion]( ? )}";
-
-		$params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	    );
-
-	    $this->_SAOConn->executeSP($tsql, $params);
-	}
-
-	public function setConceptos( Array $conceptos ) {
-
-		$this->_conceptos = $conceptos;
-	}
-
-	public function getFechaInicio() {
-		return $this->_fechaInicio;
-	}
-
-	public function setFechaInicio( $fecha ) {
-		
-		if ( ! $this->fechaEsValida( $fecha ) )
+	/**
+	 * @param $fecha
+	 * @throws Exception
+     */
+	public function setFechaInicio($fecha)
+	{
+		if ( ! $this->fechaEsValida($fecha))
+		{
 			throw new Exception("El formato de fecha inicial es incorrecto.");
+		}
 		
-		$this->_fechaInicio = $fecha;
+		$this->fechaInicio = $fecha;
 	}
 
-	public function getFechaTermino() {
-		return $this->_fechaTermino;
+	/**
+	 * @return null
+     */
+	public function getFechaTermino()
+	{
+		return $this->fechaTermino;
 	}
 
-	public function setFechaTermino( $fecha ) {
-		
-		if ( ! $this->fechaEsValida( $fecha ) )
+	/**
+	 * @param $fecha
+	 * @throws Exception
+     */
+	public function setFechaTermino($fecha)
+	{
+		if ( ! $this->fechaEsValida($fecha))
+		{
 			throw new Exception("El formato de fecha termino es incorrecto.");
+		}
 		
-		$this->_fechaTermino = $fecha;
+		$this->fechaTermino = $fecha;
 	}
 
-	public function getConceptoRaiz() {
-		
-		return $this->_conceptoRaiz;
+	/**
+	 * @param $fecha
+	 * @throws Exception
+     */
+	public function setFechaEjecucion($fecha)
+	{
+		if ( ! $this->fechaEsValida($fecha))
+		{
+			throw new Exception("El formato de fecha termino es incorrecto.");
+		}
+
+		$this->fechaEjecucion = $fecha;
 	}
 
-	public function getConceptosAvance() {
+	/**
+	 * @return mixed
+     */
+	public function getFechaEjecucion()
+	{
+		return $this->fechaEjecucion;
+	}
 
-		$tsql = "{call [AvanceObra].[uspConceptosAvance]( ?, ?, ? )}";
+	/**
+	 * @param $fecha
+	 * @throws Exception
+     */
+	public function setFechaContable($fecha)
+	{
+		if ( ! $this->fechaEsValida($fecha))
+		{
+			throw new Exception("El formato de fecha termino es incorrecto.");
+		}
 
-	    $params = array(
-	        array( $this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->getIDConceptoRaiz(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+		$this->fechaContable = $fecha;
+	}
+
+	/**
+	 * @return mixed
+     */
+	public function getFechaContable()
+	{
+		return $this->fechaContable;
+	}
+
+	/**
+	 * @return mixed
+     */
+	public function getConceptosAvance()
+	{
+		$tsql = "SELECT
+					  [transacciones].[id_transaccion]
+					, [items].[id_concepto]
+					, [contratos].[nivel]
+					, (LEN([contratos].[nivel]) / 4) - 1 AS [numero_nivel]
+					,
+					CASE
+						WHEN [items].[id_concepto] > 0 THEN 1
+						ELSE 0
+					END AS [es_actividad]
+					, [contratos].[descripcion]
+					, [contratos].[unidad]
+					, [contratos].[cantidad_presupuestada]
+					, [items].[precio_unitario]
+					, [contratos].[estado]
+					, [contratos].[clave]
+					, [items_avance].[cantidad]
+				FROM
+					[dbo].[contratos]
+				INNER JOIN
+					[dbo].[transacciones]
+					ON
+						[contratos].[id_transaccion] = [transacciones].[id_antecedente]
+				LEFT OUTER JOIN
+					[dbo].[items]
+					ON
+						[transacciones].[id_transaccion] = [items].[id_transaccion]
+							AND
+						[contratos].[id_concepto] = [items].[id_concepto]
+				LEFT OUTER JOIN
+				(
+					SELECT
+						  [items].[id_antecedente]
+						, [items].[id_concepto]
+						, items.[cantidad]
+					FROM
+						[dbo].[transacciones]
+					INNER JOIN
+						[dbo].[items]
+					ON
+						[transacciones].[id_transaccion] = [items].[id_transaccion]
+					WHERE
+						[transacciones].[tipo_transaccion] = 105
+							AND
+						[items].[id_transaccion] = ?
+				) AS [items_avance]
+				ON
+					[transacciones].[id_transaccion] = [items_avance].[id_antecedente]
+						AND
+					[items].[id_concepto] = [items_avance].[id_concepto]
+				WHERE
+					[transacciones].[tipo_transaccion] = 51
+						AND
+					[transacciones].[id_obra] = ?
+						AND
+					[transacciones].[id_transaccion] = ?
+						AND
+					EXISTS
+					(
+						SELECT 1
+						FROM
+							[dbo].[items] AS [items_contrato]
+						INNER JOIN
+							[dbo].[contratos] AS [conceptos_contrato]
+							ON
+								[items_contrato].[id_concepto] = [conceptos_contrato].[id_concepto]
+						WHERE
+							[items_contrato].[id_transaccion] = [transacciones].[id_transaccion]
+								AND
+							[conceptos_contrato].[nivel] LIKE [contratos].[nivel] + '%'
+					)
+				ORDER BY
+					[contratos].[nivel];;";
+
+	    $params = array
+		(
+	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+			array($this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+			array($this->subcontrato->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 	    );
 
-	    $conceptos = $this->_SAOConn->executeSP($tsql, $params);
+	    $conceptos = $this->conn->executeQuery($tsql, $params);
 
 	    return $conceptos;
 	}
 
-	public function getTotalesTransaccion() {
+	/**
+	 * @return mixed
+     */
+	public function getTotalesTransaccion()
+	{
+		$tsql = "SELECT
+					  [transacciones].[id_transaccion]
+					, [transacciones].[monto] - [transacciones].[impuesto] AS [subtotal]
+					, [transacciones].[monto]
+					, [transacciones].[impuesto]
+				FROM
+					[transacciones]
+				WHERE
+					[transacciones].[id_transaccion] = ?";
 
-		$tsql = "{call [AvanceObra].[uspTotalesTransaccion]( ? )}";
-
-		$params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+		$params = array
+		(
+	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
-	    $totales = $this->_SAOConn->executeSP($tsql, $params);
+	    $totales = $this->conn->executeQuery($tsql, $params);
 
 	    return $totales;
 	}
 
-	public static function getConceptosNuevoAvance( $IDObra, $IDConceptoRaiz, SAODBConn $conn ) {
+	/**
+	 * @param Obra $obra
+	 * @param $id_subcontrato
+	 * @return array
+	 * @throws DBServerStatementExecutionException
+     */
+	public static function getConceptosNuevoAvance(Obra $obra, $id_subcontrato)
+	{
+		$tsql = "SELECT
+					  [transacciones].[id_transaccion]
+					, [items].[id_concepto]
+					, [contratos].[nivel]
+					, (LEN([contratos].[nivel]) / 4) - 1 AS [numero_nivel]
+					,
+					CASE
+						WHEN [items].[id_concepto] > 0 THEN 1
+						ELSE 0
+					END AS [es_actividad]
+					, [contratos].[descripcion]
+					, [contratos].[unidad]
+					, [contratos].[cantidad_presupuestada]
+					, [items].[precio_unitario]
+					, [contratos].[estado]
+					, [contratos].[clave]
+				FROM
+					[dbo].[contratos]
+				INNER JOIN
+					[dbo].[transacciones]
+					ON
+						[contratos].[id_transaccion] = [transacciones].[id_antecedente]
+				LEFT OUTER JOIN
+					[dbo].[items]
+					ON
+						[transacciones].[id_transaccion] = [items].[id_transaccion]
+							AND
+						[contratos].[id_concepto] = [items].[id_concepto]
+				WHERE
+					[transacciones].[tipo_transaccion] = 51
+						AND
+					[transacciones].[id_obra] = ?
+						AND
+					[transacciones].[id_transaccion] = ?
+						AND
+					EXISTS
+					(
+						SELECT 1
+						FROM
+							[dbo].[items] AS [items_contrato]
+						INNER JOIN
+							[dbo].[contratos] AS [conceptos_contrato]
+							ON
+								[items_contrato].[id_concepto] = [conceptos_contrato].[id_concepto]
+						WHERE
+							[items_contrato].[id_transaccion] = [transacciones].[id_transaccion]
+								AND
+							[conceptos_contrato].[nivel] LIKE [contratos].[nivel] + '%'
+					)
+				ORDER BY
+					[contratos].[nivel];";
 
-		$tsql = "{call [AvanceObra].[uspConceptosAvance]( ?, ? )}";
+		$params = array
+		(
+			array($obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+			array($id_subcontrato, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
+		);
 
-	    $params = array(
-	        array( $IDObra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $IDConceptoRaiz, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	    );
+		$conceptos = $obra->getConn()->executeSP($tsql, $params);
 
-	    $conceptos = $conn->executeSP($tsql, $params);
-
-	    return $conceptos;
+		return $conceptos;
 	}
 
-	public static function getFoliosTransaccion( $IDObra, SAODBConn $conn) {
+	/**
+	 * @param Obra $obra
+	 * @return array
+	 * @throws DBServerStatementExecutionException
+     */
+	public static function getFoliosTransaccion(Obra $obra)
+	{
+		$tsql = "SELECT
+					[id_transaccion],
+					[numero_folio]
+				 FROM
+				 	[dbo].[transacciones]
+				 WHERE
+				 	[id_obra] = ?
+						AND
+					[tipo_transaccion] = ?
+				 ORDER BY
+				 	[numero_folio] DESC";
 
-		if ( ! is_int($IDObra) )
-			throw new Exception("El identificador de la obra no es correcto.");
+		$params = array
+		(
+			array($obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+			array(self::TIPO_TRANSACCION, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
+		);
 
-		$tsql = '{call [AvanceObra].[uspListaFolios]( ? )}';
-
-		$params = array(
-	        array( $IDObra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	    );
-
-	    $foliosTran = $conn->executeSP($tsql, $params);
+		$foliosTran = $obra->getConn()->executeSP($tsql, $params);
 
 		return $foliosTran;
 	}
 
-	public static function getListaTransacciones( $IDObra, SAODBConn $conn ) {
-
-		return parent::getListaTransacciones($IDObra, self::TIPO_TRANSACCION, $conn);
+	/**
+	 * @param Obra $obra
+	 * @param null $tipo_transaccion
+	 * @return array
+     */
+	public static function getListaTransacciones(Obra $obra, $tipo_transaccion=null)
+	{
+		return parent::getListaTransacciones($obra, self::TIPO_TRANSACCION);
 	}
+
 }
-?>

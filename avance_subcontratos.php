@@ -54,22 +54,18 @@
 									<input type="hidden" name="txtFechaTransaccionDB" id="txtFechaTransaccionDB" />
 									<input type="hidden" name="IDTransaccion" id="IDTransaccion" value="" />
 								</form>
-								<a id="aprobar" class="button op aprobar">
-									<span class="icon"></span>
-									<span class="button-text">Aprobar</span>
-								</a>
-								<a id="revierte-aprobacion" class="button revertir">
-									<span class="icon"></span>
-									<span class="button-text">Revertir Aprobación</span>
-								</a>
 							</section>
 
 							<section id="tran-info">
 								<form>
 									<fieldset>
 										<div class="multi-field">
-											<label>Conceptos Dependientes de</label>
-											<input type="text" id="txtConceptoRaiz" class="roField" />
+											<label for="txtEmpresa">Empresa</label>
+											<input type="text" id="txtEmpresa" class="roField" disabled />
+										</div>
+										<div>
+											<label for="txtSubcontrato">Subcontrato</label>
+											<input type="text" id="txtSubcontrato" class="roField" disabled />
 										</div>
 										<div>
 											<label for="txtObservaciones">Observaciones</label>
@@ -89,6 +85,21 @@
 												<span class="label">Término</span>
 												<input type="text" class="date" name="txtFechaTermino" id="txtFechaTermino" />
 												<input type="hidden" name="txtFechaTerminoDB" id="txtFechaTerminoDB" />
+											</span>
+										</div>
+									</fieldset>
+									<fieldset>
+										<legend>Fechas de Reconocimiento de Avance</legend>
+										<div class="multi-field">
+											<span>
+												<span class="label">Ejecución</span>
+												<input type="text" class="date" name="txtFechaEjecucion" id="txtFechaEjecucion" />
+												<input type="hidden" name="txtFechaEjecucionDB" id="txtFechaEjecucionDB" />
+											</span>
+											<span>
+												<span class="label">Contable</span>
+												<input type="text" class="date" name="txtFechaContable" id="txtFechaContable" />
+												<input type="hidden" name="txtFechaContableDB" id="txtFechaContableDB" />
 											</span>
 										</div>
 									</fieldset>
@@ -121,29 +132,18 @@
 									<col class="icon"/>
 									<col/>
 									<col class="unidad"/>
-									<col span="2" class="monto"/>
-									<col class="monto editable"/>
-									<col span="5" class="monto"/>
+									<col class="monto"/>
+									<col class="monto"/>
+									<col class="monto"/>
 								</colgroup>
 								<thead>
 									<tr>
-										<th rowspan="2"></th>
-										<th rowspan="2">Concepto</th>
-										<th rowspan="2">Unidad</th>
-										<th colspan="3">Cantidad</th>
-										<th rowspan="2">Precio Venta</th>
-										<th>Monto</th>
+										<th></th>
+										<th>Concepto</th>
+										<th>Unidad</th>
+										<th>Cantidad Contratada</th>
+										<th>Precio Unitario</th>
 										<th>Cantidad</th>
-										<th>Monto</th>
-										<th rowspan="2">Cumplido</th>
-									</tr>
-									<tr>
-										<th>Presupuesto</th>
-										<th>Anterior</th>
-										<th>Avance</th>
-										<th>Avance</th>
-										<th>Actual</th>
-										<th>Actual</th>
 									</tr>
 								</thead>
 								<tbody></tbody>
@@ -160,9 +160,52 @@
 		</footer> <!-- app-footer -->
 	</div> <!-- app-wrapper -->
 
+	<div id="dialog-subcontratos" class="dialog" title="Subcontratos a Estimar">
+		<div class="ui-state-highlight ui-corner-all">
+			<p><span class="ui-icon ui-icon-info"></span><strong>De doble click para seleccionar un subcontrato</strong></p>
+		</div>
+		<table id="tabla-subcontratos" class="stripped">
+			<colgroup>
+				<col/>
+				<col span="2" class="folio"/>
+			</colgroup>
+			<thead>
+			<tr>
+				<th>Contratista</th>
+				<th>Folio</th>
+				<th>Fecha</th>
+				<th>Referencia</th>
+			</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
+
+	<script type="text/template" id="template-concepto">
+		<tr data-id="<%- id_concepto %>" data-iditem="<%- id_item %>" data-esactividad="<%- es_actividad %>">
+			<td class="icon-cell">
+				<a class="icon fixed"></a>
+			</td>
+			<% if (es_actividad){ %>
+				<td title="<%- descripcion %>"><%= '&nbsp;&nbsp;'.repeat(numero_nivel) + descripcion %></td>
+				<td class="centrado"><%- unidad %></td>
+				<td class="numerico contratado"><%- cantidad_presupuestada %></td>
+				<td class="numerico"><%- precio_unitario %></td>
+				<td class="numerico editable editable-cell"><%- cantidad %></td>
+			<% } else { %>
+				<th><%= '&nbsp;&nbsp;'.repeat(numero_nivel) + descripcion %></th>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			<% } %>
+		</tr>
+	</script>
+
 	<div id="message-console"><span id="console-message"></span><span id="console-toggler" class="open"></span></div>
 	<div id="cache"></div>
 
+	<script src="inc/js/lib/underscore-min.js"></script>
 	<script src="inc/js/jquery-1.7.1.min.js"></script>
 	<script src="inc/js/jquery-ui/js/jquery-ui.min.js"></script>
 	<script src="inc/js/jquery-ui/js/i18n/jquery.ui.datepicker-es.min.js"></script>
@@ -171,7 +214,6 @@
 	<script src="inc/js/jquery.buttonlist.js"></script>
 	<script src="inc/js/jquery.listaTransacciones.js"></script>
 	<script src="inc/js/jquery.uxtable.js"></script>
-	<script src="inc/js/jquery.presupuestoObra.js"></script>
 	<script src="inc/js/jquery.notify.js"></script>
 	<script src="inc/js/avance_subcontratos.js"></script>
 </body>

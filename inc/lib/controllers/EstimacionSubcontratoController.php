@@ -543,4 +543,3 @@ try {
 }
 
 echo json_encode($data);
-?>
