@@ -62,7 +62,7 @@ try
 					'es_actividad' => $concepto->es_actividad,
 					'descripcion' => $concepto->descripcion,
 					'unidad' => $concepto->unidad,
-					'cantidad_original' => Util::formatoNumerico($concepto->cantidad_original),
+					'cantidad_presupuestada' => Util::formatoNumerico($concepto->cantidad_presupuestada),
 					'precio_unitario' => Util::formatoNumerico($concepto->precio_unitario),
 					'cantidad' => 0,
 				);
@@ -122,7 +122,7 @@ try
 					'es_actividad' => $concepto->es_actividad,
 					'descripcion' => $concepto->descripcion,
 					'unidad' => $concepto->unidad,
-					'cantidad_original' => Util::formatoNumerico($concepto->cantidad_original),
+					'cantidad_presupuestada' => Util::formatoNumerico($concepto->cantidad_presupuestada),
 					'precio_unitario' => Util::formatoNumerico($concepto->precio_unitario),
 					'cantidad' => Util::formatoNumerico($concepto->cantidad),
 				);

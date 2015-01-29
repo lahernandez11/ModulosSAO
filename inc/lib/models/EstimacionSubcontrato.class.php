@@ -798,7 +798,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 		$tsql = '{call [SubcontratosEstimaciones].[uspListaFolios]( ? )}';
 
 		$params = array(
-	        array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array($obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
 	    $foliosTran = $obra->getConn()->executeSP( $tsql, $params );
