@@ -365,8 +365,8 @@ class AvanceSubcontrato extends TransaccionSAO {
 	public function getConceptosAvance()
 	{
 		$tsql = "SELECT
-					  [contratos].[id_transaccion]
-					, [contratos].[id_concepto]
+					  [transacciones].[id_transaccion]
+					, [items].[id_concepto]
 					, [contratos].[nivel]
 					, (LEN([contratos].[nivel]) / 4) - 1 AS [numero_nivel]
 					,
@@ -376,7 +376,7 @@ class AvanceSubcontrato extends TransaccionSAO {
 					END AS [es_actividad]
 					, [contratos].[descripcion]
 					, [contratos].[unidad]
-					, [contratos].[cantidad_original]
+					, [contratos].[cantidad_presupuestada]
 					, [items].[precio_unitario]
 					, [contratos].[estado]
 					, [contratos].[clave]
@@ -385,14 +385,14 @@ class AvanceSubcontrato extends TransaccionSAO {
 					[dbo].[contratos]
 				INNER JOIN
 					[dbo].[transacciones]
-				ON
-					[contratos].[id_transaccion] = [transacciones].[id_antecedente]
+					ON
+						[contratos].[id_transaccion] = [transacciones].[id_antecedente]
 				LEFT OUTER JOIN
 					[dbo].[items]
-				ON
-					[transacciones].[id_transaccion] = [items].[id_transaccion]
-						AND
-					[contratos].[id_concepto] = [items].[id_concepto]
+					ON
+						[transacciones].[id_transaccion] = [items].[id_transaccion]
+							AND
+						[contratos].[id_concepto] = [items].[id_concepto]
 				LEFT OUTER JOIN
 				(
 					SELECT
@@ -415,19 +415,28 @@ class AvanceSubcontrato extends TransaccionSAO {
 						AND
 					[items].[id_concepto] = [items_avance].[id_concepto]
 				WHERE
-					[transacciones].[id_obra] = ?
-						AND
 					[transacciones].[tipo_transaccion] = 51
 						AND
-					(
-						[items].[id_concepto] IS NOT NULL
-							OR
-						[contratos].[unidad] IS NULL
-					)
+					[transacciones].[id_obra] = ?
 						AND
 					[transacciones].[id_transaccion] = ?
+						AND
+					EXISTS
+					(
+						SELECT 1
+						FROM
+							[dbo].[items] AS [items_contrato]
+						INNER JOIN
+							[dbo].[contratos] AS [conceptos_contrato]
+							ON
+								[items_contrato].[id_concepto] = [conceptos_contrato].[id_concepto]
+						WHERE
+							[items_contrato].[id_transaccion] = [transacciones].[id_transaccion]
+								AND
+							[conceptos_contrato].[nivel] LIKE [contratos].[nivel] + '%'
+					)
 				ORDER BY
-					[contratos].[nivel];";
+					[contratos].[nivel];;";
 
 	    $params = array
 		(
@@ -475,8 +484,8 @@ class AvanceSubcontrato extends TransaccionSAO {
 	public static function getConceptosNuevoAvance(Obra $obra, $id_subcontrato)
 	{
 		$tsql = "SELECT
-					  [contratos].[id_transaccion]
-					, [contratos].[id_concepto]
+					  [transacciones].[id_transaccion]
+					, [items].[id_concepto]
 					, [contratos].[nivel]
 					, (LEN([contratos].[nivel]) / 4) - 1 AS [numero_nivel]
 					,
@@ -486,7 +495,7 @@ class AvanceSubcontrato extends TransaccionSAO {
 					END AS [es_actividad]
 					, [contratos].[descripcion]
 					, [contratos].[unidad]
-					, [contratos].[cantidad_original]
+					, [contratos].[cantidad_presupuestada]
 					, [items].[precio_unitario]
 					, [contratos].[estado]
 					, [contratos].[clave]
@@ -494,26 +503,35 @@ class AvanceSubcontrato extends TransaccionSAO {
 					[dbo].[contratos]
 				INNER JOIN
 					[dbo].[transacciones]
-				ON
-					[contratos].[id_transaccion] = [transacciones].[id_antecedente]
+					ON
+						[contratos].[id_transaccion] = [transacciones].[id_antecedente]
 				LEFT OUTER JOIN
 					[dbo].[items]
-				ON
-					[transacciones].[id_transaccion] = [items].[id_transaccion]
-						AND
-					[contratos].[id_concepto] = [items].[id_concepto]
+					ON
+						[transacciones].[id_transaccion] = [items].[id_transaccion]
+							AND
+						[contratos].[id_concepto] = [items].[id_concepto]
 				WHERE
-					[transacciones].[id_obra] = ?
-						AND
 					[transacciones].[tipo_transaccion] = 51
 						AND
-					(
-						[items].[id_concepto] IS NOT NULL
-							OR
-						[contratos].[unidad] IS NULL
-					)
+					[transacciones].[id_obra] = ?
 						AND
 					[transacciones].[id_transaccion] = ?
+						AND
+					EXISTS
+					(
+						SELECT 1
+						FROM
+							[dbo].[items] AS [items_contrato]
+						INNER JOIN
+							[dbo].[contratos] AS [conceptos_contrato]
+							ON
+								[items_contrato].[id_concepto] = [conceptos_contrato].[id_concepto]
+						WHERE
+							[items_contrato].[id_transaccion] = [transacciones].[id_transaccion]
+								AND
+							[conceptos_contrato].[nivel] LIKE [contratos].[nivel] + '%'
+					)
 				ORDER BY
 					[contratos].[nivel];";
 

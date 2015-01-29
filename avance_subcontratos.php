@@ -189,7 +189,7 @@
 			<% if (es_actividad){ %>
 				<td title="<%- descripcion %>"><%= '&nbsp;&nbsp;'.repeat(numero_nivel) + descripcion %></td>
 				<td class="centrado"><%- unidad %></td>
-				<td class="numerico contratado"><%- cantidad_original %></td>
+				<td class="numerico contratado"><%- cantidad_presupuestada %></td>
 				<td class="numerico"><%- precio_unitario %></td>
 				<td class="numerico editable editable-cell"><%- cantidad %></td>
 			<% } else { %>

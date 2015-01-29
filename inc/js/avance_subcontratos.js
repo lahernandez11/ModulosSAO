@@ -151,7 +151,12 @@ var AVANCE = {
 		$('#nueva-transaccion').on('click', function (event) {
 
 			if (that.existenCambiosSinGuardar()) {
-				pubsub.publish('notify_modtran', that.nuevaTransaccion);
+				pubsub.publish('notify_modtran', function() {
+					$('#folios-transaccion').buttonlist('reset');
+					that.limpiaDatosTransaccion();
+					that.habilitaCamposTransaccion();
+					that.muestraListaSubcontratos();
+				});
 			}
 			else {
 				if ( ! that.getIDObra() ) {
