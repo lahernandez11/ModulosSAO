@@ -14,8 +14,8 @@ $data['success'] = true;
 $data['message'] = null;
 $data['noRows']  = false;
 
-try {
-	
+try
+{
 	Sesion::validaSesionAsincrona();
 
 	if ( ! isset($_REQUEST['action']) ) {
@@ -236,45 +236,49 @@ try {
 			$observaciones = $_POST['datosGenerales']['Observaciones'];
 			$conceptos 	   = array();
 			
-			if ( isset( $_POST['conceptos'] ) && is_array( $_POST['conceptos'] ) ) {
+			if (isset( $_POST['conceptos'] ) && is_array( $_POST['conceptos'] ))
+			{
 				$conceptos = $_POST['conceptos'];
 			}
 
 			$data['errores'] = array();
 			$data['totales'] = array();
 
-			if ( ! empty( $id_transaccion ) ) {
-
-				$transaccion = new EstimacionSubcontrato( $obra, $id_transaccion );
-				$transaccion->setFecha( $fecha );
-				$transaccion->setFechaInicio( $fechaInicio );
-				$transaccion->setFechaTermino( $fechaTermino );
-				$transaccion->setObservaciones( $observaciones );
-				$transaccion->setConceptos( $conceptos );
-				$transaccion->setImporteAmortizacionAnticipo( Util::limpiaImporte( $_POST['amortizacion_anticipo'] ) );
-				$transaccion->setImporteFondoGarantia( Util::limpiaImporte( $_POST['fondo_garantia'] ) );
-				$transaccion->setImporteRetencionIVA( Util::limpiaImporte( $_POST['retencion_iva'] ) );
-				$transaccion->setImporteAnticipoLiberar( Util::limpiaImporte( $_POST['anticipo_liberar'] ) );
+			if ( ! empty( $id_transaccion ))
+			{
+				$transaccion = new EstimacionSubcontrato($obra, $id_transaccion);
+				$transaccion->setFecha($fecha);
+				$transaccion->setFechaInicio($fechaInicio);
+				$transaccion->setFechaTermino($fechaTermino);
+				$transaccion->setObservaciones($observaciones);
+				$transaccion->setConceptos($conceptos);
+				$transaccion->setImporteAmortizacionAnticipo(Util::limpiaImporte($_POST['amortizacion_anticipo']));
+				$transaccion->setImporteFondoGarantia(Util::limpiaImporte($_POST['fondo_garantia']));
+				$transaccion->setImporteRetencionIVA(Util::limpiaImporte($_POST['retencion_iva']));
+				$transaccion->setImporteAnticipoLiberar(Util::limpiaImporte($_POST['anticipo_liberar']));
 				
-				$data['errores'] = $transaccion->guardaTransaccion( Sesion::getUser() );
+				$data['errores'] = $transaccion->guardaTransaccion(Sesion::getUser());
 
-			} else {
-				$subcontrato = new Subcontrato( $obra, $id_subcontrato );
+			}
+			else
+			{
+				$subcontrato = new Subcontrato($obra, $id_subcontrato);
 				
 				$transaccion = new EstimacionSubcontrato(
 					$obra, $subcontrato, $fecha, $fechaInicio, 
 					$fechaTermino, $observaciones, $conceptos
 				);
-				
-				$data['errores']				= $transaccion->guardaTransaccion( Sesion::getUser() );
+
+				$data['errores'] = $transaccion->guardaTransaccion(Sesion::getUser());
 				$data['IDTransaccion']  		= $transaccion->getIDTransaccion();
-				$data['NumeroFolio']    		= Util::formatoNumeroFolio( $transaccion->getNumeroFolio() );
-				$data['NumeroFolioConsecutivo'] = Util::formatoNumeroFolio( $transaccion->getNumeroFolioConsecutivo() );
+				$data['NumeroFolio']    		= Util::formatoNumeroFolio($transaccion->getNumeroFolio());
+				$data['NumeroFolioConsecutivo'] = Util::formatoNumeroFolio($transaccion->getNumeroFolioConsecutivo());
 			}
 			
-			if ( count( $data['errores'] ) == 0 ) {
+			if (count($data['errores']) == 0)
+			{
 				$totales = $transaccion->getTotalesTransaccion();
-				$data['totales'] = Util::formatoNumericoTotales( $totales );
+				$data['totales'] = Util::formatoNumericoTotales($totales);
 			}
 			
 			break;
@@ -537,9 +541,12 @@ try {
 		break;
 	}
 
-} catch( Exception $e ) {
+}
+catch( Exception $e )
+{
 	$data['success'] = false;
 	$data['message'] = $e->getMessage();
+	$data['errores'] = $e->errors;
 }
 
 echo json_encode($data);
