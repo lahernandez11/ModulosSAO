@@ -738,32 +738,31 @@ var ESTIMACION = {
 
 			if( ! json.success ) {
 				messageConsole.displayMessage( json.message, 'error' );
+
+				if ( json.errores.length > 0 ) {
+					that.marcaConceptoError(json.errores);
+					messageConsole.displayMessage( 'Existen errores en algunos conceptos, por favor revise y guarde otra vez.', 'error');
+				}
 				return;
 			}
 
 			if ( ! that.getIDTransaccion() ) {
-				$('#folios-transaccion').buttonlist('addListItem', 
+				$('#folios-transaccion').buttonlist('addListItem',
 					{id: json.IDTransaccion, text: json.NumeroFolio}, 'start');
-				
-				$('#folios-transaccion').buttonlist('setSelectedItemById', 
+
+				$('#folios-transaccion').buttonlist('setSelectedItemById',
 					json.IDTransaccion, false );
-				
+
 				$('#txtFolioConsecutivo').text(json.NumeroFolioConsecutivo);
-				
+
 				that.deshabilitaFechaTransaccion();
 				that.setURLFormatoPDF();
 			}
 
-	 		that.renderTotales(json.totales);
+			that.renderTotales(json.totales);
 
-	 		if ( json.errores.length > 0 ) {
-	 			that.marcaConceptoError(json.errores);
-	 			messageConsole.displayMessage( 'Existen errores en algunos conceptos, por favor revise y guarde otra vez.', 'error');
-	 		} else {
-
-	 			$('#guardar').removeClass('alert');
-	 			messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success');
-	 		}
+			$('#guardar').removeClass('alert');
+			messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success');
 	 		
 		}).always( DATA_LOADER.hide );
 	},

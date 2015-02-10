@@ -262,13 +262,21 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
 				$errores = $this->guardaConceptos();
 
+				if (count($errores))
+				{
+					throw new Exception('Ocurrio un error al guardar los conceptos');
+				}
+
 				$this->calculaImportes();
 
 				$this->conn->commitTransaction();
 
 				return $errores;
-			} catch( Exception $e ) {
+			}
+			catch( Exception $e )
+			{
 				$this->conn->rollbackTransaction();
+				$e->errors = $errores;
 				throw $e;
 			}
 		}
@@ -281,14 +289,16 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
 		$this->suma_importes = 0;
 
-		foreach ( $this->conceptos as $concepto ) {
-			
-			try {
+		foreach ( $this->conceptos as $concepto )
+		{
+			try
+			{
 				// Limpia y valida el importe estimado
 				$concepto['importeEstimado'] = str_replace(',', '', $concepto['importeEstimado']);
 
 				// Si el importe no es valido agrega el concepto con error
-				if( ! $this->esImporte($concepto['importeEstimado']) ) {
+				if( ! $this->esImporte($concepto['importeEstimado']))
+				{
 					throw new Exception("El numero ingresado no es correcto");
 				}
 
