@@ -140,7 +140,7 @@ var ESTIMACION = {
 					'onFinishEdit': function( activeCell, value ) {
 
 						var IDConcepto = parseInt( activeCell.parent().attr('data-id') ),
-							row = activeCell.parents('tr');;
+							row = activeCell.parents('tr');
 
 						if ( parseInt(activeCell.parent().attr('data-esactividad')) == 1 ) {
 							

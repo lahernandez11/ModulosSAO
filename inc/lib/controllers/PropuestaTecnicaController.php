@@ -105,7 +105,6 @@ try
 			$conceptos = isset($_POST['conceptos']) ? $_POST['conceptos'] : array();
 
 			$data['errores'] = array();
-			$data['totales'] = array();
 
 			if (isset($_POST['id_transaccion']))
 			{
@@ -135,24 +134,6 @@ try
 				$data['numero_folio'] = Util::formatoNumeroFolio($transaccion->getNumeroFolio());
 			}
 
-			break;
-
-		case 'apruebaTransaccion':
-			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
-			$obra = new Obra( $conn, $_POST['id_obra'] );
-			$id_transaccion = (int) $_POST['id_transaccion'];
-
-			$transaccion = new PropuestaTecnica( $obra, $id_transaccion );
-			$transaccion->apruebaTransaccion( Sesion::getUser() );
-			break;
-
-		case 'revierteAprobacion':
-			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
-			$obra = new Obra( $conn, $_POST['id_obra'] );
-			$id_transaccion = (int) $_POST['id_transaccion'];
-
-			$transaccion = new PropuestaTecnica( $obra, $id_transaccion );
-			$transaccion->revierteAprobacion( Sesion::getUser() );
 			break;
 
 		case 'getFoliosTransaccion':

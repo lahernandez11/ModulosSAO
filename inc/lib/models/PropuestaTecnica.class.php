@@ -341,36 +341,6 @@ class PropuestaTecnica extends TransaccionSAO {
 	}
 
 	/**
-	 * @param Usuario $usuario
-     */
-	public function apruebaTransaccion(Usuario $usuario)
-	{
-		$tsql = "{call [AvanceObra].[uspApruebaTransaccion]( ? )}";
-
-		$params = array
-		(
-	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
-	    );
-
-	    $this->conn->executeSP($tsql, $params);
-	}
-
-	/**
-	 * @param Usuario $usuario
-     */
-	public function revierteAprobacion(Usuario $usuario)
-	{
-		$tsql = "{call [AvanceObra].[uspRevierteAprobacion]( ? )}";
-
-		$params = array
-		(
-	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
-	    );
-
-	    $this->conn->executeSP($tsql, $params);
-	}
-
-	/**
 	 * @return int
      */
 	private function getIDConceptoRaiz()
