@@ -53,7 +53,8 @@ class SQLSrvDBConn {
 
 		$stmt = sqlsrv_query( $this->dbConn, $tsql, $params );
 
-		if( ! $stmt ) {
+		if ( ! $stmt)
+		{
 			throw new DBServerStatementExecutionException( $this->getStatementExecutionError() );
 		}
 
@@ -63,8 +64,10 @@ class SQLSrvDBConn {
 
 		$mode_func = "sqlsrv_fetch_{$mode}";
 
-		while ( $obj = $mode_func( $stmt ) )
+		while ($obj = $mode_func( $stmt ))
+		{
 			$rowsCollection[] = $obj;
+		}
 
 		return $rowsCollection;
 	}
