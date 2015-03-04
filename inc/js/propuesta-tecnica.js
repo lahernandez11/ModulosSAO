@@ -304,57 +304,6 @@ var AVANCE = {
 		$('#guardar').removeClass('alert');
 	},
 
-	getTotalesTransaccion: function() {
-
-		var that = this;
-
-		var request =
-			$.ajax({
-				url: urls.tranController,
-				data: {
-					base_datos: that.getBaseDatos(),
-					id_obra: that.getIDObra(),
-					id_transaccion: that.getIDTransaccion(),
-					action: 'getTotalesTransaccion'
-				},
-				dataType: 'json'
-			}).done( function( data ) {
-				try {
-
-					if( ! data.success ) {
-						messageConsole.displayMessage(data.message, 'error');
-						return;
-					}
-
-					that.fillTotales( data.totales );
-
-				} catch( e ) {
-					messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
-				}
-			}).fail( function() {
-				$.notify({text: 'Ocurrió un error al cargar los totales.'});
-			});
-	},
-
-	setSubtotal: function( $monto ) {
-		$('#txtSubtotal').text($monto);
-	},
-
-	setIVA: function( $monto ) {
-		$('#txtIVA').text($monto);
-	},
-
-	setTotal: function( $monto ) {
-		$('#txtTotal').text($monto);
-	},
-
-	fillTotales: function( totales ) {
-		// Establece los totales de transaccion
-		this.setSubtotal(totales.subtotal);
-		this.setIVA(totales.iva);
-		this.setTotal(totales.total);
-	},
-
 	setCantidad: function( id_concepto, cantidad ) {
 
 		var cantidad = parseFloat(cantidad.replace(/,/g, '')) || 0;
@@ -523,8 +472,6 @@ var AVANCE = {
 				that.deshabilitaConceptoRaiz();
 			}
 
-	 		//that.fillTotales( data.totales );
-
 	 		$('#guardar').removeClass('alert');
 	 		messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success');
 	 		
@@ -544,8 +491,6 @@ var AVANCE = {
 			return;
 
 		DATA_LOADER.show();
-
-		this.requestingData = true;
 
 		$.ajax({
 			type: 'POST',
@@ -576,85 +521,6 @@ var AVANCE = {
 				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
 			}
 		}).always( function() {
-			that.requestingData = false;
-			DATA_LOADER.hide();
-		});
-	},
-
-	apruebaTransaccion: function() {
-
-		var that = this;
-
-		if ( ! confirm('La transacción será aprobada, desea continuar?') )
-			return;
-
-		DATA_LOADER.show();
-
-		this.requestingData = true;
-
-		$.ajax({
-			type: 'POST',
-			url: that.urls.tranController,
-			data: {
-				base_datos: that.getBaseDatos(),
-				id_obra: that.getIDObra(),
-				id_transaccion: that.getIDTransaccion(),
-				action: 'apruebaTransaccion'
-			},
-			dataType: 'json'
-		}).done( function( data ) {
-			try {
-
-				if( ! data.success ) {
-					messageConsole.displayMessage( data.message, 'error' );
-					return;
-				}
-
-				messageConsole.displayMessage( 'La transacción se aprobó correctamente.', 'success' );
-			} catch( e ) {
-				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
-			}
-		}).always( function() {
-			that.requestingData = false;
-			DATA_LOADER.hide();
-		});
-	},
-
-	revierteAprobacion: function() {
-
-		var that = this;
-
-		if ( ! confirm('La aprobación será revertida, desea continuar?') )
-			return;
-
-		DATA_LOADER.show();
-
-		this.requestingData = true;
-
-		$.ajax({
-			type: 'POST',
-			url: that.urls.tranController,
-			data: {
-				base_datos: that.getBaseDatos(),
-				id_obra: that.getIDObra(),
-				id_transaccion: that.getIDTransaccion(),
-				action: 'revierteAprobacion'
-			},
-			dataType: 'json'
-		}).done( function( data ) {
-			try {
-
-				if( ! data.success ) {
-					messageConsole.displayMessage( data.message, 'error' );
-					return;
-				}
-
-				messageConsole.displayMessage( 'La aprobación se revirtió correctamente.', 'success' );
-			} catch( e ) {
-				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
-			}
-		}).always( function() {
-			that.requestingData = false;
 			DATA_LOADER.hide();
 		});
 	},

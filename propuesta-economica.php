@@ -27,7 +27,7 @@
 		<div id="app-content">
 			<div id="app-module">
 				<div class="module-toolbar">
-					<h2>Propuesta Técnica de Trabajos Extraordinarios</h2>
+					<h2>Propuesta Económica de Trabajos Extraordinarios</h2>
 					<a class="button dd-list" id="bl-proyectos">
 						<span class="button-text">Proyectos</span>
 						<span class="icon flechita-abajo"></span>
@@ -41,8 +41,8 @@
 					<a id="eliminar" class="button">
 						<span class="label">Eliminar</span>
 					</a>
-
 				</div>
+
 				<div id="app-module-content">
 					<section id="tran">
 						<section id="tran-header">
@@ -88,6 +88,23 @@
 											</span>
 										</div>
 									</fieldset>
+                                    <fieldset>
+                                        <legend>Totales</legend>
+                                        <div class="multi-field">
+											<span>
+												<span class="label">Subtotal</span>
+												<div id="txtSubtotal" name="txtSubtotal" class="roField amount">0</div>
+											</span>
+											<span>
+												<span class="label">IVA</span>
+												<div id="txtIVA" name="txtIVA" class="roField amount">0</div>
+											</span>
+											<span>
+												<span class="label">Total</span>
+												<div id="txtTotal" name="txtTotal" class="roField amount">0</div>
+											</span>
+                                        </div>
+                                    </fieldset>
 								</form>
 								<div style="clear:both"></div>
 							</section> <!-- tran-info -->
@@ -101,6 +118,8 @@
 									<col class="unidad"/>
 									<col span="3" class="monto"/>
 									<col class="monto editable"/>
+									<col class="monto editable"/>
+									<col class="monto"/>
 								</colgroup>
 								<thead>
 									<tr>
@@ -108,7 +127,9 @@
 										<th rowspan="2">Concepto</th>
 										<th rowspan="2">Unidad</th>
 										<th colspan="3">Presupuestado</th>
-										<th rowspan="2">Cantidad</th>
+                                        <th rowspan="2">Cantidad</th>
+										<th rowspan="2">Precio</th>
+										<th rowspan="2">Monto</th>
 									</tr>
 									<tr>
 										<th>Cantidad</th>
@@ -142,11 +163,22 @@
 		<%= '&nbsp;&nbsp;'.repeat(numero_nivel) + descripcion %>
 		</<%= es_actividad ? 'td' : 'th' %>>
 		<td class="centrado"><%- unidad %></td>
-		<td class="numerico"><%- cantidad_presupuestada %></td>
-		<td class="numerico"><%- precio_unitario %></td>
-		<td class="numerico"><%- monto_presupuestado %></td>
-
-		<td class="editable-cell numerico"><%- cantidad %></td>
+		<td class="numerico"><%= es_actividad ? cantidad_presupuestada : '' %></td>
+		<td class="numerico"><%= es_actividad ? precio_unitario : '' %></td>
+        <% if(es_actividad) {%>
+            <td class="numerico"><%- monto_presupuestado %></td>
+        <% } else {%>
+        <th class="numerico"><%- monto_presupuestado %></th>
+        <% } %>
+        <% if(es_actividad) {%>
+            <td class="editable-cell numerico cantidad"><%- cantidad %></td>
+            <td class="editable-cell numerico precio"><%- precio %></td>
+            <td class="numerico total"><%- importe %></td>
+        <% } else {%>
+            <td class="editable-cell numerico"></td>
+            <td class="editable-cell numerico"></td>
+            <td class="numerico"></td>
+        <% } %>
 		</tr>
 	</script>
 
@@ -161,6 +193,6 @@
 	<script src="inc/js/jquery.uxtable.js"></script>
 	<script src="inc/js/jquery.presupuestoObra.js"></script>
 	<script src="inc/js/jquery.notify.js"></script>	
-	<script src="inc/js/propuesta-tecnica.js"></script>
+	<script src="inc/js/propuesta-economica.js"></script>
 </body>
 </html>

@@ -1,14 +1,14 @@
 <?php
 require_once 'models/TransaccionSAO.class.php';
 
-class PropuestaTecnica extends TransaccionSAO {
+class PropuestaEconomica extends TransaccionSAO {
 
-	const TIPO_TRANSACCION = 106;
+	const TIPO_TRANSACCION = 107;
 
 	private $id_concepto_raiz = 0;
-	private $concepto_raiz = null;
-	private $fecha_inicio = null;
-	private $fecha_termino = null;
+	private $concepto_raiz;
+	private $fecha_inicio;
+	private $fecha_termino;
 	private $conceptos;
 
 	/**
@@ -182,6 +182,8 @@ class PropuestaTecnica extends TransaccionSAO {
 				throw new Exception('Ocurrio un error al guardar los conceptos');
 			}
 
+            $this->actualizaTotales();
+
 			$this->conn->commitTransaction();
 
 			return $errores;
@@ -194,7 +196,6 @@ class PropuestaTecnica extends TransaccionSAO {
 		}
 
 	}
-
 
 	/**
 	 * Obtiene el numero de folio de la transaccion desde la base de datos
@@ -215,6 +216,8 @@ class PropuestaTecnica extends TransaccionSAO {
 	}
 
 	/**
+     * Guarda los conceptos definidos para la transaccion
+     *
 	 * @return array
      */
 	private function guardaConceptos()
@@ -228,17 +231,30 @@ class PropuestaTecnica extends TransaccionSAO {
 				$id_concepto = $concepto['id_concepto'];
 
 				// Limpia y valida la cantidad propuesta
-				$cantidad = (float) str_replace(',', '', $concepto['cantidad']);
+				$precio = (float) str_replace(',', '', $concepto['precio']);
 
-				$es_valido = preg_match('/^-?\d+(\.\d+)?$/', $cantidad);
+                $es_valido = preg_match('/^-?\d+(\.\d+)?$/', $precio);
 
-				// Si la cantidad no es valida agrega el concepto con error
-				if ( ! $es_valido)
-				{
-					throw new Exception("La cantidad ingresada no es correcta.");
-				}
+                // Si el precio no es valido
+                if ( ! $es_valido)
+                {
+                    throw new Exception("El precio ingresado no es correcto.");
+                }
 
-				// Identifica si el item ya existe en la transaccion
+                $cantidad = (float) str_replace(',', '', $concepto['cantidad']);
+
+                $es_valido = preg_match('/^-?\d+(\.\d+)?$/', $cantidad);
+
+                // Si la cantidad no es valida
+                if ( ! $es_valido)
+                {
+                    throw new Exception("La cantidad ingresada no es correcta.");
+                }
+
+                $importe = $cantidad * $precio;
+                $importe = floor($importe * 100) / 100;
+
+                // Identifica si el item ya existe en la transaccion
 				$sql = "SELECT 1 AS [existe]
 						FROM
 							[dbo].[items]
@@ -264,7 +280,7 @@ class PropuestaTecnica extends TransaccionSAO {
 				// Si el item no existe se registra
 				if ( ! $existe)
 				{
-					if ($cantidad == 0)
+					if ($precio == 0 || $cantidad == 0)
 					{
 						continue;
 					}
@@ -273,14 +289,18 @@ class PropuestaTecnica extends TransaccionSAO {
 							(
 								[id_transaccion],
 								[id_concepto],
-								[cantidad]
+								[cantidad],
+								[precio_unitario],
+								[importe]
 							)
-							VALUES (?, ?, ?);";
+							VALUES (?, ?, ?, ?, ?);";
 
 					$params = array(
 						array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 						array($id_concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 						array($cantidad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT),
+						array($precio, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT),
+						array($importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT),
 					);
 
 					$this->conn->executeQuery($sql, $params);
@@ -289,12 +309,14 @@ class PropuestaTecnica extends TransaccionSAO {
 				}
 
 				// Si el item existe se actualiza
-				if ($cantidad != 0)
+				if ($precio != 0 && $cantidad != 0)
 				{
 					$sql = "UPDATE
 								[dbo].[items]
 							SET
-								  [cantidad] = ?
+                                  [cantidad] = ?,
+                                  [precio_unitario] = ?,
+                                  [importe] = ?
 							WHERE
 								[id_transaccion] = ?
 									AND
@@ -302,6 +324,8 @@ class PropuestaTecnica extends TransaccionSAO {
 
 					$params = array(
 						array($cantidad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT),
+						array($precio, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT),
+                        array($importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT),
 						array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 						array($id_concepto, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 					);
@@ -331,7 +355,8 @@ class PropuestaTecnica extends TransaccionSAO {
 				$errores[] = array
 				(
 					'id_concepto' => $id_concepto,
-					'cantidad' => $cantidad,
+                    'cantidad' => $cantidad,
+                    'precio' => $precio,
 					'message' => $e->getMessage()
 				);
 			}
@@ -339,6 +364,82 @@ class PropuestaTecnica extends TransaccionSAO {
 
 		return $errores;
 	}
+
+    /**
+     * Actualiza los totales de la transaccion
+     * de acuerdo a los items que tenga
+     */
+    private function actualizaTotales()
+    {
+        $sql = "UPDATE [dbo].[transacciones]
+                SET
+                      [transacciones].[monto] = ISNULL([suma_importes].[subtotal], 0) + ROUND(ISNULL([suma_importes].[subtotal], 0) * ([obras].[iva] / 100), 2, 1)
+                    , [transacciones].[impuesto] = ROUND(ISNULL([suma_importes].[subtotal], 0) * ([obras].[iva] / 100), 2, 1)
+                FROM
+                    [dbo].[transacciones]
+                INNER JOIN
+                    [dbo].[obras]
+                ON
+                    [transacciones].[id_obra] = [obras].[id_obra]
+                LEFT OUTER JOIN
+                (
+                    SELECT
+                          [items].[id_transaccion]
+                        , SUM([items].[importe]) AS [subtotal]
+                    FROM
+                        [dbo].[items]
+                    GROUP BY
+                        [items].[id_transaccion]
+                ) AS [suma_importes]
+                ON
+                    [transacciones].[id_transaccion] = [suma_importes].[id_transaccion]
+                WHERE
+                    [transacciones].[id_transaccion] = ?";
+
+        $params = array(
+            array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+        );
+
+        $this->conn->executeQuery($sql, $params);
+    }
+
+    /**
+     * Obtiene los totales de la transaccion
+     *
+     * @return mixed
+     */
+    public function getTotales() {
+
+        $tsql = "SELECT
+                      [transacciones].[id_transaccion]
+                    , [suma_importes].[subtotal]
+                    , [transacciones].[impuesto]
+                    , [transacciones].[monto]
+                FROM
+                    [dbo].[transacciones]
+                LEFT OUTER JOIN
+                (
+                    SELECT
+                          [items].[id_transaccion]
+                        , SUM([items].[importe]) AS [subtotal]
+                    FROM
+                        [items]
+                    GROUP BY
+                        [items].[id_transaccion]
+                ) AS [suma_importes]
+                ON
+                    [transacciones].[id_transaccion] = [suma_importes].[id_transaccion]
+                WHERE
+                    [transacciones].[id_transaccion] = ?";
+
+        $params = array(
+            array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+        );
+
+        $totales = $this->conn->executeQuery($tsql, $params);
+
+        return $totales;
+    }
 
 	/**
 	 * @return int
@@ -364,10 +465,10 @@ class PropuestaTecnica extends TransaccionSAO {
 		$this->conceptos = $conceptos;
 	}
 
-	/**
-	 * @return null
+    /**
+     * @return mixed
      */
-	public function getFechaInicio()
+    public function getFechaInicio()
 	{
 		return $this->fecha_inicio;
 	}
@@ -387,7 +488,7 @@ class PropuestaTecnica extends TransaccionSAO {
 	}
 
 	/**
-	 * @return null
+	 * @return mixed
      */
 	public function getFechaTermino()
 	{
@@ -409,7 +510,7 @@ class PropuestaTecnica extends TransaccionSAO {
 	}
 
 	/**
-	 * @return null
+	 * @return mixed
      */
 	public function getConceptoRaiz()
 	{
@@ -444,6 +545,8 @@ class PropuestaTecnica extends TransaccionSAO {
 					, [conceptos].[precio_unitario]
 					, [conceptos].[monto_presupuestado]
 					, ISNULL([items].[cantidad], 0) AS [cantidad]
+					, ISNULL([items].[precio_unitario], 0) AS [precio]
+					, ISNULL([items].[importe], 0) AS [importe]
 				FROM
 					[dbo].[conceptos]
 				LEFT OUTER JOIN
@@ -544,7 +647,7 @@ class PropuestaTecnica extends TransaccionSAO {
 			array($obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 	    );
 
-	    $conceptos = $obra->getConn()->executeSP($tsql, $params);
+	    $conceptos = $obra->getConn()->executeQuery($tsql, $params);
 
 	    return $conceptos;
 	}

@@ -4,7 +4,7 @@ require_once 'models/Sesion.class.php';
 require_once 'models/Obra.class.php';
 require_once 'models/Util.class.php';
 require_once 'db/SAODBConn.class.php';
-require_once 'models/PropuestaTecnica.class.php';
+require_once 'models/PropuestaEconomica.class.php';
 
 $data['success'] = true;
 $data['message'] = null;
@@ -26,7 +26,7 @@ try
 			$obra = new Obra($conn, $_POST['id_obra']);
 			$id_transaccion = (int) $_POST['id_transaccion'];
 
-			$transaccion = new PropuestaTecnica($obra, $id_transaccion);
+			$transaccion = new PropuestaEconomica($obra, $id_transaccion);
 			$transaccion->eliminaTransaccion();
 
 			break;
@@ -38,7 +38,7 @@ try
 			
 			$data['conceptos'] = array();
 
-			$conceptos = PropuestaTecnica::getConceptosNuevoAvance($obra, $id_concepto_raiz);
+			$conceptos = PropuestaEconomica::getConceptosNuevoAvance($obra, $id_concepto_raiz);
 
 			foreach ($conceptos as $concepto)
 			{
@@ -52,6 +52,8 @@ try
 					'precio_unitario' => Util::formatoNumerico($concepto->precio_unitario),
 					'monto_presupuestado' => Util::formatoNumerico($concepto->monto_presupuestado),
 					'cantidad' => 0,
+					'precio' => 0,
+					'importe' => 0,
 				);
 			}
 
@@ -66,7 +68,7 @@ try
 			$data['conceptos'] = array();
 			$data['totales'] = array();
 			
-			$transaccion = new PropuestaTecnica($obra, $id_transaccion);
+			$transaccion = new PropuestaEconomica($obra, $id_transaccion);
 
 			$data['datos']['concepto_raiz'] = $transaccion->getConceptoRaiz();
 			$data['datos']['observaciones'] = $transaccion->getObservaciones();
@@ -87,9 +89,22 @@ try
 					'cantidad_presupuestada' => Util::formatoNumerico($concepto->cantidad_presupuestada),
 					'precio_unitario' => Util::formatoNumerico($concepto->precio_unitario),
 					'monto_presupuestado' => Util::formatoNumerico($concepto->monto_presupuestado),
-					'cantidad' => Util::formatoNumerico($concepto->cantidad)
+					'cantidad' => Util::formatoNumerico($concepto->cantidad),
+					'precio' => Util::formatoNumerico($concepto->precio),
+					'importe' => Util::formatoNumerico($concepto->importe),
 				);
 			}
+
+            $totales = $transaccion->getTotales();
+
+            foreach ($totales as $total)
+            {
+                $data['totales'] = array(
+                    'subtotal' => Util::formatoNumerico($total->subtotal),
+                    'impuesto' => Util::formatoNumerico($total->impuesto),
+                    'monto' => Util::formatoNumerico($total->monto),
+                );
+            }
 
 			break;
 
@@ -105,10 +120,11 @@ try
 			$conceptos = isset($_POST['conceptos']) ? $_POST['conceptos'] : array();
 
 			$data['errores'] = array();
+			$data['totales'] = array();
 
 			if (isset($_POST['id_transaccion']))
 			{
-				$transaccion = new PropuestaTecnica($obra, (int) $_POST['id_transaccion']);
+				$transaccion = new PropuestaEconomica($obra, (int) $_POST['id_transaccion']);
 				$transaccion->setFecha($fecha);
 				$transaccion->setFechaInicio($fechaInicio);
 				$transaccion->setFechaTermino($fechaTermino);
@@ -119,7 +135,7 @@ try
 			}
 			else
 			{
-				$transaccion = new PropuestaTecnica(
+				$transaccion = new PropuestaEconomica(
 						$obra,
 						$fecha,
 						$fechaInicio,
@@ -134,6 +150,35 @@ try
 				$data['numero_folio'] = Util::formatoNumeroFolio($transaccion->getNumeroFolio());
 			}
 
+            $totales = $transaccion->getTotales();
+
+            foreach ($totales as $total)
+            {
+                $data['totales'] = array(
+                    'subtotal' => Util::formatoNumerico($total->subtotal),
+                    'impuesto' => Util::formatoNumerico($total->impuesto),
+                    'monto' => Util::formatoNumerico($total->monto),
+                );
+            }
+
+			break;
+
+		case 'apruebaTransaccion':
+			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
+			$obra = new Obra( $conn, $_POST['id_obra'] );
+			$id_transaccion = (int) $_POST['id_transaccion'];
+
+			$transaccion = new PropuestaEconomica( $obra, $id_transaccion );
+			$transaccion->apruebaTransaccion( Sesion::getUser() );
+			break;
+
+		case 'revierteAprobacion':
+			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
+			$obra = new Obra( $conn, $_POST['id_obra'] );
+			$id_transaccion = (int) $_POST['id_transaccion'];
+
+			$transaccion = new PropuestaEconomica( $obra, $id_transaccion );
+			$transaccion->revierteAprobacion( Sesion::getUser() );
 			break;
 
 		case 'getFoliosTransaccion':
@@ -142,7 +187,7 @@ try
 
 			$data['options'] = array();
 
-			$folios = PropuestaTecnica::getFoliosTransaccion($obra);
+			$folios = PropuestaEconomica::getFoliosTransaccion($obra);
 
 			foreach ($folios as $folio)
 			{
@@ -159,7 +204,7 @@ try
 			
 			$data['options'] = array();
 
-			$listaTran = PropuestaTecnica::getListaTransacciones($obra);
+			$listaTran = PropuestaEconomica::getListaTransacciones($obra);
 
 			foreach ( $listaTran as $tran )
 			{
