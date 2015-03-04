@@ -39,6 +39,7 @@
 			<div id="app-content">
 				<div id="app-module">
 					<div class="module-toolbar">
+						<h2>Presupuesto de Obra</h2>
 						<a class="button dd-list" id="bl-proyectos">
 							<span class="button-text">Proyectos</span>
 							<span class="icon flechita-abajo"></span>
@@ -55,7 +56,6 @@
 							<option value="frente">Frente</option>
 							<option value="contratista">Contratista</option>
 						</select>
-						<h2>Presupuesto de Obra</h2>
 					</div>
 					<div id="app-module-content">
 						<section id="tran">

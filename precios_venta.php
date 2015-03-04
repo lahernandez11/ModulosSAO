@@ -24,6 +24,7 @@
 		<div id="app-content">
 			<div id="app-module">
 				<div class="module-toolbar">
+					<h2>Precios de Venta</h2>
 					<a class="button dd-list" id="bl-proyectos">
 						<span class="button-text">Proyectos</span>
 						<span class="icon flechita-abajo"></span>
@@ -31,7 +32,6 @@
 					<a id="guardar" class="button">
 						<span class="label">Guardar</span>
 					</a>
-					<h2>Precios de Venta</h2>
 				</div>
 				<div id="app-module-content">
 					<section id="tran">

@@ -27,6 +27,7 @@
 		<div id="app-content">
 			<div id="app-module">
 				<div class="module-toolbar">
+					<h2>Propuesta Técnica de Trabajos Extraordinarios</h2>
 					<a class="button dd-list" id="bl-proyectos">
 						<span class="button-text">Proyectos</span>
 						<span class="icon flechita-abajo"></span>
@@ -40,7 +41,7 @@
 					<a id="eliminar" class="button">
 						<span class="label">Eliminar</span>
 					</a>
-					<h2>Propuesta Técnica</h2>
+
 				</div>
 				<div id="app-module-content">
 					<section id="tran">

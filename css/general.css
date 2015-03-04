@@ -1214,12 +1214,15 @@ ul.dropdown-list li a.with-icon
 .module-toolbar h2
 {
 	color: #424242;
-	float: right;
-	margin: 0;
-	padding: 0.2em 1em 0 0;
-	position: absolute;
-	right: 0;
-	top: 0.5em;
+	/*float: right;*/
+	/*margin: 0;*/
+	/*padding: 0.2em 1em 0 0;*/
+	/*position: absolute;*/
+	/*right: 0;*/
+	/*top: 0.5em;*/
+
+	font-size: 2em;
+	margin: 0.2em 0 0.5em 0;
 }
 .module-toolbar .toolbar-button
 {
