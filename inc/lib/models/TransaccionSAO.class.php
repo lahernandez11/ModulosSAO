@@ -6,6 +6,9 @@ abstract class TransaccionSAO {
 	public $obra;
 	protected $id_transaccion;
 	protected $tipo_transaccion;
+	protected $cumplimiento;
+	protected $vencimiento;
+	protected $id_concepto;
 	protected $estado = 0;
 	protected $_numeroFolio = 0;
 	protected $_fecha = null;
@@ -73,7 +76,10 @@ abstract class TransaccionSAO {
 					, [transacciones].[estado]
 					, [transacciones].[numero_folio]
 					, [transacciones].[referencia]
+					, [transacciones].[id_concepto]
 					, CAST([transacciones].[fecha] AS DATE) AS [fecha]
+					, CAST([transacciones].[vencimiento] AS DATE) AS [cumplimiento]
+					, CAST([transacciones].[cumplimiento] AS DATE) AS [vencimiento]
 					, [transacciones].[observaciones]
 				FROM
 					[dbo].[transacciones]
@@ -98,11 +104,14 @@ abstract class TransaccionSAO {
 		foreach ($rsDatosTran as $datosTran)
 		{
 			$this->tipo_transaccion = $datosTran->tipo_transaccion;
-			$this->referencia 		= $datosTran->referencia;
-			$this->estado 		    = $datosTran->estado;
-			$this->_numeroFolio     = $datosTran->numero_folio;
-			$this->setFecha( $datosTran->fecha );
-			$this->_observaciones   = $datosTran->observaciones;
+			$this->cumplimiento = $datosTran->cumplimiento;
+			$this->vencimiento = $datosTran->vencimiento;
+			$this->id_concepto = $datosTran->id_concepto;
+			$this->referencia = $datosTran->referencia;
+			$this->estado = $datosTran->estado;
+			$this->_numeroFolio = $datosTran->numero_folio;
+			$this->setFecha($datosTran->fecha);
+			$this->_observaciones = $datosTran->observaciones;
 		}
 	}
 
@@ -300,6 +309,7 @@ abstract class TransaccionSAO {
 	public static function generaComentario(Usuario $usuario, $operacion)
 	{
 		$fecha = date("d/m/Y H:i");
+
 		$comentario = "{$operacion};{$fecha};{$usuario->getUsername()}|";
 
 		return $comentario;

@@ -3,7 +3,7 @@
 <html lang="es-mx">
 <head>
 	<meta charset="utf-8" />
-	<title>Avance de Obra</title>
+	<title>Gestión de Trabajos Extraordinarios</title>
 
 	<link rel="stylesheet" href="css/normalize.css" />
 	<link rel="stylesheet" href="css/general.css" />
@@ -11,7 +11,9 @@
 	<link rel="stylesheet" href="css/jquery.notify.css" />
 	<link rel="stylesheet" href="inc/js/jquery-ui/css/grupo-hi/jquery-ui.min.css" />
 
-	<!--[if lt IE 9]><script src="inc/js/html5shiv.js"></script><![endif]-->
+	<!--[if lt IE 9]>
+		<script src="inc/js/html5shiv.js"></script>
+	<![endif]-->
 </head>
 
 <body>
@@ -25,7 +27,7 @@
 		<div id="app-content">
 			<div id="app-module">
 				<div class="module-toolbar">
-					<h2>Producción de Obra</h2>
+					<h2>Propuesta Técnica de Trabajos Extraordinarios</h2>
 					<a class="button dd-list" id="bl-proyectos">
 						<span class="button-text">Proyectos</span>
 						<span class="icon flechita-abajo"></span>
@@ -39,6 +41,7 @@
 					<a id="eliminar" class="button">
 						<span class="label">Eliminar</span>
 					</a>
+
 				</div>
 				<div id="app-module-content">
 					<section id="tran">
@@ -55,14 +58,6 @@
 									<input type="hidden" name="txtFechaTransaccionDB" id="txtFechaTransaccionDB" />
 									<input type="hidden" name="IDTransaccion" id="IDTransaccion" value="" />
 								</form>
-								<a id="aprobar" class="button op">
-									<span class="icon"></span>
-									<span class="button-text">Aprobar</span>
-								</a>
-								<a id="revierte-aprobacion" class="button">
-									<span class="icon"></span>
-									<span class="button-text">Revertir Aprobación</span>
-								</a>
 							</section>
 
 							<section id="tran-info">
@@ -76,21 +71,9 @@
 											<label for="txtObservaciones">Observaciones</label>
 											<textarea id="txtObservaciones" class="roField"></textarea>
 										</div>
-										<div>
-											<a class="button dd-list" id="empresa">
-												<span class="button-text">Empresa</span>
-												<span class="icon flechita-abajo"></span>
-											</a>
-											<!-- <select class="roField">
-												<option>123</option>
-												<option>345</option>
-												<option>567</option>
-											</select> -->
-											<!-- <input type="text" id="txtEmpresa" class="roField" /> -->
-										</div>
 									</fieldset>
 									<fieldset>
-										<legend>Periodo de Avance</legend>
+										<legend>Periodo</legend>
 
 										<div class="multi-field">
 											<span>
@@ -105,24 +88,6 @@
 											</span>
 										</div>
 									</fieldset>
-									<fieldset>
-										<legend>Totales</legend>
-										<div class="multi-field">
-											<span>
-												<span class="label">Subtotal</span>
-												<div id="txtSubtotal" name="txtSubtotal" class="roField amount">0</div>
-											</span>
-											<span>
-												<span class="label">IVA</span>
-												<div id="txtIVA" name="txtIVA" class="roField amount">0</div>
-											</span>
-											<span>
-												<span class="label">Total</span>
-												<div id="txtTotal" name="txtTotal" class="roField amount">0</div>
-											</span>
-										</div>
-									</fieldset>
-
 								</form>
 								<div style="clear:both"></div>
 							</section> <!-- tran-info -->
@@ -134,30 +99,21 @@
 									<col class="icon"/>
 									<col/>
 									<col class="unidad"/>
-									<col span="2" class="monto"/>
+									<col span="3" class="monto"/>
 									<col class="monto editable"/>
-									<col span="4" class="monto"/>
-									<col class="cumplido"/>
 								</colgroup>
 								<thead>
 									<tr>
 										<th rowspan="2"></th>
 										<th rowspan="2">Concepto</th>
 										<th rowspan="2">Unidad</th>
-										<th colspan="3">Cantidad</th>
-										<th rowspan="2">Precio Venta</th>
-										<th>Monto</th>
-										<th>Cantidad</th>
-										<th>Monto</th>
-										<th rowspan="2">Cumplido</th>
+										<th colspan="3">Presupuestado</th>
+										<th rowspan="2">Cantidad</th>
 									</tr>
 									<tr>
-										<th>Presupuesto</th>
-										<th>Anterior</th>
-										<th>Avance</th>
-										<th>Avance</th>
-										<th>Actual</th>
-										<th>Actual</th>
+										<th>Cantidad</th>
+										<th>Precio</th>
+										<th>Monto</th>
 									</tr>
 								</thead>
 								<tbody></tbody>
@@ -177,6 +133,24 @@
 	<div id="message-console"><span id="console-message"></span><span id="console-toggler" class="open"></span></div>
 	<div id="cache"></div>
 
+	<script type="text/template" id="template-concepto">
+		<tr data-id="<%- id_concepto %>" data-esactividad="<%- es_actividad %>">
+		<td class="icon-cell">
+			<a class="icon fixed"></a>
+		</td>
+		<<%= es_actividad ? 'td' : 'th' %> title="<%- descripcion %>">
+		<%= '&nbsp;&nbsp;'.repeat(numero_nivel) + descripcion %>
+		</<%= es_actividad ? 'td' : 'th' %>>
+		<td class="centrado"><%- unidad %></td>
+		<td class="numerico"><%- cantidad_presupuestada %></td>
+		<td class="numerico"><%- precio_unitario %></td>
+		<td class="numerico"><%- monto_presupuestado %></td>
+
+		<td class="editable-cell numerico"><%- cantidad %></td>
+		</tr>
+	</script>
+
+	<script src="inc/js/lib/underscore-min.js"></script>
 	<script src="inc/js/jquery-1.7.1.min.js"></script>
 	<script src="inc/js/jquery-ui/js/jquery-ui.min.js"></script>
 	<script src="inc/js/jquery-ui/js/i18n/jquery.ui.datepicker-es.min.js"></script>
@@ -187,6 +161,6 @@
 	<script src="inc/js/jquery.uxtable.js"></script>
 	<script src="inc/js/jquery.presupuestoObra.js"></script>
 	<script src="inc/js/jquery.notify.js"></script>	
-	<script src="inc/js/avance_obra.js"></script>
+	<script src="inc/js/propuesta-tecnica.js"></script>
 </body>
 </html>

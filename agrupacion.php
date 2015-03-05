@@ -21,22 +21,22 @@
 		<div id="app-content">
 			<div id="app-module">
 				<div class="module-toolbar">
-						<a class="button dd-list" id="bl-proyectos">
-							<span class="button-text">Proyectos</span>
-							<span class="icon flechita-abajo"></span>
+					<h2>Agrupación</h2>
+					<a class="button dd-list" id="bl-proyectos">
+						<span class="button-text">Proyectos</span>
+						<span class="icon flechita-abajo"></span>
+					</a>
+					<span class="actions">
+						<a id="consulta-insumos" class="button">
+						<span class="label">Insumos</span>
 						</a>
-						<span class="actions">
-							<a id="consulta-insumos" class="button">
-							<span class="label">Insumos</span>
-							</a>
-							<a id="consulta-subcontrato" class="button">
-								<span class="label">Subcontratos</span>
-							</a>
-							<a id="consulta-varios" class="button">
-								<span class="label">Gastos Varios</span>
-							</a>
-						</span>
-						<h2>Agrupación</h2>
+						<a id="consulta-subcontrato" class="button">
+							<span class="label">Subcontratos</span>
+						</a>
+						<a id="consulta-varios" class="button">
+							<span class="label">Gastos Varios</span>
+						</a>
+					</span>
 				</div>
 				<div id="app-module-content">
 						

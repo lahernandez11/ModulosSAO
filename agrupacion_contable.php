@@ -21,6 +21,7 @@
 			<div id="app-content">
 				<div id="app-module">
 					<div class="module-toolbar">
+						<h2>Agrupación Contable</h2>
 						<a class="button dd-list" id="bl-proyectos">
 							<span class="button-text">Proyectos</span>
 							<span class="icon flechita-abajo"></span>
@@ -33,7 +34,6 @@
 							<input type="checkbox" name="col-switch" id="naturaleza">
 							<label for="naturaleza">Naturaleza</label>
 						</span>
-						<h2>Agrupación Contable</h2>
 					</div>
 					<div id="app-module-content">
 						<section id="tran">
