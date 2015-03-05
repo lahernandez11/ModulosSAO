@@ -87,7 +87,7 @@ class PropuestaConciliacion extends TransaccionSAO {
 
 		$params = array
 		(
-			array(static::TIPO_TRANSACCION, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+			array(self::TIPO_TRANSACCION, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 	    );
 
@@ -160,7 +160,7 @@ class PropuestaConciliacion extends TransaccionSAO {
 					);";
 
 				$params = array(
-					array(static::TIPO_TRANSACCION, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+					array(self::TIPO_TRANSACCION, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 					array($this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
 					array($this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
 					array($this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
@@ -698,7 +698,7 @@ class PropuestaConciliacion extends TransaccionSAO {
 		$params = array
 		(
 	        array($obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-			array(static::TIPO_TRANSACCION, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
+			array(self::TIPO_TRANSACCION, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
 	    $foliosTran = $obra->getConn()->executeSP($tsql, $params);
