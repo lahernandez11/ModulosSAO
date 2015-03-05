@@ -1,9 +1,9 @@
 <?php
 require_once 'models/TransaccionSAO.class.php';
 
-class PropuestaEconomica extends TransaccionSAO {
+class PropuestaConciliacion extends TransaccionSAO {
 
-	const TIPO_TRANSACCION = 107;
+	const TIPO_TRANSACCION = 108;
 
 	private $id_concepto_raiz = 0;
 	private $concepto_raiz;
@@ -230,9 +230,8 @@ class PropuestaEconomica extends TransaccionSAO {
 			{
 				$id_concepto = $concepto['id_concepto'];
 
-                // Limpia y valida la cantidad propuesta
-                $precio = str_replace(',', '', $concepto['precio']);
-
+				// Limpia y valida la cantidad propuesta
+				$precio = str_replace(',', '', $concepto['precio']);
                 $cantidad = str_replace(',', '', $concepto['cantidad']);
 
                 $es_valido = preg_match('/^-?\d+(\.\d+)?$/', $precio);
@@ -401,6 +400,41 @@ class PropuestaEconomica extends TransaccionSAO {
         );
 
         $this->conn->executeQuery($sql, $params);
+    }
+
+    /**
+     * Indica si la transaccion esta confirmada
+     *
+     * @return bool
+     */
+    public function confirmada()
+    {
+        if ($this->estado == 1)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Confirma la transaccion
+     *
+     * @param Usuario $usuario
+     */
+    public function confirmar(Usuario $usuario)
+    {
+        $tsql = "UPDATE [dbo].[transacciones]
+                SET
+                    [estado] = 1
+                WHERE
+                    [id_transaccion] = ?";
+
+        $params = array(
+            array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
+        );
+
+        $this->conn->executeQuery($tsql, $params);
     }
 
     /**
