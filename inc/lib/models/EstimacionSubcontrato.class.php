@@ -84,15 +84,15 @@ class EstimacionSubcontrato extends TransaccionSAO {
      */
     private function instaceFromDefault(
 		Obra $obra, Subcontrato $subcontrato, $fecha, $fechaInicio, $fechaTermino, $observaciones,
-		Array $conceptos )
+		Array $conceptos)
     {
 		
-		parent::__construct( $obra, self::TIPO_TRANSACCION, $fecha, $observaciones );
+		parent::__construct($obra, self::TIPO_TRANSACCION, $fecha, $observaciones);
 
 		$this->subcontrato = $subcontrato;
-		$this->setFechaInicio( $fechaInicio );
-		$this->setFechaTermino( $fechaTermino );
-		$this->setConceptos( $conceptos );
+		$this->setFechaInicio($fechaInicio);
+		$this->setFechaTermino($fechaTermino);
+		$this->setConceptos($conceptos);
 	}
 
     /**
@@ -101,51 +101,43 @@ class EstimacionSubcontrato extends TransaccionSAO {
      */
     private function instanceFromID( Obra $obra, $id_transaccion )
     {
-		parent::__construct( $obra, $id_transaccion );
+		parent::__construct($obra, $id_transaccion);
 
 		$this->registraTransaccionAdicional();
 		$this->setDatosGenerales();
 	}
 
-	/*
-	 * Crea el registro adicional de la estimacion en la tabla
-	 * Estimaciones para una transaccion que fue registrada
-	 * en el SAO
-	*/
     /**
-     *
+     * Crea el registro adicional de la estimacion en la tabla
+     * Estimaciones para una transaccion que fue registrada en el SAO
      */
     private function registraTransaccionAdicional()
     {
-
-		if ( ! $this->existeRegistroEstimacion() )
+		if ( ! $this->existeRegistroEstimacion())
         {
 			$tsql = "INSERT INTO [SubcontratosEstimaciones].[Estimaciones]
 					(
-					      [IDEstimacion],
-					      [NumeroFolioConsecutivo]
+                        [IDEstimacion],
+                        [NumeroFolioConsecutivo]
 					)
 					VALUES ( ?, ? );";
 
 		    $params = array(
-		        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-		        array( $this->getNumeroFolio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+		        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+		        array($this->getNumeroFolio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 		    );
 
-		   	$this->conn->executeQuery( $tsql, $params );
+		   	$this->conn->executeQuery($tsql, $params);
 		}
 	}
 
-	/*
-	 * Verifica si la transaccion tiene un registro asociado
-	 * en la tabla adicional Estimaciones
-	*/
     /**
+     * Verifica si la transaccion tiene un registro asociado en la tabla adicional Estimaciones
+     *
      * @return bool
      */
     private function existeRegistroEstimacion()
     {
-
 		$tsql = "SELECT 1
 				 FROM
 				 	[SubcontratosEstimaciones].[Estimaciones]
@@ -153,10 +145,10 @@ class EstimacionSubcontrato extends TransaccionSAO {
 				 	[IDEstimacion] = ?";
 
 	    $params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
-	    $res = $this->conn->executeQuery( $tsql, $params );
+	    $res = $this->conn->executeQuery($tsql, $params);
 
 	    if (count($res) > 0)
         {
@@ -166,8 +158,9 @@ class EstimacionSubcontrato extends TransaccionSAO {
         return false;
 	}
 
-	// @override
     /**
+     * Establece los datos generales de la transaccion
+     *
      * @throws Exception
      */
     protected function setDatosGenerales()
@@ -206,25 +199,25 @@ class EstimacionSubcontrato extends TransaccionSAO {
 					[transacciones].[id_transaccion] = ?";
 
 		$params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
-	    $datos = $this->conn->executeSP( $tsql, $params );
+	    $datos = $this->conn->executeSP($tsql, $params);
 
-	    $this->subcontrato 			    = new Subcontrato( $this->obra, $datos[0]->id_antecedente );
-	    $this->empresa 		   		    = $this->subcontrato->empresa;
-	    $this->moneda 					= new Moneda( $this->obra, $datos[0]->id_moneda );
+	    $this->subcontrato = new Subcontrato( $this->obra, $datos[0]->id_antecedente );
+	    $this->empresa = $this->subcontrato->empresa;
+	    $this->moneda = new Moneda( $this->obra, $datos[0]->id_moneda );
 
 	    $this->numero_folio_consecutivo = $datos[0]->NumeroFolioConsecutivo;
-	    $this->fecha_inicio 			= $datos[0]->cumplimiento;
-	    $this->fecha_termino 			= $datos[0]->vencimiento;
-	    $this->pct_anticipo 		    = $datos[0]->anticipo;
-	    $this->pct_fondo_garantia 	    = $datos[0]->retencion;
-	    $this->pct_iva 	   			    = $datos[0]->porcentaje_iva;
+	    $this->fecha_inicio = $datos[0]->cumplimiento;
+	    $this->fecha_termino = $datos[0]->vencimiento;
+	    $this->pct_anticipo = $datos[0]->anticipo;
+	    $this->pct_fondo_garantia = $datos[0]->retencion;
+	    $this->pct_iva = $datos[0]->porcentaje_iva;
 
-	    $this->descuentos   = EstimacionDescuentoMaterial::getInstance( $this );
-	    $this->retenciones  = EstimacionRetencion::getInstance( $this );
-	    $this->liberaciones = EstimacionRetencionLiberacion::getInstance( $this );
+	    $this->descuentos = EstimacionDescuentoMaterial::getInstance($this);
+	    $this->retenciones = EstimacionRetencion::getInstance($this);
+	    $this->liberaciones = EstimacionRetencionLiberacion::getInstance($this);
 
 	    $this->getTotalesTransaccion();
 	}
@@ -234,22 +227,23 @@ class EstimacionSubcontrato extends TransaccionSAO {
      */
     public function getConceptosEstimacion()
     {
-
 		$tsql = "{call [SubcontratosEstimaciones].[uspConceptosEstimacion]( ?, ?, ?, ? )}";
 
 	    $params = array(
-	        array( $this->subcontrato->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( 0, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT ),
-	        array( 0, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT )
+	        array($this->subcontrato->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+	        array(0, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT),
+	        array(0, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT)
 	    );
 
-	    $conceptos = $this->conn->executeSP( $tsql, $params );
+	    $conceptos = $this->conn->executeSP($tsql, $params);
 
 	    return $conceptos;
 	}
 
     /**
+     * Guarda los cambios o crea una transaccion
+     *
      * @param Usuario $usuario
      * @return array
      * @throws Exception
@@ -300,9 +294,9 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
                 $this->conn->executeSP($tsql, $params);
 
-                $this->pct_anticipo 	  = $this->subcontrato->getPorcentajeAnticipo();
+                $this->pct_anticipo = $this->subcontrato->getPorcentajeAnticipo();
                 $this->pct_fondo_garantia = $this->subcontrato->getPorcentajeRetencion();
-                $this->empresa 			  = $this->subcontrato->empresa;
+                $this->empresa = $this->subcontrato->empresa;
             }
 
             $errores = $this->guardaConceptos();
@@ -327,6 +321,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	}
 
     /**
+     * Guarda los conceptos que se estiman en esta transaccion
+     *
      * @return array
      */
     private function guardaConceptos()
@@ -357,10 +353,9 @@ class EstimacionSubcontrato extends TransaccionSAO {
 					array($concepto['importeEstimado'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4))
 				);
 
-				$this->conn->executeSP( $tsql, $params );
+				$this->conn->executeSP($tsql, $params);
 				
 				$this->suma_importes += $concepto['importeEstimado'];
-
 			}
             catch( Exception $e )
             {
@@ -377,19 +372,28 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	}
 
     /**
-     *
+     * Actualiza los importes de la transaccion.
+     * Calcula el subtotal, iva y total con los descuentos de amortizacion y fondo de garantia
+     * 
      */
     private function calculaImportes()
     {
+        // Calculo del importe de amortizacion de anticipo
 		$this->amortizacion_anticipo = $this->pct_anticipo * $this->suma_importes;
+        // Calculo del importe de fondo de garantia
 		$this->fondo_garantia = $this->pct_fondo_garantia * $this->suma_importes;
 
+        // Calculo del subtotal
 		$this->subtotal = $this->suma_importes;
+        // Descuento de amortizacion de anticipo antes de iva
 		$this->subtotal -= $this->amortizacion_anticipo;
-        $this->subtotal -= $this->fondo_garantia;
 
+        // Se calcula el iva y total
         $this->iva = $this->subtotal * $this->subcontrato->getPorcentajeIVA();
         $this->total = $this->subtotal + $this->iva;
+
+        // Se descuenta el fondo de garantia despues de iva
+        $this->total -= $this->fondo_garantia;
 
         $tsql = "UPDATE
 					[dbo].[transacciones]
@@ -402,7 +406,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 				WHERE
 					[id_transaccion] = ?;";
 
-	    $params = array(
+        $params = array(
 	        array($this->iva, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
 	        array($this->total, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
 	        array($this->pct_fondo_garantia * 100, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(15, 5)),
@@ -411,7 +415,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
-	    $this->conn->executeQuery($tsql, $params);
+        $this->conn->executeQuery($tsql, $params);
 
 		$tsql = "UPDATE
 					[SubcontratosEstimaciones].[Estimaciones]
@@ -429,6 +433,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	}
 
     /**
+     * Aprueba la transaccion
+     *
      * @param Usuario $usuario
      * @throws Exception
      */
@@ -462,7 +468,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 		        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 		    );
 
-		    $this->conn->executeQuery( $tsql, $params );
+		    $this->conn->executeQuery($tsql, $params);
 
 			$tsql = "{call [dbo].[sp_aprobar_transaccion]( ? )}";
 
@@ -497,6 +503,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	}
 
     /**
+     * Revierte la aprobacion de esta transaccion
+     *
      * @throws Exception
      */
     public function revierteAprobacion()
@@ -531,6 +539,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	}
 
     /**
+     * Elimina la transaccion
+     *
      * @throws Exception
      */
     public function eliminaTransaccion()
@@ -550,6 +560,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	}
 
     /**
+     * Identifica si la transaccion esta aprobada
+     *
      * @return bool
      */
     public function estaAprobada()
@@ -563,10 +575,12 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	}
 
     /**
+     * Obtiene los conceptos a estimar para esta transaccion de acuerdo a un subcontrato
+     *
      * @param int $soloConceptosEstimados
      * @return mixed
      */
-    public function getConceptosEstimados($soloConceptosEstimados=1)
+    public function getConceptosEstimados($soloConceptosEstimados = 1)
     {
 		$tsql = "{call [SubcontratosEstimaciones].[uspConceptosEstimacion]( ?, ?, ?, ? )}";
 
@@ -583,6 +597,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	}
 
     /**
+     * Agrega un descuento por prestamo de materiales en esta transaccion
+     *
      * @param Material $material
      * @param $cantidad
      * @param $precio
@@ -606,6 +622,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	}
 
     /**
+     * Agrega una retencion en esta transaccion
+     *
      * @param RetencionTipo $tipo_retencion
      * @param $importe
      * @param $concepto
@@ -622,6 +640,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	}
 
     /**
+     * Libera importe retenido en esta transaccion
+     *
      * @param $importe
      * @param $concepto
      * @param Usuario $usuario
@@ -642,8 +662,12 @@ class EstimacionSubcontrato extends TransaccionSAO {
 		return $liberacion;
 	}
 
+
     /**
+     * Elimina una liberacion generada en estra transaccion
+     *
      * @param $IDLiberacion
+     * @return $this
      */
     public function eliminaLiberacion($IDLiberacion)
     {
@@ -660,6 +684,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	}
 
     /**
+     * Obtiene el importe retenido por liberar de la empresa de esta transaccion
+     *
      * @return null
      */
     public function getImporteRetenidoPorLiberar()
@@ -673,12 +699,14 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	        array(&$importePorLiberar, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_DECIMAL(19, 4))
 	    );
 
-	    $this->conn->executeSP( $tsql, $params );
+	    $this->conn->executeSP($tsql, $params);
 
 	    return $importePorLiberar;
 	}
 
     /**
+     * Obtiene los totales de esta transaccion
+     *
      * @return array
      */
     public function getTotalesTransaccion()
@@ -1024,6 +1052,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	}
 
     /**
+     * Obtiene los conceptos a estimar para esta transaccion de acuerdo al subcontrato
+     *
      * @param Subcontrato $subcontrato
      * @return mixed
      */
@@ -1044,6 +1074,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	}
 
     /**
+     * Obtiene todos los folios de este tipo de transaccion
+     *
      * @param Obra $obra
      * @return array
      * @throws DBServerStatementExecutionException
@@ -1072,6 +1104,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	}
 
     /**
+     * Obtiene los tipos de retencion
+     *
      * @param SAODBConn $conn
      * @return array
      * @throws DBServerStatementExecutionException
