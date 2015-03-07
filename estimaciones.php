@@ -492,24 +492,24 @@
 					<td class="numerico editable" id="txtAmortAnticipo"><%- totales.amortizacion_anticipo %></td>
 				</tr>
 				<tr>
-					<th>Fondo de Garantia</th>
-					<td class="porcentaje"><%- totales.porcentaje_fondo_garantia %></td>
-					<td class="numerico editable" id="txtFondoGarantia"><%- totales.fondo_garantia %></td>
-				</tr>
-				<tr>
 					<th colspan="2">Subtotal</th>
 					<td class="numerico"><%- totales.subtotal %></td>
 				</tr>
-				<tr>
+                <tr>
 					<th colspan="2">I.V.A.</th>
 					<td class="numerico"><%- totales.iva %></td>
 				</tr>
-				<tr class="total">
+                <tr>
 					<th colspan="2">Total</th>
 					<th class="numerico"><%- totales.total_estimacion %></th>
 				</tr>
-			</tbody>
-		</table>
+                <tr>
+                    <th>Fondo de Garantia</th>
+                    <td class="porcentaje"><%- totales.porcentaje_fondo_garantia %></td>
+                    <td class="numerico editable" id="txtFondoGarantia"><%- totales.fondo_garantia %></td>
+                </tr>
+            </tbody>
+        </table>
 		<table class="tabla-resumen">
 			<caption>Deductivas y Retenciones</caption>
 			<colgroup>

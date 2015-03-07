@@ -7,6 +7,7 @@ require_once 'models/CargoMaterial.class.php';
 require_once 'models/EstimacionRetencion.class.php';
 require_once 'models/EstimacionDescuentoMaterial.class.php';
 require_once 'models/EstimacionRetencionLiberacion.class.php';
+require_once 'models/Exceptions/TransaccionEstaCerradaExeption.php';
 
 class EstimacionSubcontrato extends TransaccionSAO {
 	
@@ -15,6 +16,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	const CARACTER_OPERACION_APROBACION = 'A';
 	const ESTADO_CAPTURADA = 0;
 	const ESTADO_APROBADA  = 1;
+	const ESTADO_REVISADA  = 2;
 
 	public $subcontrato;
 	public $empresa;
@@ -177,7 +179,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 					, [transacciones].[id_antecedente]
 					, [transacciones].[id_moneda]
 					, [transacciones].[anticipo] / 100 AS [anticipo]
-					, [transacciones].[retencion] / 100 AS [retencion]
+					, [Estimaciones].[PorcentajeFondoGarantia] / 100 AS [PorcentajeFondoGarantia]
 					, 
 					IIF(
 						[transacciones].[monto] - [transacciones].[impuesto] = 0, 0,
@@ -212,7 +214,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 	    $this->fecha_inicio = $datos[0]->cumplimiento;
 	    $this->fecha_termino = $datos[0]->vencimiento;
 	    $this->pct_anticipo = $datos[0]->anticipo;
-	    $this->pct_fondo_garantia = $datos[0]->retencion;
+	    $this->pct_fondo_garantia = $datos[0]->PorcentajeFondoGarantia;
 	    $this->pct_iva = $datos[0]->porcentaje_iva;
 
 	    $this->descuentos = EstimacionDescuentoMaterial::getInstance($this);
@@ -250,9 +252,9 @@ class EstimacionSubcontrato extends TransaccionSAO {
      */
     public function guardaTransaccion(Usuario $usuario)
     {
-		if ($this->estaAprobada())
+		if ($this->estaCerrada())
         {
-			throw new Exception("No es posible modificar la estimacion. Ya esta aprobada.", 1);
+            throw new TransaccionEstaCerradaExeption();
 		}
 
         try
@@ -374,7 +376,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
     /**
      * Actualiza los importes de la transaccion.
      * Calcula el subtotal, iva y total con los descuentos de amortizacion y fondo de garantia
-     * 
+     *
      */
     private function calculaImportes()
     {
@@ -393,7 +395,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
         $this->total = $this->subtotal + $this->iva;
 
         // Se descuenta el fondo de garantia despues de iva
-        $this->total -= $this->fondo_garantia;
+//        $this->total -= $this->fondo_garantia;
 
         $tsql = "UPDATE
 					[dbo].[transacciones]
@@ -409,10 +411,10 @@ class EstimacionSubcontrato extends TransaccionSAO {
         $params = array(
 	        array($this->iva, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
 	        array($this->total, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
-	        array($this->pct_fondo_garantia * 100, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(15, 5)),
+            array(0, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT),
 	        array($this->retencion_iva, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
-	        array($this->pct_anticipo * 100, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(15, 5)),
-	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
+            array($this->pct_anticipo * 100, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(15, 5)),
+            array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
         $this->conn->executeQuery($tsql, $params);
@@ -420,11 +422,15 @@ class EstimacionSubcontrato extends TransaccionSAO {
 		$tsql = "UPDATE
 					[SubcontratosEstimaciones].[Estimaciones]
 				SET
+				    [PorcentajeFondoGarantia] = ?,
+				    [ImporteFondoGarantia] = ?,
 					[ImporteAnticipoLiberar] = ?
 				WHERE
 					[IDEstimacion] = ?;";
 
 	    $params = array(
+            array($this->pct_fondo_garantia * 100, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
+            array($this->fondo_garantia, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
 	        array($this->anticipo_liberar, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
 	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
@@ -509,10 +515,10 @@ class EstimacionSubcontrato extends TransaccionSAO {
      */
     public function revierteAprobacion()
     {
-		if ( ! $this->estaAprobada())
+        if ($this->estaCerrada())
         {
-			throw new Exception("La estimacion no esta aprobada.", 1);
-		}
+            throw new TransaccionEstaCerradaExeption();
+        }
 
         $tsql = "{call [dbo].[sp_revertir_transaccion]( ? )}";
 
@@ -545,19 +551,32 @@ class EstimacionSubcontrato extends TransaccionSAO {
      */
     public function eliminaTransaccion()
     {
-		if ($this->estaAprobada())
+		if ($this->estaCerrada())
         {
-			throw new Exception("La estimacion se encuentra aprobada.", 1);
+            throw new TransaccionEstaCerradaExeption();
 		}
 
-		$tsql = "{call [SubcontratosEstimaciones].[uspEliminaTransaccion]( ? )}";
+		$tsql = "{call [SubcontratosEstimaciones].[uspEliminaTransaccion](?)}";
 
 		$params = array(
 	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
-	    $this->conn->executeSP( $tsql, $params );
+	    $this->conn->executeSP($tsql, $params);
 	}
+
+    /**
+     * @return bool
+     */
+    public function estaCerrada()
+    {
+        if ($this->estaRevisada() || $this->estaAprobada())
+        {
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * Identifica si la transaccion esta aprobada
@@ -566,13 +585,28 @@ class EstimacionSubcontrato extends TransaccionSAO {
      */
     public function estaAprobada()
     {
-		if ($this->estado > self::ESTADO_CAPTURADA)
+		if ($this->estado >= self::ESTADO_APROBADA)
         {
             return true;
         }
 
         return false;
 	}
+
+    /**
+     * Identifica si la transaccion ya esta revisada contra factura
+     *
+     * @return bool
+     */
+    public function estaRevisada()
+    {
+        if ($this->estado == self::ESTADO_REVISADA)
+        {
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * Obtiene los conceptos a estimar para esta transaccion de acuerdo a un subcontrato
@@ -607,9 +641,9 @@ class EstimacionSubcontrato extends TransaccionSAO {
      */
     public function addDescuento(Material $material, $cantidad, $precio)
     {
-		if ($this->estaAprobada())
+		if ($this->estaCerrada())
         {
-			throw new Exception("La estimacion se encuentra aprobada.", 1);
+            throw new TransaccionEstaCerradaExeption();
 		}
 
 		$descuento = new EstimacionDescuentoMaterial( $this, $material );
@@ -1022,6 +1056,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 		if ($this->suma_importes != 0)
         {
 			$this->pct_fondo_garantia = ($importe / $this->suma_importes);
+			$this->fondo_garantia = $importe;
 		}
 	}
 
