@@ -236,7 +236,7 @@ try
 			$observaciones = $_POST['datosGenerales']['Observaciones'];
 			$conceptos 	   = array();
 			
-			if (isset( $_POST['conceptos'] ) && is_array( $_POST['conceptos'] ))
+			if (isset($_POST['conceptos']) && is_array($_POST['conceptos']))
 			{
 				$conceptos = $_POST['conceptos'];
 			}
@@ -294,11 +294,12 @@ try
 
 		case 'revierteAprobacion':
 			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
-			$obra = new Obra( $conn, (int) $_POST['id_obra'] );
+			$obra = new Obra($conn, (int) $_POST['id_obra']);
 
 			$id_transaccion = (int) $_POST['id_transaccion'];
-			$transaccion = new EstimacionSubcontrato( $obra, $id_transaccion );
+			$transaccion = new EstimacionSubcontrato($obra, $id_transaccion);
 			$transaccion->revierteAprobacion();
+
 			break;
 
 		case 'eliminaTransaccion':
@@ -542,11 +543,15 @@ try
 	}
 
 }
-catch( Exception $e )
+catch(Exception $e)
 {
 	$data['success'] = false;
 	$data['message'] = $e->getMessage();
-	$data['errores'] = $e->errors;
+
+    if (property_exists('Exception', 'errors'))
+    {
+        $data['errores'] = $e->errors;
+    }
 }
 
 echo json_encode($data);
