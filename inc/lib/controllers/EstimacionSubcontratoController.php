@@ -94,8 +94,8 @@ try
 
 
 			$item = array();
-			foreach ( EstimacionSubcontrato::getConceptosNuevaEstimacion( $subcontrato ) as $concepto) {
-
+			foreach ( EstimacionSubcontrato::getConceptosNuevaEstimacion( $subcontrato ) as $concepto)
+            {
 				$item['IDConceptoContrato']    = $concepto->IDConceptoContrato;
 				$item['EsActividad'] 		   = $concepto->EsActividad;
 				$item['NumeroNivel'] 		   = $concepto->NumeroNivel;
@@ -244,8 +244,7 @@ try
 			$data['errores'] = array();
 			$data['totales'] = array();
 
-			if ( ! empty( $id_transaccion ))
-			{
+			if ( ! empty( $id_transaccion )) {
 				$transaccion = new EstimacionSubcontrato($obra, $id_transaccion);
 				$transaccion->setFecha($fecha);
 				$transaccion->setFechaInicio($fechaInicio);
@@ -259,9 +258,7 @@ try
 				
 				$data['errores'] = $transaccion->guardaTransaccion(Sesion::getUser());
 
-			}
-			else
-			{
+			} else {
 				$subcontrato = new Subcontrato($obra, $id_subcontrato);
 				
 				$transaccion = new EstimacionSubcontrato(
@@ -275,8 +272,7 @@ try
 				$data['NumeroFolioConsecutivo'] = Util::formatoNumeroFolio($transaccion->getNumeroFolioConsecutivo());
 			}
 			
-			if (count($data['errores']) == 0)
-			{
+			if (count($data['errores']) == 0) {
 				$totales = $transaccion->getTotalesTransaccion();
 				$data['totales'] = Util::formatoNumericoTotales($totales);
 			}

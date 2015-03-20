@@ -261,9 +261,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
         {
             $this->conn->beginTransaction();
 
-            if ( ! empty($this->id_transaccion))
-            {
-
+            if ( ! empty($this->id_transaccion)) {
                 $tsql = "{call [SubcontratosEstimaciones].[uspActualizaDatosGenerales]( ?, ?, ?, ?, ?, ? )}";
 
                 $params = array(
@@ -276,9 +274,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
                 );
 
                 $this->conn->executeSP($tsql, $params);
-            }
-            else
-            {
+            } else {
                 $tsql = "{call [SubcontratosEstimaciones].[uspRegistraTransaccion]( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )}";
 
                 $params = array(
@@ -303,8 +299,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
             $errores = $this->guardaConceptos();
 
-            if (count($errores))
-            {
+            if (count($errores)) {
                 throw new Exception('Ocurrio un error al guardar los conceptos');
             }
 
@@ -382,11 +377,13 @@ class EstimacionSubcontrato extends TransaccionSAO {
     {
         // Calculo del importe de amortizacion de anticipo
 		$this->amortizacion_anticipo = $this->pct_anticipo * $this->suma_importes;
+
         // Calculo del importe de fondo de garantia
 		$this->fondo_garantia = $this->pct_fondo_garantia * $this->suma_importes;
 
         // Calculo del subtotal
 		$this->subtotal = $this->suma_importes;
+
         // Descuento de amortizacion de anticipo antes de iva
 		$this->subtotal -= $this->amortizacion_anticipo;
 
@@ -411,9 +408,9 @@ class EstimacionSubcontrato extends TransaccionSAO {
         $params = array(
 	        array($this->iva, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
 	        array($this->total, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
-            array(0, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT),
+            array(0, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_REAL),
 	        array($this->retencion_iva, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
-            array($this->pct_anticipo * 100, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(15, 5)),
+            array($this->pct_anticipo * 100, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_REAL),
             array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
@@ -1030,15 +1027,15 @@ class EstimacionSubcontrato extends TransaccionSAO {
      */
     public function setImporteAmortizacionAnticipo($importe)
     {
-		if ( ! $this->esImporte( $importe ))
+		if ( ! $this->esImporte($importe))
         {
 			$importe = 0;
 		}
 
-		// $this->amortizacion_anticipo = $importe;
-		if ($this->suma_importes != 0)
+        if ($this->suma_importes != 0)
         {
-			$this->pct_anticipo = ($importe / $this->suma_importes);
+//            $this->amortizacion_anticipo = $importe;
+            $this->pct_anticipo = ($importe / $this->suma_importes);
 		}
 	}
 
@@ -1052,7 +1049,6 @@ class EstimacionSubcontrato extends TransaccionSAO {
 			$importe = 0;
 		}
 
-		// $this->fondo_garantia = $importe;
 		if ($this->suma_importes != 0)
         {
 			$this->pct_fondo_garantia = ($importe / $this->suma_importes);
@@ -1181,4 +1177,5 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
 		return $data;
 	}
+
 }
