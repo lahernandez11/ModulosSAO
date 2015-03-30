@@ -958,8 +958,8 @@ class Subcontrato extends TransaccionSAO
 				 	[id_transaccion] = ?";
 
 	    $params = array(
+            array($id_clasificador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-	        array($id_clasificador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
 	    $this->conn->executeQuery($tsql, $params);
