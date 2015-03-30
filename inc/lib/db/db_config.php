@@ -24,6 +24,12 @@ $db_pwd['SAO1814_CUTZAMALA']  = 'develop';
 $db_name['SAO1814_CUTZAMALA'] = 'SAO1814_CUTZAMALA';
 $db_type['SAO1814_CUTZAMALA'] = 'OBRA';
 
+$db_host['SAO1814_MUSEO_BARROCO'] = '172.20.74.3\SAO_DEVELOP';
+$db_user['SAO1814_MUSEO_BARROCO'] = 'develop';
+$db_pwd['SAO1814_MUSEO_BARROCO']  = 'develop';
+$db_name['SAO1814_MUSEO_BARROCO'] = 'SAO1814_MUSEO_BARROCO';
+$db_type['SAO1814_MUSEO_BARROCO'] = 'OBRA';
+
 //$db_host['SAO1814_CIRCUITO_MTTO'] = '172.20.74.3\SAO_DEVELOP';
 //$db_user['SAO1814_CIRCUITO_MTTO'] = 'develop';
 //$db_pwd['SAO1814_CIRCUITO_MTTO']  = 'develop';
