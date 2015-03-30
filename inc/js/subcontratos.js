@@ -390,7 +390,7 @@ var SUBCONTRATOS = {
 				id_obra: that.getIDObra(),
 				id_transaccion: that.getIDTransaccion(),
 				id_clasificador: selectedItem.value,
-				action: 'setClasficador'
+				action: 'setClasificador'
 			},
 			dataType: 'json'
 		})
