@@ -3,8 +3,8 @@ require_once 'TransaccionSAO.class.php';
 require_once 'Empresa.class.php';
 require_once 'Moneda.class.php';
 
-class Subcontrato extends TransaccionSAO {
-
+class Subcontrato extends TransaccionSAO
+{
 	const TIPO_TRANSACCION = 51;
 
 	public $empresa;
@@ -44,8 +44,11 @@ class Subcontrato extends TransaccionSAO {
 	private $importe_acumulado_fondo_garantia = 0;
 	private $importe_acumulado_retencion = 0;
 
-	public function __construct() {
-		
+    /**
+     *
+     */
+    public function __construct()
+    {
 		$params = func_get_args();
 
 		switch ( func_num_args() ) {
@@ -60,13 +63,26 @@ class Subcontrato extends TransaccionSAO {
 		}
 	}
 
-	private function instaceFromDefault( Obra $obra, $fecha, $fechaInicio, $fechaTermino, 
-		$observaciones, Array $conceptos ) {
-
+    /**
+     * @param Obra $obra
+     * @param $fecha
+     * @param $fechaInicio
+     * @param $fechaTermino
+     * @param $observaciones
+     * @param array $conceptos
+     */
+    private function instaceFromDefault(Obra $obra, $fecha, $fechaInicio, $fechaTermino,
+		$observaciones, Array $conceptos)
+    {
 		parent::__construct( $obra, self::TIPO_TRANSACCION, $fecha, $observaciones );
 	}
 
-	private function instanceFromID( Obra $obra, $id_transaccion ) {
+    /**
+     * @param Obra $obra
+     * @param $id_transaccion
+     */
+    private function instanceFromID( Obra $obra, $id_transaccion )
+    {
 		parent::__construct( $obra, $id_transaccion );
 		
 		$this->setDatosGenerales();
@@ -77,8 +93,11 @@ class Subcontrato extends TransaccionSAO {
 	}
 
 	// @override
-	protected function setDatosGenerales() {
-		
+    /**
+     * @throws Exception
+     */
+    protected function setDatosGenerales()
+    {
 		parent::setDatosGenerales();
 
 		$tsql = "SELECT
@@ -216,49 +235,52 @@ class Subcontrato extends TransaccionSAO {
 				    [transacciones].[id_transaccion] = ?;";
 
 		$params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
 	    $datos = $this->conn->executeSP( $tsql, $params );
 
-	    $this->empresa 				 = new Empresa( $this->obra, $datos[0]->id_empresa );
-	    $this->moneda 				 = new Moneda( $this->obra, $datos[0]->id_moneda );
+	    $this->empresa = new Empresa( $this->obra, $datos[0]->id_empresa );
+	    $this->moneda = new Moneda( $this->obra, $datos[0]->id_moneda );
 
-	    $this->porcentaje_fondo_garantia 	= $datos[0]->PctFondoGarantia;
-	    $this->importe_fondo_garantia 		= $datos[0]->ImporteFondoGarantia;
-	    $this->porcentaje_anticipo 		 	= $datos[0]->PctAnticipo;
-	    $this->importe_anticipo 	 		= $datos[0]->ImporteAnticipo;
-	    $this->subtotal 	 		 		= $datos[0]->subtotal;
-	    $this->iva 	 			 			= $datos[0]->impuesto;
-	    $this->porcentaje_iva 	 			= $datos[0]->porcentaje_iva;
-	    $this->total 	 			 		= $datos[0]->monto;
+	    $this->porcentaje_fondo_garantia = $datos[0]->PctFondoGarantia;
+	    $this->importe_fondo_garantia = $datos[0]->ImporteFondoGarantia;
+	    $this->porcentaje_anticipo = $datos[0]->PctAnticipo;
+	    $this->importe_anticipo = $datos[0]->ImporteAnticipo;
+	    $this->subtotal = $datos[0]->subtotal;
+	    $this->iva = $datos[0]->impuesto;
+	    $this->porcentaje_iva = $datos[0]->porcentaje_iva;
+	    $this->total = $datos[0]->monto;
 
-	    $this->importe_acumulado_estimado 	= $datos[0]->ImporteAcumuladoEstimado;
-	    $this->importe_acumulado_anticipo 	= $datos[0]->ImporteAcumuladoAnticipo;
+	    $this->importe_acumulado_estimado = $datos[0]->ImporteAcumuladoEstimado;
+	    $this->importe_acumulado_anticipo = $datos[0]->ImporteAcumuladoAnticipo;
 	    $this->importe_acumulado_fondo_garantia = $datos[0]->ImporteAcumuladoFondoGarantia;
-	    $this->importe_acumulado_retencion  = $datos[0]->ImporteAcumuladoRetenciones;
+	    $this->importe_acumulado_retencion = $datos[0]->ImporteAcumuladoRetenciones;
 
-		$this->tipo_contrato 			   	= $datos[0]->tipo_contrato;
-		$this->descripcion 			   		= $datos[0]->descripcion;
-		$this->id_clasificador 		   		= $datos[0]->id_clasificador;
-		$this->clasificador 			   	= $datos[0]->clasificador;
-		$this->monto_subcontrato 		   	= $datos[0]->monto_subcontrato;
-		$this->monto_anticipo 			   	= $datos[0]->monto_anticipo;
-		$this->porcentaje_retencion_fg    	= $datos[0]->porcentaje_retencion_fg;
-		$this->fecha_inicio_cliente 	   	= $datos[0]->fecha_inicio_cliente;
-		$this->fecha_termino_cliente 	   	= $datos[0]->fecha_termino_cliente;
-		$this->fecha_inicio_proyecto 	   	= $datos[0]->fecha_inicio_proyecto;
-		$this->fecha_termino_proyecto 	   	= $datos[0]->fecha_termino_proyecto;
-		$this->fecha_inicio_contratista   	= $datos[0]->fecha_inicio_contratista;
-		$this->fecha_termino_contratista  	= $datos[0]->fecha_termino_contratista;
-		$this->monto_venta_cliente 	   		= $datos[0]->monto_venta_cliente;
-		$this->monto_venta_actual_cliente 	= $datos[0]->monto_venta_actual_cliente;
-		$this->monto_inicial_pio 		   	= $datos[0]->monto_inicial_pio;
-		$this->monto_actual_pio 		   	= $datos[0]->monto_actual_pio;
+		$this->tipo_contrato = $datos[0]->tipo_contrato;
+		$this->descripcion = $datos[0]->descripcion;
+		$this->id_clasificador = $datos[0]->id_clasificador;
+		$this->clasificador = $datos[0]->clasificador;
+		$this->monto_subcontrato = $datos[0]->monto_subcontrato;
+		$this->monto_anticipo = $datos[0]->monto_anticipo;
+		$this->porcentaje_retencion_fg = $datos[0]->porcentaje_retencion_fg;
+		$this->fecha_inicio_cliente = $datos[0]->fecha_inicio_cliente;
+		$this->fecha_termino_cliente = $datos[0]->fecha_termino_cliente;
+		$this->fecha_inicio_proyecto = $datos[0]->fecha_inicio_proyecto;
+		$this->fecha_termino_proyecto = $datos[0]->fecha_termino_proyecto;
+		$this->fecha_inicio_contratista = $datos[0]->fecha_inicio_contratista;
+		$this->fecha_termino_contratista = $datos[0]->fecha_termino_contratista;
+		$this->monto_venta_cliente = $datos[0]->monto_venta_cliente;
+		$this->monto_venta_actual_cliente = $datos[0]->monto_venta_actual_cliente;
+		$this->monto_inicial_pio = $datos[0]->monto_inicial_pio;
+		$this->monto_actual_pio = $datos[0]->monto_actual_pio;
 	}
 
-	public function guardaTransaccion() {
-
+    /**
+     *
+     */
+    public function guardaTransaccion()
+    {
 		$tsql = "UPDATE [Subcontratos].[subcontrato]
 				SET
 					[descripcion] = ?,
@@ -277,6 +299,7 @@ class Subcontrato extends TransaccionSAO {
 					[monto_actual_pio] = ?
 				WHERE
 					[id_transaccion] = ?";
+
 		$params = array(
 			$this->descripcion,
 			$this->monto_subcontrato,
@@ -298,128 +321,251 @@ class Subcontrato extends TransaccionSAO {
 		$this->conn->executeQuery( $tsql, $params );
 	}
 
-	public function getReferencia() {
+    /**
+     * @return mixed
+     */
+    public function getReferencia()
+    {
 		return $this->referencia;
 	}
-	
-	public function getImporteAnticipo() {
+
+    /**
+     * @return int
+     */
+    public function getImporteAnticipo()
+    {
 		return $this->importe_anticipo;
 	}
 
-	public function getImporteEstimado() {
+    /**
+     * @return int
+     */
+    public function getImporteEstimado()
+    {
 		return $this->importe_acumulado_estimado;
 	}
 
-	public function getImporteAcumuladoAnticipo() {
+    /**
+     * @return int
+     */
+    public function getImporteAcumuladoAnticipo()
+    {
 		return $this->importe_acumulado_anticipo;
 	}
 
-	public function getImporteFondoGarantia() {
+    /**
+     * @return int
+     */
+    public function getImporteFondoGarantia()
+    {
 		return $this->importe_fondo_garantia;
 	}
 
-	public function getImporteAcumuladoFondoGarantia() {
+    /**
+     * @return int
+     */
+    public function getImporteAcumuladoFondoGarantia()
+    {
 		return $this->importe_acumulado_fondo_garantia;
 	}
 
-	public function getImporteAcumuladoRetenciones() {
+    /**
+     * @return int
+     */
+    public function getImporteAcumuladoRetenciones()
+    {
 		return $this->importe_acumulado_retencion;
 	}
 
-	public function getSubtotal() {
+    /**
+     * @return int
+     */
+    public function getSubtotal()
+    {
 		return $this->subtotal;
 	}
 
-	public function getIVA() {
+    /**
+     * @return int
+     */
+    public function getIVA()
+    {
 		return $this->iva;
 	}
 
-	public function getPorcentajeIVA() {
+    /**
+     * @return int
+     */
+    public function getPorcentajeIVA()
+    {
 		return $this->porcentaje_iva;
 	}
 
-	public function getTotal() {
+    /**
+     * @return int
+     */
+    public function getTotal()
+    {
 		return $this->total;
 	}
 
-	public function getTipoContrato() {
+    /**
+     * @return mixed
+     */
+    public function getTipoContrato()
+    {
 		return $this->tipo_contrato;
 	}
 
-	public function getDescripcion() {
+    /**
+     * @return mixed
+     */
+    public function getDescripcion()
+    {
 		return $this->descripcion;
 	}
 
-	public function getIdClasificador() {
+    /**
+     * @return mixed
+     */
+    public function getIdClasificador()
+    {
 		return $this->id_clasificador;
 	}
 
-	public function getClasificador() {
+    /**
+     * @return mixed
+     */
+    public function getClasificador()
+    {
 		return $this->clasificador;
 	}
 
-	public function getMontoSubcontrato() {
+    /**
+     * @return int
+     */
+    public function getMontoSubcontrato()
+    {
 		return $this->monto_subcontrato;
 	}
 
-	public function getMontoAnticipo() {
+    /**
+     * @return int
+     */
+    public function getMontoAnticipo()
+    {
 		return $this->monto_anticipo;
 	}
 
-	public function getPorcentajeRetencionFG() {
+    /**
+     * @return int
+     */
+    public function getPorcentajeRetencionFG()
+    {
 		return $this->porcentaje_retencion_fg;
 	}
 
-	public function getPorcentajeAnticipo() {
+    /**
+     * @return int
+     */
+    public function getPorcentajeAnticipo()
+    {
 		return $this->porcentaje_anticipo;
 	}
 
-	public function getPorcentajeRetencion() {
+    /**
+     * @return int
+     */
+    public function getPorcentajeRetencion()
+    {
 		return $this->porcentaje_fondo_garantia;
 	}
 
-	public function getFechaInicioCliente() {
+    /**
+     * @return mixed
+     */
+    public function getFechaInicioCliente()
+    {
 		return $this->fecha_inicio_cliente;
 	}
 
-	public function getFechaTerminoCliente() {
+    /**
+     * @return mixed
+     */
+    public function getFechaTerminoCliente()
+    {
 		return $this->fecha_termino_cliente;
 	}
 
-	public function getFechaInicioProyecto() {
+    /**
+     * @return mixed
+     */
+    public function getFechaInicioProyecto()
+    {
 		return $this->fecha_inicio_proyecto;
 	}
 
-	public function getFechaTerminoProyecto() {
+    /**
+     * @return mixed
+     */
+    public function getFechaTerminoProyecto()
+    {
 		return $this->fecha_termino_proyecto;
 	}
 
-	public function getFechaInicioContratista() {
+    /**
+     * @return mixed
+     */
+    public function getFechaInicioContratista()
+    {
 		return $this->fecha_inicio_contratista;
 	}
 
-	public function getFechaTerminoContratista() {
+    /**
+     * @return mixed
+     */
+    public function getFechaTerminoContratista()
+    {
 		return $this->fecha_termino_contratista;
 	}
 
-	public function getMontoVentaCliente() {
+    /**
+     * @return int
+     */
+    public function getMontoVentaCliente()
+    {
 		return $this->monto_venta_cliente;
 	}
 
-	public function getMontoVentaActualCliente() {
+    /**
+     * @return int
+     */
+    public function getMontoVentaActualCliente()
+    {
 		return $this->monto_venta_actual_cliente;
 	}
 
-	public function getMontoInicialPio() {
+    /**
+     * @return int
+     */
+    public function getMontoInicialPio()
+    {
 		return $this->monto_inicial_pio;
 	}
 
-	public function getMontoActualPio() {
+    /**
+     * @return int
+     */
+    public function getMontoActualPio()
+    {
 		return $this->monto_actual_pio;
 	}
 
-	public function getEstimaciones() {
-		
+    /**
+     * @return array
+     */
+    public function getEstimaciones()
+    {
 		$tsql = "SELECT
 					[id_transaccion]
 				FROM
@@ -437,149 +583,224 @@ class Subcontrato extends TransaccionSAO {
 			array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 		);
 
-		$data = $this->conn->executeQuery( $tswl, $params );
+		$data = $this->conn->executeQuery($tsql, $params);
 
 		$estimaciones = array();
 
-		foreach ( $data as $estimacion ) {
+		foreach ($data as $estimacion) {
 			$estimaciones[] = new EstimacionSubcontrato( $this->obra, $estimacion->id_transaccion );
 		}
 
 		return $estimaciones;
 	}
 
-	public function setDescripcion( $valor ) {
+    /**
+     * @param $valor
+     */
+    public function setDescripcion($valor)
+    {
 		$this->descripcion = $valor;
 	}
 
-	public function setMontoSubcontrato( $valor ) {
-		if ( ! $this->esImporte( $valor ) ) {
+    /**
+     * @param $valor
+     */
+    public function setMontoSubcontrato($valor)
+    {
+		if ( ! $this->esImporte($valor)) {
 			$valor = 0.0;
 		}
 		
 		$this->monto_subcontrato = $valor;
 	}
 
-	public function setMontoAnticipo( $valor ) {
-		if ( ! $this->esImporte( $valor ) ) {
+    /**
+     * @param $valor
+     */
+    public function setMontoAnticipo($valor)
+    {
+		if ( ! $this->esImporte($valor)) {
 			$valor = 0.0;
 		}
 		
 		$this->monto_anticipo = $valor;
 	}
 
-	public function setPorcentajeRetencionFG( $valor ) {
-		if ( ! $this->esImporte( $valor ) ) {
+    /**
+     * @param $valor
+     */
+    public function setPorcentajeRetencionFG($valor)
+    {
+		if ( ! $this->esImporte($valor)) {
 			$valor = 0.0;
 		}
 		
 		$this->porcentaje_retencion_fg = $valor;
 	}
 
-	public function setFechaInicioCliente( $valor ) {
-		if ( ! $this->esFecha( $valor ) ) {
+    /**
+     * @param $valor
+     */
+    public function setFechaInicioCliente($valor)
+    {
+		if ( ! $this->esFecha($valor)) {
 			$valor = null;
 		}
 		
 		$this->fecha_inicio_cliente = $valor;
 	}
 
-	public function setFechaTerminoCliente( $valor ) {
-		if ( ! $this->esFecha( $valor ) ) {
+    /**
+     * @param $valor
+     */
+    public function setFechaTerminoCliente($valor)
+    {
+		if ( ! $this->esFecha($valor)) {
 			$valor = null;
 		}
 		
 		$this->fecha_termino_cliente = $valor;
 	}
 
-	public function setFechaInicioProyecto( $valor ) {
-		if ( ! $this->esFecha( $valor ) ) {
+    /**
+     * @param $valor
+     */
+    public function setFechaInicioProyecto($valor)
+    {
+		if ( ! $this->esFecha($valor)) {
 			$valor = null;
 		}
 		
 		$this->fecha_inicio_proyecto = $valor;
 	}
 
-	public function setFechaTerminoProyecto( $valor ) {
-		if ( ! $this->esFecha( $valor ) ) {
+    /**
+     * @param $valor
+     */
+    public function setFechaTerminoProyecto($valor)
+    {
+		if ( ! $this->esFecha($valor)) {
 			$valor = null;
 		}
 		
 		$this->fecha_termino_proyecto = $valor;
 	}
 
-	public function setFechaInicioContratista( $valor ) {
-		if ( ! $this->esFecha( $valor ) ) {
+    /**
+     * @param $valor
+     */
+    public function setFechaInicioContratista($valor)
+    {
+		if ( ! $this->esFecha($valor)) {
 			$valor = null;
 		}
 		
 		$this->fecha_inicio_contratista = $valor;
 	}
 
-	public function setFechaTerminoContratista( $valor ) {
-		if ( ! $this->esFecha( $valor ) ) {
+    /**
+     * @param $valor
+     */
+    public function setFechaTerminoContratista($valor)
+    {
+		if ( ! $this->esFecha($valor)) {
 			$valor = null;
 		}
 		
 		$this->fecha_termino_contratista = $valor;
 	}
 
-	public function setMontoVentaCliente( $valor ) {
-		if ( ! $this->esImporte( $valor ) ) {
+    /**
+     * @param $valor
+     */
+    public function setMontoVentaCliente($valor)
+    {
+		if ( ! $this->esImporte($valor)) {
 			$valor = 0.0;
 		}
 		
 		$this->monto_venta_cliente = $valor;
 	}
 
-	public function setMontoVentaActualCliente( $valor ) {
-		if ( ! $this->esImporte( $valor ) ) {
+    /**
+     * @param $valor
+     */
+    public function setMontoVentaActualCliente($valor)
+    {
+		if ( ! $this->esImporte($valor)) {
 			$valor = 0.0;
 		}
 		
 		$this->monto_venta_actual_cliente = $valor;
 	}
 
-	public function setMontoInicialPio( $valor ) {
-		if ( ! $this->esImporte( $valor ) ) {
+    /**
+     * @param $valor
+     */
+    public function setMontoInicialPio($valor)
+    {
+		if ( ! $this->esImporte($valor)) {
 			$valor = 0.0;
 		}
 
 		$this->monto_inicial_pio = $valor;
 	}
 
-	public function setMontoActualPio( $valor ) {
-		if ( ! $this->esImporte( $valor ) ) {
+    /**
+     * @param $valor
+     */
+    public function setMontoActualPio($valor)
+    {
+		if ( ! $this->esImporte($valor)) {
 			$valor = 0.0;
 		}
 		
 		$this->monto_actual_pio = $valor;
 	}
 
-	public static function getFoliosTransaccion( Obra $obra ) {
+    /**
+     * @param Obra $obra
+     * @return null
+     */
+    public static function getFoliosTransaccion(Obra $obra)
+    {
 		return null;
 	}
-	
-	public static function getListaTransacciones( Obra $obra, $tipo_transaccion=null ) {
 
-		return parent::getListaTransacciones( $obra, self::TIPO_TRANSACCION );
+    /**
+     * @param Obra $obra
+     * @param null $tipo_transaccion
+     * @return array
+     */
+    public static function getListaTransacciones(Obra $obra, $tipo_transaccion = null)
+    {
+		return parent::getListaTransacciones($obra, self::TIPO_TRANSACCION);
 	}
 
-	public static function getSubcontratosPorContratista( Obra $obra ) {
-
+    /**
+     * @param Obra $obra
+     * @return array
+     * @throws DBServerStatementExecutionException
+     */
+    public static function getSubcontratosPorContratista(Obra $obra)
+    {
 		$tsql = "{call [Agrupacion].[uspListaSubcontratos]( ? )}";
 
 		$params = array(
-			array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+			array($obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 		);
 
-		$datos = $obra->getConn()->executeSP( $tsql, $params );
+		$datos = $obra->getConn()->executeSP($tsql, $params);
 
 		return $datos;
 	}
 
-	private function existeRegistroAgrupacion( $id_actividad ) {
-
+    /**
+     * @param $id_actividad
+     * @return bool
+     */
+    private function existeRegistroAgrupacion($id_actividad)
+    {
 		$tsql = "SELECT 1
 				 FROM [Agrupacion].[agrupacion_subcontratos]
 				 WHERE
@@ -592,22 +813,26 @@ class Subcontrato extends TransaccionSAO {
 				 	[id_actividad] = ?";
 
 	    $params = array(
-	        array( $this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->empresa->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $id_actividad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array($this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+	        array($this->empresa->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+	        array($id_actividad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
 	    $res = $this->conn->executeQuery( $tsql, $params );
 
-	    if (count($res) > 0)
-	    	return true;
-	    else
-	    	return false;
+	    if (count($res) > 0) {
+            return true;
+        }
+
+        return false;
 	}
 
-	private function creaRegistroAgrupacion( $id_actividad ) {
-
+    /**
+     * @param $id_actividad
+     */
+    private function creaRegistroAgrupacion($id_actividad)
+    {
 		$tsql = "INSERT INTO [Agrupacion].[agrupacion_subcontratos]
 				(
 					  [id_obra]
@@ -619,23 +844,28 @@ class Subcontrato extends TransaccionSAO {
 				( ?, ?, ?, ? )";
 
 	    $params = array(
-	        array( $this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->empresa->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $id_actividad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array($this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+	        array($this->empresa->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+	        array($id_actividad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
-	    $this->conn->executeQuery( $tsql, $params );
+	    $this->conn->executeQuery($tsql, $params);
 	}
 
-	public function setAgrupadorPartida( $id_actividad, AgrupadorInsumo $agrupador ) {
-
-		if ( ! $this->existeRegistroAgrupacion( $id_actividad ) )
-			$this->creaRegistroAgrupacion( $id_actividad );
+    /**
+     * @param $id_actividad
+     * @param AgrupadorInsumo $agrupador
+     */
+    public function setAgrupadorPartida($id_actividad, AgrupadorInsumo $agrupador)
+    {
+		if ( ! $this->existeRegistroAgrupacion($id_actividad)) {
+            $this->creaRegistroAgrupacion( $id_actividad );
+        }
 
 		$field = '';
 
-		switch ( $agrupador->getTipoAgrupador() ) {
+		switch ($agrupador->getTipoAgrupador()) {
 			case AgrupadorInsumo::TIPO_NATURALEZA:
 				$field = AgrupadorInsumo::FIELD_NATURALEZA;
 				break;
@@ -662,53 +892,65 @@ class Subcontrato extends TransaccionSAO {
 				 	[id_actividad] = ?";
 
 	    $params = array(
-	    	array( $agrupador->getIDAgrupador(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->empresa->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $id_actividad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	    	array($agrupador->getIDAgrupador(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+	        array($this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+	        array($this->empresa->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+	        array($id_actividad, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
-	    $this->conn->executeQuery( $tsql, $params );
+	    $this->conn->executeQuery($tsql, $params);
 	}
 
-	private function existeRegistroSubcontrato() {
-
+    /**
+     * @return bool
+     */
+    private function existeRegistroSubcontrato()
+    {
 		$tsql = "SELECT 1
 				 FROM [Subcontratos].[subcontrato]
 				 WHERE
 				 	[id_transaccion] = ?";
 
 	    $params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
-	    $res = $this->conn->executeQuery( $tsql, $params );
+	    $res = $this->conn->executeQuery($tsql, $params);
 
-	    if ( count( $res ) > 0)
-	    	return true;
-	    else
-	    	return false;
+	    if ( count( $res ) > 0) {
+            return true;
+        }
+
+	    return false;
 	}
 
-	private function creaRegistroSubcontrato() {
-
+    /**
+     *
+     */
+    private function creaRegistroSubcontrato()
+    {
 		$tsql = "INSERT INTO [Subcontratos].[subcontrato]
 				(
-					  [id_transaccion]
+                  [id_transaccion]
 				)
 				VALUES
 				( ? )";
 
 	    $params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
-	    $this->conn->executeQuery( $tsql, $params );
+	    $this->conn->executeQuery($tsql, $params);
 	}
 
-	public function setClasificador( $id_clasificador ) {
-
+    /**
+     * Asigna un clasificador a este subcontrato
+     *
+     * @param $id_clasificador
+     */
+    public function setClasificador($id_clasificador)
+    {
 		$tsql = "UPDATE [Subcontratos].[subcontrato]
 				 SET
 				 	[id_clasificador] = ?
@@ -716,15 +958,20 @@ class Subcontrato extends TransaccionSAO {
 				 	[id_transaccion] = ?";
 
 	    $params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $id_clasificador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+	        array($id_clasificador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
-	    $this->conn->executeQuery( $tsql, $params );
+	    $this->conn->executeQuery($tsql, $params);
 	}
 
-	public function getAddendums() {
-
+    /**
+     * Obtiene los addendums de este subcontrato
+     *
+     * @return mixed
+     */
+    public function getAddendums()
+    {
 		$tsql = "SELECT
 					  [addendum].[id_addendum]
 					, [addendum].[fecha]
@@ -739,32 +986,47 @@ class Subcontrato extends TransaccionSAO {
 					[addendum].[fecha] DESC";
 
 	    $params = array(
-	        array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
-	   return $this->conn->executeQuery( $tsql, $params );
+	   return $this->conn->executeQuery($tsql, $params);
 	}
 
-	public function addAddendum( Addendum $addendum ) {
-
+    /**
+     * Agrega un addendum a este subcontrato
+     * 
+     * @param Addendum $addendum
+     */
+    public function addAddendum(Addendum $addendum)
+    {
 		$addendum->save( $this );
 	}
 
-	public static function getListaSubcontratos( Obra $obra ) {
-
+    /**
+     * @param Obra $obra
+     * @return array
+     * @throws DBServerStatementExecutionException
+     */
+    public static function getListaSubcontratos(Obra $obra)
+    {
 		$tsql = '{call [SubcontratosEstimaciones].[uspListaSubcontratos]( ? )}';
 
 		$params = array(
-	        array( $obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	        array($obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
-	    $lista = $obra->getConn()->executeSP( $tsql, $params );
+	    $lista = $obra->getConn()->executeSP($tsql, $params);
 
 		return $lista;
 	}
 
-	public static function getContratistas( Obra $obra ) {
-		
+    /**
+     * @param Obra $obra
+     * @return array
+     * @throws DBServerStatementExecutionException
+     */
+    public static function getContratistas(Obra $obra)
+    {
 		$tsql = 'SELECT DISTINCT
 					  [obras].[id_obra]
 					, [transacciones].[id_empresa]
@@ -786,15 +1048,21 @@ class Subcontrato extends TransaccionSAO {
 				ORDER BY
 					[empresas].[razon_social];';
 
-		$params = array( self::TIPO_TRANSACCION, $obra->getId() );
+		$params = array(self::TIPO_TRANSACCION, $obra->getId());
 
 	    $data = $obra->getConn()->executeQuery( $tsql, $params );
 
 		return $data;
 	}
 
-	public static function getTransaccionesContratista( Obra $obra, $id_empresa ) {
-
+    /**
+     * @param Obra $obra
+     * @param $id_empresa
+     * @return array
+     * @throws DBServerStatementExecutionException
+     */
+    public static function getTransaccionesContratista(Obra $obra, $id_empresa)
+    {
 		$tsql = 'SELECT 
 					  [id_obra]
 					, [id_transaccion]
@@ -818,5 +1086,5 @@ class Subcontrato extends TransaccionSAO {
 
 		return $data;
 	}
+
 }
-?>

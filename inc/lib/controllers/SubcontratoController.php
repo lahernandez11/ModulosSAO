@@ -49,55 +49,56 @@ try {
 			$obra = new Obra( $conn, $_GET['id_obra'] );
 			$id_transaccion = (int) $_GET['id_transaccion'];
 
-			$transaccion = new Subcontrato( $obra, $id_transaccion );
+			$transaccion = new Subcontrato($obra, $id_transaccion);
+
 			$data['subcontrato'] = array(
-				'tipo_contrato' 			 => $transaccion->getTipoContrato(),
-				'referencia' 			 	 => $transaccion->getReferencia(),
-				'empresa' 					 => $transaccion->getNombreContratista(),
-				'observaciones' 			 => $transaccion->getObservaciones(),
-				'descripcion' 				 => $transaccion->getDescripcion(),
-				'id_clasificador' 			 => $transaccion->getIdClasificador(),
-				'clasificador' 				 => $transaccion->getClasificador(),
-				'monto_subcontrato' 		 => $transaccion->getMontoSubcontrato(),
-				'monto_anticipo' 			 => $transaccion->getMontoAnticipo(),
-				'porcentaje_retencion_fg' 	 => $transaccion->getPorcentajeRetencionFG(),
-				'fecha_inicio_cliente' 	  	 => Util::formatoFecha( $transaccion->getFechaInicioCliente() ),
-				'fecha_termino_cliente'   	 => Util::formatoFecha( $transaccion->getFechaTerminoCliente() ),
-				'fecha_inicio_proyecto'   	 => Util::formatoFecha( $transaccion->getFechaInicioProyecto() ),
-				'fecha_termino_proyecto'  	 => Util::formatoFecha( $transaccion->getFechaTerminoProyecto() ),
-				'fecha_inicio_contratista'   => Util::formatoFecha( $transaccion->getFechaInicioContratista() ),
-				'fecha_termino_contratista'  => Util::formatoFecha( $transaccion->getFechaTerminoContratista() ),
-				'monto_venta_cliente' 		 => $transaccion->getMontoVentaCliente(),
+				'tipo_contrato' => $transaccion->getTipoContrato(),
+				'referencia' => $transaccion->getReferencia(),
+				'empresa' => $transaccion->empresa->getNombre(),
+				'observaciones' => $transaccion->getObservaciones(),
+				'descripcion' => $transaccion->getDescripcion(),
+				'id_clasificador' => $transaccion->getIdClasificador(),
+				'clasificador' => $transaccion->getClasificador(),
+				'monto_subcontrato' => $transaccion->getMontoSubcontrato(),
+				'monto_anticipo' => $transaccion->getMontoAnticipo(),
+				'porcentaje_retencion_fg' => $transaccion->getPorcentajeRetencionFG(),
+				'fecha_inicio_cliente' => Util::formatoFecha($transaccion->getFechaInicioCliente()),
+				'fecha_termino_cliente' => Util::formatoFecha($transaccion->getFechaTerminoCliente()),
+				'fecha_inicio_proyecto' => Util::formatoFecha($transaccion->getFechaInicioProyecto()),
+				'fecha_termino_proyecto' => Util::formatoFecha($transaccion->getFechaTerminoProyecto()),
+				'fecha_inicio_contratista' => Util::formatoFecha($transaccion->getFechaInicioContratista()),
+				'fecha_termino_contratista' => Util::formatoFecha($transaccion->getFechaTerminoContratista()),
+				'monto_venta_cliente' => $transaccion->getMontoVentaCliente(),
 				'monto_venta_actual_cliente' => $transaccion->getMontoVentaActualCliente(),
-				'monto_inicial_pio' 		 => $transaccion->getMontoInicialPio(),
-				'monto_actual_pio' 			 => $transaccion->getMontoActualPio()
+				'monto_inicial_pio' => $transaccion->getMontoInicialPio(),
+				'monto_actual_pio' => $transaccion->getMontoActualPio()
 			);
 			break;
 
 		case 'getClasificadores':
-			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
-			$obra = new Obra( $conn, $_GET['id_obra'] );
+			$conn = SAODBConnFactory::getInstance($_GET['base_datos']);
+			$obra = new Obra($conn, $_GET['id_obra']);
 
 			$data['options'] = array();
 
-			foreach ( ClasificadorSubcontrato::getClasificadores( $obra ) as $clasificador ) {
+			foreach (ClasificadorSubcontrato::getClasificadores($obra) as $clasificador) {
 				$data['options'][] = array(
-					'id'    => $clasificador->id_clasificador,
+					'id' => $clasificador->id_clasificador,
 					'label' => $clasificador->clasificador
 				);
 			}
 			break;
 
 		case 'setClasificador':
-			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
-			$obra = new Obra( $conn, $_POST['id_obra'] );
+			$conn = SAODBConnFactory::getInstance($_POST['base_datos']);
+			$obra = new Obra($conn, $_POST['id_obra']);
 			$id_transaccion = $_POST['id_transaccion'];
 			$id_clasificador = $_POST['id_clasificador'];
 
 			$data['options'] = array();
 
-			$transaccion = new Subcontrato( $obra, $id_transaccion );
-			$transaccion->setClasificador( $id_clasificador );
+			$transaccion = new Subcontrato($obra, $id_transaccion);
+			$transaccion->setClasificador($id_clasificador);
 			break;
 
 		case 'guardaTransaccion':
