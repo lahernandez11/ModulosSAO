@@ -13,10 +13,24 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF
 	protected $numero_de_estimacion_label = 'No. Estimación';
 	protected $semana_de_contrato_label = 'Semana de Contrato';
 	protected $numero_de_contrato_label = 'No. de Contrato:';
-	protected $firma_contratista_titulo_label = 'por el contratista';
-	protected $firma_contratista_descripcion_label = 'factor o dependiente';
-	protected $firma_cliente_titulo_label = 'por el cliente';
-	protected $firma_cliente_descripcion_label = 'gerente de proyecto';
+	protected $firma_contratista_titulo_label = 'Elaboró';
+	protected $firma_contratista_descripcion_label = 'CONTRATISTA';
+	protected $firma_control_estimaciones_titulo_label = 'Revisó';
+	protected $firma_control_estimaciones_descripcion_label = 'CONTROL DE ESTIMACIONES';
+    protected $firma_superintendencia_titulo_label = 'Avaló';
+    protected $firma_superintendencia_descripcion_label = 'SUPERINTENDENCIA DE OBRA';
+    protected $firma_calidad_titulo_label = 'Vo.Bo.';
+    protected $firma_calidad_descripcion_label = 'CALIDAD';
+    protected $firma_planeacion_titulo_label = 'Vo.Bo.';
+    protected $firma_planeacion_descripcion_label = 'CONTROL DE PLANEACIÓN';
+    protected $firma_seguimiento_titulo_label = 'Vo.Bo.';
+    protected $firma_seguimiento_descripcion_label = 'CONTROL DE SEGUIMIENTO';
+    protected $firma_subcontratos_titulo_label = 'Vo.Bo.';
+    protected $firma_subcontratos_descripcion_label = 'SUBCONTRATOS';
+    protected $firma_director_proyecto_titulo_label = 'Autorizó';
+    protected $firma_director_proyecto_descripcion_label = 'DIRECTOR DE PROYECTO';
+	protected $firma_administrador_titulo_label = 'Recibe';
+	protected $firma_administrador_descripcion_label = 'ADMINISTRADOR';
 	protected $table_body_widths = array();
 
 	private $estimacion;
@@ -823,29 +837,79 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF
 	}
 
     /**
-     *
+     * Imprime las firmas y numero de pagina
      */
     public function Footer()
     {
 		$this->Ln(5);
 		$this->resetFontStyle();
-		$this->SetFontSize(7);
-		$this->Cell(70, 3, "", 0, 0);
-		$this->Cell(50, 3, $this->firma_contratista_titulo_label, 1, 0, "C", true);
-		$this->Cell(50, 3, "", 0, 0);
-		$this->Cell(50, 3, $this->firma_cliente_titulo_label, 1, 0, "C", true);
+		$this->SetFontSize(4);
+
+		$this->Cell(10, 3, "", 0, 0);
+		$this->Cell(25, 3, $this->firma_contratista_titulo_label, 1, 0, "C", true);
+        $this->Cell(5, 3, "", 0, 0);
+        $this->Cell(25, 3, $this->firma_control_estimaciones_titulo_label, 1, 0, "C", true);
+        $this->Cell(5, 3, "", 0, 0);
+        $this->Cell(25, 3, $this->firma_superintendencia_titulo_label, 1, 0, "C", true);
+        $this->Cell(5, 3, "", 0, 0);
+        $this->Cell(25, 3, $this->firma_calidad_titulo_label, 1, 0, "C", true);
+        $this->Cell(5, 3, "", 0, 0);
+        $this->Cell(25, 3, $this->firma_planeacion_titulo_label, 1, 0, "C", true);
+        $this->Cell(5, 3, "", 0, 0);
+        $this->Cell(25, 3, $this->firma_seguimiento_titulo_label, 1, 0, "C", true);
+        $this->Cell(5, 3, "", 0, 0);
+        $this->Cell(25, 3, $this->firma_subcontratos_titulo_label, 1, 0, "C", true);
+        $this->Cell(5, 3, "", 0, 0);
+        $this->Cell(25, 3, $this->firma_director_proyecto_titulo_label, 1, 0, "C", true);
+        $this->Cell(5, 3, "", 0, 0);
+        $this->Cell(25, 3, $this->firma_administrador_titulo_label, 1, 0, "C", true);
+
+        $this->Ln();
+
+		$this->Cell(10, 3, "", 0, 0);
+		$this->Cell(25, 8, "", 1, 0, "C");
+		$this->Cell(5, 8, "", 0, 0);
+		$this->Cell(25, 8, "", 1, 0, "C");
+        $this->Cell(5, 8, "", 0, 0);
+        $this->Cell(25, 8, "", 1, 0, "C");
+        $this->Cell(5, 8, "", 0, 0);
+        $this->Cell(25, 8, "", 1, 0, "C");
+        $this->Cell(5, 8, "", 0, 0);
+        $this->Cell(25, 8, "", 1, 0, "C");
+        $this->Cell(5, 8, "", 0, 0);
+        $this->Cell(25, 8, "", 1, 0, "C");
+        $this->Cell(5, 8, "", 0, 0);
+        $this->Cell(25, 8, "", 1, 0, "C");
+        $this->Cell(5, 8, "", 0, 0);
+        $this->Cell(25, 8, "", 1, 0, "C");
+        $this->Cell(5, 8, "", 0, 0);
+        $this->Cell(25, 8, "", 1, 0, "C");
+
 		$this->Ln();
-		$this->Cell(70, 3, "", 0, 0);
-		$this->Cell(50, 8, "", 1, 0, "C");
-		$this->Cell(50, 8, "", 0, 0);
-		$this->Cell(50, 8, "", 1, 0, "C");
+
+        $this->Cell(10, 3, "", 0, 0);
+		$this->Cell(25, 3, $this->firma_contratista_descripcion_label, 1, 0, "C", true);
+		$this->Cell(5, 3, "", 0, 0);
+		$this->Cell(25, 3, $this->firma_control_estimaciones_descripcion_label, 1, 0, "C", true);
+        $this->Cell(5, 3, "", 0, 0);
+        $this->Cell(25, 3, $this->firma_superintendencia_descripcion_label, 1, 0, "C", true);
+        $this->Cell(5, 3, "", 0, 0);
+        $this->Cell(25, 3, $this->firma_calidad_descripcion_label, 1, 0, "C", true);
+        $this->Cell(5, 3, "", 0, 0);
+        $this->Cell(25, 3, $this->firma_planeacion_descripcion_label, 1, 0, "C", true);
+        $this->Cell(5, 3, "", 0, 0);
+        $this->Cell(25, 3, $this->firma_seguimiento_descripcion_label, 1, 0, "C", true);
+        $this->Cell(5, 3, "", 0, 0);
+        $this->Cell(25, 3, $this->firma_subcontratos_descripcion_label, 1, 0, "C", true);
+        $this->Cell(5, 3, "", 0, 0);
+        $this->Cell(25, 3, $this->firma_director_proyecto_descripcion_label, 1, 0, "C", true);
+        $this->Cell(5, 3, "", 0, 0);
+        $this->Cell(25, 3, $this->firma_administrador_descripcion_label, 1, 0, "C", true);
+
 		$this->Ln();
-		$this->Cell(70, 3, "", 0, 0);
-		$this->Cell(50, 3, $this->firma_contratista_descripcion_label, 1, 0, "C", true);
-		$this->Cell(50, 3, "", 0, 0);
-		$this->Cell(50, 3, $this->firma_cliente_descripcion_label, 1, 0, "C", true);
-		
-		$this->Ln();
+
+        // Numero de pagina
+        $this->SetFontSize(7);
 		$this->SetY(-8);
 		$this->AliasNbPages();
 		$this->Cell(0, 3, "Página " . $this->getCurrentPage() . '/{nb}', 0, 0, self::TEXT_ALIGN_RIGHT);
@@ -856,7 +920,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF
      * @param string $i
      * @return string|void
      */
-    public function Output( $nombre=null, $i='I' )
+    public function Output($nombre = null, $i = 'I')
     {
 		$this->writeDatosGeneralesEstimacion();
 		$this->writeConceptosEstimados();
@@ -865,7 +929,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF
 		$this->writeLiberaciones();
 		$this->writeTotales();
 
-		parent::Output( self::FORMATO_NOMBRE_ARCHIVO, 'I' );
+		parent::Output(self::FORMATO_NOMBRE_ARCHIVO, 'I');
 	}
 
 }
