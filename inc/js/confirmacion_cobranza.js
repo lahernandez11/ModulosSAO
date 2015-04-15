@@ -771,8 +771,17 @@ var COBRANZA = {
 		this.uxtable('getCell', 9).text( pu.toFixed(4).numFormat() );
 	},
 
+    cleanFormatoNumero: function(text) {
+        return text.replace(/,/gi, "");
+    },
+
 	setImporteCobrado: function() {
-		this.text((parseFloat(this.prev().text()) * parseFloat(this.prev().prev().text())).toFixed(2).toString().numFormat());
+		this.text(
+            (
+                parseFloat(COBRANZA.cleanFormatoNumero(this.prev().text())) *
+                parseFloat(COBRANZA.cleanFormatoNumero(this.prev().prev().text()))
+            ).toFixed(2).toString().numFormat()
+        );
 	},
 
 	marcaConceptosError: function( errores ) {
