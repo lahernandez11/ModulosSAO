@@ -384,14 +384,15 @@ var ESTIMACION = {
 	},
 
 	cleanCantidad: function(text) {
-		return text.replace(',', '');
+		return text.replace(/,/gi, "");
 	},
 
 	setMontoTotal: function($row) {
 		var that = this,
 			cantidad = parseFloat(that.cleanCantidad($row.find('.cantidad').text())),
 			precio = parseFloat(that.cleanCantidad($row.find('.precio').text()));
-
+console.log(cantidad);
+console.log(precio);
 			monto = cantidad * precio;
 
 		$row.find('.total').text(monto.toFixed(2).toString().numFormat());

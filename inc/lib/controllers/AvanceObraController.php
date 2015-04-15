@@ -119,7 +119,7 @@ try {
 			$totales = $transaccion->getTotalesTransaccion();
 
 			foreach ( $totales as $total ) {
-				
+
 				$data['totales'] = array(
 					'subtotal' => Util::formatoNumerico( $total->Subtotal ),
 					'iva' 	   => Util::formatoNumerico( $total->IVA ),
