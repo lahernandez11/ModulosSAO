@@ -309,7 +309,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
             if (count($errores))
             {
-                throw new \Exception('Ocurrio un error al guardar los conceptos');
+                throw new Exception('Ocurrio un error al guardar los conceptos');
             }
 
             $this->calculaImportes();
@@ -318,7 +318,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 
             return $errores;
         }
-        catch(\Exception $e) {
+        catch(Exception $e)
+        {
             $this->conn->rollbackTransaction();
             $e->errors = $errores;
             throw $e;
