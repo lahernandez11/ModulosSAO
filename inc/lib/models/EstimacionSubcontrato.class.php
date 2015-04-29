@@ -9,8 +9,8 @@ require_once 'models/EstimacionDescuentoMaterial.class.php';
 require_once 'models/EstimacionRetencionLiberacion.class.php';
 require_once 'models/Exceptions/TransaccionEstaCerradaExeption.php';
 
-class EstimacionSubcontrato extends TransaccionSAO
-{
+class EstimacionSubcontrato extends TransaccionSAO {
+
 	const TIPO_TRANSACCION = 52;
 	const CARACTER_OPERACION_REGISTRO   = 'I';
 	const CARACTER_OPERACION_APROBACION = 'A';
@@ -62,7 +62,8 @@ class EstimacionSubcontrato extends TransaccionSAO
     {
 		$params = func_get_args();
 
-		switch ( func_num_args() ) {
+		switch ( func_num_args() )
+        {
 			case 7:
 				call_user_func_array(array($this, "instaceFromDefault"), $params);
 				break;
@@ -84,10 +85,15 @@ class EstimacionSubcontrato extends TransaccionSAO
      * @throws Exception
      */
     private function instaceFromDefault(
-		Obra $obra, Subcontrato $subcontrato, $fecha, $fechaInicio, $fechaTermino, $observaciones,
-		Array $conceptos)
+		Obra $obra,
+        Subcontrato $subcontrato,
+        $fecha,
+        $fechaInicio,
+        $fechaTermino,
+        $observaciones,
+		Array $conceptos
+    )
     {
-		
 		parent::__construct($obra, self::TIPO_TRANSACCION, $fecha, $observaciones);
 
 		$this->subcontrato = $subcontrato;
@@ -100,7 +106,7 @@ class EstimacionSubcontrato extends TransaccionSAO
      * @param Obra $obra
      * @param $id_transaccion
      */
-    private function instanceFromID( Obra $obra, $id_transaccion )
+    private function instanceFromID(Obra $obra, $id_transaccion)
     {
 		parent::__construct($obra, $id_transaccion);
 
@@ -114,7 +120,8 @@ class EstimacionSubcontrato extends TransaccionSAO
      */
     private function registraTransaccionAdicional()
     {
-		if ( ! $this->existeRegistroEstimacion()) {
+		if ( ! $this->existeRegistroEstimacion())
+        {
 			$tsql = "INSERT INTO [SubcontratosEstimaciones].[Estimaciones]
 					(
                         [IDEstimacion],
@@ -150,7 +157,8 @@ class EstimacionSubcontrato extends TransaccionSAO
 
 	    $res = $this->conn->executeQuery($tsql, $params);
 
-	    if (count($res) > 0) {
+	    if (count($res) > 0)
+        {
             return true;
         }
 
@@ -249,14 +257,17 @@ class EstimacionSubcontrato extends TransaccionSAO
      */
     public function guardaTransaccion(Usuario $usuario)
     {
-		if ($this->estaCerrada()) {
+		if ($this->estaCerrada())
+        {
             throw new TransaccionEstaCerradaExeption();
 		}
 
-        try {
+        try
+        {
             $this->conn->beginTransaction();
 
-            if ( ! empty($this->id_transaccion)) {
+            if ( ! empty($this->id_transaccion))
+            {
                 $tsql = "{call [SubcontratosEstimaciones].[uspActualizaDatosGenerales]( ?, ?, ?, ?, ?, ? )}";
 
                 $params = array(
@@ -270,7 +281,8 @@ class EstimacionSubcontrato extends TransaccionSAO
 
                 $this->conn->executeSP($tsql, $params);
             }
-            else {
+            else
+            {
                 $tsql = "{call [SubcontratosEstimaciones].[uspRegistraTransaccion]( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )}";
 
                 $params = array(
@@ -295,8 +307,9 @@ class EstimacionSubcontrato extends TransaccionSAO
 
             $errores = $this->guardaConceptos();
 
-            if (count($errores)) {
-                throw new Exception('Ocurrio un error al guardar los conceptos');
+            if (count($errores))
+            {
+                throw new \Exception('Ocurrio un error al guardar los conceptos');
             }
 
             $this->calculaImportes();
@@ -305,7 +318,7 @@ class EstimacionSubcontrato extends TransaccionSAO
 
             return $errores;
         }
-        catch(Exception $e) {
+        catch(\Exception $e) {
             $this->conn->rollbackTransaction();
             $e->errors = $errores;
             throw $e;
@@ -325,13 +338,16 @@ class EstimacionSubcontrato extends TransaccionSAO
 
 		$this->suma_importes = 0;
 
-		foreach ($this->conceptos as $concepto) {
-			try {
+		foreach ($this->conceptos as $concepto)
+        {
+			try
+            {
 				// Limpia y valida el importe estimado
 				$concepto['importeEstimado'] = str_replace(',', '', $concepto['importeEstimado']);
 
 				// Si el importe no es valido agrega el concepto con error
-				if ( ! $this->esImporte($concepto['importeEstimado'])) {
+				if ( ! $this->esImporte($concepto['importeEstimado']))
+                {
 					throw new Exception("El numero ingresado no es correcto");
 				}
 
@@ -346,8 +362,8 @@ class EstimacionSubcontrato extends TransaccionSAO
 				
 				$this->suma_importes += $concepto['importeEstimado'];
 			}
-            catch(Exception $e) {
-
+            catch(Exception $e)
+            {
 				$errores[] = array(
 					'IDConceptoContrato' => $concepto['IDConceptoContrato'],
 					'importeEstimado' => $concepto['importeEstimado'],
@@ -434,15 +450,18 @@ class EstimacionSubcontrato extends TransaccionSAO
      */
     public function setAprobada(Usuario $usuario)
     {
-		if ($this->suma_importes == 0) {
+		if ($this->suma_importes == 0)
+        {
 			throw new Exception("La estimacion no tiene importe", 1);
 		}
 
-		if ($this->estado > self::ESTADO_CAPTURADA) {
+		if ($this->estado > self::ESTADO_CAPTURADA)
+        {
 			throw new Exception("La estimacion se encuentra aprobada.", 1);
 		}
 
-		try {
+		try
+        {
 			$this->conn->beginTransaction();
 
 			$tsql = "UPDATE [dbo].[transacciones]
@@ -486,7 +505,8 @@ class EstimacionSubcontrato extends TransaccionSAO
 
 			$this->conn->commitTransaction();
 		}
-        catch(Exception $e) {
+        catch(Exception $e)
+        {
 			$this->conn->rollbackTransaction();
 			throw $e;
 		}
@@ -499,7 +519,8 @@ class EstimacionSubcontrato extends TransaccionSAO
      */
     public function revierteAprobacion()
     {
-        if ($this->estaCerrada()) {
+        if ($this->estaCerrada())
+        {
             throw new TransaccionEstaCerradaExeption();
         }
 
@@ -534,7 +555,8 @@ class EstimacionSubcontrato extends TransaccionSAO
      */
     public function eliminaTransaccion()
     {
-		if ($this->estaCerrada()) {
+		if ($this->estaCerrada())
+        {
             throw new TransaccionEstaCerradaExeption();
 		}
 
@@ -552,10 +574,10 @@ class EstimacionSubcontrato extends TransaccionSAO
      */
     public function estaCerrada()
     {
-        if ($this->estaRevisada() || $this->estaAprobada()) {
+        if ($this->estaRevisada() || $this->estaAprobada())
+        {
             return true;
         }
-
         return false;
     }
 
@@ -566,10 +588,10 @@ class EstimacionSubcontrato extends TransaccionSAO
      */
     public function estaAprobada()
     {
-		if ($this->estado >= self::ESTADO_APROBADA) {
+		if ($this->estado >= self::ESTADO_APROBADA)
+        {
             return true;
         }
-
         return false;
 	}
 
@@ -580,10 +602,10 @@ class EstimacionSubcontrato extends TransaccionSAO
      */
     public function estaRevisada()
     {
-        if ($this->estado == self::ESTADO_REVISADA) {
+        if ($this->estado == self::ESTADO_REVISADA)
+        {
             return true;
         }
-
         return false;
     }
 
@@ -620,7 +642,8 @@ class EstimacionSubcontrato extends TransaccionSAO
      */
     public function addDescuento(Material $material, $cantidad, $precio)
     {
-		if ($this->estaCerrada()) {
+		if ($this->estaCerrada())
+        {
             throw new TransaccionEstaCerradaExeption();
 		}
 
@@ -662,7 +685,8 @@ class EstimacionSubcontrato extends TransaccionSAO
      */
     public function addLiberacion($importe, $concepto, Usuario $usuario)
     {
-		if ( ! $this->esImporte($importe)) {
+		if ( ! $this->esImporte($importe))
+        {
 			throw new Exception("Importe Incorrecto");
 		}
 
@@ -730,7 +754,8 @@ class EstimacionSubcontrato extends TransaccionSAO
 
 	    $totales = $this->conn->executeSP($tsql, $params, SQLSrvDBConn::FETCH_MODE_ARRAY);
 
-	    if (count($totales) > 0) {
+	    if (count($totales) > 0)
+        {
 		    $this->suma_importes = $totales[0]['suma_importes'];
 			$this->amortizacion_anticipo = $totales[0]['amortizacion_anticipo'];
 			$this->fondo_garantia = $totales[0]['fondo_garantia'];
@@ -784,11 +809,13 @@ class EstimacionSubcontrato extends TransaccionSAO
 			// 'acumulado_por_liberar'					=> $this->empresa->getImportePorLiberar()
 		);
 
-		foreach ($this->descuentos as $descuento) {
+		foreach ($this->descuentos as $descuento)
+        {
 			$data['descuentos'] += $descuento->getImporte();
 		}
 
-		foreach ($this->retenciones as $retencion) {
+		foreach ($this->retenciones as $retencion)
+        {
 			$data['retenciones'] += $retencion->getImporte();
 		}
 
@@ -817,7 +844,8 @@ class EstimacionSubcontrato extends TransaccionSAO
      */
     public function setFechaInicio($fecha)
     {
-		if ( ! $this->fechaEsValida($fecha)) {
+		if ( ! $this->fechaEsValida($fecha))
+        {
             throw new Exception("El formato de fecha inicial es incorrecto.");
         }
 
@@ -838,7 +866,8 @@ class EstimacionSubcontrato extends TransaccionSAO
      */
     public function setFechaTermino($fecha)
     {
-		if ( ! $this->fechaEsValida($fecha)) {
+		if ( ! $this->fechaEsValida($fecha))
+        {
             throw new Exception("El formato de fecha término es incorrecto.");
         }
 
@@ -1002,12 +1031,13 @@ class EstimacionSubcontrato extends TransaccionSAO
      */
     public function setImporteAmortizacionAnticipo($importe)
     {
-		if ( ! $this->esImporte($importe)) {
+		if ( ! $this->esImporte($importe))
+        {
 			$importe = 0;
 		}
 
-        if ($this->suma_importes != 0) {
-//            $this->amortizacion_anticipo = $importe;
+        if ($this->suma_importes != 0)
+        {
             $this->pct_anticipo = ($importe / $this->suma_importes);
 		}
 	}
@@ -1017,11 +1047,13 @@ class EstimacionSubcontrato extends TransaccionSAO
      */
     public function setImporteFondoGarantia($importe)
     {
-		if ( ! $this->esImporte($importe)) {
+		if ( ! $this->esImporte($importe))
+        {
 			$importe = 0;
 		}
 
-		if ($this->suma_importes != 0) {
+		if ($this->suma_importes != 0)
+        {
 			$this->pct_fondo_garantia = ($importe / $this->suma_importes);
 			$this->fondo_garantia = $importe;
 		}
@@ -1032,7 +1064,8 @@ class EstimacionSubcontrato extends TransaccionSAO
      */
     public function setImporteRetencionIVA($importe)
     {
-		if ( ! $this->esImporte($importe)) {
+		if ( ! $this->esImporte($importe))
+        {
 			$importe = 0;
 		}
 
@@ -1044,7 +1077,8 @@ class EstimacionSubcontrato extends TransaccionSAO
      */
     public function setImporteAnticipoLiberar($importe)
     {
-		if ( ! $this->esImporte($importe)) {
+		if ( ! $this->esImporte($importe))
+        {
 			$importe = 0;
 		}
 
@@ -1098,7 +1132,7 @@ class EstimacionSubcontrato extends TransaccionSAO
      * @param null $tipo_transaccion
      * @return array
      */
-    public static function getListaTransacciones(Obra $obra, $tipo_transaccion=null)
+    public static function getListaTransacciones(Obra $obra, $tipo_transaccion = null)
     {
 		return parent::getListaTransacciones($obra, self::TIPO_TRANSACCION);
 	}
@@ -1137,8 +1171,6 @@ class EstimacionSubcontrato extends TransaccionSAO
 		$data .= "subtotal: {$this->subtotal}, ";
 		$data .= "iva: {$this->iva}, ";
 		$data .= "total_estimacion: {$this->total_estimacion}, ";
-		// $data .= "descuentos: {$this->descuentos}, ";
-		// $data .= "retencion: {$this->retenciones}, ";
 		$data .= "retencion_iva: {$this->retencion_iva}, ";
 		$data .= "anticipo_liberar: {$this->anticipo_liberar}, ";
 		$data .= "retencion_liberada: {$this->retencion_liberada}, ";
