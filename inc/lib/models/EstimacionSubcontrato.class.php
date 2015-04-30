@@ -520,7 +520,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
      */
     public function revierteAprobacion()
     {
-        if ($this->estaCerrada())
+        if ($this->estaRevisada())
         {
             throw new TransaccionEstaCerradaExeption();
         }
