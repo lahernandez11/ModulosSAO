@@ -15,7 +15,6 @@ var PRECIOS_VENTA = {
 	conceptoTemplate: null,
 
 	init: function() {
-
 		var that = this;
 		
 		this.conceptoTemplate = _.template($('#concepto-template').html());
@@ -26,7 +25,6 @@ var PRECIOS_VENTA = {
 		var notifyModifiedTranSubs = pubsub.subscribe('notify_modtran', notifyModifiedTran);
 
 		$('#tabla-conceptos').on('keyup', 'input[type=text]', function() {
-
 		    var oldValue = $(this).val();
 		    
 		    $(this).val(oldValue.numFormat());
@@ -35,8 +33,7 @@ var PRECIOS_VENTA = {
 		$('#bl-proyectos').buttonlist({
 			source: 'inc/lib/controllers/ListaObrasController.php',
 			data: { action: 'getListaProyectos'},
-			onSelect: function( selectedItem, listItem ) {
-				
+			onSelect: function(selectedItem, listItem) {
 				that.cargaTransaccion();
 			},
 			didNotDataFound: function() {
@@ -56,11 +53,10 @@ var PRECIOS_VENTA = {
 		$('#tabla-conceptos').uxtable({
 			editableColumns: {
 				3: {
-					'onFinishEdit': function( activeCell, value ) {
+					'onFinishEdit': function(activeCell, value) {
+						var IDConcepto = parseInt(activeCell.parent().attr('data-id'));
 
-						var IDConcepto = parseInt( activeCell.parent().attr('data-id') );
-
-						if ( parseInt(activeCell.parent().attr('data-esactividad')) == 1 ) {
+						if (parseInt(activeCell.parent().attr('data-esactividad')) == 1) {
 							that.setPrecioProduccion.call( this, IDConcepto, value );
 
 							pubsub.publish('modified_tran');
@@ -68,11 +64,11 @@ var PRECIOS_VENTA = {
 					}
 				},
 				4: {
-					'onFinishEdit': function( activeCell, value ) {
+					'onFinishEdit': function(activeCell, value) {
 
-						var IDConcepto = parseInt( activeCell.parent().attr('data-id') );
+						var IDConcepto = parseInt(activeCell.parent().attr('data-id'));
 
-						if ( parseInt(activeCell.parent().attr('data-esactividad')) == 1 ) {
+						if (parseInt(activeCell.parent().attr('data-esactividad')) == 1) {
 							that.setPrecioEstimacion.call( this, IDConcepto, value );
 
 							pubsub.publish('modified_tran');
@@ -107,23 +103,21 @@ var PRECIOS_VENTA = {
 		$('#guardar').removeClass('alert');
 	},
 
-	setPrecioProduccion: function( IDConcepto, precio ) {
-		PRECIOS_VENTA.marcaConcepto( IDConcepto );
-		this.uxtable('getCell', 3).text( PRECIOS_VENTA.validaPrecio(precio).toFixed(4).numFormat() );
+	setPrecioProduccion: function(IDConcepto, precio) {
+		PRECIOS_VENTA.marcaConcepto(IDConcepto);
+		this.uxtable('getCell', 3).text(PRECIOS_VENTA.validaPrecio(precio).toFixed(4).numFormat());
 	},
 
-	setPrecioEstimacion: function( IDConcepto, precio ) {
-		PRECIOS_VENTA.marcaConcepto( IDConcepto );
-		this.uxtable('getCell', 4).text( PRECIOS_VENTA.validaPrecio(precio).toFixed(4).numFormat() );
+	setPrecioEstimacion: function(IDConcepto, precio) {
+		PRECIOS_VENTA.marcaConcepto(IDConcepto);
+		this.uxtable('getCell', 4).text(PRECIOS_VENTA.validaPrecio(precio).toFixed(4).numFormat());
 	},
 
-	validaPrecio: function( precio ) {
-
+	validaPrecio: function(precio) {
 		return parseFloat(precio.replace(/,/g, '')) || 0;
 	},
 
 	cargaTransaccion: function() {
-		
 		var that = this;
 
 		that.limpiaDatosTransaccion();
@@ -138,53 +132,50 @@ var PRECIOS_VENTA = {
 				action: 'getPreciosVenta'
 			},
 			dataType: 'json'
-		}).done( function( data ) {
+		}).done(function(data) {
 			try {
 
-				if( ! data.success ) {
+				if ( ! data.success) {
 					messageConsole.displayMessage(data.message, 'error');
 					return;
 				}
 
-				if( data.noRows ) {
+				if (data.noRows) {
 					$.notify({text: data.message});
 					return;
 				}
 
 				// llena la tabla de conceptos
-				that.renderConceptos( data.conceptos );
-
-			} catch( e ) {
-				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
+				that.renderConceptos(data.conceptos);
+			} catch(e) {
+				messageConsole.displayMessage('Error: ' + e.message, 'error');
 			}
 		})
-		.always( DATA_LOADER.hide );
+		.always(DATA_LOADER.hide);
 	},
 
-	renderConceptos: function( conceptos ) {
+	renderConceptos: function(conceptos) {
 		var html = '';
 
-		for( var i = 0; i < conceptos.length; i++ ) {
+		for (var i = 0; i < conceptos.length; i++) {
 			console.log(conceptos[i]);
-			html += this.conceptoTemplate( conceptos[i] );
+			html += this.conceptoTemplate(conceptos[i]);
 		}
 
-		$('#tabla-conceptos tbody').html( html );
+		$('#tabla-conceptos tbody').html(html);
 	},
 
 	getConceptosModificados: function() {
-
 		var conceptos = [],
 			row = null;
 
-		$('#tabla-conceptos tr.' + this.classes.conceptoModificado).each( function() {			
+		$('#tabla-conceptos tr.' + this.classes.conceptoModificado).each(function() {
 			row = $(this);
 
 			conceptos[conceptos.length] = {
-
-				'IDConcepto': row.attr('data-id'),
-				'precioProduccion': row.children(':eq(3)').text(),
-				'precioEstimacion': row.children(':eq(4)').text(),
+				'id_concepto': row.attr('data-id'),
+				'precio_produccion': row.children(':eq(3)').text(),
+				'precio_estimacion': row.children(':eq(4)').text()
 			}
 		});
 
@@ -192,7 +183,6 @@ var PRECIOS_VENTA = {
 	},
 
 	guardaTransaccion: function() {
-
 		var that = this;
 
 		DATA_LOADER.show();
@@ -208,31 +198,28 @@ var PRECIOS_VENTA = {
 			},
 			dataType: 'json'
 		})
-		.done( function( data ) {
+		.done(function(data) {
 			try {
-
-				if( ! data.success ) {
-					messageConsole.displayMessage( data.message, 'error' );
+				if ( ! data.success) {
+					messageConsole.displayMessage(data.message, 'error');
 					return;
 				}
 
 				$('#guardar').removeClass('alert');
 
-				messageConsole.displayMessage( 'La transacción se guardó correctamente.', 'success' );
-			} catch( e ) {
-				messageConsole.displayMessage( 'Error: ' + e.message, 'error' );
+				messageConsole.displayMessage('La transacción se guardó correctamente.', 'success');
+			} catch(e) {
+				messageConsole.displayMessage('Error: ' + e.message, 'error');
 			}
 		})
-		.always( DATA_LOADER.hide );
+		.always(DATA_LOADER.hide);
 	},
 
-	marcaConcepto: function( IDConcepto ) {
-		
+	marcaConcepto: function(IDConcepto) {
 		$('tr[data-id=' + IDConcepto + ']').addClass(this.classes.conceptoModificado);
 	},
 
-	desmarcaConcepto: function( IDConcepto ) {
-
+	desmarcaConcepto: function(IDConcepto) {
 		$('tr[data-id=' + IDConcepto + ']').removeClass(this.classes.conceptoModificado);
 	},
 
@@ -241,21 +228,19 @@ var PRECIOS_VENTA = {
 	},
 
 	existenCambiosSinGuardar: function() {
-		
 		return $('#guardar').hasClass('alert');
 	}
 };
 
 // funciones Mediators que llamaran las notificaciones
-var modifiedTran = function( event, data ) {
+var modifiedTran = function(event, data) {
 	PRECIOS_VENTA.identificaModificacion();
 };
 
-var notifyModifiedTran = function( event, data ) {
-	
-	if( confirm('Existen cambios sin guardar, desea continuar?...') ) {
+var notifyModifiedTran = function(event, data) {
+	if (confirm('Existen cambios sin guardar, desea continuar?...')) {
 
-		if( typeof data === 'function' )
+		if (typeof data === 'function')
 			data.call( PRECIOS_VENTA );
 	}
 }
