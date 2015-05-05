@@ -1,4 +1,5 @@
 <?php
+
 require_once 'models/Obra.class.php';
 
 class PrecioVenta {
