@@ -79,17 +79,17 @@
 	<div id="cache"></div>
 
 	<script type="text/template" id="concepto-template">
-		<tr data-id="<%- IDConcepto %>" data-esactividad="<%- EsActividad %>">
+		<tr data-id="<%- id_concepto %>" data-esactividad="<%- es_actividad %>">
 			<td class="icon-cell">
 				<a class="icon fixed"></a>
 			</td>
-			<<%= EsActividad ? 'td' : 'th' %> title="<%- Descripcion %>">
-				<%= '&nbsp;&nbsp;'.repeat(NumeroNivel) + Descripcion %>
-			</<%= EsActividad ? 'td' : 'th' %>>
-			<td class="centrado"><%- Unidad %></td>
-			<td class="editable-cell numerico"><%= EsActividad ? PrecioProduccion : '' %></td>
-			<td class="editable-cell numerico"><%= EsActividad ? PrecioEstimacion : '' %></td>
-			<td class="centrado"><%= ConPrecio ? FechaUltimaModificacion : '' %></td>
+			<<%= es_actividad ? 'td' : 'th' %> title="<%- descripcion %>">
+				<%= '&nbsp;&nbsp;'.repeat(numero_nivel) + descripcion %>
+			</<%= es_actividad ? 'td' : 'th' %>>
+			<td class="centrado"><%- unidad %></td>
+			<td class="editable-cell numerico"><%= es_actividad ? precio_produccion : '' %></td>
+			<td class="editable-cell numerico"><%= es_actividad ? precio_estimacion : '' %></td>
+			<td class="centrado"><%= con_precio ? updated_at : '' %></td>
 		</tr>
 	</script>
 
