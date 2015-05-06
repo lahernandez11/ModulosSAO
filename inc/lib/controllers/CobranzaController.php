@@ -10,27 +10,28 @@ $data['success'] = true;
 $data['message'] = null;
 $data['noRows']  = false;
 
-try {
-
+try
+{
 	Sesion::validaSesionAsincrona();
 
-	if ( ! isset($_REQUEST['action']) ) {
+	if ( ! isset($_REQUEST['action']))
+    {
 		throw new Exception("No fue definida una acción");
 	}
 
-	switch ( $_REQUEST['action'] ) {
-
+	switch ($_REQUEST['action'])
+    {
 		case 'nuevaTransaccion':
-			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
-			$obra = new Obra( $conn, (int) $_GET['id_obra'] );
+			$conn = SAODBConnFactory::getInstance($_GET['base_datos']);
+			$obra = new Obra($conn, (int) $_GET['id_obra']);
 			$id_estimacion_obra = (int) $_GET['id_estimacion_obra'];
 			
 			$data['conceptos'] = array();
 
-			$conceptos = Cobranza::getConceptosNuevaTransaccion( $obra, $id_estimacion_obra );
+			$conceptos = Cobranza::getConceptosNuevaTransaccion($obra, $id_estimacion_obra);
 
-			foreach ( $conceptos as $concepto ) {
-				
+			foreach ($conceptos as $concepto)
+            {
 				$data['conceptos'][] = array(
 					'IDConcepto'  => $concepto->IDConcepto,
 					'NumeroNivel' => $concepto->NumeroNivel,
@@ -38,50 +39,48 @@ try {
 					'EsActividad' => $concepto->EsActividad,
 					'Estimado' 	  => $concepto->Estimado,
 					'Unidad' 	  => $concepto->Unidad,
-					'CantidadPresupuestada'    => Util::formatoNumerico( $concepto->CantidadPresupuestada ),
-					// 'CantidadEstimadaAnterior' => Util::formatoNumerico( $concepto->CantidadEstimadaAnterior ),
-					'CantidadEstimada' 		   => Util::formatoNumerico( $concepto->CantidadEstimada ),
-					'PrecioUnitarioEstimado'   => Util::formatoNumerico( $concepto->PrecioUnitarioEstimado ),
-					'ImporteEstimado' 		   => Util::formatoNumerico( $concepto->ImporteEstimado ),
-					'CantidadCobrada'	 	   => Util::formatoNumerico( $concepto->CantidadCobrada ),
-					'PrecioUnitarioCobrado'    => Util::formatoNumerico( $concepto->PrecioUnitarioCobrado ),
-					'ImporteCobrado' 		   => Util::formatoNumerico( $concepto->ImporteCobrado )
+					'CantidadPresupuestada'    => Util::formatoNumerico($concepto->CantidadPresupuestada),
+					'CantidadEstimada' 		   => Util::formatoNumerico($concepto->CantidadEstimada),
+					'PrecioUnitarioEstimado'   => Util::formatoNumerico($concepto->PrecioUnitarioEstimado),
+					'ImporteEstimado' 		   => Util::formatoNumerico($concepto->ImporteEstimado),
+					'CantidadCobrada'	 	   => Util::formatoNumerico($concepto->CantidadCobrada),
+					'PrecioUnitarioCobrado'    => Util::formatoNumerico($concepto->PrecioUnitarioCobrado),
+					'ImporteCobrado' 		   => Util::formatoNumerico($concepto->ImporteCobrado),
 				);
 			}
 			break;
 
 		case 'eliminaTransaccion':
-			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
-			$obra = new Obra( $conn, (int) $_POST['id_obra'] );
+			$conn = SAODBConnFactory::getInstance($_POST['base_datos']);
+			$obra = new Obra($conn, (int) $_POST['id_obra']);
 			
 			$id_transaccion = (int) $_POST['id_transaccion'];
 
-			$transaccion = new Cobranza( $obra, $id_transaccion );
+			$transaccion = new Cobranza($obra, $id_transaccion);
 
 			$transaccion->eliminaTransaccion();
-
 			break;
 
 		case 'getDatosTransaccion':
-			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
-			$obra = new Obra( $conn, (int) $_GET['id_obra'] );
+			$conn = SAODBConnFactory::getInstance($_GET['base_datos']);
+			$obra = new Obra($conn, (int) $_GET['id_obra']);
 			$id_transaccion = (int) $_GET['id_transaccion'];
 
 			$data['datos'] 	   = array();
 			$data['conceptos'] = array();
 			$data['totales']   = array();
 			
-			$transaccion = new Cobranza( $obra, $id_transaccion );
+			$transaccion = new Cobranza($obra, $id_transaccion);
 
 			$data['datos']['referencia']    = $transaccion->getReferencia();
 			$data['datos']['observaciones'] = $transaccion->getObservaciones();
 			$data['datos']['folio_factura'] = $transaccion->getFolioFactura();
-			$data['datos']['fecha'] 		= Util::formatoFecha( $transaccion->getFecha() );
+			$data['datos']['fecha'] 		= Util::formatoFecha($transaccion->getFecha());
 
 			$conceptos = $transaccion->getConceptos();
 
-			foreach ( $conceptos as $concepto ) {
-				
+			foreach ($conceptos as $concepto)
+            {
 				$data['conceptos'][] = array(
 					'IDConcepto'  => $concepto->IDConcepto,
 					'NumeroNivel' => $concepto->NumeroNivel,
@@ -89,156 +88,148 @@ try {
 					'EsActividad' => $concepto->EsActividad,
 					'Estimado' 	  => $concepto->Estimado,
 					'Unidad' 	  => $concepto->Unidad,
-					'CantidadPresupuestada'    => Util::formatoNumerico( $concepto->CantidadPresupuestada ),
-					// 'CantidadEstimadaAnterior' => Util::formatoNumerico( $concepto->CantidadEstimadaAnterior ),
-					'CantidadEstimada' 		   => Util::formatoNumerico( $concepto->CantidadEstimada ),
-					'PrecioUnitarioEstimado'   => Util::formatoNumerico( $concepto->PrecioUnitarioEstimado ),
-					'ImporteEstimado' 		   => Util::formatoNumerico( $concepto->ImporteEstimado ),
-					'CantidadCobrada'	 	   => Util::formatoNumerico( $concepto->CantidadCobrada ),
-					'PrecioUnitarioCobrado'    => Util::formatoNumerico( $concepto->PrecioUnitarioCobrado ),
-					'ImporteCobrado' 		   => Util::formatoNumerico( $concepto->ImporteCobrado )
+					'CantidadPresupuestada'    => Util::formatoNumerico($concepto->CantidadPresupuestada),
+					'CantidadEstimada' 		   => Util::formatoNumerico($concepto->CantidadEstimada),
+					'PrecioUnitarioEstimado'   => Util::formatoNumerico($concepto->PrecioUnitarioEstimado),
+					'ImporteEstimado' 		   => Util::formatoNumerico($concepto->ImporteEstimado),
+					'CantidadCobrada'	 	   => Util::formatoNumerico($concepto->CantidadCobrada),
+					'PrecioUnitarioCobrado'    => Util::formatoNumerico($concepto->PrecioUnitarioCobrado),
+					'ImporteCobrado' 		   => Util::formatoNumerico($concepto->ImporteCobrado),
 				);
 			}
 
 			$totales = $transaccion->getTotales();
 
-			$data['totales'] = formatoTotales( $totales );
+			$data['totales'] = formatoTotales($totales);
 			
 			break;
 
 		case 'guardaTransaccion':
-			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
-			$obra = new Obra( $conn, (int) $_POST['id_obra'] );
+			$conn = SAODBConnFactory::getInstance($_POST['base_datos']);
+			$obra = new Obra($conn, (int) $_POST['id_obra']);
 			$id_estimacion_obra = (int) $_POST['id_estimacion_obra'];
 
 			$fecha 		   = $_POST['fecha'];
 			$folio_factura = $_POST['folio_factura'];
 			$observaciones = $_POST['observaciones'];
-			$conceptos 	   = isset( $_POST['conceptos'] ) ? $_POST['conceptos'] : array();
+			$conceptos 	   = isset($_POST['conceptos']) ? $_POST['conceptos'] : array();
 
 			$data['errores']  = array();
 			$data['totales']  = array();
 
-			if ( isset( $_POST['id_transaccion'] ) ) {
+			if (isset($_POST['id_transaccion']))
+            {
+				$transaccion = new Cobranza($obra, (int) $_POST['id_transaccion']);
+				$transaccion->setFecha($fecha);
+				$transaccion->setObservaciones($observaciones);
+				$transaccion->setConceptos($conceptos);
+				$transaccion->setFolioFactura($folio_factura);
 
-				$transaccion = new Cobranza( $obra, (int) $_POST['id_transaccion'] );
-				$transaccion->setFecha( $fecha );
-				$transaccion->setObservaciones( $observaciones );
-				$transaccion->setConceptos( $conceptos );
-				$transaccion->setFolioFactura( $folio_factura );
+				$data['errores'] = $transaccion->guardaTransaccion(Sesion::getUser());
+			}
+            else
+            {
+				$transaccion = new Cobranza($obra, $id_estimacion_obra, $fecha, $folio_factura, $observaciones, $conceptos);
 
-				$data['errores'] = $transaccion->guardaTransaccion( Sesion::getUser() );
-			} else {
-				
-				$transaccion = new Cobranza(
-						$obra,
-						$id_estimacion_obra,
-						$fecha,
-						$folio_factura,
-						$observaciones,
-						$conceptos
-				);
-
-				$data['errores'] 		= $transaccion->guardaTransaccion( Sesion::getUser() );
+				$data['errores'] 		= $transaccion->guardaTransaccion(Sesion::getUser());
 				$data['IDTransaccion']  = $transaccion->getIDTransaccion();
-				$data['numeroFolio']    = Util::formatoNumeroFolio( $transaccion->getNumeroFolio() );
+				$data['numeroFolio']    = Util::formatoNumeroFolio($transaccion->getNumeroFolio());
 			}
 
 			$totales = $transaccion->getTotales();
 
-			$data['totales'] = formatoTotales( $totales );
-
+			$data['totales'] = formatoTotales($totales);
 			break;
 
 		case 'getTotalesTransaccion':
-			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
-			$obra = new Obra( $conn, (int) $_GET['id_obra'] );
+			$conn = SAODBConnFactory::getInstance($_GET['base_datos']);
+			$obra = new Obra($conn, (int) $_GET['id_obra']);
 			$id_transaccion = (int) $_GET['id_transaccion'];
 
 			$data['totales'] = array();
 
-			$transaccion = new Cobranza( $obra, $id_transaccion );
+			$transaccion = new Cobranza($obra, $id_transaccion);
 			$totales = $transaccion->getTotales();
 
-			$data['totales'] = formatoTotales( $totales );
+			$data['totales'] = formatoTotales($totales);
 			break;
 
 		case 'getFoliosTransaccion':
-			$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
-			$obra = new Obra( $conn, (int) $_GET['id_obra'] );
+			$conn = SAODBConnFactory::getInstance($_GET['base_datos']);
+			$obra = new Obra($conn, (int) $_GET['id_obra']);
 			$data['options'] = array();
 
-			$folios = Cobranza::getFoliosTransaccion( $obra );
+			$folios = Cobranza::getFoliosTransaccion($obra);
 			
-			foreach ( $folios as $folio ) {
-				
+			foreach ($folios as $folio)
+            {
 				$data['options'][] = array(
 					'IDCobranza' => $folio->IDCobranza,
-					'NumeroFolio'   => Util::formatoNumeroFolio( $folio->NumeroFolio )
+					'NumeroFolio'   => Util::formatoNumeroFolio($folio->NumeroFolio),
 				);
 			}
 
 			break;
 
 		case 'actualizaTotal':
-			$conn = SAODBConnFactory::getInstance( $_POST['base_datos'] );
-			$obra = new Obra( $conn, (int) $_POST['id_obra'] );
+			$conn = SAODBConnFactory::getInstance($_POST['base_datos']);
+			$obra = new Obra($conn, (int) $_POST['id_obra']);
 			$id_transaccion = (int) $_POST['id_transaccion'];
 
 			$tipoTotal = $_POST['tipoTotal'];
 			$importe   = Util::limpiaImporte($_POST['importe']);
 			
-			$transaccion = new Cobranza( $obra, $id_transaccion );
+			$transaccion = new Cobranza($obra, $id_transaccion);
 
-			switch ( $tipoTotal ) {
-
+			switch ($tipoTotal)
+            {
 				case 'txtImporteProgramado':
-					$transaccion->setImporteProgramado( $importe );
+					$transaccion->setImporteProgramado($importe);
 					break;
 
 				case 'txtImporteDevolucion':
-					$transaccion->setImporteDevolucion( $importe );
+					$transaccion->setImporteDevolucion($importe);
 					break;
 
 				case 'txtImporteRetencionObraNoEjecutada':
-					$transaccion->setImporteRetencionObraNoEjecutada( $importe );
+					$transaccion->setImporteRetencionObraNoEjecutada($importe);
 					break;
 
 				case 'txtImporteAmortizacionAnticipo':
-					$transaccion->setImporteAmortizacionAnticipo( $importe );
+					$transaccion->setImporteAmortizacionAnticipo($importe);
 					break;
 
 				case 'txtImporteIVAAnticipo':
-					$transaccion->setImporteIVAAnticipo( $importe );
+					$transaccion->setImporteIVAAnticipo($importe);
 					break;
 
 				case 'txtImporteInspeccionVigilancia':
-					$transaccion->setImporteInspeccionVigilancia( $importe );
+					$transaccion->setImporteInspeccionVigilancia($importe);
 					break;
 
 				case 'txtImporteCMIC':
-					$transaccion->setImporteCMIC( $importe );
+					$transaccion->setImporteCMIC($importe);
 					break;
 
 				default:
 					throw new Exception("Total no válido");
 			}
-
 			break;
 	}
 
-} catch( Exception $e ) {
-
+}
+catch (Exception $e)
+{
 	$data['success'] = false;
 	$data['message'] = $e->getMessage();
 }
 
-function formatoTotales( $totales ) {
-
+function formatoTotales($totales)
+{
 	$data = array();
 
-	foreach ($totales as $total) {
-
+	foreach ($totales as $total)
+    {
 		$data = array(
 			'subtotal'  => Util::formatoNumerico($total->Subtotal),
 			'iva' 		=> Util::formatoNumerico($total->IVA),
@@ -268,4 +259,3 @@ function formatoTotales( $totales ) {
 }
 
 echo json_encode($data);
-?>

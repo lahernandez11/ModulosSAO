@@ -17,8 +17,8 @@ class Cobranza extends TransaccionSAO
     {
 		$params = func_get_args();
 
-		switch (func_num_args()) {
-
+		switch (func_num_args())
+        {
 			case 6:
 				call_user_func_array(array($this, "instanceFromDefault"), $params);
 				break;
@@ -60,7 +60,7 @@ class Cobranza extends TransaccionSAO
      */
     private function instanceFromID(Obra $obra, $id_transaccion)
     {
-		parent::__construct( $obra, $id_transaccion );
+		parent::__construct($obra, $id_transaccion);
 
 		$this->setDatosGenerales();
 	}
@@ -71,7 +71,8 @@ class Cobranza extends TransaccionSAO
      */
     public function guardaTransaccion(Usuario $usuario)
     {
-		if ( ! empty($this->id_transaccion)) {
+		if ( ! empty($this->id_transaccion))
+        {
 			$tsql = "{call [Cobranza].[uspActualizaDatosGenerales]( ?, ?, ?, ?, ? )}";
 
 		    $params = array(
@@ -84,7 +85,9 @@ class Cobranza extends TransaccionSAO
 		    );
 
 		    $this->conn->executeSP($tsql, $params);
-		} else {
+		}
+        else
+        {
 			$tsql = "{call [Cobranza].[uspRegistraTransaccion]( ?, ?, ?, ?, ?, ? )}";
 
 		    $params = array(
@@ -93,7 +96,7 @@ class Cobranza extends TransaccionSAO
 		        array($this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('MAX')),
 		        array($usuario->getUsername(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16)),
 		        array(&$this->id_transaccion, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT),
-		        array(&$this->_numeroFolio, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT)
+		        array(&$this->_numeroFolio, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT),
 		    );
 
 		    $this->conn->executeSP($tsql, $params);
@@ -111,31 +114,36 @@ class Cobranza extends TransaccionSAO
 
 		$tsql = "{call [Cobranza].[uspGuardaConcepto]( ?, ?, ?, ? )}";
 
-		foreach ($this->conceptos as $concepto) {
-			try {
+		foreach ($this->conceptos as $concepto)
+        {
+			try
+            {
 				// Limpia y valida la cantidad y precio
-				$concepto['cantidad'] = (float) str_replace( ',', '', $concepto['cantidad'] );
-				$concepto['precio'] = (float) str_replace( ',', '', $concepto['precio'] );
+				$concepto['cantidad'] = (float) str_replace(',', '', $concepto['cantidad']);
+				$concepto['precio'] = (float) str_replace(',', '', $concepto['precio']);
 
 				// Si el importe no es valido agrega el concepto con error
-				if ( ! $this->esImporte( $concepto['cantidad'] ) || ! $this->esImporte( $concepto['precio'])) {
+				if ( ! $this->esImporte($concepto['cantidad']) || ! $this->esImporte($concepto['precio']))
+                {
 					throw new Exception("El numero ingresado no es correcto");
 				}
 
-				if ($concepto['cantidad'] === 0.0) {
+				if ($concepto['cantidad'] === 0.0)
+                {
 					continue;
 				}
 
 				$params = array(
-					array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-					array( $concepto['IDConcepto'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-					array( $concepto['cantidad'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT ),
-					array( $concepto['precio'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) )
-					// array( $concepto['cumplido'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT )
+					array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+					array($concepto['IDConcepto'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
+					array($concepto['cantidad'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT),
+					array($concepto['precio'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
 				);
 
 				$this->conn->executeSP($tsql, $params);
-			} catch (Exception $e) {
+			}
+            catch (Exception $e)
+            {
 				$errores[] = array(
 					'IDConcepto' => $concepto['IDConcepto'],
 					'cantidad'   => $concepto['cantidad'],
@@ -171,7 +179,7 @@ class Cobranza extends TransaccionSAO
 		$params = array(
 	        array($this->getIDObra() , SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 	        array($this->getIDEstimacionObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
+	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 	    );
 
 	    $conceptos = $this->conn->executeSP($tsql, $params);
@@ -182,7 +190,7 @@ class Cobranza extends TransaccionSAO
     /**
      * @param array $conceptos
      */
-    public function setConceptos( Array $conceptos )
+    public function setConceptos(Array $conceptos)
     {
 		$this->conceptos = $conceptos;
 	}
@@ -206,7 +214,7 @@ class Cobranza extends TransaccionSAO
     /**
      * @param $folio
      */
-    public function setFolioFactura( $folio )
+    public function setFolioFactura($folio)
     {
 		$this->folio_factura = $folio;
 	}
@@ -254,7 +262,8 @@ class Cobranza extends TransaccionSAO
      */
     public function setImporteProgramado($importe)
     {
-		if ( ! $this->esImporte($importe)) {
+		if ( ! $this->esImporte($importe))
+        {
 			throw new Exception("Importe Incorrecto");
 		}
 
@@ -262,7 +271,7 @@ class Cobranza extends TransaccionSAO
 
         $params = array(
             array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-            array($importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4))
+            array($importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
         );
 
         $this->conn->executeSP($tsql, $params);
@@ -274,7 +283,8 @@ class Cobranza extends TransaccionSAO
      */
     public function setImporteDevolucion($importe)
     {
-		if ( ! $this->esImporte($importe)) {
+		if ( ! $this->esImporte($importe))
+        {
 			throw new Exception("Importe Incorrecto");
 		}
 
@@ -283,7 +293,7 @@ class Cobranza extends TransaccionSAO
         $params = array(
             array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
             null,
-            array($importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4))
+            array($importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
         );
 
         $this->conn->executeSP($tsql, $params);
@@ -295,7 +305,8 @@ class Cobranza extends TransaccionSAO
      */
     public function setImporteRetencionObraNoEjecutada($importe)
     {
-		if ( ! $this->esImporte($importe)) {
+		if ( ! $this->esImporte($importe))
+        {
 			throw new Exception("Importe Incorrecto");
 		}
 
@@ -305,7 +316,7 @@ class Cobranza extends TransaccionSAO
             array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
             null,
             null,
-            array($importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4))
+            array($importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
         );
 
         $this->conn->executeSP($tsql, $params);
@@ -317,7 +328,8 @@ class Cobranza extends TransaccionSAO
      */
     public function setImporteAmortizacionAnticipo($importe)
     {
-		if ( ! $this->esImporte($importe)) {
+		if ( ! $this->esImporte($importe))
+        {
 			throw new Exception("Importe Incorrecto");
 		}
 
@@ -328,7 +340,7 @@ class Cobranza extends TransaccionSAO
             null,
             null,
             null,
-            array($importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4))
+            array($importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
         );
 
         $this->conn->executeSP($tsql, $params);
@@ -340,7 +352,8 @@ class Cobranza extends TransaccionSAO
      */
     public function setImporteIVAAnticipo($importe)
     {
-		if ( ! $this->esImporte($importe)) {
+		if ( ! $this->esImporte($importe))
+        {
 			throw new Exception("Importe Incorrecto");
 		}
 
@@ -352,7 +365,7 @@ class Cobranza extends TransaccionSAO
             null,
             null,
             null,
-            array($importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4))
+            array($importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
         );
 
         $this->conn->executeSP($tsql, $params);
@@ -364,20 +377,21 @@ class Cobranza extends TransaccionSAO
      */
     public function setImporteInspeccionVigilancia($importe)
     {
-		if ( ! $this->esImporte($importe)) {
+		if ( ! $this->esImporte($importe))
+        {
 			throw new Exception("Importe Incorrecto");
 		}
 
         $tsql = "{call [Cobranza].[uspActualizaTotales]( ?, ?, ?, ?, ?, ?, ? )}";
 
         $params = array(
-            array( $this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+            array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
             null,
             null,
             null,
             null,
             null,
-            array( $importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4) )
+            array($importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
         );
 
         $this->conn->executeSP($tsql, $params);
@@ -389,7 +403,8 @@ class Cobranza extends TransaccionSAO
      */
     public function setImporteCMIC($importe)
     {
-		if ( ! $this->esImporte($importe)) {
+		if ( ! $this->esImporte($importe))
+        {
 			throw new Exception("Importe Incorrecto");
 		}
 
@@ -403,7 +418,7 @@ class Cobranza extends TransaccionSAO
             null,
             null,
             null,
-            array($importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4))
+            array($importe, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
         );
 
         $this->conn->executeSP($tsql, $params);
@@ -439,7 +454,7 @@ class Cobranza extends TransaccionSAO
 
 		$params = array(
 	        array($obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-	        array($id_estimacion_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
+	        array($id_estimacion_obra, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 	    );
 
 	    $conceptos = $obra->getConn()->executeSP($tsql, $params);
