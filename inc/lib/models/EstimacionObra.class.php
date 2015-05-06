@@ -1,8 +1,8 @@
 <?php
 require_once 'models/TransaccionSAO.class.php';
 
-class EstimacionObra extends TransaccionSAO
-{
+class EstimacionObra extends TransaccionSAO {
+
 	const TIPO_TRANSACCION = 103;
 
 	private $fecha_inicio;
@@ -16,7 +16,8 @@ class EstimacionObra extends TransaccionSAO
     {
 		$params = func_get_args();
 
-		switch (func_num_args()) {
+		switch (func_num_args())
+        {
 			case 7:
 				call_user_func_array(array($this, "instanceFromDefault"), $params);
 				break;
@@ -72,8 +73,8 @@ class EstimacionObra extends TransaccionSAO
      */
     public function guardaTransaccion(Usuario $usuario)
     {
-		if ( ! empty( $this->id_transaccion)) {
-
+		if ( ! empty( $this->id_transaccion))
+        {
 			$tsql = "{call [EstimacionObra].[uspActualizaDatosGenerales]( ?, ?, ?, ?, ?, ?, ? )}";
 
 		    $params = array(
@@ -87,8 +88,9 @@ class EstimacionObra extends TransaccionSAO
 		    );
 
 		    $this->conn->executeSP($tsql, $params);
-		} else {
-
+		}
+        else
+        {
 			$tsql = "{call [EstimacionObra].[uspRegistraTransaccion]( ?, ?, ?, ?, ?, ?, ?, ?, ? )}";
 
 		    $params = array(
@@ -100,7 +102,7 @@ class EstimacionObra extends TransaccionSAO
 		        array($this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096)),
 		        array($usuario->getUsername(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16)),
 		        array(&$this->id_transaccion, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT),
-		        array(&$this->_numeroFolio, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT)
+		        array(&$this->_numeroFolio, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT),
 		    );
 
 		    $this->conn->executeSP($tsql, $params);
@@ -110,14 +112,17 @@ class EstimacionObra extends TransaccionSAO
 
 		$tsql = "{call [EstimacionObra].[uspEstimaConcepto]( ?, ?, ?, ?, ? )}";
 
-		foreach ($this->conceptos as $concepto) {
-			try {
+		foreach ($this->conceptos as $concepto)
+        {
+			try
+            {
 				// Limpia y valida la cantidad y precio
 				$concepto['cantidad'] = str_replace(',', '', $concepto['cantidad']);
 				$concepto['precio'] = str_replace(',', '', $concepto['precio']);
 
 				// Si el importe no es valido agrega el concepto con error
-				if ( ! $this->esImporte( $concepto['cantidad']) || ! $this->esImporte( $concepto['precio'] ) ) {
+				if ( ! $this->esImporte($concepto['cantidad']) || ! $this->esImporte($concepto['precio']))
+                {
 					throw new Exception("El numero ingresado no es correcto");
 				}
 
@@ -126,11 +131,13 @@ class EstimacionObra extends TransaccionSAO
 					array($concepto['IDConcepto'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 					array($concepto['cantidad'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT),
 					array($concepto['precio'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
-					array($concepto['cumplido'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT)
+					array($concepto['cumplido'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT),
 				);
 
 				$this->conn->executeSP($tsql, $params);
-			} catch (Exception $e) {
+			}
+            catch (Exception $e)
+            {
 				$errores[] = array(
 					'IDConcepto' => $concepto['IDConcepto'],
 					'cantidad'   => $concepto['cantidad'],
@@ -164,7 +171,8 @@ class EstimacionObra extends TransaccionSAO
      */
     public function setFechaInicio($fecha)
     {
-		if ( ! $this->fechaEsValida($fecha)) {
+		if ( ! $this->fechaEsValida($fecha))
+        {
             throw new Exception("El formato de fecha inicial es incorrecto.");
         }
 
@@ -185,7 +193,8 @@ class EstimacionObra extends TransaccionSAO
      */
     public function setFechaTermino($fecha)
     {
-		if ( ! $this->fechaEsValida($fecha)) {
+		if ( ! $this->fechaEsValida($fecha))
+        {
             throw new Exception("El formato de fecha término es incorrecto.");
         }
 
