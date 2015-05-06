@@ -127,7 +127,7 @@ class AvanceObra extends TransaccionSAO {
 		        array($this->getIDConceptoRaiz(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 		        array($usuario->getUsername(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16)),
 		        array(&$this->id_transaccion, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT),
-		        array(&$this->_numeroFolio, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT)
+		        array(&$this->_numeroFolio, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT),
 		    );
 
 		    $this->conn->executeSP($tsql, $params);
@@ -164,7 +164,7 @@ class AvanceObra extends TransaccionSAO {
 					array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 					array($concepto['IDConcepto'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 					array($concepto['cantidad'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT),
-					array($concepto['cumplido'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT)
+					array($concepto['cumplido'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT),
 				);
 			
 				$this->conn->executeSP($tsql, $params);
@@ -333,7 +333,7 @@ class AvanceObra extends TransaccionSAO {
 
 	    $params = array(
 	        array($obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-	        array($id_concepto_raiz, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
+	        array($id_concepto_raiz, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
 	    );
 
 	    $conceptos = $obra->getConn()->executeSP($tsql, $params);
