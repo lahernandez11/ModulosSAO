@@ -26,11 +26,11 @@ try
 			$obra = new Obra($conn, $_GET['id_obra']);
 			$conceptos = EstimacionObra::getConceptosNuevaEstimacion($obra);
 			
-			$data['conceptos'] = array();
+			$data['conceptos'] = [];
 
 			foreach ($conceptos as $concepto)
             {
-				$data['conceptos'][] = array(
+				$data['conceptos'][] = [
 					'IDConcepto'  			   => $concepto->IDConcepto,
 					'NumeroNivel' 			   => $concepto->NumeroNivel,
 					'Descripcion' 			   => $concepto->Descripcion,
@@ -39,10 +39,10 @@ try
 					'CantidadPresupuestada'    => Util::formatoNumerico($concepto->CantidadPresupuestada),
 					'CantidadEstimadaAnterior' => Util::formatoNumerico($concepto->CantidadEstimadaAnterior),
 					'CantidadEstimada' 		   => Util::formatoNumerico($concepto->CantidadEstimada),
-					'PrecioVenta' 		 	   => Util::formatoNumerico($concepto->PrecioVenta),
+					'PrecioVenta' 		 	   => $concepto->PrecioVenta,
 					'Total' 		 		   => Util::formatoNumerico($concepto->Total),
 					'Cumplido' 		 		   => $concepto->Cumplido,
-				);
+				];
 			}
 			break;
 
@@ -50,15 +50,15 @@ try
 			$conn = SAODBConnFactory::getInstance($_GET['base_datos']);
 			$obra = new Obra($conn, $_GET['id_obra']);
 			
-			$data['options'] = array();
+			$data['options'] = [];
 			$folios = EstimacionObra::getFoliosTransaccion($obra);
 			
 			foreach ($folios as $folio)
             {
-				$data['options'][] = array(
+				$data['options'][] = [
 					'id_transaccion' => $folio->IDTransaccion,
 					'numero_folio' => Util::formatoNumeroFolio($folio->NumeroFolio),
-				);
+				];
 			}
 			break;
 
@@ -67,9 +67,9 @@ try
 			$obra = new Obra($conn, $_GET['id_obra']);
 			$id_transaccion = (int) $_GET['id_transaccion'];
 
-			$data['datos'] 	   = array();
-			$data['conceptos'] = array();
-			$data['totales']   = array();
+			$data['datos'] 	   = [];
+			$data['conceptos'] = [];
+			$data['totales']   = [];
 			
 			$transaccion = new EstimacionObra($obra, $id_transaccion);
 
@@ -83,7 +83,7 @@ try
 
 			foreach ($conceptos as $concepto)
             {
-				$data['conceptos'][] = array(
+				$data['conceptos'][] = [
 					'IDConcepto'  			   => $concepto->IDConcepto,
 					'NumeroNivel' 			   => $concepto->NumeroNivel,
 					'Descripcion' 			   => $concepto->Descripcion,
@@ -92,21 +92,21 @@ try
 					'CantidadPresupuestada'    => Util::formatoNumerico($concepto->CantidadPresupuestada),
 					'CantidadEstimadaAnterior' => Util::formatoNumerico($concepto->CantidadEstimadaAnterior),
 					'CantidadEstimada' 		   => Util::formatoNumerico($concepto->CantidadEstimada),
-					'PrecioVenta' 		 	   => Util::formatoNumerico($concepto->PrecioVenta),
+					'PrecioVenta' 		 	   => $concepto->PrecioVenta,
 					'Total' 		 		   => Util::formatoNumerico($concepto->Total),
 					'Cumplido' 		 		   => $concepto->Cumplido,
-				);
+				];
 			}
 
 			$totales = $transaccion->getTotalesTransaccion();
 
 			foreach ($totales as $total)
             {
-				$data['totales'][] = array(
+				$data['totales'][] = [
 					'Subtotal'  => Util::formatoNumerico($total->Subtotal),
 					'IVA' 		=> Util::formatoNumerico($total->IVA),
 					'Total'   	=> Util::formatoNumerico($total->Total),
-				);
+				];
 			}
 			break;
 
@@ -119,15 +119,14 @@ try
 			$fechaTermino  = $_POST['datosGenerales']['fechaTermino'];
 			$referencia    = $_POST['datosGenerales']['referencia'];
 			$observaciones = $_POST['datosGenerales']['observaciones'];
-			$conceptos     = isset($_POST['conceptos']) ? $_POST['conceptos'] : array();
+			$conceptos     = isset($_POST['conceptos']) ? $_POST['conceptos'] : [];
 
-			$data['errores'] = array();
-			$data['totales'] = array();
+			$data['errores'] = [];
+			$data['totales'] = [];
 
 			if (isset($_POST['id_transaccion']))
             {
 				$transaccion = new EstimacionObra($obra, (int) $_POST['id_transaccion']);
-
 				$transaccion->setFecha($fecha);
 				$transaccion->setFechaInicio($fechaInicio);
 				$transaccion->setFechaTermino($fechaTermino);
@@ -136,27 +135,28 @@ try
 				$transaccion->setConceptos($conceptos);
 				
 				$data['errores'] = $transaccion->guardaTransaccion(Sesion::getUser());
-			} else {
-				
+			}
+            else
+            {
 				$transaccion = new EstimacionObra(
 					$obra, $fecha, $fechaInicio, $fechaTermino,
 					$observaciones, $referencia, $conceptos
 				);
 				
-				$data['errores']		= $transaccion->guardaTransaccion(Sesion::getUser());
-				$data['id_transaccion']  = $transaccion->getIDTransaccion();
-				$data['numero_folio']    = Util::formatoNumeroFolio($transaccion->getNumeroFolio());
+				$data['errores'] = $transaccion->guardaTransaccion(Sesion::getUser());
+				$data['id_transaccion'] = $transaccion->getIDTransaccion();
+				$data['numero_folio'] = Util::formatoNumeroFolio($transaccion->getNumeroFolio());
 			}
 
 			$totales = $transaccion->getTotalesTransaccion();
 
 			foreach ($totales as $total)
             {
-				$data['totales'][] = array(
+				$data['totales'][] = [
 					'Subtotal'  => Util::formatoNumerico($total->Subtotal),
 					'IVA' 		=> Util::formatoNumerico($total->IVA),
 					'Total'   	=> Util::formatoNumerico($total->Total),
-				);
+				];
 			}
 
 			break;
@@ -195,17 +195,17 @@ try
 
 			$transaccion = new EstimacionObra($obra , $id_transaccion);
 
-			$data['totales'] = array();
+			$data['totales'] = [];
 
 			$totales = $transaccion->getTotalesTransaccion();
 
 			foreach ($totales as $total)
             {
-				$data['totales'][] = array(
+				$data['totales'][] = [
 					'Subtotal'  => Util::formatoNumerico($total->Subtotal),
 					'IVA' 		=> Util::formatoNumerico($total->IVA),
 					'Total'     => Util::formatoNumerico($total->Total),
-				);
+				];
 			}
 			break;
 
@@ -215,16 +215,16 @@ try
 
 			$listaTran = EstimacionObra::getListaTransacciones($obra);
 
-			$data['options'] = array();
+			$data['options'] = [];
 
 			foreach ($listaTran as $tran)
             {
-				$data['options'][] = array(
+				$data['options'][] = [
 					'IDTransaccion'  => $tran->IDTransaccion,
 					'NumeroFolio' 	 => Util::formatoNumeroFolio($tran->NumeroFolio),
 					'Fecha'     	 => Util::formatoFecha($tran->Fecha),
 					'Observaciones'  => $tran->Observaciones,
-				);
+				];
 			}
 			break;
 	}
@@ -236,4 +236,4 @@ catch (Exception $e)
 	$data['message'] = $e->getMessage();
 }
 
-echo json_encode( $data );
+echo json_encode($data);
