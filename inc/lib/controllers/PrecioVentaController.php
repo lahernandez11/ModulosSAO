@@ -26,21 +26,21 @@ try
 			$obra = new Obra($conn, $_GET['id_obra']);
 			$precios = PrecioVenta::getPreciosVenta($obra);
 
-			$data['conceptos'] = array();
+			$data['conceptos'] = [];
 
 			foreach ($precios as $precio)
             {
-				$data['conceptos'][] = array(
+				$data['conceptos'][] = [
 					'id_concepto'  	   => $precio->id_concepto,
 					'numero_nivel' 	   => $precio->numero_nivel,
 					'descripcion' 	   => $precio->descripcion,
 					'es_actividad' 	   => $precio->es_actividad,
 					'con_precio' 	   => $precio->con_precio,
 					'unidad' 	   	   => $precio->unidad,
-					'precio_produccion' => Util::formatoNumerico($precio->precio_produccion),
-					'precio_estimacion' => Util::formatoNumerico($precio->precio_estimacion),
+					'precio_produccion' => $precio->precio_produccion,
+					'precio_estimacion' => $precio->precio_estimacion,
 					'updated_at' => Util::formatoFecha($precio->updated_at),
-				);
+				];
 			}
 			break;
 
@@ -48,9 +48,9 @@ try
 			$conn = SAODBConnFactory::getInstance($_POST['base_datos']);
 			$obra = new Obra($conn, $_POST['id_obra']);
 
-			$conceptos = is_array($_POST['conceptos']) ? $_POST['conceptos'] : array();
+			$conceptos = is_array($_POST['conceptos']) ? $_POST['conceptos'] : [];
 
-			$data['conceptosError'] = array();
+			$data['conceptosError'] = [];
 			$data['conceptosError'] = PrecioVenta::setPreciosVenta($obra, $conceptos);
 			break;
 	}
@@ -62,4 +62,4 @@ catch (Exception $e)
 	$data['message'] = $e->getMessage();
 }
 
-echo json_encode( $data );
+echo json_encode($data);
