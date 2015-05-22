@@ -44,7 +44,7 @@ try
 					'PrecioUnitarioEstimado'   => Util::formatoNumerico($concepto->PrecioUnitarioEstimado),
 					'ImporteEstimado' 		   => Util::formatoNumerico($concepto->ImporteEstimado),
 					'CantidadCobrada'	 	   => Util::formatoNumerico($concepto->CantidadCobrada),
-					'PrecioUnitarioCobrado'    => Util::formatoNumerico($concepto->PrecioUnitarioCobrado),
+					'PrecioUnitarioCobrado'    => $concepto->PrecioUnitarioCobrado,
 					'ImporteCobrado' 		   => Util::formatoNumerico($concepto->ImporteCobrado),
 				);
 			}
@@ -72,10 +72,10 @@ try
 			
 			$transaccion = new Cobranza($obra, $id_transaccion);
 
-			$data['datos']['referencia']    = $transaccion->getReferencia();
+			$data['datos']['referencia'] = $transaccion->getReferencia();
 			$data['datos']['observaciones'] = $transaccion->getObservaciones();
 			$data['datos']['folio_factura'] = $transaccion->getFolioFactura();
-			$data['datos']['fecha'] 		= Util::formatoFecha($transaccion->getFecha());
+			$data['datos']['fecha'] = Util::formatoFecha($transaccion->getFecha());
 
 			$conceptos = $transaccion->getConceptos();
 
@@ -93,7 +93,7 @@ try
 					'PrecioUnitarioEstimado'   => Util::formatoNumerico($concepto->PrecioUnitarioEstimado),
 					'ImporteEstimado' 		   => Util::formatoNumerico($concepto->ImporteEstimado),
 					'CantidadCobrada'	 	   => Util::formatoNumerico($concepto->CantidadCobrada),
-					'PrecioUnitarioCobrado'    => Util::formatoNumerico($concepto->PrecioUnitarioCobrado),
+					'PrecioUnitarioCobrado'    => $concepto->PrecioUnitarioCobrado,
 					'ImporteCobrado' 		   => Util::formatoNumerico($concepto->ImporteCobrado),
 				);
 			}
@@ -101,7 +101,7 @@ try
 			$totales = $transaccion->getTotales();
 
 			$data['totales'] = formatoTotales($totales);
-			
+
 			break;
 
 		case 'guardaTransaccion':
