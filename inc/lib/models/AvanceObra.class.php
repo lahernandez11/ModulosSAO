@@ -21,11 +21,11 @@ class AvanceObra extends TransaccionSAO {
 		switch (func_num_args())
         {
 			case 7:
-				call_user_func_array(array($this, "instaceFromDefault"), $params);
+				call_user_func_array([$this, "instaceFromDefault"], $params);
 				break;
 
 			case 2:
-				call_user_func_array(array($this, "instanceFromID"), $params);
+				call_user_func_array([$this, "instanceFromID"], $params);
 				break;
 		}
 	}
@@ -79,9 +79,9 @@ class AvanceObra extends TransaccionSAO {
 
 		$tsql = "{call [AvanceObra].[uspDatosGenerales]( ? )}";
 
-		$params = array(
-	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
-	    );
+		$params = [
+	        [$this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	    ];
 
 	    $datos = $this->conn->executeSP($tsql, $params);
 
@@ -97,20 +97,20 @@ class AvanceObra extends TransaccionSAO {
      */
     public function guardaTransaccion(Usuario $usuario)
 	{
-		$errores = array();
+		$errores = [];
 
 		if ( ! empty($this->id_transaccion))
         {
 			$tsql = "{call [AvanceObra].[uspGuardaDatosGenerales]( ?, ?, ?, ?, ?, ? )}";
 
-		    $params = array(
-		        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-		        array($this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
-		        array($this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
-		        array($this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
-		        array($this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096)),
-		        array($usuario->getUsername(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16)),
-		    );
+		    $params = [
+		        [$this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+		        [$this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE],
+		        [$this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE],
+		        [$this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE],
+		        [$this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096)],
+		        [$usuario->getUsername(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16)],
+		    ];
 
 		    $this->conn->executeSP($tsql, $params);
 		}
@@ -118,17 +118,17 @@ class AvanceObra extends TransaccionSAO {
         {
 			$tsql = "{call [AvanceObra].[uspRegistraTransaccion]( ?, ?, ?, ?, ?, ?, ?, ?, ? )}";
 
-		    $params = array(
-		        array($this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-		        array($this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
-		       	array($this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
-		        array($this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE),
-		        array($this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096)),
-		        array($this->getIDConceptoRaiz(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-		        array($usuario->getUsername(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16)),
-		        array(&$this->id_transaccion, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT),
-		        array(&$this->_numeroFolio, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT),
-		    );
+		    $params = [
+		        [$this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+		        [$this->getFecha(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE],
+		       	[$this->getFechaInicio(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE],
+		        [$this->getFechaTermino(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DATE],
+		        [$this->getObservaciones(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(4096)],
+		        [$this->getIDConceptoRaiz(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+		        [$usuario->getUsername(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR(16)],
+		        [&$this->id_transaccion, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT],
+		        [&$this->_numeroFolio, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_INT],
+		    ];
 
 		    $this->conn->executeSP($tsql, $params);
 		}
@@ -160,23 +160,22 @@ class AvanceObra extends TransaccionSAO {
 					throw new Exception("La cantidad ingresada no es correcta.");
 				}
 
-				$params = array(
-					array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-					array($concepto['IDConcepto'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-					array($concepto['cantidad'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT),
-					array($concepto['cumplido'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT),
-				);
+				$params = [
+					[$this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+					[$concepto['IDConcepto'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+					[$concepto['cantidad'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_FLOAT],
+					[$concepto['cumplido'], SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_BIT],
+				];
 			
 				$this->conn->executeSP($tsql, $params);
 			}
             catch (Exception $e)
             {
-				$errores[] = array
-				(
+				$errores[] = [
 					'IDConcepto' => $concepto['IDConcepto'],
 					'cantidad' => $concepto['cantidad'],
-					'message' => $e->getMessage()
-				);
+					'message' => $e->getMessage(),
+				];
 			}
 		}
 
@@ -190,9 +189,9 @@ class AvanceObra extends TransaccionSAO {
 	{
 		$tsql = "{call [AvanceObra].[uspApruebaTransaccion]( ? )}";
 
-		$params = array(
-	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
-	    );
+		$params = [
+	        [$this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	    ];
 
 	    $this->conn->executeSP($tsql, $params);
 	}
@@ -204,9 +203,9 @@ class AvanceObra extends TransaccionSAO {
 	{
 		$tsql = "{call [AvanceObra].[uspRevierteAprobacion]( ? )}";
 
-		$params = array(
-	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
-	    );
+		$params = [
+	        [$this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT]
+	    ];
 
 	    $this->conn->executeSP($tsql, $params);
 	}
@@ -294,11 +293,11 @@ class AvanceObra extends TransaccionSAO {
 	{
 		$tsql = "{call [AvanceObra].[uspConceptosAvance]( ?, ?, ? )}";
 
-	    $params = array(
-	        array($this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-	        array($this->getIDConceptoRaiz(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
-	    );
+	    $params = [
+	        [$this->getIDObra(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	        [$this->getIDConceptoRaiz(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	        [$this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	    ];
 
 	    $conceptos = $this->conn->executeSP($tsql, $params);
 
@@ -312,9 +311,9 @@ class AvanceObra extends TransaccionSAO {
 	{
 		$tsql = "{call [AvanceObra].[uspTotalesTransaccion]( ? )}";
 
-		$params = array(
-	        array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
-	    );
+		$params = [
+	        [$this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	    ];
 
 	    $totales = $this->conn->executeSP($tsql, $params);
 
@@ -331,10 +330,10 @@ class AvanceObra extends TransaccionSAO {
 	{
 		$tsql = "{call [AvanceObra].[uspConceptosAvance]( ?, ? )}";
 
-	    $params = array(
-	        array($obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-	        array($id_concepto_raiz, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT),
-	    );
+	    $params = [
+	        [$obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	        [$id_concepto_raiz, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	    ];
 
 	    $conceptos = $obra->getConn()->executeSP($tsql, $params);
 
@@ -350,9 +349,9 @@ class AvanceObra extends TransaccionSAO {
 	{
 		$tsql = '{call [AvanceObra].[uspListaFolios]( ? )}';
 
-		$params = array(
-	        array($obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
-	    );
+		$params = [
+	        [$obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	    ];
 
 	    $foliosTran = $obra->getConn()->executeSP($tsql, $params);
 

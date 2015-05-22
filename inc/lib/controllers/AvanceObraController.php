@@ -36,13 +36,13 @@ try
 			$obra = new Obra($conn, $_GET['id_obra']);
 			$id_concepto_raiz = (int) $_GET['id_concepto_raiz'];
 			
-			$data['conceptos'] = array();
+			$data['conceptos'] = [];
 
 			$conceptos = AvanceObra::getConceptosNuevoAvance($obra, $id_concepto_raiz);
 
 			foreach ($conceptos as $concepto)
             {
-				$data['conceptos'][] = array(
+				$data['conceptos'][] = [
 					'IDConcepto'  => $concepto->IDConcepto,
 					'NumeroNivel' => $concepto->NumeroNivel,
 					'Descripcion' => $concepto->Descripcion,
@@ -56,7 +56,7 @@ try
 					'MontoAvance'			 => Util::formatoNumerico($concepto->MontoAvance),
 					'CantidadAvance' 		 => Util::formatoNumerico($concepto->CantidadAvance),
 					'MontoAvanceActual'   	 => Util::formatoNumerico($concepto->MontoAvanceActual),
-				);
+				];
 			}
 			break;
 
@@ -64,16 +64,16 @@ try
 			$conn = SAODBConnFactory::getInstance($_GET['base_datos']);
 			$obra = new Obra($conn, $_GET['id_obra']);
 			
-			$data['options'] = array();
+			$data['options'] = [];
 
 			$folios = AvanceObra::getFoliosTransaccion($obra);
 			
 			foreach ($folios as $folio)
             {
-				$data['options'][] = array(
+				$data['options'][] = [
 					'IDTransaccion' => $folio->IDTransaccion,
-					'NumeroFolio'   => Util::formatoNumeroFolio($folio->NumeroFolio)
-				);
+					'NumeroFolio'   => Util::formatoNumeroFolio($folio->NumeroFolio),
+				];
 			}
 			break;
 
@@ -82,9 +82,9 @@ try
 			$obra = new Obra($conn, $_GET['id_obra']);
 			$id_transaccion = (int) $_GET['id_transaccion'];
 
-			$data['datos'] 	   = array();
-			$data['conceptos'] = array();
-			$data['totales']   = array();
+			$data['datos'] 	   = [];
+			$data['conceptos'] = [];
+			$data['totales']   = [];
 			
 			$transaccion = new AvanceObra($obra, $id_transaccion);
 
@@ -98,7 +98,7 @@ try
 
 			foreach ($conceptos as $concepto)
             {
-				$data['conceptos'][] = array(
+				$data['conceptos'][] = [
 					'IDConcepto'  => $concepto->IDConcepto,
 					'NumeroNivel' => $concepto->NumeroNivel,
 					'Descripcion' => $concepto->Descripcion,
@@ -112,18 +112,18 @@ try
 					'MontoAvance'			 => Util::formatoNumerico($concepto->MontoAvance),
 					'CantidadAvanceActual'   => Util::formatoNumerico($concepto->CantidadAvanceActual),
 					'MontoAvanceActual'   	 => Util::formatoNumerico($concepto->MontoAvanceActual),
-				);
+				];
 			}
 
 			$totales = $transaccion->getTotalesTransaccion();
 
 			foreach ($totales as $total)
             {
-				$data['totales'] = array(
+				$data['totales'] = [
 					'subtotal' => Util::formatoNumerico($total->Subtotal),
 					'iva' 	   => Util::formatoNumerico($total->IVA),
 					'total'    => Util::formatoNumerico($total->Total),
-				);
+				];
 			}
 			break;
 
@@ -136,10 +136,10 @@ try
 			$fechaInicio   = $_POST['fechaInicio'];
 			$fechaTermino  = $_POST['fechaTermino'];
 			$observaciones = $_POST['observaciones'];
-			$conceptos 	   = isset($_POST['conceptos']) ? $_POST['conceptos'] : array();
+			$conceptos 	   = isset($_POST['conceptos']) ? $_POST['conceptos'] : [];
 
-			$data['errores'] = array();
-			$data['totales']   = array();
+			$data['errores'] = [];
+			$data['totales'] = [];
 
 			if (isset($_POST['id_transaccion']))
             {
@@ -173,11 +173,11 @@ try
 
 			foreach ($totales as $total)
             {
-				$data['totales'] = array(
+				$data['totales'] = [
 					'subtotal' => Util::formatoNumerico($total->Subtotal),
 					'iva' 	   => Util::formatoNumerico($total->IVA),
 					'total'    => Util::formatoNumerico($total->Total),
-				);
+				];
 			}
 			break;
 
@@ -204,18 +204,18 @@ try
 			$obra = new Obra($conn, $_GET['id_obra']);
 			$id_transaccion = (int) $_GET['id_transaccion'];
 
-			$data['totales'] = array();
+			$data['totales'] = [];
 
 			$avanceObra = new AvanceObra($obra, $id_transaccion);
 			$totales = $avanceObra->getTotalesTransaccion();
 
 			foreach ($totales as $total)
             {
-				$data['totales'] = array(
+				$data['totales'] = [
 					'Subtotal' => Util::formatoNumerico($total->Subtotal),
 					'IVA' 	   => Util::formatoNumerico($total->IVA),
 					'Total'    => Util::formatoNumerico($total->Total),
-				);
+				];
 			}
 			break;
 
@@ -223,18 +223,18 @@ try
 			$conn = SAODBConnFactory::getInstance($_GET['base_datos']);
 			$obra = new Obra($conn, $_GET['id_obra']);
 			
-			$data['options'] = array();
+			$data['options'] = [];
 
 			$listaTran = AvanceObra::getListaTransacciones($obra);
 
 			foreach ($listaTran as $tran)
             {
-				$data['options'][] = array(
+				$data['options'][] = [
 					'IDTransaccion'  => $tran->IDTransaccion,
 					'NumeroFolio' 	 => Util::formatoNumeroFolio($tran->NumeroFolio),
 					'Fecha'     	 => Util::formatoFecha($tran->Fecha),
-					'Observaciones'  => $tran->Observaciones
-				);
+					'Observaciones'  => $tran->Observaciones,
+				];
 			}
 			break;
 	}
