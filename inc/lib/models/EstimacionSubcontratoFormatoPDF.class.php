@@ -809,7 +809,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF
 			  $total
 			+ $this->estimacion->getAnticipoLiberar()
 			+ $this->suma_liberaciones
-            - $fondo_garantia_actual
+            - $fondo_garantia
 			- $retencion_iva
 			- $descuento
 			- $retencion;
