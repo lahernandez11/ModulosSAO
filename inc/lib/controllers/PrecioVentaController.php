@@ -33,6 +33,7 @@ try
 				$data['conceptos'][] = [
 					'id_concepto'  	   => $precio->id_concepto,
 					'numero_nivel' 	   => $precio->numero_nivel,
+					'clave_concepto'   => $precio->clave_concepto,
 					'descripcion' 	   => $precio->descripcion,
 					'es_actividad' 	   => $precio->es_actividad,
 					'con_precio' 	   => $precio->con_precio,

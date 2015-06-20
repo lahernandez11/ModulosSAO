@@ -14,9 +14,10 @@ class PrecioVenta {
         $tsql = "SELECT
                       [conceptos].[id_concepto]
                     , (LEN([conceptos].[nivel]) / 4) AS [numero_nivel]
+                    , [conceptos].[clave_concepto]
                     , [conceptos].[descripcion]
-                    , IIF( [conceptos].[concepto_medible] > 0, 1, 0) AS [es_actividad]
-                    , IIF( [precios_venta].[id_concepto] IS NULL, 0, 1) AS [con_precio]
+                    , IIF([conceptos].[concepto_medible] > 0, 1, 0) AS [es_actividad]
+                    , IIF([precios_venta].[id_concepto] IS NULL, 0, 1) AS [con_precio]
                     , ISNULL([conceptos].[unidad], '') AS [unidad]
                     , ISNULL([precios_venta].[precio_produccion], 0) AS [precio_produccion]
                     , ISNULL([precios_venta].[precio_estimacion], 0) AS [precio_estimacion]

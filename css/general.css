@@ -456,7 +456,7 @@ table col.icon-header
 }
 table col.monto
 {
-	width: 120px;
+	width: 115px;
 }
 table col.pct
 {
@@ -473,6 +473,10 @@ table col.tipo
 table col.unidad
 {
 	width: 80px;
+}
+table col.clave
+{
+    width: 100px;
 }
 table thead th
 {
@@ -1515,7 +1519,7 @@ ul.dropdown-list li a.with-icon
 	margin: 0 auto;
 	margin-bottom: 20px;
 	margin-top: 20px;
-	font-size: 0.9em;
+	font-size: 0.8em;
 }
 #app-footer
 {

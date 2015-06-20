@@ -52,7 +52,7 @@ var PRECIOS_VENTA = {
 
 		$('#tabla-conceptos').uxtable({
 			editableColumns: {
-				3: {
+				4: {
 					'onFinishEdit': function(activeCell, value) {
 						var IDConcepto = parseInt(activeCell.parent().attr('data-id'));
 
@@ -63,7 +63,7 @@ var PRECIOS_VENTA = {
 						}
 					}
 				},
-				4: {
+				5: {
 					'onFinishEdit': function(activeCell, value) {
 
 						var IDConcepto = parseInt(activeCell.parent().attr('data-id'));
@@ -105,12 +105,12 @@ var PRECIOS_VENTA = {
 
 	setPrecioProduccion: function(IDConcepto, precio) {
 		PRECIOS_VENTA.marcaConcepto(IDConcepto);
-		this.uxtable('getCell', 3).text(PRECIOS_VENTA.validaPrecio(precio).toFixed(4).numFormat());
+		this.uxtable('getCell', 4).text(PRECIOS_VENTA.validaPrecio(precio).toFixed(4).numFormat());
 	},
 
 	setPrecioEstimacion: function(IDConcepto, precio) {
 		PRECIOS_VENTA.marcaConcepto(IDConcepto);
-		this.uxtable('getCell', 4).text(PRECIOS_VENTA.validaPrecio(precio).toFixed(4).numFormat());
+		this.uxtable('getCell', 5).text(PRECIOS_VENTA.validaPrecio(precio).toFixed(4).numFormat());
 	},
 
 	validaPrecio: function(precio) {
@@ -158,7 +158,6 @@ var PRECIOS_VENTA = {
 		var html = '';
 
 		for (var i = 0; i < conceptos.length; i++) {
-			console.log(conceptos[i]);
 			html += this.conceptoTemplate(conceptos[i]);
 		}
 
@@ -174,8 +173,8 @@ var PRECIOS_VENTA = {
 
 			conceptos[conceptos.length] = {
 				'id_concepto': row.attr('data-id'),
-				'precio_produccion': row.children(':eq(3)').text(),
-				'precio_estimacion': row.children(':eq(4)').text()
+				'precio_produccion': row.children(':eq(4)').text(),
+				'precio_estimacion': row.children(':eq(5)').text()
 			}
 		});
 

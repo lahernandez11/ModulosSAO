@@ -100,6 +100,7 @@ try
 				$item['IDConceptoContrato']    = $concepto->IDConceptoContrato;
 				$item['EsActividad'] 		   = $concepto->EsActividad;
 				$item['NumeroNivel'] 		   = $concepto->NumeroNivel;
+				$item['clave'] 		   = $concepto->clave;
 				$item['Descripcion'] 		   = $concepto->Descripcion;
 				$item['CantidadSubcontratada'] = $concepto->EsActividad;
 				$item['Unidad'] 			   = $concepto->Unidad;
@@ -168,6 +169,7 @@ try
 				$item['IDConceptoContrato']    = $concepto->IDConceptoContrato;
 				$item['EsActividad'] 	       = $concepto->EsActividad;
 				$item['NumeroNivel'] 		   = $concepto->NumeroNivel;
+                $item['clave'] 		           = $concepto->clave;
 				$item['Descripcion'] 		   = $concepto->Descripcion;
 				$item['CantidadSubcontratada'] = $concepto->EsActividad;
 				$item['Unidad'] 			   = $concepto->Unidad;
@@ -493,18 +495,6 @@ try
 			$retencion->delete();
 			break;
 
-		// case 'getImportePorLiberar':
-		// 	$conn = SAODBConnFactory::getInstance( $_GET['base_datos'] );
-		// 	$obra = new Obra( $conn, (int) $_GET['id_obra'] );
-		// 	$id_transaccion = (int) $_GET['id_transaccion'];
-
-		// 	$transaccion = new EstimacionSubcontrato( $obra, $id_transaccion );
-
-		// 	$data['importePorLiberar'] = 0;
-
-		// 	$data['importePorLiberar'] = Util::formatoNumerico( $transaccion->getImporteRetenidoPorLiberar() );
-		// 	break;
-		
 		case 'guardaLiberacion':
 			$conn = SAODBConnFactory::getInstance($_POST['base_datos']);
 			$obra = new Obra($conn, (int) $_POST['id_obra']);
