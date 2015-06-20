@@ -60,6 +60,7 @@ try
 					'id_concepto' => $concepto->id_concepto,
 					'numero_nivel' => $concepto->numero_nivel,
 					'es_actividad' => $concepto->es_actividad,
+					'clave' => $concepto->clave,
 					'descripcion' => $concepto->descripcion,
 					'unidad' => $concepto->unidad,
 					'cantidad_presupuestada' => Util::formatoNumerico($concepto->cantidad_presupuestada),
@@ -120,6 +121,7 @@ try
 					'id_concepto' => $concepto->id_concepto,
 					'numero_nivel' => $concepto->numero_nivel,
 					'es_actividad' => $concepto->es_actividad,
+                    'clave' => $concepto->clave,
 					'descripcion' => $concepto->descripcion,
 					'unidad' => $concepto->unidad,
 					'cantidad_presupuestada' => Util::formatoNumerico($concepto->cantidad_presupuestada),
@@ -186,8 +188,11 @@ try
 					$fechaTermino, $fechaEjecucion, $fechaContable, $observaciones, $conceptos
 				);
 
-				$data['errores'] = $transaccion->guardaTransaccion(Sesion::getUser());
-				$data['id_transaccion'] = $transaccion->getIDTransaccion();
+                $data['errores'] = $transaccion->guardaTransaccion(Sesion::getUser());
+
+                $transaccion = new AvanceSubcontrato($obra, $transaccion->getIDTransaccion());
+
+                $data['id_transaccion'] = $transaccion->getIDTransaccion();
 				$data['numero_folio'] = Util::formatoNumeroFolio($transaccion->getNumeroFolio());
 			}
 

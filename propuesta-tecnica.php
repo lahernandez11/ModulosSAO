@@ -97,7 +97,8 @@
 							<table id="tabla-conceptos">
 								<colgroup>
 									<col class="icon"/>
-									<col/>
+                                    <col class="clave"/>
+                                    <col/>
 									<col class="unidad"/>
 									<col span="3" class="monto"/>
 									<col class="monto editable"/>
@@ -105,6 +106,7 @@
 								<thead>
 									<tr>
 										<th rowspan="2"></th>
+										<th rowspan="2">Clave</th>
 										<th rowspan="2">Concepto</th>
 										<th rowspan="2">Unidad</th>
 										<th colspan="3">Presupuestado</th>
@@ -138,6 +140,7 @@
 		<td class="icon-cell">
 			<a class="icon fixed"></a>
 		</td>
+        <td title="<%- clave_concepto %>"><%- clave_concepto %></td>
 		<<%= es_actividad ? 'td' : 'th' %> title="<%- descripcion %>">
 		<%= '&nbsp;&nbsp;'.repeat(numero_nivel) + descripcion %>
 		</<%= es_actividad ? 'td' : 'th' %>>

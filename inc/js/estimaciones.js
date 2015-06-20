@@ -137,7 +137,7 @@ var ESTIMACION = {
 
 		$('#tabla-conceptos').uxtable({
 			editableColumns: {
-				12: {
+				13: {
 					'onFinishEdit': function( activeCell, value ) {
 
 						var cantidadEstimada = parseFloat(value.replace(/,/g, '')),
@@ -157,7 +157,7 @@ var ESTIMACION = {
 						//}
 					}
 				},
-				13: {
+				14: {
 					'onFinishEdit': function( activeCell, value ) {
 
 						var porcentajeEstimado = parseFloat(value.replace(/,/g, '')),
@@ -177,7 +177,7 @@ var ESTIMACION = {
 						//}
 					}
 				},
-				15: {
+				16: {
 					'onFinishEdit': function( activeCell, value ) {
 
 						var importeEstimado = parseFloat( value.replace(/,/g, '') ),
@@ -897,32 +897,32 @@ var ESTIMACION = {
 
 	getVolumenSubcontratado: function() {
 		
-		return parseFloat(this.uxtable('getCell', 3).text().replace(/,/g, ''));
+		return parseFloat(this.uxtable('getCell', 4).text().replace(/,/g, ''));
 	},
 
 	getPrecioUnitarioConcepto: function() {
 
-		return parseFloat(this.uxtable('getCell', 14).text().replace(/,/g, ''));
+		return parseFloat(this.uxtable('getCell', 15).text().replace(/,/g, ''));
 	},
 
 	getVolumenSaldo: function() {
 
-		return parseFloat(this.uxtable('getCell', 10).text().replace(/,/g, ''));
+		return parseFloat(this.uxtable('getCell', 11).text().replace(/,/g, ''));
 	},
 
 	setCantidadEstimada: function( cantidadEstimada ) {
 
-		this.uxtable('getCell', 12).text( cantidadEstimada.toFixed(4).numFormat() );
+		this.uxtable('getCell', 13).text( cantidadEstimada.toFixed(4).numFormat() );
 	},
 
 	setPorcentajeEstimado: function( pctEstimado ) {
 
-		this.uxtable('getCell', 13).text( pctEstimado.toFixed(2) );
+		this.uxtable('getCell', 14).text( pctEstimado.toFixed(2) );
 	},
 
 	setImporteEstimado: function( importeEstimado ) {
 
-		this.uxtable('getCell', 15).text( importeEstimado.toFixed(2).numFormat() );
+		this.uxtable('getCell', 16).text( importeEstimado.toFixed(2).numFormat() );
 	},
 
 	getConceptosEstimados: function() {
@@ -935,7 +935,7 @@ var ESTIMACION = {
 			estimados[estimados.length] = {
 				'IDConceptoContrato': row.attr('data-id'),
 				'IDConceptoDestino': row.attr('data-iddestino'),
-				'importeEstimado': row.children(':eq(15)').text()
+				'importeEstimado': row.children(':eq(16)').text()
 			}
 		});
 

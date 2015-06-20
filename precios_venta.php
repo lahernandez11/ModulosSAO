@@ -39,15 +39,17 @@
 						<section id="tran-content">
 							<table id="tabla-conceptos">
 								<colgroup>
-									<col class="icon"/>
-									<col/>
-									<col class="unidad"/>
+                                    <col class="icon"/>
+                                    <col class="clave"/>
+                                    <col/>
+                                    <col class="unidad"/>
 									<col span="2" class="monto editable"/>
 									<col class="monto"/>
 								</colgroup>
 								<thead>
 									<tr>
 										<th rowspan="2"></th>
+										<th rowspan="2">Clave</th>
 										<th rowspan="2">Concepto</th>
 										<th rowspan="2">Unidad</th>
 										<th colspan="2">Precio Venta</th>
@@ -83,6 +85,7 @@
 			<td class="icon-cell">
 				<a class="icon fixed"></a>
 			</td>
+            <td title="<%- clave_concepto %>"><%- clave_concepto %></td>
 			<<%= es_actividad ? 'td' : 'th' %> title="<%- descripcion %>">
 				<%= '&nbsp;&nbsp;'.repeat(numero_nivel) + descripcion %>
 			</<%= es_actividad ? 'td' : 'th' %>>

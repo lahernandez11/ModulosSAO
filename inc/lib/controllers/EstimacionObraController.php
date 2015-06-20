@@ -33,6 +33,7 @@ try
 				$data['conceptos'][] = [
 					'IDConcepto'  			   => $concepto->IDConcepto,
 					'NumeroNivel' 			   => $concepto->NumeroNivel,
+                    'clave_concepto' 		   => $concepto->clave_concepto,
 					'Descripcion' 			   => $concepto->Descripcion,
 					'EsActividad' 			   => $concepto->EsActividad,
 					'Unidad' 	  			   => $concepto->Unidad,
@@ -86,6 +87,7 @@ try
 				$data['conceptos'][] = [
 					'IDConcepto'  			   => $concepto->IDConcepto,
 					'NumeroNivel' 			   => $concepto->NumeroNivel,
+					'clave_concepto' 		   => $concepto->clave_concepto,
 					'Descripcion' 			   => $concepto->Descripcion,
 					'EsActividad' 			   => $concepto->EsActividad,
 					'Unidad' 	  			   => $concepto->Unidad,

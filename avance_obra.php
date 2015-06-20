@@ -76,18 +76,18 @@
 											<label for="txtObservaciones">Observaciones</label>
 											<textarea id="txtObservaciones" class="roField"></textarea>
 										</div>
-										<div>
-											<a class="button dd-list" id="empresa">
-												<span class="button-text">Empresa</span>
-												<span class="icon flechita-abajo"></span>
-											</a>
+<!--										<div>-->
+<!--											<a class="button dd-list" id="empresa">-->
+<!--												<span class="button-text">Empresa</span>-->
+<!--												<span class="icon flechita-abajo"></span>-->
+<!--											</a>-->
 											<!-- <select class="roField">
 												<option>123</option>
 												<option>345</option>
 												<option>567</option>
 											</select> -->
 											<!-- <input type="text" id="txtEmpresa" class="roField" /> -->
-										</div>
+<!--										</div>-->
 									</fieldset>
 									<fieldset>
 										<legend>Periodo de Avance</legend>
@@ -132,7 +132,8 @@
 							<table id="tabla-conceptos">
 								<colgroup>
 									<col class="icon"/>
-									<col/>
+                                    <col class="clave"/>
+                                    <col/>
 									<col class="unidad"/>
 									<col span="2" class="monto"/>
 									<col class="monto editable"/>
@@ -142,6 +143,7 @@
 								<thead>
 									<tr>
 										<th rowspan="2"></th>
+										<th rowspan="2">Clave</th>
 										<th rowspan="2">Concepto</th>
 										<th rowspan="2">Unidad</th>
 										<th colspan="3">Cantidad</th>
