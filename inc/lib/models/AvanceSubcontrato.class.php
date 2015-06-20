@@ -374,6 +374,7 @@ class AvanceSubcontrato extends TransaccionSAO {
 						WHEN [items].[id_concepto] > 0 THEN 1
 						ELSE 0
 					END AS [es_actividad]
+					, [contratos].[clave]
 					, [contratos].[descripcion]
 					, [contratos].[unidad]
 					, [contratos].[cantidad_presupuestada]
@@ -493,6 +494,7 @@ class AvanceSubcontrato extends TransaccionSAO {
 						WHEN [items].[id_concepto] > 0 THEN 1
 						ELSE 0
 					END AS [es_actividad]
+					, [contratos].[clave]
 					, [contratos].[descripcion]
 					, [contratos].[unidad]
 					, [contratos].[cantidad_presupuestada]

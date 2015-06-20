@@ -121,7 +121,7 @@ var ESTIMACION = {
 
 		$('#tabla-conceptos').uxtable({
 			editableColumns: {
-				5: {
+				6: {
 					'onFinishEdit': function( activeCell, value ) {
 
 						var IDConcepto = parseInt( activeCell.parent().attr('data-id') ),
@@ -136,7 +136,7 @@ var ESTIMACION = {
 						pubsub.publish('modified_tran');
 					}
 				},
-				6: {
+				7: {
 					'onFinishEdit': function( activeCell, value ) {
 
 						var IDConcepto = parseInt( activeCell.parent().attr('data-id') ),
@@ -368,7 +368,7 @@ var ESTIMACION = {
 		//else
 			//ESTIMACION.desmarcaConcepto( IDConcepto );
 
-		this.uxtable('getCell', 5).text( cantidad.toFixed(4).numFormat() );
+		this.uxtable('getCell', 6).text( cantidad.toFixed(4).numFormat() );
 	},
 
 	setPrecio: function( IDConcepto, precio ) {
@@ -380,7 +380,7 @@ var ESTIMACION = {
 		//else
 			//ESTIMACION.desmarcaConcepto( IDConcepto );
 
-		this.uxtable('getCell', 6).text( pu.toFixed(4).numFormat() );
+		this.uxtable('getCell', 7).text( pu.toFixed(4).numFormat() );
 	},
 
 	cleanCantidad: function(text) {
@@ -390,9 +390,7 @@ var ESTIMACION = {
 	setMontoTotal: function($row) {
 		var that = this,
 			cantidad = parseFloat(that.cleanCantidad($row.find('.cantidad').text())),
-			precio = parseFloat(that.cleanCantidad($row.find('.precio').text()));
-console.log(cantidad);
-console.log(precio);
+			precio = parseFloat(that.cleanCantidad($row.find('.precio').text())),
 			monto = cantidad * precio;
 
 		$row.find('.total').text(monto.toFixed(2).toString().numFormat());
@@ -529,8 +527,8 @@ console.log(precio);
 			conceptos[conceptos.length] = {
 
 				'IDConcepto': row.attr('data-id'),
-				'cantidad': row.children(':eq(5)').text(),
-				'precio': row.children(':eq(6)').text(),
+				'cantidad': row.children(':eq(6)').text(),
+				'precio': row.children(':eq(7)').text(),
 				'cumplido': (row.find('td.cumplido a.checkbox').hasClass('checkbox-checked') ? 1: 0)
 			}
 		});

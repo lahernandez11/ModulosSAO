@@ -146,7 +146,8 @@
 							<table id="tabla-conceptos">
 								<colgroup>
 									<col class="icon" />
-									<col/>
+                                    <col class="clave" />
+                                    <col/>
 									<col class="unidad" />
 									<col class="monto contratado" span="2" />
 									<col class="monto avance-volumen" span="2" />
@@ -162,6 +163,7 @@
 								<thead>
 									<tr>
 										<th rowspan="2"></th>
+										<th rowspan="2">Clave</th>
 										<th rowspan="2">Concepto</th>
 										<th rowspan="2">UM</th>
 										<th colspan="2" class="contratado">Contratado</th>
@@ -406,6 +408,7 @@
 			<td class="icon-cell">
 				<a class="icon fixed"></a>
 			</td>
+            <td title="<%- clave %>"><%- clave %></td>
 			<<%= EsActividad ? 'td' : 'th' %> title="<%- Descripcion %>">
 				<%= '&nbsp;&nbsp;'.repeat(NumeroNivel) + Descripcion %>
 			</<%= EsActividad ? 'td' : 'th' %>>
@@ -416,13 +419,13 @@
 			<td class="numerico avance-volumen"></td>
 			<td class="numerico avance-volumen"><%- CantidadEstimadaTotal %></td>
 			<td class="numerico avance-volumen"><%- PctAvance %></td>
-			
+
 			<td class="numerico avance-importe"></td>
 			<td class="numerico avance-importe"><%- MontoEstimadoTotal %></td>
-			
+
 			<td class="numerico saldo"><%- CantidadSaldo %></td>
 			<td class="numerico saldo"><%- MontoSaldo %></td>
-			
+
 			<td class="editable-cell numerico"><%- CantidadEstimada %></td>
 			<td class="editable-cell numerico"><%- PctEstimado %></td>
 			<td class="numerico"><%- PrecioUnitario %></td>
@@ -430,7 +433,7 @@
 			<td class="destino" title="<%- RutaDestino %>"><%- RutaDestino %></td>
 		</tr>
 	</script>
-	
+
 	<script type="text/template" id="template-deductiva">
 		<tr data-id="<%- id_descuento %>" data-idmaterial="<%- id_material %>">
 			<td title="<%- descripcion %>"><%- descripcion %></td>

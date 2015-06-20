@@ -54,11 +54,11 @@ $db_type['SAO1814_MUSEO_BARROCO'] = 'OBRA';
 //$db_name['SAO1814_AVANCE'] = 'SAO1814_AVANCE';
 //$db_type['SAO1814_AVANCE'] = 'OBRA';
 
-//$db_host['SAO1814_MEXICO_TOLUCA'] = '172.20.74.3\SAO_DEVELOP';
-//$db_user['SAO1814_MEXICO_TOLUCA'] = 'develop';
-//$db_pwd['SAO1814_MEXICO_TOLUCA']  = 'develop';
-//$db_name['SAO1814_MEXICO_TOLUCA'] = 'SAO1814_MEXICO_TOLUCA';
-//$db_type['SAO1814_MEXICO_TOLUCA'] = 'OBRA';
+    //$db_host['SAO1814_MEXICO_TOLUCA'] = '172.20.74.3\SAO_DEVELOP';
+    //$db_user['SAO1814_MEXICO_TOLUCA'] = 'develop';
+    //$db_pwd['SAO1814_MEXICO_TOLUCA']  = 'develop';
+    //$db_name['SAO1814_MEXICO_TOLUCA'] = 'SAO1814_MEXICO_TOLUCA';
+    //$db_type['SAO1814_MEXICO_TOLUCA'] = 'OBRA';
 
 //$db_host['SAO1814_MUSEO_BARROCO'] = '172.20.74.3\SAO_DEVELOP';
 //$db_user['SAO1814_MUSEO_BARROCO'] = 'develop';

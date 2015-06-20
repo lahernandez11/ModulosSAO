@@ -123,7 +123,7 @@ var AVANCE = {
 
 		$('#tabla-conceptos').uxtable({
 			editableColumns: {
-				5: {
+				6: {
 					'onFinishEdit': function (activeCell, value) {
 
 						var id_concepto = parseInt(activeCell.parent().attr('data-id'));
@@ -456,7 +456,7 @@ var AVANCE = {
 		//else
 			//AVANCE.desmarcaConcepto( IDConcepto );
 
-		this.uxtable('getCell', 5).text( cantidad.toFixed(4).numFormat() );
+		this.uxtable('getCell', 6).text( cantidad.toFixed(4).numFormat() );
 	},
 
 	cargaTransaccion: function() {
@@ -524,13 +524,13 @@ var AVANCE = {
 		var conceptos = [],
 			row = null;
 
-		$('#tabla-conceptos tr.' + this.classes.conceptoModificado).each( function() {			
+		$('#tabla-conceptos tr.' + this.classes.conceptoModificado).each( function() {
 			row = $(this);
 
 			conceptos[conceptos.length] = {
 				'id_item': row.attr('data-iditem'),
 				'id_concepto': row.attr('data-id'),
-				'cantidad': row.children(':eq(5)').text(),
+				'cantidad': row.children(':eq(6)').text()
 			}
 		});
 
