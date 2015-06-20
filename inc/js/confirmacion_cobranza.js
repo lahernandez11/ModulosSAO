@@ -92,7 +92,7 @@ var COBRANZA = {
 
 		$('#tabla-conceptos').uxtable({
 			editableColumns: {
-				8: {
+				9: {
 					'onFinishEdit': function( activeCell, value ) {
 
 						var cantidad = parseFloat(value.replace(/,/g, '')),
@@ -107,7 +107,7 @@ var COBRANZA = {
 						pubsub.publish('modified_tran');
 					}
 				},
-				9: {
+				10: {
 					'onFinishEdit': function( activeCell, value ) {
 
 						var pu = parseFloat(value.replace(/,/g, '')),
@@ -655,8 +655,8 @@ var COBRANZA = {
 			conceptos[conceptos.length] = {
 
 				'IDConcepto': row.attr('data-id'),
-				'cantidad': row.children(':eq(8)').text(),
-				'precio': row.children(':eq(9)').text()
+				'cantidad': row.children(':eq(9)').text(),
+				'precio': row.children(':eq(10)').text()
 				// 'cumplido': (row.find('td.cumplido a.checkbox').hasClass('checkbox-checked') ? 1: 0)
 			}
 		});
@@ -759,7 +759,7 @@ var COBRANZA = {
 
 		COBRANZA.marcaConcepto( IDConcepto );
 		
-		this.uxtable('getCell', 8).text( cantidad.toFixed(4).numFormat() );
+		this.uxtable('getCell', 9).text( cantidad.toFixed(4).numFormat() );
 	},
 
 	setPrecio: function( IDConcepto, precio ) {
@@ -768,7 +768,7 @@ var COBRANZA = {
 
 		COBRANZA.marcaConcepto( IDConcepto );
 
-		this.uxtable('getCell', 9).text( pu.toFixed(4).numFormat() );
+		this.uxtable('getCell', 10).text( pu.toFixed(4).numFormat() );
 	},
 
     cleanFormatoNumero: function(text) {

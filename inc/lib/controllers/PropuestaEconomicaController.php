@@ -45,6 +45,7 @@ try
 				$data['conceptos'][] = array(
 					'id_concepto'  => $concepto->id_concepto,
 					'numero_nivel' => $concepto->numero_nivel,
+					'clave_concepto' => $concepto->clave_concepto,
 					'descripcion' => $concepto->descripcion,
 					'unidad' 	  => $concepto->unidad,
 					'es_actividad' => $concepto->es_actividad,
@@ -83,6 +84,7 @@ try
 				$data['conceptos'][] = array(
 					'id_concepto' => $concepto->id_concepto,
 					'numero_nivel' => $concepto->numero_nivel,
+                    'clave_concepto' => $concepto->clave_concepto,
 					'descripcion' => $concepto->descripcion,
 					'unidad' => $concepto->unidad,
 					'es_actividad' => $concepto->es_actividad,
@@ -136,13 +138,13 @@ try
 			else
 			{
 				$transaccion = new PropuestaEconomica(
-						$obra,
-						$fecha,
-						$fechaInicio,
-						$fechaTermino,
-						$observaciones,
-						$id_concepto_raiz,
-						$conceptos
+                    $obra,
+                    $fecha,
+                    $fechaInicio,
+                    $fechaTermino,
+                    $observaciones,
+                    $id_concepto_raiz,
+                    $conceptos
 				);
 			
 				$data['errores'] = $transaccion->guardaTransaccion(Sesion::getUser());
@@ -206,7 +208,7 @@ try
 
 			$listaTran = PropuestaEconomica::getListaTransacciones($obra);
 
-			foreach ( $listaTran as $tran )
+			foreach ($listaTran as $tran)
 			{
 				$data['options'][] = array(
 					'id_transaccion' => $tran->IDTransaccion,

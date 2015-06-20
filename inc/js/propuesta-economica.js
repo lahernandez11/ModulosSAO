@@ -157,7 +157,7 @@ var AVANCE = {
 
 		$('#tabla-conceptos').uxtable({
 			editableColumns: {
-				6: {
+				7: {
 					'onFinishEdit': function( activeCell, value ) {
 
 						var id_concepto = parseInt( activeCell.parent().attr('data-id')),
@@ -171,7 +171,7 @@ var AVANCE = {
 						pubsub.publish('modified_tran');
 					}
 				},
-                7: {
+                8: {
                     'onFinishEdit': function( activeCell, value ) {
 
                         var id_concepto = parseInt(activeCell.parent().attr('data-id')),
@@ -346,7 +346,7 @@ var AVANCE = {
 
 		AVANCE.marcaConcepto( id_concepto );
 
-		this.uxtable('getCell', 6).text( cantidad.toFixed(4).numFormat() );
+		this.uxtable('getCell', 7).text( cantidad.toFixed(4).numFormat() );
 	},
 
     setPrecio: function( id_concepto, precio ) {
@@ -355,7 +355,7 @@ var AVANCE = {
 
         AVANCE.marcaConcepto( id_concepto );
 
-        this.uxtable('getCell', 7).text( precio.toFixed(4).numFormat() );
+        this.uxtable('getCell', 8).text( precio.toFixed(4).numFormat() );
     },
 
     setMontoTotal: function($row) {
@@ -474,8 +474,8 @@ var AVANCE = {
 			conceptos[conceptos.length] = {
 
 				'id_concepto': row.attr('data-id'),
-				'cantidad': row.children(':eq(6)').text(),
-				'precio': row.children(':eq(7)').text()
+				'cantidad': row.children(':eq(7)').text(),
+				'precio': row.children(':eq(8)').text()
 			}
 		});
 

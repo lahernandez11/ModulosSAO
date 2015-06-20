@@ -154,7 +154,7 @@ var AVANCE = {
 
 		$('#tabla-conceptos').uxtable({
 			editableColumns: {
-				5: {
+				6: {
 					'onFinishEdit': function( activeCell, value ) {
 
 						var IDConcepto = parseInt( activeCell.parent().attr('data-id') );
@@ -361,7 +361,7 @@ var AVANCE = {
 		//else
 			//AVANCE.desmarcaConcepto( IDConcepto );
 
-		this.uxtable('getCell', 5).text( cantidad.toFixed(4).numFormat() );
+		this.uxtable('getCell', 6).text( cantidad.toFixed(4).numFormat() );
 	},
 
 	cargaTransaccion: function() {
@@ -476,6 +476,7 @@ var AVANCE = {
 			rows +=
 				 '<tr data-id="' + this.IDConcepto + '" data-esactividad="' + this.EsActividad + '">'
 				+  '<td class="icon-cell"><a class="icon fixed"></a></td>'
+				+  '<td title="' + this.clave_concepto + '">' + this.clave_concepto + '</td>'
 				+  '<' + cellType + ' title="' + this.Descripcion + '">'
 				+  '&nbsp;&nbsp;'.repeat(this.NumeroNivel) + this.Descripcion + ' </' + cellType + '>'
 				+  '<td class="centrado">' + this.Unidad + '</td>'
@@ -506,7 +507,7 @@ var AVANCE = {
 			conceptos[conceptos.length] = {
 
 				'IDConcepto': row.attr('data-id'),
-				'cantidad': row.children(':eq(5)').text(),
+				'cantidad': row.children(':eq(6)').text(),
 				'cumplido': (row.find('td.cumplido a.checkbox').hasClass('checkbox-checked') ? 1: 0)
 			}
 		});
