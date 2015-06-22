@@ -1,8 +1,8 @@
 <?php
 require_once 'models/Obra.class.php';
 
-class Material {
-
+class Material
+{
 	const TIPO_MATERIAL = 1;
 	const TIPO_MANO_OBRA = 2;
 	const TIPO_SERVICIOS = 3;
@@ -32,9 +32,15 @@ class Material {
 
 	private $conn = null;
 
-	public function __construct( Obra $obra, $id_material ) {
-
-		if ( ! is_int( $id_material ) ) {
+    /**
+     * @param Obra $obra
+     * @param $id_material
+     * @throws Exception
+     */
+    public function __construct(Obra $obra, $id_material)
+    {
+		if ( ! is_int($id_material))
+        {
 			throw new Exception("El identificador de material no es valido");
 		}
 
@@ -44,7 +50,11 @@ class Material {
 		$this->init();
 	}
 
-	private function init() {
+    /**
+     * @throws DBServerStatementExecutionException
+     */
+    private function init()
+    {
 		$tsql = "SELECT
 					[materiales].[id_material]
 				  , [materiales].[tipo_material]
@@ -69,19 +79,19 @@ class Material {
 					[dbo].[materiales]
 				LEFT OUTER JOIN
 					[Agrupacion].[agrupacion_insumos]
-					ON
-						[materiales].[id_material] = [agrupacion_insumos].[id_material]
-							AND
-						[agrupacion_insumos].[id_obra] = ?
+                ON
+                    [materiales].[id_material] = [agrupacion_insumos].[id_material]
+                        AND
+                    [agrupacion_insumos].[id_obra] = ?
 				WHERE
 					[materiales].[id_material] = ?";
 
-		$params = array(
-	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	    );
+		$params = [
+	        [$this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	        [$this->id, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	    ];
 
-	    $res = $this->conn->executeQuery( $tsql, $params );
+	    $res = $this->conn->executeQuery($tsql, $params);
 
 		$this->descripcion 					= $res[0]->descripcion;
 		$this->tipo_material 				= $res[0]->tipo_material;
@@ -103,30 +113,40 @@ class Material {
 		$this->id_agrupador_insumo_generico = $res[0]->id_agrupador_insumo_generico;
 	}
 
-	private function existeRegistroAgrupacion() {
-
+    /**
+     * @return bool
+     * @throws DBServerStatementExecutionException
+     */
+    private function existeRegistroAgrupacion()
+    {
 		$tsql = "SELECT 1
-				 FROM [Agrupacion].[agrupacion_insumos]
+				 FROM
+				    [Agrupacion].[agrupacion_insumos]
 				 WHERE
 				 	[id_obra] = ?
 				 		AND
 				 	[id_material] = ?";
 
-	    $params = array(
-	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	    );
+	    $params = [
+	        [$this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	        [$this->id, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	    ];
 
 	    $res = $this->conn->executeQuery( $tsql, $params );
 
-	    if ( count( $res ) > 0 )
-	    	return true;
-	    else
-	    	return false;
+	    if (count($res) > 0)
+        {
+            return true;
+        }
+
+	    return false;
 	}
 
-	private function creaRegistroAgrupacion() {
-
+    /**
+     * @throws DBServerStatementExecutionException
+     */
+    private function creaRegistroAgrupacion()
+    {
 		$tsql = "INSERT INTO [Agrupacion].[agrupacion_insumos]
 				(
 					  [id_obra]
@@ -135,22 +155,29 @@ class Material {
 				VALUES
 				( ?, ? )";
 
-	    $params = array(
-	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	    );
+	    $params = [
+	        [$this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	        [$this->id, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	    ];
 
 	    $this->conn->executeQuery($tsql, $params);
 	}
 
-	public function setAgrupador( AgrupadorInsumo $agrupador ) {
-
-		if ( ! $this->existeRegistroAgrupacion() )
-			$this->creaRegistroAgrupacion();
+    /**
+     * @param AgrupadorInsumo $agrupador
+     * @throws DBServerStatementExecutionException
+     */
+    public function setAgrupador(AgrupadorInsumo $agrupador)
+    {
+		if ( ! $this->existeRegistroAgrupacion())
+        {
+            $this->creaRegistroAgrupacion();
+        }
 
 		$field = '';
 
-		switch ( $agrupador->getTipoAgrupador() ) {
+		switch ($agrupador->getTipoAgrupador())
+        {
 			case AgrupadorInsumo::TIPO_NATURALEZA:
 				$field = AgrupadorInsumo::FIELD_NATURALEZA;
 				break;
@@ -172,17 +199,22 @@ class Material {
 				 		AND
 				 	[id_material] = ?";
 
-	    $params = array(
-	        array( $agrupador->getIDAgrupador(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->id, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	    );
+	    $params = [
+	        [$agrupador->getIDAgrupador(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	        [$this->obra->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	        [$this->id, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	    ];
 
-	    $this->conn->executeQuery( $tsql, $params );
+	    $this->conn->executeQuery($tsql, $params);
 	}
 
-	public static function getMaterialesObra( Obra $obra ) {
-
+    /**
+     * @param Obra $obra
+     * @return array
+     * @throws DBServerStatementExecutionException
+     */
+    public static function getMaterialesObra(Obra $obra)
+    {
 		$tsql = "SELECT
 				    [id_obra]
 				  , [id_familia]
@@ -191,7 +223,6 @@ class Material {
 				  , [material]
 				  , [codigo_externo]
 				  , [unidad]
-				  , [EstaPresupuestado]
 				  , [id_agrupador_naturaleza]
 				  , [agrupador_naturaleza]
 				  , [id_agrupador_familia]
@@ -206,18 +237,26 @@ class Material {
 					[familia],
 					[material]";
 
-		$params = array(
-			array( $obra->getid(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-		);
+		$params = [
+			[$obra->getid(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+		];
 
-		$data = $obra->getConn()->executeSP( $tsql, $params );
+		$data = $obra->getConn()->executeSP($tsql, $params);
 
 		return $data;
 	}
 
-	public static function getMateriales( SAODBConn $conn, $descripcion = null, $tipo = null ) {
-
-		switch ( $tipo ) {
+    /**
+     * @param SAODBConn $conn
+     * @param null $descripcion
+     * @param null $tipo
+     * @return array
+     * @throws DBServerStatementExecutionException
+     */
+    public static function getMateriales(SAODBConn $conn, $descripcion = null, $tipo = null)
+    {
+		switch ($tipo)
+        {
 			case self::TIPO_MATERIAL:
 			case self::TIPO_MANO_OBRA:
 			case self::TIPO_SERVICIOS:
@@ -232,77 +271,140 @@ class Material {
 
 		$tsql = "{call [Insumos].[uspListaInsumos]( ?, ? )}";
 
-	    $params = array(
-	        array( $tipo, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $descripcion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('255') )
-	    );
+	    $params = [
+	        [$tipo, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+	        [$descripcion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('255')],
+	    ];
 
 	    return $conn->executeSP($tsql, $params);
 	}
 
-	public function getId() {
+    /**
+     * @return int
+     */
+    public function getId()
+    {
 		return $this->id;
 	}
-	
-	public function getDescripcion() {
+
+    /**
+     * @return mixed
+     */
+    public function getDescripcion()
+    {
 		return $this->descripcion;
 	}
 
-	public function getTipoMaterial() {
+    /**
+     * @return mixed
+     */
+    public function getTipoMaterial()
+    {
 		return $this->tipo_material;
 	}
 
-	public function getNivel() {
+    /**
+     * @return mixed
+     */
+    public function getNivel()
+    {
 		return $this->nivel;
 	}
 
-	public function getUnidad() {
+    /**
+     * @return mixed
+     */
+    public function getUnidad()
+    {
 		return $this->unidad;
 	}
 
-	public function getUnidadCompra() {
+    /**
+     * @return mixed
+     */
+    public function getUnidadCompra()
+    {
 		return $this->unidad_compra;
 	}
 
-	public function getUnidadCapacidad() {
+    /**
+     * @return mixed
+     */
+    public function getUnidadCapacidad()
+    {
 		return $this->unidad_capacidad;
 	}
 
-	public function getEquivalecia() {
+    /**
+     * @return mixed
+     */
+    public function getEquivalecia()
+    {
 		return $this->equivalecia;
 	}
 
-	public function getMarca() {
+    /**
+     * @return mixed
+     */
+    public function getMarca()
+    {
 		return $this->marca;
 	}
 
-	public function getIdInsumo() {
+    /**
+     * @return mixed
+     */
+    public function getIdInsumo()
+    {
 		return $this->id_insumo;
 	}
 
-	public function getConsumo() {
+    /**
+     * @return mixed
+     */
+    public function getConsumo()
+    {
 		return $this->consumo;
 	}
 
-	public function getCodigoExterno() {
+    /**
+     * @return mixed
+     */
+    public function getCodigoExterno()
+    {
 		return $this->codigo_externo;
 	}
 
-	public function getMerma() {
+    /**
+     * @return mixed
+     */
+    public function getMerma()
+    {
 		return $this->merma;
 	}
 
-	public function getSecuencia() {
+    /**
+     * @return mixed
+     */
+    public function getSecuencia()
+    {
 		return $this->secuencia;
 	}
 
-	public function getCuentaContable() {
+    /**
+     * @return mixed
+     */
+    public function getCuentaContable()
+    {
 		return $this->cuenta_contable;
 	}
 
-	public function getNumeroParte() {
+    /**
+     * @return mixed
+     */
+    public function getNumeroParte()
+    {
 		return $this->numero_parte;
 	}
 
 }
-?>
