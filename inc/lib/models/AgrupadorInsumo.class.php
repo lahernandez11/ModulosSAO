@@ -1,6 +1,7 @@
 <?php
-class AgrupadorInsumo {
-	
+
+class AgrupadorInsumo
+{
 	const TIPO_NATURALEZA = 1;
 	const TIPO_FAMILIA = 2;
 	const TIPO_GENERICO = 3;
@@ -11,13 +12,22 @@ class AgrupadorInsumo {
 	private $id_agrupador = null;
 	private $conn = null;
 
-	public function __construct( SAODBConn $conn, $id_agrupador ) {
+    /**
+     * @param SAODBConn $conn
+     * @param $id_agrupador
+     */
+    public function __construct(SAODBConn $conn, $id_agrupador)
+    {
 		$this->conn = $conn;
 		$this->id_agrupador = $id_agrupador;
 	}
 
-	public function getTipoAgrupador() {
-
+    /**
+     * @return mixed
+     * @throws DBServerStatementExecutionException
+     */
+    public function getTipoAgrupador()
+    {
 		$tsql = "SELECT
 				    [agrupador].[id_tipo_agrupador]
 				FROM
@@ -25,22 +35,32 @@ class AgrupadorInsumo {
 				WHERE
 					[id_agrupador] = ?";
 
-		$params = array(
-			array( $this->id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-		);
+		$params = [
+			[$this->id_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT]
+		];
 
 		$data = $this->conn->executeSP($tsql, $params);
 
 		return $data[0]->id_tipo_agrupador;
 	}
 
-	public function getIDAgrupador() {
+    /**
+     * @return null
+     */
+    public function getIDAgrupador()
+    {
 		return $this->id_agrupador;
 	}
 
-	public static function getAgrupadoresInsumo( SAODBConn $conn, 
-		$descripcion = null, $tipo_agrupador = null ) {
-
+    /**
+     * @param SAODBConn $conn
+     * @param null $descripcion
+     * @param null $tipo_agrupador
+     * @return array
+     * @throws DBServerStatementExecutionException
+     */
+    public static function getAgrupadoresInsumo(SAODBConn $conn, $descripcion = null, $tipo_agrupador = null)
+    {
 		$tsql = "SELECT
 				    [agrupador].[id_agrupador]
 				  , CONCAT([agrupador].[codigo], ' ', [agrupador].[agrupador]) AS [agrupador]
@@ -54,14 +74,14 @@ class AgrupadorInsumo {
 				ORDER BY
 					[agrupador]";
 
-		$params = array(
-			array( $tipo_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-			array( $descripcion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('140') )
-		);
+		$params = [
+			[$tipo_agrupador, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT],
+			[$descripcion, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_VARCHAR('140')]
+		];
 
 		$data = $conn->executeSP($tsql, $params);
 
 		return $data;
 	}
+
 }
-?>
