@@ -619,6 +619,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF
 		$anticipo = $this->estimacion->getAmortizacionAnticipo();
 		$anticipo_actual = $anticipo_anterior + $anticipo;
 		$anticipo_saldo = $anticipo_contrato - $anticipo_actual;
+		//ERNESTO
 
 		$this->Row(
 			array(
@@ -674,22 +675,25 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF
 
 		$this->resetFills(array(true));
 		$this->resetBorders(array(true));
-
-		$iva_contrato = $this->estimacion->subcontrato->getIVA();
-		$iva_anterior = $this->estimacion->getIVAAnterior();
+		
+		$iva_contrato = $this->estimacion->subcontrato->getIVA();  
+		$iva_anterior = $this->estimacion->getIVAAnterior(); 
 		$iva = $this->estimacion->getIVA();
-		$iva_actual = $iva_anterior + $iva;
-		$iva_saldo = $iva_contrato - $iva_actual;
+		$iva_actual = $iva_anterior + $iva; 
+		$iva_saldo = $iva_contrato - $iva_actual; 
+		$iva_acumulado_anterior = $iva_anterior + $iva_saldo;
+		$iva_esta_estimacion = $iva_acumulado_anterior + $iva;
+		$iva_saldo_real = $iva_contrato - $iva_esta_estimacion;
 
 		$this->Row(
 			array(
 				"IVA", "%", 
 				Util::formatoPorcentaje($this->estimacion->getPctIVA()), "",
 				Util::formatoNumerico($iva_contrato), "",
-				Util::formatoNumerico($iva_anterior), "",
+				Util::formatoNumerico($iva_acumulado_anterior), "",
 				Util::formatoNumerico($iva), "",
-				Util::formatoNumerico($iva_actual), "",
-				Util::formatoNumerico($iva_saldo)
+				Util::formatoNumerico($iva_esta_estimacion), "",
+				Util::formatoNumerico($iva_saldo_real)
 			)
 		);
 
