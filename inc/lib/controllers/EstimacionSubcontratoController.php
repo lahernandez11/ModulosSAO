@@ -8,6 +8,7 @@ require_once 'models/EstimacionSubcontrato.class.php';
 require_once 'models/RetencionTipo.class.php';
 require_once 'models/EstimacionSubcontratoFormatoPDF.class.php';
 require_once 'models/EstimacionSubcontratoFormatoPDF_SPM.class.php';
+require_once 'models/EstimacionSubcontratoFormatoPDF_NAP3.class.php';
 require_once 'models/Util.class.php';
 
 $data['success'] = true;
