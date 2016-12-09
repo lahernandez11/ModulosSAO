@@ -1,4 +1,5 @@
 <?php
+ini_set("display_errors","on");
 require_once 'models/FormatoPDF.class.php';
 require_once 'models/Util.class.php';
 
