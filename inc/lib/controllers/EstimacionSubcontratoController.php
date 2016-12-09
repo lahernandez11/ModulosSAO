@@ -534,13 +534,15 @@ try
 			$transaccion = new EstimacionSubcontrato($obra, $id_transaccion);
 
 			if ($transaccion->obra->getDBName() === 'SAO1814_SPM_MOBILIARIO')
-            {
-                $formatoPDF = new EstimacionSubcontratoFormatoPDF_SPM($transaccion, $soloEstimados);
-            }
-			else
-            {
-                $formatoPDF = new EstimacionSubcontratoFormatoPDF($transaccion, $soloEstimados);
-            }
+                        {
+                            $formatoPDF = new EstimacionSubcontratoFormatoPDF_SPM($transaccion, $soloEstimados);
+                        }else if($transaccion->obra->getDBName() === 'SAO1814_PISTA_AEROPUERTO'){
+                            $formatoPDF = new EstimacionSubcontratoFormatoPDF_NAP3($transaccion, $soloEstimados);
+                        }
+                        else
+                        {
+                            $formatoPDF = new EstimacionSubcontratoFormatoPDF($transaccion, $soloEstimados);
+                        }
 			
 			$formatoPDF->Output();
 			break;
