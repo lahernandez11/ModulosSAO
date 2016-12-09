@@ -174,7 +174,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF
 		$this->Ln();
 
 		$this->Cell(80, 5, $this->numero_de_contrato_label, $printBorder, 0, "L");
-		$this->Cell(0, 5, "", $printBorder, 0, "C");
+		$this->Cell(0, 5, $this->estimacion->subcontrato->getReferencia(), $printBorder, 0, "C");
 		$this->Ln(10);
 	}
 
