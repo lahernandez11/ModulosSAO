@@ -132,7 +132,7 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
 
 		$this->SetFontSize(12);
 		
-		$this->SetXY($xPosDatai + 200, 0);
+		$this->SetXY($xPosDatai + 200, 15);
 		
 		$this->setFontStyle("B");
 		$this->Cell($labelCellWidth, $cellHeight, "Folio SAO", $printBorder);
