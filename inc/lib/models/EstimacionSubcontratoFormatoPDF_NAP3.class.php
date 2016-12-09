@@ -113,7 +113,7 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
 		$this->SetFontSize(16);
 		$this->setFontStyle("B");
 		// $this->SetX($this->GetX() + 20);
-		$this->Cell(200, 30, $this->titulo, 0, 0, "C",0,1);
+		$this->Cell(200, 30, $this->titulo, 0, 1, "C",0);
 		$this->resetFontSize();
 		$this->resetTextColor();
                 
