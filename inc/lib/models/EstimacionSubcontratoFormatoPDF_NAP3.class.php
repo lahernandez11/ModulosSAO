@@ -106,7 +106,7 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
 		$this->AddPage( self::PDF_PAGE_ORIENTATION );
 		$this->SetFont('Arial', '', 7);
                 
-                $this->image('../../../img/app/CARGIPROPEN_NAICM.jpg', 10, 1, 50, 20);
+                $this->image('../../../img/app/CARGIPROPEN_NAICM.jpg', 10, 10, 50, 20);
 
 		$printBorder = 1;
 
@@ -116,7 +116,7 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
 		$this->setFontStyle("B");
 		// $this->SetX($this->GetX() + 20);
                 $xPosDatai = $this->GetX();
-		$this->Cell(200, 20, $this->titulo, 0, 1, "C",0);
+		$this->Cell(150, 20, $this->titulo, 0, 1, "C",0);
 		$this->resetFontSize();
 		$this->resetTextColor();
                 
@@ -124,7 +124,7 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
                 
                 $this->SetFontSize(14);
 		$this->setFontStyle("B");
-                $this->Cell(200, 30, $this->subtitulo, 0, 0, "C");
+                $this->Cell(150, 30, $this->subtitulo, 0, 0, "C");
 		$this->resetFontSize();
 		$this->resetTextColor();
 		
@@ -149,21 +149,21 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
 
 		$this->SetFontSize(9);
 
-		$this->SetX($xPosData);
+		$this->SetX($xPosDatai + 200);
 		$this->setFontStyle("B");
 		$this->Cell($labelCellWidth, $cellHeight, $this->semana_de_contrato_label, $printBorder);
 		$this->resetFontStyle();
 		$this->Cell(0, $cellHeight, "", $printBorder, 0, 'R');
 		$this->Ln($cellHeight);
 
-		$this->SetX($xPosData);
+		$this->SetX($xPosDatai + 200);
 		$this->setFontStyle("B");
 		$this->Cell($labelCellWidth, $cellHeight, "Fecha", $printBorder);
 		$this->resetFontStyle();
 		$this->Cell(0, $cellHeight, Util::formatoFecha($this->estimacion->getFecha()), $printBorder, 0, 'R');
 		$this->Ln($cellHeight);
 
-		$this->SetX($xPosData);
+		$this->SetX($xPosDatai + 200);
 		$this->setFontStyle("B");
 		$this->Cell($labelCellWidth, $cellHeight, "Periodo", $printBorder);
 		$this->resetFontStyle();
