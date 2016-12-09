@@ -2,7 +2,7 @@
 require_once 'models/FormatoPDF.class.php';
 require_once 'models/Util.class.php';
 
-class EstimacionSubcontratoFormatoPDF extends FormatoPDF
+class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
 {
 	const FORMATO_NOMBRE_ARCHIVO = 'EstimacionSubcontrato.pdf';
 	const PDF_PAGE_ORIENTATION = 'L';
