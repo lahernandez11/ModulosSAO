@@ -105,6 +105,8 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
     {
 		$this->AddPage( self::PDF_PAGE_ORIENTATION );
 		$this->SetFont('Arial', '', 7);
+                
+                $this->image('../../../img/app/CARGIPROPEN_NAICM.jpg', 10, 1, 50, 20);
 
 		$printBorder = 1;
 
