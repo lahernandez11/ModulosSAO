@@ -859,7 +859,7 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
      */
     public function Footer()
     {
-        $this->Ln(5);
+        $this->Ln(4);
         $this->resetFontStyle();
         $this->SetFontSize(4);
 
@@ -883,21 +883,21 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
         $this->Ln();
 
         //$this->Cell(5, 3, "", 0, 0);
-        $this->Cell(29, 8, "", "LRT", 0, "C");
-        $this->Cell(5, 8, "", 0, 0);
-        $this->Cell(29, 8, "", "LRT", 0, "C");
-        $this->Cell(5, 8, "", 0, 0);
-        $this->Cell(29, 8, "", "LRT", 0, "C");
-        $this->Cell(5, 8, "", 0, 0);
-        $this->Cell(29, 8, "", "LRT", 0, "C");
-        $this->Cell(5, 8, "", 0, 0);
-        $this->Cell(29, 8, "", "LRT", 0, "C");
-        $this->Cell(5, 8, "", 0, 0);
-        $this->Cell(29, 8, "", "LRT", 0, "C");
-        $this->Cell(5, 8, "", 0, 0);
-        $this->Cell(29, 8, "", "LRT", 0, "C");
-        $this->Cell(5, 8, "", 0, 0);
-        $this->Cell(29, 8, "", "LRT", 0, "C");
+        $this->Cell(29, 6, "", "LRT", 0, "C");
+        $this->Cell(5, 6, "", 0, 0);
+        $this->Cell(29, 6, "", "LRT", 0, "C");
+        $this->Cell(5, 6, "", 0, 0);
+        $this->Cell(29, 6, "", "LRT", 0, "C");
+        $this->Cell(5, 6, "", 0, 0);
+        $this->Cell(29, 6, "", "LRT", 0, "C");
+        $this->Cell(5, 6, "", 0, 0);
+        $this->Cell(29, 6, "", "LRT", 0, "C");
+        $this->Cell(5, 6, "", 0, 0);
+        $this->Cell(29, 6, "", "LRT", 0, "C");
+        $this->Cell(5, 6, "", 0, 0);
+        $this->Cell(29, 6, "", "LRT", 0, "C");
+        $this->Cell(5, 6, "", 0, 0);
+        $this->Cell(29, 6, "", "LRT", 0, "C");
         
         
         $this->Ln();
