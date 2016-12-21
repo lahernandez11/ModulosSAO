@@ -902,6 +902,29 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
         $this->Cell(25, 8, "", 1, 0, "C");
         $this->Cell(5, 8, "", 0, 0);
         $this->Cell(25, 8, "", 1, 0, "C");
+        
+        
+        $this->Ln();
+
+		$this->Cell(10, 3, "", 0, 0);
+		$this->Cell(25, 8, "", 1, 0, "C");
+		$this->Cell(5, 8, "", 0, 0);
+		$this->Cell(25, 8, "", 1, 0, "C");
+        $this->Cell(5, 8, "", 0, 0);
+        $this->Cell(25, 8, "", 1, 0, "C");
+        $this->Cell(5, 8, "", 0, 0);
+        $this->Cell(25, 8, "Ing. Luis Sánchez Padilla", 1, 0, "C");
+        $this->Cell(5, 8, "", 0, 0);
+        $this->Cell(25, 8, "Ing. José Luis Gaona Aburto", 1, 0, "C");
+        $this->Cell(5, 8, "", 0, 0);
+        //$this->Cell(25, 8, "", 1, 0, "C");
+        //$this->Cell(5, 8, "", 0, 0);
+        $this->Cell(25, 8, "Ing. Arturo Mejia Bernal", 1, 0, "C");
+        $this->Cell(5, 8, "", 0, 0);
+        $this->Cell(25, 8, "Ing. Victor Manuel Orozco Muñoz", 1, 0, "C");
+        $this->Cell(5, 8, "", 0, 0);
+        $this->Cell(25, 8, "Lic. Adlay Kepler Barrios Figueroa", 1, 0, "C");
+        
 
 		$this->Ln();
 
