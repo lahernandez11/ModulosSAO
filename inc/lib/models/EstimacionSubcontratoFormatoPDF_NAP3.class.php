@@ -859,11 +859,11 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
      */
     public function Footer()
     {
-		$this->Ln(5);
-		$this->resetFontStyle();
-		$this->SetFontSize(4);
+        $this->Ln(5);
+        $this->resetFontStyle();
+        $this->SetFontSize(4);
 
-        $this->Cell(5, 3, "", 0, 0);
+        //$this->Cell(5, 3, "", 0, 0);
         $this->Cell(29, 3, $this->firma_contratista_titulo_label, 1, 0, "C", true);
         $this->Cell(5, 3, "", 0, 0);
         $this->Cell(29, 3, $this->firma_control_estimaciones_titulo_label, 1, 0, "C", true);
@@ -882,7 +882,7 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
 
         $this->Ln();
 
-        $this->Cell(5, 3, "", 0, 0);
+        //$this->Cell(5, 3, "", 0, 0);
         $this->Cell(29, 8, "", "LRT", 0, "C");
         $this->Cell(5, 8, "", 0, 0);
         $this->Cell(29, 8, "", "LRT", 0, "C");
@@ -903,12 +903,12 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
         $this->Ln();
         $this->resetFontStyle();
         $this->SetFontSize(6);
-        $this->Cell(5, 3, "", 0, 0);
+        //$this->Cell(5, 3, "", 0, 0);
         $this->Cell(29, 3, "", "LRB", 0, "C");
         $this->Cell(5, 3, "", 0, 0);
         $this->Cell(29, 3, "", "LRB", 0, "C");
         $this->Cell(5, 3, "", 0, 0);
-        $this->Cell(29, 3, "", 1, 0, "C");
+        $this->Cell(29, 3, "", "LRB", 0, "C");
         $this->Cell(5, 3, "", 0, 0);
         $this->Cell(29, 3, "Ing. Luis Sánchez Padilla", "LRB", 0, "C");
         $this->Cell(5, 3, "", 0, 0);
@@ -916,6 +916,8 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
         $this->Cell(5, 3, "", 0, 0);
         $this->Cell(29, 3, "Ing. Arturo Mejia Bernal", "LRB", 0, "C");
         $this->Cell(5, 3, "", 0, 0);
+        $this->resetFontStyle();
+        $this->SetFontSize(5.5);
         $this->Cell(29, 3, "Ing. Victor Manuel Orozco Muñoz", "LRB", 0, "C");
         $this->Cell(5, 3, "", 0, 0);
         $this->Cell(29, 3, "Lic. Adlay Kepler Barrios Figueroa", "LRB", 0, "C");
@@ -924,7 +926,7 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
 	$this->Ln();
         $this->resetFontStyle();
         $this->SetFontSize(4);
-        $this->Cell(5, 3, "", 0, 0);
+        //$this->Cell(5, 3, "", 0, 0);
         $this->Cell(29, 3, $this->firma_contratista_descripcion_label, 1, 0, "C", true);
         $this->Cell(5, 3, "", 0, 0);
         $this->Cell(29, 3, $this->firma_control_estimaciones_descripcion_label, 1, 0, "C", true);
