@@ -106,7 +106,7 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
 		$this->AddPage( self::PDF_PAGE_ORIENTATION );
 		$this->SetFont('Arial', '', 7);
                 
-                $this->image('../../../img/app/cargipropen_reducido.jpg', 10, 10, 26, 20);
+                $this->image('../../../img/app/cargipropen_reducido.jpg', 10, 10, 39, 30);
 
 		$printBorder = 1;
 
