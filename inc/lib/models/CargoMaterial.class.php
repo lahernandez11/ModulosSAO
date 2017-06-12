@@ -58,7 +58,9 @@ class CargoMaterial {
 
 	private function init() {
 
-		$tsql = "SELECT 
+		if ($this->empresa->getId_moneda() == 1)
+		{
+			$tsql = "SELECT 
 					  SUM([items].[cantidad]) AS [cantidad]
 					, SUM([items].[importe]) / SUM([items].[cantidad]) AS [precio]
 					, SUM([items].[importe]) AS [importe]
@@ -73,10 +75,33 @@ class CargoMaterial {
 						AND
 					[items].[id_material] = ?";
 
-	    $params = array(
-	        array( $this->empresa->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
-	        array( $this->material->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
-	    );
+			$params = array(
+		        array( $this->empresa->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        array( $this->material->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	    	);
+		}
+		else{
+			$tsql = "SELECT  
+						SUM([items].[cantidad]) as cantidad
+						, SUM([items].[importe] / cambio) / sum([items].[cantidad] )  as precio
+						, SUM([items].[importe] / cambio) as importe
+					FROM [Compras].[ItemsXContratista]
+					INNER JOIN [dbo].[items] ON [ItemsXContratista].[id_item] = [items].[id_item]
+					INNER JOIN [dbo].[transacciones] ON [transacciones].[id_transaccion] = [items].[id_transaccion]
+					left JOIN [dbo].[cambios] as tipcam ON convert(char(10), [transacciones].[Fecha], 111) = convert(char(10), tipcam.[fecha], 111) 
+					WHERE
+						[ItemsXContratista].[id_empresa] = ?
+					AND [items].[id_material] = ?
+					and tipcam.[id_moneda] = ?";
+
+			$params = array(
+		        array( $this->empresa->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        array( $this->material->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
+		        array( $this->empresa->getId_moneda(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT )
+	    	);
+		}
+
+	   
 
 	    $data = $this->conn->executeQuery( $tsql, $params );
 

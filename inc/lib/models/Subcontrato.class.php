@@ -240,8 +240,9 @@ class Subcontrato extends TransaccionSAO
 
 	    $datos = $this->conn->executeSP( $tsql, $params );
 
-	    $this->empresa = new Empresa( $this->obra, $datos[0]->id_empresa );
+	    
 	    $this->moneda = new Moneda( $this->obra, $datos[0]->id_moneda );
+	    $this->empresa = new Empresa( $this->obra, $datos[0]->id_empresa, $datos[0]->id_moneda );
 
 	    $this->porcentaje_fondo_garantia = $datos[0]->PctFondoGarantia;
 	    $this->importe_fondo_garantia = $datos[0]->ImporteFondoGarantia;

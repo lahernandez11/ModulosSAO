@@ -412,6 +412,8 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
 
 			$this->Row(
 				array(
+					//$this->estimacion->moneda->getNombre(),
+					//$this->estimacion->id_moneda,
 					$cargo_material->material->getDescripcion(),
 					$cargo_material->material->getUnidad(),
 					Util::formatoNumerico($cargo_material->getPrecio()),
@@ -690,6 +692,20 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
 		$this->resetFills(array(true));
 		$this->resetBorders(array(true));
 		
+		$porcen_iva = round($this->estimacion->getPctIVA() *100,4);
+
+
+		$iva_contrato = $subtotal_contrato * $porcen_iva / 100 ;  
+		$iva_acumulado_anterior = $subtotal_anterior * $porcen_iva / 100;
+		$iva = $subtotal * $porcen_iva / 100;
+		$iva_esta_estimacion = $subtotal_actual * $porcen_iva / 100;
+		$iva_saldo_real = $subtotal_saldo * $porcen_iva / 100;
+
+		$iva_anterior = $this->estimacion->getIVAAnterior(); 		
+
+		
+
+		/*
 		$iva_contrato = $this->estimacion->subcontrato->getIVA();  
 		$iva_anterior = $this->estimacion->getIVAAnterior(); 
 		$iva = $this->estimacion->getIVA();
@@ -698,6 +714,8 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
 		$iva_acumulado_anterior = $iva_anterior + $iva_saldo;
 		$iva_esta_estimacion = $iva_acumulado_anterior + $iva;
 		$iva_saldo_real = $iva_contrato - $iva_esta_estimacion;
+
+		*/
 
 		$this->Row(
 			array(

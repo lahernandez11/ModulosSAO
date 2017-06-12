@@ -20,12 +20,13 @@ class Empresa {
 	private $tipo_cliente;
 	private $porcentaje;
 	private $no_proveedor_virtual;
+	private $id_moneda;
 
 	private $importe_acumulado_cargos = 0;
 
 	private $conn;
 
-	public function __construct( Obra $obra, $id_empresa ) {
+	public function __construct( Obra $obra, $id_empresa, $id_moneda ) {
 
 		if ( ! is_int( $id_empresa ) ) {
 			throw new Exception("El identificador de empresa no es valido");
@@ -33,6 +34,7 @@ class Empresa {
 
 		$this->obra = $obra;
 		$this->id   = $id_empresa;
+		$this->id_moneda = $id_moneda;
 		$this->conn = $obra->getConn();
 		$this->init();
 	}
@@ -91,6 +93,10 @@ class Empresa {
 
 	public function getId() {
 		return $this->id;
+	}
+
+	public function getId_moneda() {
+		return $this->id_moneda;
 	}
 
 	public function getNombre() {
