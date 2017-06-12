@@ -92,7 +92,7 @@ class CargoMaterial {
 					WHERE
 						[ItemsXContratista].[id_empresa] = ?
 					AND [items].[id_material] = ?
-					and tipcam.[id_moneda] = ?";
+					and tipcam.[id_moneda] = ?"; 
 
 			$params = array(
 		        array( $this->empresa->getId(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT ),
