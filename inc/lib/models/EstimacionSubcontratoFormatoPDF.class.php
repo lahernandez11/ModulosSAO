@@ -681,7 +681,8 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF
 		$iva = $this->estimacion->getIVA();
 		$iva_actual = $iva_anterior + $iva; 
 		$iva_saldo = $iva_contrato - $iva_actual; 
-		$iva_acumulado_anterior = $iva_anterior + $iva_saldo;
+		//$iva_acumulado_anterior = $iva_anterior + $iva_saldo;
+		$iva_acumulado_anterior = $anticipo_anterior * $this->estimacion->getPctIVA();
 		$iva_esta_estimacion = $iva_acumulado_anterior + $iva;
 		$iva_saldo_real = $iva_contrato - $iva_esta_estimacion;
 
