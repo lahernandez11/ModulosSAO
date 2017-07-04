@@ -409,7 +409,8 @@ class EstimacionSubcontrato extends TransaccionSAO {
 					[monto]       = ?,
 					[retencion]   = ?,
 					[IVARetenido] = ?,
-					[anticipo]    = ?
+					[anticipo]    = ?,
+					[FondoGarantia]=?
 				WHERE
 					[id_transaccion] = ?;";
 
@@ -419,6 +420,7 @@ class EstimacionSubcontrato extends TransaccionSAO {
             array(0, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_REAL),
 	        array($this->retencion_iva, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
             array($this->pct_anticipo * 100, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_REAL),
+            array($this->fondo_garantia, SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_DECIMAL(19, 4)),
             array($this->getIDTransaccion(), SQLSRV_PARAM_IN, null, SQLSRV_SQLTYPE_INT)
 	    );
 
