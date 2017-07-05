@@ -658,21 +658,39 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
 			)
 		);
 
+		$descuento_contrato = $this->sumaImporteCargoMaterial;
+		$descuento_anterior = $this->sumaAcumuladoDescuentoAnterior;
+		$descuento = $this->sumaImporteDescuentoEstaEstimacion;
+		$descuento_actual = $this->sumaAcumuladoDescuentoEstaEstimacion;
+		$descuento_saldo = $this->sumaImporteCargoMaterial - $this->sumaAcumuladoDescuentoEstaEstimacion;
+
+		$this->Row(
+			array(
+				"Descuentos", "", "", "",
+				Util::formatoNumerico($descuento_contrato),"",
+				Util::formatoNumerico($descuento_anterior), "",
+				Util::formatoNumerico($descuento),	"",
+				Util::formatoNumerico($descuento_actual), "",
+				Util::formatoNumerico( $descuento_saldo, "")
+			)
+		);
+
+
 		$fondo_garantia_contrato = $this->estimacion->subcontrato->getImporteFondoGarantia();
 		$fondo_garantia_anterior = $this->estimacion->getFondoGarantiaAnterior();
 		$fondo_garantia = $this->estimacion->getFondoGarantia();
 		$fondo_garantia_actual = $fondo_garantia_anterior + $fondo_garantia;
 		$fondo_garantia_saldo = $fondo_garantia_contrato - $fondo_garantia_actual;
 
-		$subtotal_contrato = $ejecutado_contrato - $anticipo_contrato - $fondo_garantia_contrato;
+		$subtotal_contrato = $ejecutado_contrato - $anticipo_contrato - $fondo_garantia_contrato - $descuento_contrato;
 
-		$subtotal_anterior = $ejecutado_anterior - $anticipo_anterior - $fondo_garantia_anterior;
+		$subtotal_anterior = $ejecutado_anterior - $anticipo_anterior - $fondo_garantia_anterior -$descuento_anterior;
 
-		$subtotal = $this->sumaImporteEstaEstimacion - $anticipo;
+		$subtotal = $this->sumaImporteEstaEstimacion - $anticipo - $descuento;
 
 		$subtotal_actual = $subtotal_anterior + $subtotal;
 
-		$subtotal_saldo = $subtotal_contrato - $subtotal_actual;
+		$subtotal_saldo = $subtotal_contrato - $subtotal_actual ;
 
 		$this->setFills(array(true));
 		$this->setBorders(array(true));
@@ -779,22 +797,7 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
 			)
 		);
 
-		$descuento_contrato = $this->estimacion->empresa->getImporteAcumuladoCargos();
-		$descuento_anterior = $this->estimacion->getDescuentoAnterior();
-		$descuento = $this->sumaImporteDescuentoEstaEstimacion;
-		$descuento_actual = $descuento_anterior + $descuento;
-		$descuento_saldo = $descuento_contrato - $descuento_actual;
-
-		$this->Row(
-			array(
-				"Descuentos", "", "", "",
-				Util::formatoNumerico($descuento_contrato), "",
-				Util::formatoNumerico($descuento_anterior), "",
-				Util::formatoNumerico($descuento), "",
-				Util::formatoNumerico($descuento_actual), "",
-				Util::formatoNumerico($descuento_saldo)
-			)
-		);
+		
 
 		$retencion_contrato = $this->estimacion->subcontrato->getImporteAcumuladoRetenciones();
 		$retencion_anterior = $this->estimacion->getRetencionAnterior();
@@ -837,9 +840,9 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
 			)
 		);
 
-		$pagar_contrato = $total_contrato - $descuento_contrato - $retencion_contrato;
+		$pagar_contrato = $total_contrato  - $retencion_contrato;
 
-		$pagar_anterior = $total_anterior - $descuento_anterior - $retencion_anterior;
+		$pagar_anterior = $total_anterior  - $retencion_anterior;
 
 		$pagar =
 			  $total
@@ -847,7 +850,6 @@ class EstimacionSubcontratoFormatoPDF_NAP3 extends FormatoPDF
 			+ $this->suma_liberaciones
             - $fondo_garantia
 			- $retencion_iva
-			- $descuento
 			- $retencion;
 
 		$pagar_actual = $pagar_anterior + $pagar;
