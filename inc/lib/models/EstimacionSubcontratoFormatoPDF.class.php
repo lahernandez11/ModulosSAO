@@ -648,7 +648,8 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF
 		$fondo_garantia_actual = $fondo_garantia_anterior + $fondo_garantia;
 		$fondo_garantia_saldo = $fondo_garantia_contrato - $fondo_garantia_actual;
 
-		$subtotal_contrato = $ejecutado_contrato - $anticipo_contrato - $fondo_garantia_contrato;
+		//$subtotal_contrato = $ejecutado_contrato - $anticipo_contrato - $fondo_garantia_contrato;
+		$subtotal_contrato = $ejecutado_contrato - $anticipo_contrato;
 
 		$subtotal_anterior = $ejecutado_anterior - $anticipo_anterior - $fondo_garantia_anterior;
 
@@ -806,7 +807,7 @@ class EstimacionSubcontratoFormatoPDF extends FormatoPDF
 			)
 		);
 
-		$pagar_contrato = $total_contrato - $descuento_contrato - $retencion_contrato;
+		$pagar_contrato = $total_contrato - $descuento_contrato - $retencion_contrato - $fondo_garantia_contrato;
 
 		$pagar_anterior = $total_anterior - $descuento_anterior - $retencion_anterior;
 
